@@ -1,5 +1,10 @@
-function required(name: string): string {
-  const value = process.env[name];
+// Next.js only inlines `NEXT_PUBLIC_*` vars into the browser bundle when it
+// sees the literal static form `process.env.VAR_NAME` — a dynamic/computed
+// lookup like `process.env[name]` can't be statically analyzed, so it's left
+// as real runtime code, and `process` doesn't exist in the browser at all.
+// Every accessor below must reference `process.env.X` directly (not through
+// a shared helper taking a variable name) so client components keep working.
+function required(name: string, value: string | undefined): string {
   if (!value) {
     throw new Error(`Missing required env var: ${name}`);
   }
@@ -7,18 +12,27 @@ function required(name: string): string {
 }
 
 export const env = {
-  supabaseUrl: () => required("NEXT_PUBLIC_SUPABASE_URL"),
-  supabaseAnonKey: () => required("NEXT_PUBLIC_SUPABASE_ANON_KEY"),
-  supabaseServiceRoleKey: () => required("SUPABASE_SERVICE_ROLE_KEY"),
+  supabaseUrl: () =>
+    required("NEXT_PUBLIC_SUPABASE_URL", process.env.NEXT_PUBLIC_SUPABASE_URL),
+  supabaseAnonKey: () =>
+    required(
+      "NEXT_PUBLIC_SUPABASE_ANON_KEY",
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY,
+    ),
+  supabaseServiceRoleKey: () =>
+    required("SUPABASE_SERVICE_ROLE_KEY", process.env.SUPABASE_SERVICE_ROLE_KEY),
   siteUrl: () => process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000",
   billingEnabled: () => process.env.NEXT_PUBLIC_BILLING_ENABLED === "true",
 
   creemApiBaseUrl: () =>
     process.env.CREEM_API_BASE_URL ?? "https://api.creem.io/v1",
-  creemApiKey: () => required("CREEM_API_KEY"),
-  creemWebhookSecret: () => required("CREEM_WEBHOOK_SECRET"),
-  creemSuccessUrl: () => required("CREEM_SUCCESS_URL"),
-  creemGenericProductId: () => required("CREEM_GENERIC_PRODUCT_ID"),
+  creemApiKey: () => required("CREEM_API_KEY", process.env.CREEM_API_KEY),
+  creemWebhookSecret: () =>
+    required("CREEM_WEBHOOK_SECRET", process.env.CREEM_WEBHOOK_SECRET),
+  creemSuccessUrl: () =>
+    required("CREEM_SUCCESS_URL", process.env.CREEM_SUCCESS_URL),
+  creemGenericProductId: () =>
+    required("CREEM_GENERIC_PRODUCT_ID", process.env.CREEM_GENERIC_PRODUCT_ID),
 
   adminAllowedEmails: () =>
     (process.env.ADMIN_ALLOWED_EMAILS ?? "")
