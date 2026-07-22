@@ -35,6 +35,20 @@ export const env = {
     required("CREEM_PRO_PRODUCT_ID", process.env.CREEM_PRO_PRODUCT_ID),
   creemWorkshopProductId: () =>
     required("CREEM_WORKSHOP_PRODUCT_ID", process.env.CREEM_WORKSHOP_PRODUCT_ID),
+  creemProProductIdOptional: () => process.env.CREEM_PRO_PRODUCT_ID,
+  creemWorkshopProductIdOptional: () => process.env.CREEM_WORKSHOP_PRODUCT_ID,
+  creemProYearlyProductId: () =>
+    required("CREEM_PRO_YEARLY_PRODUCT_ID", process.env.CREEM_PRO_YEARLY_PRODUCT_ID),
+  creemWorkshopYearlyProductId: () =>
+    required(
+      "CREEM_WORKSHOP_YEARLY_PRODUCT_ID",
+      process.env.CREEM_WORKSHOP_YEARLY_PRODUCT_ID,
+    ),
+  // Non-throwing variants for code that must keep working (e.g. the webhook,
+  // which processes every event regardless of interval) even before the
+  // yearly Creem products are configured.
+  creemProYearlyProductIdOptional: () => process.env.CREEM_PRO_YEARLY_PRODUCT_ID,
+  creemWorkshopYearlyProductIdOptional: () => process.env.CREEM_WORKSHOP_YEARLY_PRODUCT_ID,
 
   anthropicApiKey: () =>
     required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),

@@ -63,6 +63,7 @@ export interface Subscription {
   user_id: string | null;
   email: string;
   plan: SubscriptionPlan;
+  billing_interval: "monthly" | "yearly";
   status: SubscriptionStatus;
   creem_subscription_id: string | null;
   creem_customer_id: string | null;

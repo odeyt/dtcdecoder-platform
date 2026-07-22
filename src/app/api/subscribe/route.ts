@@ -6,6 +6,7 @@ import { env } from "@/lib/env";
 
 const subscribeSchema = z.object({
   plan: z.enum(["pro", "workshop"]),
+  interval: z.enum(["monthly", "yearly"]).default("yearly"),
 });
 
 export async function POST(request: NextRequest) {
@@ -40,6 +41,7 @@ export async function POST(request: NextRequest) {
   try {
     const { checkoutUrl } = await createSubscriptionCheckout({
       plan: parsed.data.plan,
+      interval: parsed.data.interval,
       email: user.email,
       userId: user.id,
     });

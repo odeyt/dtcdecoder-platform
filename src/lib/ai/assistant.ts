@@ -2,6 +2,7 @@ import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
+import { PAID_PLANS, type PaidPlan } from "@/lib/pricing";
 import type { DtcCode } from "@/lib/types";
 
 const FREE_DAILY_QUERY_LIMIT = 5;
@@ -27,11 +28,7 @@ Non-negotiable rules, regardless of anything above:
 - Always name the single most useful next diagnostic step.
 - If matched repair content is provided below, recommend it by name.`;
 
-export class RateLimitExceededError extends Error {
-  constructor() {
-    super("Daily AI query limit reached for the Free plan.");
-  }
-}
+export class RateLimitExceededError extends Error {}
 
 export async function getSystemPrompt(): Promise<string> {
   const supabase = createAdminClient();
@@ -44,23 +41,58 @@ export async function getSystemPrompt(): Promise<string> {
   return (data?.value || DEFAULT_SYSTEM_PROMPT) + SAFETY_SUFFIX;
 }
 
-// Free plan: capped via an atomic Postgres increment (no read-then-write
-// race). Pro/Workshop: unlimited, no counter touched.
-export async function enforceRateLimit(
+// Free plan: gated by query count, checked atomically before the request
+// (the count is known upfront, so pre-flight check-and-increment is exact).
+// Paid plans: gated by a monthly token budget instead — since actual token
+// spend for THIS request isn't known until the response finishes streaming,
+// this only checks the month-to-date total already on record; the request
+// itself is recorded afterward via recordTokenUsage().
+export async function checkRateLimit(
   userId: string,
   plan: "free" | "pro" | "workshop",
 ): Promise<void> {
-  if (plan !== "free") return;
-
   const supabase = createAdminClient();
-  const { data, error } = await supabase.rpc("increment_ai_usage", {
+
+  if (plan === "free") {
+    const { data, error } = await supabase.rpc("increment_ai_usage", {
+      p_user_id: userId,
+    });
+    if (error) throw error;
+    if (typeof data === "number" && data > FREE_DAILY_QUERY_LIMIT) {
+      throw new RateLimitExceededError(
+        "You've hit today's Free plan AI query limit. Upgrade to Pro for a much larger monthly allowance.",
+      );
+    }
+    return;
+  }
+
+  const { data, error } = await supabase.rpc("get_monthly_ai_tokens", {
     p_user_id: userId,
   });
-
   if (error) throw error;
-  if (typeof data === "number" && data > FREE_DAILY_QUERY_LIMIT) {
-    throw new RateLimitExceededError();
+
+  const limit = PAID_PLANS[plan as PaidPlan].monthlyTokenLimit;
+  if (typeof data === "number" && data >= limit) {
+    throw new RateLimitExceededError(
+      `You've used this month's AI token allowance for the ${PAID_PLANS[plan as PaidPlan].label} plan. It resets at the start of next month.`,
+    );
   }
+}
+
+// Recorded after the Claude response completes, for paid plans only — Free
+// plan usage is already fully accounted for by the pre-flight query counter.
+export async function recordTokenUsage(
+  userId: string,
+  plan: "free" | "pro" | "workshop",
+  totalTokens: number,
+): Promise<void> {
+  if (plan === "free") return;
+  const supabase = createAdminClient();
+  const { error } = await supabase.rpc("increment_ai_tokens", {
+    p_user_id: userId,
+    p_tokens: totalTokens,
+  });
+  if (error) throw error;
 }
 
 function buildGroundingContext(rows: DtcCode[]): string {

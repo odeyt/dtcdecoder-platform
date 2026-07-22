@@ -4,7 +4,8 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { findGroundingDtcCodes } from "@/lib/ai/grounding";
 import {
-  enforceRateLimit,
+  checkRateLimit,
+  recordTokenUsage,
   streamAssistantResponse,
   RateLimitExceededError,
 } from "@/lib/ai/assistant";
@@ -41,16 +42,10 @@ export async function POST(request: NextRequest) {
   const plan = await getEffectivePlan(user.id, user.email ?? null);
 
   try {
-    await enforceRateLimit(user.id, plan);
+    await checkRateLimit(user.id, plan);
   } catch (err) {
     if (err instanceof RateLimitExceededError) {
-      return NextResponse.json(
-        {
-          error:
-            "You've hit today's Free plan AI query limit. Upgrade to Pro for unlimited diagnostic help.",
-        },
-        { status: 429 },
-      );
+      return NextResponse.json({ error: err.message }, { status: 429 });
     }
     throw err;
   }
@@ -67,6 +62,13 @@ export async function POST(request: NextRequest) {
             controller.enqueue(encoder.encode(event.delta.text));
           }
         }
+
+        // Record actual token spend for paid-plan monthly budget enforcement
+        // — only knowable once the response has fully streamed.
+        const finalMessage = await claudeStream.finalMessage();
+        const totalTokens =
+          finalMessage.usage.input_tokens + finalMessage.usage.output_tokens;
+        await recordTokenUsage(user.id, plan, totalTokens);
       } catch (err) {
         console.error("AI assistant stream failed", err);
       } finally {

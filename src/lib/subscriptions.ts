@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { Subscription, SubscriptionPlan } from "@/lib/types";
+import type { BillingInterval } from "@/lib/pricing";
 
 // Resolves a user's effective plan. Looks up by user_id first (the normal
 // case once signed in), falling back to email — covers the same guest-then-
@@ -60,6 +61,7 @@ export interface WebhookSubscriptionUpdate {
   email: string;
   userId: string | null;
   plan: SubscriptionPlan;
+  interval: BillingInterval;
   status: "active" | "past_due" | "canceled";
   currentPeriodEnd: string | null;
 }
@@ -90,6 +92,7 @@ export async function upsertSubscriptionFromWebhook(
       email: update.email.toLowerCase(),
       user_id: update.userId,
       plan: update.plan,
+      billing_interval: update.interval,
       status: update.status,
       current_period_end: update.currentPeriodEnd,
     },

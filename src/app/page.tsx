@@ -129,10 +129,10 @@ export default function HomePage() {
       {/* Pricing teaser */}
       <section className="mx-auto max-w-3xl px-6 py-16 text-center">
         <h2 className="text-2xl font-bold text-white">
-          Free to start. Unlimited when you need it.
+          Free to start. A lot more when you need it.
         </h2>
         <p className="mt-2 text-zinc-400">
-          Pro Technician and Workshop plans unlock unlimited AI diagnostics.
+          Pro Technician and Workshop plans unlock a much larger monthly AI allowance — save $30 on the yearly plan.
         </p>
         <Link
           href="/pricing"

@@ -89,7 +89,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
 
       <section className="rounded-2xl border border-white/10 bg-white/5 p-6 text-center backdrop-blur-md">
         <p className="text-sm text-zinc-300">
-          Want unlimited AI diagnostic help for codes like this one?
+          Want a much larger monthly AI diagnostic allowance?
         </p>
         <Link
           href="/pricing"

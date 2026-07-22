@@ -72,7 +72,7 @@ export function AiAssistantChat({ signedIn }: { signedIn: boolean }) {
       <div className="rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-md">
         <p className="text-white">Sign in to use the DTC AI Assistant.</p>
         <p className="mt-2 text-sm text-zinc-400">
-          Free accounts get 5 AI questions a day — Pro and Workshop are unlimited.
+          Free accounts get 5 AI questions a day — Pro and Workshop get a much larger monthly allowance.
         </p>
         <Link
           href="/account/login"

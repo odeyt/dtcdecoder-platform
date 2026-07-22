@@ -4,10 +4,12 @@ import { useState } from "react";
 
 export function SubscribeButton({
   plan,
+  interval,
   label,
   signedIn,
 }: {
   plan: "pro" | "workshop";
+  interval: "monthly" | "yearly";
   label: string;
   signedIn: boolean;
 }) {
@@ -27,7 +29,7 @@ export function SubscribeButton({
       const res = await fetch("/api/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan }),
+        body: JSON.stringify({ plan, interval }),
       });
       const data = await res.json();
 
