@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getMakeDtcCode } from "@/lib/dtc";
 import { DtcCodeResult } from "@/components/DtcCodeResult";
 import { isReservedMakeSlug } from "@/lib/reserved-slugs";
+import { createClient } from "@/lib/supabase/server";
+import { recordSearchHistory } from "@/lib/search-history";
 
 export const revalidate = 3600;
 
@@ -33,6 +35,14 @@ export default async function MakeDtcCodePage({ params }: Props) {
 
   const dtc = await getMakeDtcCode(make.toLowerCase(), slug.toLowerCase());
   if (!dtc || !dtc.is_published) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
+  }
 
   return <DtcCodeResult dtc={dtc} />;
 }

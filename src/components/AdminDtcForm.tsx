@@ -32,6 +32,19 @@ export function AdminDtcForm({
             <option value="professional">Professional</option>
           </select>
         </div>
+        <div>
+          <label className="block text-sm font-medium text-zinc-300">Severity</label>
+          <select
+            name="severity"
+            defaultValue={dtc?.severity ?? "moderate"}
+            className="mt-1 w-full rounded-md border border-white/10 bg-black/30 px-3 py-2 text-white"
+          >
+            <option value="low">Low</option>
+            <option value="moderate">Moderate</option>
+            <option value="high">High</option>
+            <option value="critical">Critical</option>
+          </select>
+        </div>
       </div>
 
       <Field label="Title" name="title" defaultValue={dtc?.title} required />
@@ -49,6 +62,11 @@ export function AdminDtcForm({
         defaultValue={dtc?.diagnostic_steps.join("\n")}
       />
       <TextArea label="Common mistakes" name="commonMistakes" defaultValue={dtc?.common_mistakes ?? ""} />
+      <TextArea
+        label="Drive recommendation (when to stop driving / is it safe to continue)"
+        name="driveRecommendation"
+        defaultValue={dtc?.drive_recommendation ?? ""}
+      />
       <TextArea
         label="Related makes (one per line)"
         name="relatedMakes"

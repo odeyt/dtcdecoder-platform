@@ -1,7 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isReservedMakeSlug } from "@/lib/reserved-slugs";
-import type { DtcCode, DtcDifficulty, DtcFaqEntry } from "@/lib/types";
+import type { DtcCode, DtcDifficulty, DtcSeverity, DtcFaqEntry } from "@/lib/types";
 
 export interface DtcCodeInput {
   code: string;
@@ -17,6 +17,8 @@ export interface DtcCodeInput {
   diagnosticSteps: string[];
   commonMistakes: string;
   difficulty: DtcDifficulty;
+  severity: DtcSeverity;
+  driveRecommendation: string;
   relatedMakes: string[];
   faq: DtcFaqEntry[];
   pdfUrl: string;
@@ -85,6 +87,8 @@ export async function createDtcCode(input: DtcCodeInput): Promise<DtcCode> {
       diagnostic_steps: input.diagnosticSteps,
       common_mistakes: input.commonMistakes || null,
       difficulty: input.difficulty,
+      severity: input.severity,
+      drive_recommendation: input.driveRecommendation || null,
       related_makes: input.relatedMakes,
       faq: input.faq,
       pdf_url: input.pdfUrl || null,
@@ -120,6 +124,8 @@ export async function updateDtcCode(
       diagnostic_steps: input.diagnosticSteps,
       common_mistakes: input.commonMistakes || null,
       difficulty: input.difficulty,
+      severity: input.severity,
+      drive_recommendation: input.driveRecommendation || null,
       related_makes: input.relatedMakes,
       faq: input.faq,
       pdf_url: input.pdfUrl || null,

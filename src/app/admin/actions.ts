@@ -11,7 +11,7 @@ import {
   type DtcCodeInput,
 } from "@/lib/admin-dtc";
 import { createAdminClient } from "@/lib/supabase/admin";
-import type { DtcDifficulty, DtcFaqEntry, BlogCategory } from "@/lib/types";
+import type { DtcDifficulty, DtcSeverity, DtcFaqEntry, BlogCategory } from "@/lib/types";
 
 function linesToArray(value: FormDataEntryValue | null): string[] {
   return String(value ?? "")
@@ -33,6 +33,7 @@ function parseFaq(value: FormDataEntryValue | null): DtcFaqEntry[] {
 
 function parseDtcInput(formData: FormData): DtcCodeInput {
   const difficulty = String(formData.get("difficulty") ?? "moderate") as DtcDifficulty;
+  const severity = String(formData.get("severity") ?? "moderate") as DtcSeverity;
 
   return {
     code: String(formData.get("code") ?? "").trim(),
@@ -48,6 +49,8 @@ function parseDtcInput(formData: FormData): DtcCodeInput {
     diagnosticSteps: linesToArray(formData.get("diagnosticSteps")),
     commonMistakes: String(formData.get("commonMistakes") ?? "").trim(),
     difficulty,
+    severity,
+    driveRecommendation: String(formData.get("driveRecommendation") ?? "").trim(),
     relatedMakes: linesToArray(formData.get("relatedMakes")),
     faq: parseFaq(formData.get("faq")),
     pdfUrl: String(formData.get("pdfUrl") ?? "").trim(),

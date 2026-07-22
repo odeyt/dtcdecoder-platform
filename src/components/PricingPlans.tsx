@@ -16,19 +16,25 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
 
   return (
     <div>
-      <div className="mx-auto flex w-fit rounded-full border border-white/10 bg-white/5 p-1">
+      <div className="mx-auto flex w-fit rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-1">
         <button
           onClick={() => setInterval("yearly")}
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-            interval === "yearly" ? "bg-red-600 text-white" : "text-zinc-400"
+          aria-pressed={interval === "yearly"}
+          className={`min-h-11 rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-semibold transition ${
+            interval === "yearly"
+              ? "bg-[var(--accent-red)] text-white"
+              : "text-[var(--text-muted)]"
           }`}
         >
           Yearly — Save ${YEARLY_FLAT_DISCOUNT_USD}
         </button>
         <button
           onClick={() => setInterval("monthly")}
-          className={`rounded-full px-4 py-1.5 text-sm font-semibold transition ${
-            interval === "monthly" ? "bg-red-600 text-white" : "text-zinc-400"
+          aria-pressed={interval === "monthly"}
+          className={`min-h-11 rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-semibold transition ${
+            interval === "monthly"
+              ? "bg-[var(--accent-red)] text-white"
+              : "text-[var(--text-muted)]"
           }`}
         >
           Monthly
@@ -37,14 +43,15 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
         <PlanCard title="Free" price="$0" priceSuffix="/mo">
-          <ul className="space-y-2 text-sm text-zinc-300">
+          <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             <li>Basic DTC lookup</li>
             <li>5 AI searches per day</li>
-            <li>Public repair tips</li>
+            <li>Search history</li>
+            <li>Safety warnings</li>
           </ul>
           <Link
             href={signedIn ? "/dtc" : "/account/login"}
-            className="mt-6 block rounded-full border border-white/20 px-6 py-3 text-center font-semibold text-white transition hover:bg-white/10"
+            className="mt-6 block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 text-center font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
           >
             Start Free
           </Link>
@@ -79,7 +86,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
         />
       </div>
 
-      <p className="mt-6 text-center text-xs text-zinc-500">
+      <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
         AI token allowances reset monthly and are a fair-use limit to keep
         the service reliable for everyone — most technicians never come
         close to them.
@@ -121,7 +128,7 @@ function PaidPlanCard({
           : undefined
       }
     >
-      <ul className="space-y-2 text-sm text-zinc-300">
+      <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
         {bullets.map((bullet) => (
           <li key={bullet}>{bullet}</li>
         ))}
@@ -155,18 +162,20 @@ function PlanCard({
 }) {
   return (
     <div
-      className={`rounded-2xl border p-6 backdrop-blur-md ${
-        highlighted
-          ? "border-red-500/40 bg-gradient-to-b from-red-600/10 to-transparent shadow-[0_0_30px_rgba(255,30,45,0.15)]"
-          : "border-white/10 bg-white/5"
+      className={`rounded-[var(--radius-xl)] border p-6 ${
+        highlighted ? "bg-[var(--surface-burgundy)]" : "glass-panel"
       }`}
+      style={{
+        borderColor: highlighted ? "var(--border-red)" : "var(--border-subtle)",
+        boxShadow: highlighted ? "var(--shadow-accent)" : "var(--shadow-ambient)",
+      }}
     >
-      <h2 className="text-xl font-bold text-white">{title}</h2>
-      <p className="mt-1 text-2xl font-bold text-red-400">
+      <h2 className="text-xl font-bold text-[var(--text-primary)]">{title}</h2>
+      <p className="mt-1 text-2xl font-bold text-[var(--accent-red)]">
         {price}
-        <span className="text-sm text-zinc-400">{priceSuffix}</span>
+        <span className="text-sm text-[var(--text-muted)]">{priceSuffix}</span>
       </p>
-      {subline && <p className="mt-1 text-xs text-zinc-500">{subline}</p>}
+      {subline && <p className="mt-1 text-xs text-[var(--text-muted)]">{subline}</p>}
       <div className="mt-4">{children}</div>
     </div>
   );

@@ -1,4 +1,5 @@
 export type DtcDifficulty = "easy" | "moderate" | "hard" | "professional";
+export type DtcSeverity = "low" | "moderate" | "high" | "critical";
 
 export interface DtcFaqEntry {
   q: string;
@@ -20,6 +21,8 @@ export interface DtcCode {
   diagnostic_steps: string[];
   common_mistakes: string | null;
   difficulty: DtcDifficulty;
+  severity: DtcSeverity;
+  drive_recommendation: string | null;
   related_makes: string[];
   faq: DtcFaqEntry[];
   pdf_url: string | null;
@@ -28,6 +31,15 @@ export interface DtcCode {
   is_published: boolean;
   created_at: string;
   updated_at: string;
+}
+
+export interface SearchHistoryEntry {
+  id: string;
+  user_id: string;
+  kind: "lookup" | "ai";
+  query: string;
+  dtc_code_id: string | null;
+  created_at: string;
 }
 
 export type BlogCategory =

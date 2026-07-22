@@ -3,6 +3,7 @@ import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { findGroundingDtcCodes } from "@/lib/ai/grounding";
+import { recordSearchHistory } from "@/lib/search-history";
 import {
   checkRateLimit,
   recordTokenUsage,
@@ -51,6 +52,9 @@ export async function POST(request: NextRequest) {
   }
 
   const groundingRows = await findGroundingDtcCodes(parsed.data.message);
+  recordSearchHistory(user.id, "ai", parsed.data.message, groundingRows[0]?.id ?? null).catch(
+    () => {},
+  );
   const claudeStream = await streamAssistantResponse(parsed.data.message, groundingRows);
 
   const encoder = new TextEncoder();

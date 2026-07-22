@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getGenericDtcCode } from "@/lib/dtc";
 import { DtcCodeResult } from "@/components/DtcCodeResult";
+import { createClient } from "@/lib/supabase/server";
+import { recordSearchHistory } from "@/lib/search-history";
 
 export const revalidate = 3600;
 
@@ -25,6 +27,14 @@ export default async function GenericDtcCodePage({ params }: Props) {
   const dtc = await getGenericDtcCode(code.toLowerCase());
 
   if (!dtc || !dtc.is_published) notFound();
+
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (user) {
+    recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
+  }
 
   return <DtcCodeResult dtc={dtc} />;
 }

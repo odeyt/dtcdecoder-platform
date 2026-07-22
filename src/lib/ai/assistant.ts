@@ -5,7 +5,7 @@ import { env } from "@/lib/env";
 import { PAID_PLANS, type PaidPlan } from "@/lib/pricing";
 import type { DtcCode } from "@/lib/types";
 
-const FREE_DAILY_QUERY_LIMIT = 5;
+export const FREE_DAILY_QUERY_LIMIT = 5;
 
 const DEFAULT_SYSTEM_PROMPT = `You are DTC AI Assistant, a master automotive diagnostic technician with decades of hands-on experience. A user will describe a fault code, symptom, or vehicle issue. Respond the way an experienced tech would explain it to another tech:
 
@@ -93,6 +93,43 @@ export async function recordTokenUsage(
     p_tokens: totalTokens,
   });
   if (error) throw error;
+}
+
+export interface UsageSummary {
+  used: number;
+  limit: number;
+  unit: "queries" | "tokens";
+}
+
+// Real, current usage — used by the account page's UsageMeter. Never a
+// placeholder; reads the same counters checkRateLimit() enforces against.
+export async function getUsageSummary(
+  userId: string,
+  plan: "free" | "pro" | "workshop",
+): Promise<UsageSummary> {
+  const supabase = createAdminClient();
+
+  if (plan === "free") {
+    const today = new Date().toISOString().slice(0, 10);
+    const { data, error } = await supabase
+      .from("ai_usage")
+      .select("query_count")
+      .eq("user_id", userId)
+      .eq("usage_date", today)
+      .maybeSingle();
+    if (error) throw error;
+    return { used: data?.query_count ?? 0, limit: FREE_DAILY_QUERY_LIMIT, unit: "queries" };
+  }
+
+  const { data, error } = await supabase.rpc("get_monthly_ai_tokens", {
+    p_user_id: userId,
+  });
+  if (error) throw error;
+  return {
+    used: typeof data === "number" ? data : 0,
+    limit: PAID_PLANS[plan as PaidPlan].monthlyTokenLimit,
+    unit: "tokens",
+  };
 }
 
 function buildGroundingContext(rows: DtcCode[]): string {

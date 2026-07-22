@@ -51,11 +51,12 @@ export function SubscribeButton({
       <button
         onClick={handleClick}
         disabled={loading}
-        className="w-full rounded-full bg-red-600 px-6 py-3 font-semibold text-white shadow-[0_0_20px_rgba(255,30,45,0.35)] transition hover:bg-red-500 disabled:opacity-60"
+        className="min-h-11 w-full rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        style={{ boxShadow: "var(--shadow-accent)" }}
       >
         {loading ? "Redirecting…" : label}
       </button>
-      {error && <p className="mt-2 text-center text-xs text-red-400">{error}</p>}
+      {error && <p className="mt-2 text-center text-xs text-[var(--accent-red)]">{error}</p>}
     </div>
   );
 }
