@@ -3,21 +3,22 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
-
-const NAV_LINKS = [
-  { href: "/dtc", label: "DTC Lookup" },
-  { href: "/ai-assistant", label: "AI Diagnostic" },
-  { href: "/repair-pdfs", label: "Repair Library" },
-  { href: "/history", label: "History" },
-  { href: "/pricing", label: "Pricing" },
-];
 
 // Auth state is fetched client-side (not passed from the root layout) so
 // that marketing/static pages (home, privacy, terms, etc.) can still be
 // statically generated instead of forced dynamic on every request just to
 // know whether to show "Sign In" or an account email in the header.
 export function SiteNav() {
+  const t = useTranslations("nav");
+  const NAV_LINKS = [
+    { href: "/dtc", label: t("dtcLookup") },
+    { href: "/ai-assistant", label: t("aiDiagnostic") },
+    { href: "/repair-pdfs", label: t("repairLibrary") },
+    { href: "/history", label: t("history") },
+    { href: "/pricing", label: t("pricing") },
+  ];
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -62,7 +63,7 @@ export function SiteNav() {
           <span>Decoder</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label="Primary">
+        <nav className="hidden items-center gap-1 md:flex" aria-label={t("primaryNav")}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -97,7 +98,7 @@ export function SiteNav() {
               href="/account/login"
               className="text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
             >
-              Sign In
+              {t("signIn")}
             </Link>
           )}
           <Link
@@ -105,7 +106,7 @@ export function SiteNav() {
             className="rounded-[var(--radius-md)] bg-[var(--accent-red)] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
             style={{ boxShadow: "var(--shadow-accent)" }}
           >
-            Decode a Code
+            {t("decodeACode")}
           </Link>
         </div>
 
@@ -113,7 +114,7 @@ export function SiteNav() {
           onClick={() => setMenuOpen((v) => !v)}
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
+          aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
           className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-primary)] md:hidden"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -139,7 +140,7 @@ export function SiteNav() {
       {menuOpen && (
         <nav
           id="mobile-nav"
-          aria-label="Mobile"
+          aria-label={t("mobileNav")}
           className="space-y-1 border-t border-[var(--border-subtle)] bg-[var(--surface-0)] px-6 py-4 md:hidden"
         >
           {NAV_LINKS.map((link) => (
@@ -158,7 +159,7 @@ export function SiteNav() {
               onClick={() => setMenuOpen(false)}
               className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-3 text-center text-sm text-[var(--text-primary)]"
             >
-              {userEmail ? userEmail : "Sign In"}
+              {userEmail ? userEmail : t("signIn")}
             </Link>
             <Link
               href="/dtc"

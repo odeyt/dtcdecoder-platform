@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dtcLookup": "Buscar Código DTC",
+    "aiDiagnostic": "Diagnóstico IA",
+    "repairLibrary": "Biblioteca de Reparación",
+    "history": "Historial",
+    "pricing": "Precios",
+    "signIn": "Iniciar Sesión",
+    "decodeACode": "Decodificar un Código",
+    "openMenu": "Abrir menú",
+    "closeMenu": "Cerrar menú",
+    "primaryNav": "Principal",
+    "mobileNav": "Móvil"
+  },
+  "footer": {
+    "tagline": "Inteligencia de diagnóstico automotriz asistida por IA — no sustituye el diagnóstico presencial de un técnico calificado.",
+    "product": "Producto",
+    "blog": "Blog",
+    "videos": "Videos",
+    "history": "Historial",
+    "youtube": "YouTube",
+    "gumroad": "Gumroad",
+    "company": "Empresa",
+    "contact": "Contacto",
+    "privacyPolicy": "Política de Privacidad",
+    "terms": "Términos",
+    "affiliateDisclosure": "Divulgación de Afiliados",
+    "copyright": "© {year} DTC Decoder. Todos los derechos reservados."
+  },
+  "hero": {
+    "searchLabel": "Ingresa un código DTC, síntoma o problema del vehículo",
+    "searchPlaceholder": "Ingresa P0300, ‘ralentí irregular’ o describe lo que hace el vehículo",
+    "decode": "Decodificar",
+    "trustLine": "Diagnósticos asistidos por IA basados en datos de referencia verificados · Las búsquedas con sesión iniciada se guardan en tu historial",
+    "eyebrow": "DIAGNÓSTICO VEHICULAR CON IA",
+    "headline": "Entiende lo que tu vehículo te está diciendo.",
+    "subheadline": "Decodifica códigos de falla, evalúa las causas probables y sigue un proceso de diagnóstico más seguro antes de reemplazar piezas."
+  },
+  "home": {
+    "pdfHeading": "¿Necesitas el flujo de trabajo de reparación profesional completo?",
+    "pdfBody": "Descarga el PDF de Diagnóstico Maestro completo con revisiones de cableado, datos del escáner, pasos de prueba y guía de reparación.",
+    "getRepairPdf": "Obtener PDF de Reparación",
+    "videoHeading": "Mira diagnósticos reales paso a paso y casos de estudio de técnicos.",
+    "videoBody": "Videos completos de desarme a reparación para cada código de falla principal.",
+    "watchOnYoutube": "Ver en YouTube",
+    "pricingHeading": "Gratis para empezar. Mucho más cuando lo necesites.",
+    "pricingBody": "Los planes Pro Técnico y Taller desbloquean una asignación mensual de IA mucho mayor — ahorra $30 en el plan anual.",
+    "seePricing": "Ver Precios"
+  }
+}

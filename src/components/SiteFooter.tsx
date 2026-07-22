@@ -1,6 +1,9 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export function SiteFooter() {
+  const t = useTranslations("footer");
+
   return (
     <footer className="mt-24 border-t border-[var(--border-subtle)] bg-[var(--surface-1)]">
       <div className="container-app px-6 py-14">
@@ -9,24 +12,21 @@ export function SiteFooter() {
             <p className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
               <span className="text-[var(--accent-red)]">DTC</span> Decoder
             </p>
-            <p className="mt-2 max-w-xs text-sm text-[var(--text-muted)]">
-              AI-assisted automotive diagnostic intelligence — not a substitute
-              for a qualified technician&apos;s in-person diagnosis.
-            </p>
+            <p className="mt-2 max-w-xs text-sm text-[var(--text-muted)]">{t("tagline")}</p>
           </div>
           <div className="grid grid-cols-2 gap-x-12 gap-y-8 sm:flex">
             <nav className="flex flex-col gap-2 text-sm text-[var(--text-secondary)]">
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-                Product
+                {t("product")}
               </span>
               <Link href="/blog" className="hover:text-[var(--text-primary)]">
-                Blog
+                {t("blog")}
               </Link>
               <Link href="/videos" className="hover:text-[var(--text-primary)]">
-                Videos
+                {t("videos")}
               </Link>
               <Link href="/history" className="hover:text-[var(--text-primary)]">
-                History
+                {t("history")}
               </Link>
               <a
                 href="https://youtube.com"
@@ -34,7 +34,7 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="hover:text-[var(--text-primary)]"
               >
-                YouTube
+                {t("youtube")}
               </a>
               <a
                 href="https://gumroad.com"
@@ -42,30 +42,30 @@ export function SiteFooter() {
                 rel="noopener noreferrer"
                 className="hover:text-[var(--text-primary)]"
               >
-                Gumroad
+                {t("gumroad")}
               </a>
             </nav>
             <nav className="flex flex-col gap-2 text-sm text-[var(--text-secondary)]">
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-                Company
+                {t("company")}
               </span>
               <Link href="/contact" className="hover:text-[var(--text-primary)]">
-                Contact
+                {t("contact")}
               </Link>
               <Link href="/privacy" className="hover:text-[var(--text-primary)]">
-                Privacy Policy
+                {t("privacyPolicy")}
               </Link>
               <Link href="/terms" className="hover:text-[var(--text-primary)]">
-                Terms
+                {t("terms")}
               </Link>
               <Link href="/affiliate-disclosure" className="hover:text-[var(--text-primary)]">
-                Affiliate Disclosure
+                {t("affiliateDisclosure")}
               </Link>
             </nav>
           </div>
         </div>
         <p className="mt-12 text-xs text-[var(--text-muted)]">
-          © {new Date().getFullYear()} DTC Decoder. All rights reserved.
+          {t("copyright", { year: new Date().getFullYear() })}
         </p>
       </div>
     </footer>

@@ -1,0 +1,50 @@
+{
+  "nav": {
+    "dtcLookup": "DTC Lookup",
+    "aiDiagnostic": "AI Diagnostic",
+    "repairLibrary": "Repair Library",
+    "history": "History",
+    "pricing": "Pricing",
+    "signIn": "Sign In",
+    "decodeACode": "Decode a Code",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu",
+    "primaryNav": "Primary",
+    "mobileNav": "Mobile"
+  },
+  "footer": {
+    "tagline": "AI-assisted automotive diagnostic intelligence — not a substitute for a qualified technician's in-person diagnosis.",
+    "product": "Product",
+    "blog": "Blog",
+    "videos": "Videos",
+    "history": "History",
+    "youtube": "YouTube",
+    "gumroad": "Gumroad",
+    "company": "Company",
+    "contact": "Contact",
+    "privacyPolicy": "Privacy Policy",
+    "terms": "Terms",
+    "affiliateDisclosure": "Affiliate Disclosure",
+    "copyright": "© {year} DTC Decoder. All rights reserved."
+  },
+  "hero": {
+    "searchLabel": "Enter a DTC code, symptom, or vehicle issue",
+    "searchPlaceholder": "Enter P0300, ‘rough idle,’ or describe what the vehicle is doing",
+    "decode": "Decode",
+    "trustLine": "AI-assisted diagnostics grounded in verified reference data · Signed-in searches are saved to your history",
+    "eyebrow": "AI-POWERED VEHICLE DIAGNOSTICS",
+    "headline": "Understand what your vehicle is telling you.",
+    "subheadline": "Decode trouble codes, assess likely causes, and follow a safer diagnostic path before replacing parts."
+  },
+  "home": {
+    "pdfHeading": "Need the complete professional repair workflow?",
+    "pdfBody": "Download the full Master Diagnostic PDF with wiring checks, scan tool data, testing steps, and repair direction.",
+    "getRepairPdf": "Get Repair PDF",
+    "videoHeading": "Watch real diagnostic walkthroughs and technician case studies.",
+    "videoBody": "Full teardown-to-repair videos on every major fault code.",
+    "watchOnYoutube": "Watch on YouTube",
+    "pricingHeading": "Free to start. A lot more when you need it.",
+    "pricingBody": "Pro Technician and Workshop plans unlock a much larger monthly AI allowance — save $30 on the yearly plan.",
+    "seePricing": "See Pricing"
+  }
+}

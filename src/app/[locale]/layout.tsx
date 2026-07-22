@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
+import { NextIntlClientProvider } from "next-intl";
+import { setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -41,14 +43,15 @@ type Props = {
 // for the other. proxy.ts rewrites unprefixed requests to /en/... first, so
 // `locale` here is always a real path segment, never inferred.
 //
-// Only English has real translated content today (see the multilingual
-// rollout plan) — every other recognized locale code still renders through
-// this same tree structurally, but next-intl message catalogs and
-// per-locale content don't exist yet outside English. That lands in a
-// later slice; this one only proves the routing/layout split itself.
-// Only English is a real, enabled locale today — pre-render that one
-// statically (restoring the homepage's previous static generation) while
-// leaving every other recognized-but-not-yet-live locale to render
+// Only English and Spanish have real next-intl message catalogs today (see
+// messages/en.json, messages/es.json, and the multilingual rollout plan) —
+// every other recognized locale code still renders through this same tree
+// structurally, falling back to English messages.
+const LOCALES_WITH_CATALOGS = new Set(["en", "es"]);
+
+// Only English is a real, enabled locale in the registry today — pre-render
+// that one statically (restoring the homepage's previous static generation)
+// while leaving every other recognized-but-not-yet-live locale to render
 // dynamically on demand rather than pre-building 53 empty variants.
 export function generateStaticParams() {
   return [{ locale: DEFAULT_LOCALE }];
@@ -61,7 +64,22 @@ export default async function LocaleLayout({ children, params }: Props) {
     notFound();
   }
 
+  // Required so that server-side useTranslations()/useFormatter() calls
+  // inside this tree (SiteFooter, HeroSearch, page components) resolve
+  // their locale from this cache instead of falling back to reading
+  // next/headers() — which would force the whole tree dynamic.
+  setRequestLocale(locale);
+
   const direction = directionForLocale(locale);
+  const catalogLocale = LOCALES_WITH_CATALOGS.has(locale) ? locale : DEFAULT_LOCALE;
+  // Loaded directly (not via next-intl's async request-config derivation)
+  // and passed as explicit props below — any *unset* NextIntlClientProvider
+  // prop (now/timeZone/formats) triggers an internal getConfig() call that
+  // reads a dynamic API (next/headers) as its fallback path, which would
+  // silently force this entire statically-generated tree into per-request
+  // dynamic rendering. Passing everything explicitly avoids that call
+  // altogether and keeps the /en build genuinely static.
+  const messages = (await import(`../../../messages/${catalogLocale}.json`)).default;
 
   return (
     <html
@@ -70,9 +88,17 @@ export default async function LocaleLayout({ children, params }: Props) {
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteNav />
-        <main className="flex flex-1 flex-col">{children}</main>
-        <SiteFooter />
+        <NextIntlClientProvider
+          locale={locale}
+          messages={messages}
+          timeZone="UTC"
+          now={new Date()}
+          formats={{}}
+        >
+          <SiteNav />
+          <main className="flex flex-1 flex-col">{children}</main>
+          <SiteFooter />
+        </NextIntlClientProvider>
       </body>
     </html>
   );
