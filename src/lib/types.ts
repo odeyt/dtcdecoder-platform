@@ -39,6 +39,8 @@ export interface SearchHistoryEntry {
   kind: "lookup" | "ai";
   query: string;
   dtc_code_id: string | null;
+  ai_canonical_response_en: string | null;
+  ai_translated_response: string | null;
   created_at: string;
 }
 
@@ -89,4 +91,110 @@ export interface EmailSignup {
   name: string | null;
   email: string;
   created_at: string;
+}
+
+// --- Multilingual platform ---------------------------------------------
+
+export type SupportTier = 1 | 2 | 3 | 4;
+export type SafetyReviewStatus = "not_reviewed" | "in_review" | "approved" | "rejected";
+export type TextDirection = "ltr" | "rtl";
+
+// The full language registry row. `enabled`/`public_available`/tier flags
+// are the operational source of truth (admin-editable); routing/proxy code
+// uses the separate static locale-codes list for fast, DB-free lookups —
+// see src/lib/i18n/locale-codes.ts.
+export interface Language {
+  locale_code: string;
+  base_language: string;
+  region_code: string | null;
+  english_name: string;
+  native_name: string;
+  script: string;
+  direction: TextDirection;
+  enabled: boolean;
+  public_available: boolean;
+  paid_only: boolean;
+  support_tier: SupportTier;
+  ai_input_enabled: boolean;
+  ai_output_enabled: boolean;
+  bilingual_enabled: boolean;
+  multilingual_enabled: boolean;
+  safety_review_status: SafetyReviewStatus;
+  glossary_completion_percent: number;
+  ui_translation_completion_percent: number;
+  seo_enabled: boolean;
+  export_enabled: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Currency {
+  code: string;
+  name: string;
+  symbol: string;
+  decimal_places: number;
+  enabled: boolean;
+  display_order: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface TerminologyGlossaryEntry {
+  id: string;
+  term_en: string;
+  locale_code: string;
+  translated_term: string;
+  category: string | null;
+  notes: string | null;
+  do_not_translate: boolean;
+  safety_critical: boolean;
+  review_status: "draft" | "reviewed" | "approved";
+  reviewed_by: string | null;
+  glossary_version: number;
+  updated_at: string;
+}
+
+export type ReportMode = "single" | "bilingual" | "multilingual";
+export type MeasurementSystem = "imperial" | "metric";
+
+export interface UserPreferences {
+  user_id: string;
+  interface_locale: string;
+  ai_report_locale: string | null;
+  secondary_report_locale: string | null;
+  report_mode: ReportMode;
+  preferred_currency: string | null;
+  measurement_system: MeasurementSystem;
+  timezone: string | null;
+  date_format: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+// The one canonical (always-English) diagnostic record. Localizations are
+// translations of canonical_text, never independently-regenerated
+// conclusions — see the AI localization design in the plan.
+export interface DiagnosticReport {
+  id: string;
+  user_id: string;
+  search_history_id: string | null;
+  source_message: string;
+  detected_source_language: string | null;
+  canonical_locale: "en";
+  canonical_text: string;
+  grounding_dtc_code_ids: string[];
+  model_id: string;
+  title: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DiagnosticReportLocalization {
+  id: string;
+  report_id: string;
+  locale_code: string;
+  translated_text: string;
+  translation_status: "pending" | "completed" | "failed";
+  generated_at: string | null;
 }
