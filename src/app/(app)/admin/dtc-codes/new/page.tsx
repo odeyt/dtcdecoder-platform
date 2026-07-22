@@ -1,5 +1,5 @@
 import { AdminDtcForm } from "@/components/AdminDtcForm";
-import { createDtcCodeAction } from "@/app/admin/actions";
+import { createDtcCodeAction } from "@/app/(app)/admin/actions";
 
 export default function NewDtcCodePage() {
   return (

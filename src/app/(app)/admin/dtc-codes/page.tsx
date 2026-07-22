@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { listAllDtcCodesForAdmin } from "@/lib/admin-dtc";
-import { toggleDtcPublishAction } from "@/app/admin/actions";
+import { toggleDtcPublishAction } from "@/app/(app)/admin/actions";
 
 export default async function AdminDtcCodesPage() {
   const codes = await listAllDtcCodesForAdmin();

@@ -1,5 +1,5 @@
 import { createAdminClient } from "@/lib/supabase/admin";
-import { updateAiSystemPromptAction } from "@/app/admin/actions";
+import { updateAiSystemPromptAction } from "@/app/(app)/admin/actions";
 
 export default async function AdminSettingsPage() {
   const supabase = createAdminClient();

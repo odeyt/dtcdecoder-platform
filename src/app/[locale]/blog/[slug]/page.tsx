@@ -7,7 +7,7 @@ import { EmailSignupForm } from "@/components/EmailSignupForm";
 export const revalidate = 3600;
 
 type Props = {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ locale: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getBlogPostForAdmin } from "@/lib/blog";
 import { AdminBlogForm } from "@/components/AdminBlogForm";
-import { saveBlogPostAction } from "@/app/admin/actions";
+import { saveBlogPostAction } from "@/app/(app)/admin/actions";
 
 type Props = {
   params: Promise<{ id: string }>;

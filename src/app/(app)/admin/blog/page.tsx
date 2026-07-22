@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { listAllBlogPostsForAdmin } from "@/lib/blog";
 import { BLOG_CATEGORY_LABELS } from "@/lib/blog";
-import { toggleBlogPublishAction } from "@/app/admin/actions";
+import { toggleBlogPublishAction } from "@/app/(app)/admin/actions";
 
 export default async function AdminBlogPage() {
   const posts = await listAllBlogPostsForAdmin();

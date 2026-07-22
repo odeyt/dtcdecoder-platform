@@ -1,5 +1,5 @@
 import { AdminBlogForm } from "@/components/AdminBlogForm";
-import { saveBlogPostAction } from "@/app/admin/actions";
+import { saveBlogPostAction } from "@/app/(app)/admin/actions";
 
 export default function NewBlogPostPage() {
   return (

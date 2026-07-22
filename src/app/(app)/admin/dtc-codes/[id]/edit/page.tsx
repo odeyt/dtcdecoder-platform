@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { getDtcCodeForAdmin } from "@/lib/admin-dtc";
 import { AdminDtcForm } from "@/components/AdminDtcForm";
-import { updateDtcCodeAction } from "@/app/admin/actions";
+import { updateDtcCodeAction } from "@/app/(app)/admin/actions";
 
 type Props = {
   params: Promise<{ id: string }>;

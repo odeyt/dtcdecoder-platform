@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getGenericDtcCode } from "@/lib/dtc";
+import { getMakeDtcCode } from "@/lib/dtc";
 import { DtcCodeResult } from "@/components/DtcCodeResult";
+import { isReservedMakeSlug } from "@/lib/reserved-slugs";
 import { createClient } from "@/lib/supabase/server";
 import { recordSearchHistory } from "@/lib/search-history";
 
 export const revalidate = 3600;
 
 type Props = {
-  params: Promise<{ code: string }>;
+  params: Promise<{ locale: string; make: string; slug: string }>;
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { code } = await params;
-  const dtc = await getGenericDtcCode(code.toLowerCase());
+  const { make, slug } = await params;
+  if (isReservedMakeSlug(make)) return {};
+
+  const dtc = await getMakeDtcCode(make.toLowerCase(), slug.toLowerCase());
   if (!dtc || !dtc.is_published) return {};
 
   return {
@@ -22,10 +25,15 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
-export default async function GenericDtcCodePage({ params }: Props) {
-  const { code } = await params;
-  const dtc = await getGenericDtcCode(code.toLowerCase());
+export default async function MakeDtcCodePage({ params }: Props) {
+  const { make, slug } = await params;
 
+  // Reserved names (blog, dtc, admin, ...) are never valid `make` values —
+  // their own static routes already own that path, so this is unreachable
+  // in practice, but guards against a stale/bad row surfacing here anyway.
+  if (isReservedMakeSlug(make)) notFound();
+
+  const dtc = await getMakeDtcCode(make.toLowerCase(), slug.toLowerCase());
   if (!dtc || !dtc.is_published) notFound();
 
   const supabase = await createClient();
