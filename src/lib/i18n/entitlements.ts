@@ -23,25 +23,37 @@ export function canUseBilingualReports(plan: SubscriptionPlan): boolean {
   return plan === "pro" || plan === "workshop";
 }
 
+// Same gate as bilingual reports today (a secondary language IS what makes
+// a report bilingual) — kept as its own named function since the account
+// preferences form gates the "secondary language" field independently of
+// the report-mode toggle.
+export function canSelectSecondaryLanguage(plan: SubscriptionPlan): boolean {
+  return plan === "pro" || plan === "workshop";
+}
+
 export function canUseMultilingualReports(plan: SubscriptionPlan): boolean {
   return plan === "workshop";
 }
 
-// Everyone can save their interface language; saving an AI report/secondary
-// language specifically is gated separately below since only paid plans
-// can act on it.
-export function canSaveLanguagePreferences(_plan: SubscriptionPlan): boolean {
-  return true;
+// Free plan gets temporary, unsaved language switching only (client-side/
+// cookie, not persisted) — no saved account language at all. Paid plans get
+// a permanent, cross-device preference. Tightened from an earlier "everyone
+// can save" draft once the actual free/paid boundary was specified; nothing
+// shipped depended on the looser version since the preferences page this
+// gates didn't exist yet.
+export function canSaveLanguagePreferences(plan: SubscriptionPlan): boolean {
+  return plan === "pro" || plan === "workshop";
 }
 
 export function canSaveAiReportLocale(plan: SubscriptionPlan): boolean {
   return plan === "pro" || plan === "workshop";
 }
 
-// Display currency is formatting only (no real conversion, no checkout
-// currency change) — free to offer to every plan.
-export function canSelectDisplayCurrency(_plan: SubscriptionPlan): boolean {
-  return true;
+// Saving a *preferred display currency* is a paid feature (free users see
+// USD only) — display-only formatting, but still gated per the product's
+// free/paid boundary, not a cost-driven gate like the AI ones above.
+export function canSelectDisplayCurrency(plan: SubscriptionPlan): boolean {
+  return plan === "pro" || plan === "workshop";
 }
 
 // No PDF/report-export feature exists anywhere in this app yet — DTC pages

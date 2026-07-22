@@ -49,12 +49,15 @@ export default async function AccountPage() {
         <UpgradeCard reason="You're close to today's Free plan AI limit. Pro gives you a much larger monthly allowance." />
       )}
 
-      <div className="flex gap-6 text-sm">
+      <div className="flex flex-wrap gap-6 text-sm">
         <Link href="/ai-assistant" className="text-[var(--accent-red)] underline">
           Go to the AI Diagnostic Assistant
         </Link>
         <Link href="/history" className="text-[var(--accent-red)] underline">
           View search history
+        </Link>
+        <Link href="/account/preferences" className="text-[var(--accent-red)] underline">
+          Language &amp; region preferences
         </Link>
       </div>
     </div>

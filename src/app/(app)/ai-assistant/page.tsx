@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
-import { canSelectAiReportLanguage } from "@/lib/i18n/entitlements";
-import { listAiOutputEnabledLocales } from "@/lib/i18n/languages";
+import { getAllowedOutputLocales } from "@/lib/i18n/languages";
 import { AiAssistantChat } from "@/components/AiAssistantChat";
 
 export const metadata: Metadata = {
@@ -23,12 +22,10 @@ export default async function AiAssistantPage() {
   let outputLocaleOptions: { code: string; name: string }[] = [];
   if (user) {
     const plan = await getEffectivePlan(user.id, user.email ?? null);
-    if (canSelectAiReportLanguage(plan)) {
-      const locales = await listAiOutputEnabledLocales();
-      outputLocaleOptions = locales
-        .filter((l) => l.locale_code !== "en")
-        .map((l) => ({ code: l.locale_code, name: l.english_name }));
-    }
+    const locales = await getAllowedOutputLocales(plan);
+    outputLocaleOptions = locales
+      .filter((l) => l.locale_code !== "en")
+      .map((l) => ({ code: l.locale_code, name: l.english_name }));
   }
 
   return (

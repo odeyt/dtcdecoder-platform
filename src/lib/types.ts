@@ -157,6 +157,8 @@ export interface TerminologyGlossaryEntry {
 
 export type ReportMode = "single" | "bilingual" | "multilingual";
 export type MeasurementSystem = "imperial" | "metric";
+export type TemperatureUnit = "celsius" | "fahrenheit";
+export type TimeFormat = "12h" | "24h";
 
 export interface UserPreferences {
   user_id: string;
@@ -165,7 +167,10 @@ export interface UserPreferences {
   secondary_report_locale: string | null;
   report_mode: ReportMode;
   preferred_currency: string | null;
+  region_code: string | null;
   measurement_system: MeasurementSystem;
+  temperature_unit: TemperatureUnit;
+  time_format: TimeFormat;
   timezone: string | null;
   date_format: string | null;
   created_at: string;
