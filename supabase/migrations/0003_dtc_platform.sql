@@ -53,13 +53,24 @@ create index dtc_codes_search_count_idx on dtc_codes (search_count desc);
 -- "limp mode" with no P-code mentioned). A real generated column, not just
 -- an expression index, so the Supabase client's .textSearch("fts", ...)
 -- helper can reference it by name.
+--
+-- to_tsvector(regconfig, text) is only STABLE, not IMMUTABLE, so Postgres
+-- rejects it directly inside a generated column (42P17). Wrap it in a
+-- same-signature function marked IMMUTABLE — safe here because 'english' is
+-- a built-in text search config that doesn't change at runtime.
+create or replace function dtc_codes_fts_immutable(
+  title text, meaning text, symptoms text[], causes text[]
+) returns tsvector as $$
+  select to_tsvector(
+    'english',
+    title || ' ' || meaning || ' ' ||
+    array_to_string(symptoms, ' ') || ' ' || array_to_string(causes, ' ')
+  );
+$$ language sql immutable;
+
 alter table dtc_codes add column fts tsvector
   generated always as (
-    to_tsvector(
-      'english',
-      title || ' ' || meaning || ' ' ||
-      array_to_string(symptoms, ' ') || ' ' || array_to_string(causes, ' ')
-    )
+    dtc_codes_fts_immutable(title, meaning, symptoms, causes)
   ) stored;
 
 create index dtc_codes_fts_idx on dtc_codes using gin (fts);
