@@ -4,19 +4,47 @@ import type { SearchHistoryEntry } from "@/lib/types";
 
 // Real, persisted history — every entry corresponds to an actual DTC lookup
 // or AI assistant query a signed-in user performed. Never fabricated.
+// Returns the inserted row's id so the AI assistant route can attach the
+// canonical/translated response text once the stream finishes (see
+// updateSearchHistoryAiResponse) — id is a plain field on this table now,
+// not a new one, so no drift risk between recording and updating a turn.
 export async function recordSearchHistory(
   userId: string,
   kind: "lookup" | "ai",
   query: string,
   dtcCodeId?: string | null,
+): Promise<string> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("search_history")
+    .insert({
+      user_id: userId,
+      kind,
+      query: query.slice(0, 500),
+      dtc_code_id: dtcCodeId ?? null,
+    })
+    .select("id")
+    .single();
+  if (error) throw error;
+  return data.id;
+}
+
+// Populated after the AI assistant's response stream closes (never blocks
+// time-to-first-byte). ai_translated_response stays null when the request's
+// outputLocale was English — there's nothing to translate.
+export async function updateSearchHistoryAiResponse(
+  searchHistoryId: string,
+  canonicalResponseEn: string,
+  translatedResponse: string | null,
 ): Promise<void> {
   const supabase = createAdminClient();
-  const { error } = await supabase.from("search_history").insert({
-    user_id: userId,
-    kind,
-    query: query.slice(0, 500),
-    dtc_code_id: dtcCodeId ?? null,
-  });
+  const { error } = await supabase
+    .from("search_history")
+    .update({
+      ai_canonical_response_en: canonicalResponseEn,
+      ai_translated_response: translatedResponse,
+    })
+    .eq("id", searchHistoryId);
   if (error) throw error;
 }
 

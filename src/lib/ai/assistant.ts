@@ -3,7 +3,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
 import { PAID_PLANS, type PaidPlan } from "@/lib/pricing";
-import type { DtcCode } from "@/lib/types";
+import type { DtcCode, TerminologyGlossaryEntry } from "@/lib/types";
 
 export const FREE_DAILY_QUERY_LIMIT = 5;
 
@@ -169,5 +169,55 @@ export async function streamAssistantResponse(
     thinking: { type: "adaptive" },
     output_config: { effort: "medium" },
     messages: [{ role: "user", content: userMessage }],
+  });
+}
+
+function buildTranslationSystemPrompt(
+  outputLanguageName: string,
+  outputLocale: string,
+  glossary: TerminologyGlossaryEntry[],
+): string {
+  const glossaryBlock = glossary.length
+    ? "\n\nApproved terminology for this language — use these exact renderings; anything marked verbatim must be copied unchanged, not translated:\n" +
+      glossary
+        .map((g) =>
+          g.do_not_translate
+            ? `- "${g.term_en}" → keep exactly as "${g.term_en}" (do not translate)`
+            : `- "${g.term_en}" → "${g.translated_term}"`,
+        )
+        .join("\n")
+    : "";
+
+  return `You are a precise technical translator for automotive diagnostic content. Translate the following English diagnostic explanation into ${outputLanguageName} (locale: ${outputLocale}).
+
+Non-negotiable rules:
+- Preserve DTC codes (e.g. P0420), VINs, part numbers, connector/pin names, wire colors, CAN High/CAN Low/LIN/FlexRay/MOST, voltages, resistance/pressure/torque/temperature values and their units, module acronyms (PCM, ECU, ABS, etc.), calibration IDs, and TSB numbers exactly as written in the source — never translate or alter them.
+- Do not add, remove, reinterpret, or reorder any diagnostic content. This is a translation task, not a new diagnosis — the conclusion, ranked causes, and recommended steps must match the source exactly in meaning and order.
+- Preserve the original structure (headings, lists, paragraph breaks).
+- Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}`;
+}
+
+// A second, separate call over the ALREADY-GENERATED English text (never a
+// fresh diagnostic reasoning pass) — this is what keeps the canonical
+// record and its translations consistent: the diagnosis itself is decided
+// once, in English, and every other language is a faithful translation of
+// that fixed text. Returns the same kind of streaming object as
+// streamAssistantResponse so the API route can treat both uniformly.
+export async function translateDiagnosticText(
+  englishText: string,
+  outputLocale: string,
+  outputLanguageName: string,
+  glossary: TerminologyGlossaryEntry[],
+) {
+  const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+  const systemPrompt = buildTranslationSystemPrompt(outputLanguageName, outputLocale, glossary);
+
+  return client.messages.stream({
+    model: "claude-sonnet-5",
+    max_tokens: 2048,
+    system: systemPrompt,
+    thinking: { type: "adaptive" },
+    output_config: { effort: "low" },
+    messages: [{ role: "user", content: englishText }],
   });
 }
