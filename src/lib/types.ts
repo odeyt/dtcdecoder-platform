@@ -1,52 +1,79 @@
-export type ProductCategory = "wiring_diagram" | "software_tool";
+export type DtcDifficulty = "easy" | "moderate" | "hard" | "professional";
 
-export type OrderStatus = "pending" | "paid" | "failed" | "refunded";
+export interface DtcFaqEntry {
+  q: string;
+  a: string;
+}
 
-export interface Product {
+export interface DtcCode {
   id: string;
+  code: string;
+  make: string | null;
+  model: string | null;
+  engine_code: string | null;
   slug: string;
   title: string;
-  description: string | null;
-  category: ProductCategory;
-  vehicle_make: string | null;
-  vehicle_model: string | null;
-  vehicle_year_start: number | null;
-  vehicle_year_end: number | null;
-  vehicle_system: string | null;
-  price_cents: number;
-  currency: string;
-  creem_product_id: string | null;
-  thumbnail_path: string;
+  meta_description: string | null;
+  meaning: string;
+  symptoms: string[];
+  causes: string[];
+  diagnostic_steps: string[];
+  common_mistakes: string | null;
+  difficulty: DtcDifficulty;
+  related_makes: string[];
+  faq: DtcFaqEntry[];
+  pdf_url: string | null;
+  youtube_url: string | null;
+  search_count: number;
   is_published: boolean;
   created_at: string;
   updated_at: string;
 }
 
-export interface ProductFile {
+export type BlogCategory =
+  | "dtc_guides"
+  | "check_engine_light"
+  | "limp_mode"
+  | "can_bus_diagnostics"
+  | "ev_diagnostics"
+  | "transmission_faults"
+  | "immobilizer_problems"
+  | "bmw_diagnostics"
+  | "land_rover_diagnostics"
+  | "toyota_diagnostics";
+
+export interface BlogPost {
   id: string;
-  product_id: string;
-  storage_path: string;
-  file_name: string;
+  title: string;
+  slug: string;
+  category: BlogCategory;
+  excerpt: string | null;
+  content: string;
+  is_published: boolean;
+  published_at: string | null;
   created_at: string;
+  updated_at: string;
 }
 
-export interface Order {
+export type SubscriptionPlan = "free" | "pro" | "workshop";
+export type SubscriptionStatus = "active" | "past_due" | "canceled";
+
+export interface Subscription {
   id: string;
   user_id: string | null;
   email: string;
-  status: OrderStatus;
-  total_cents: number;
-  currency: string;
-  creem_checkout_id: string | null;
-  provider_event_id: string | null;
+  plan: SubscriptionPlan;
+  status: SubscriptionStatus;
+  creem_subscription_id: string | null;
+  creem_customer_id: string | null;
+  current_period_end: string | null;
   created_at: string;
-  paid_at: string | null;
+  updated_at: string;
 }
 
-export interface OrderItem {
+export interface EmailSignup {
   id: string;
-  order_id: string;
-  product_id: string;
-  unit_price_cents: number;
+  name: string | null;
+  email: string;
   created_at: string;
 }

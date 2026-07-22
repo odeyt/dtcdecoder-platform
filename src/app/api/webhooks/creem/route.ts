@@ -2,8 +2,9 @@ import { NextResponse, type NextRequest } from "next/server";
 import {
   verifyWebhookSignature,
   parseWebhookPayload,
+  planForProductId,
 } from "@/lib/payments/creem";
-import { markOrderPaidIfNotAlready, markOrderFailed } from "@/lib/orders";
+import { upsertSubscriptionFromWebhook } from "@/lib/subscriptions";
 
 export async function POST(request: NextRequest) {
   // Read the raw body — verification must happen against the exact bytes
@@ -22,38 +23,57 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Malformed payload" }, { status: 400 });
   }
 
-  const orderId = event.object?.metadata?.order_id;
+  const subscription = event.object;
+  const plan = planForProductId(subscription.product_id) ?? "pro";
+  const userId = subscription.metadata?.user_id ?? null;
 
-  if (event.eventType === "checkout.completed") {
-    if (!orderId) {
-      // Nothing we can reconcile this against — acknowledge so Creem
-      // doesn't retry indefinitely, but don't pretend it succeeded.
-      console.error("checkout.completed webhook missing metadata.order_id", event.id);
-      return NextResponse.json({ received: true });
-    }
+  try {
+    switch (event.eventType) {
+      case "subscription.active":
+      case "subscription.paid":
+        await upsertSubscriptionFromWebhook({
+          creemSubscriptionId: subscription.id,
+          creemCustomerId: subscription.customer.id,
+          email: subscription.customer.email,
+          userId,
+          plan,
+          status: "active",
+          currentPeriodEnd: subscription.current_period_end ?? null,
+        });
+        break;
 
-    try {
-      await markOrderPaidIfNotAlready(orderId, event.id);
-    } catch (err) {
-      console.error("Failed to mark order paid", orderId, err);
-      return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+      case "subscription.past_due":
+        await upsertSubscriptionFromWebhook({
+          creemSubscriptionId: subscription.id,
+          creemCustomerId: subscription.customer.id,
+          email: subscription.customer.email,
+          userId,
+          plan,
+          status: "past_due",
+          currentPeriodEnd: subscription.current_period_end ?? null,
+        });
+        break;
+
+      case "subscription.canceled":
+        await upsertSubscriptionFromWebhook({
+          creemSubscriptionId: subscription.id,
+          creemCustomerId: subscription.customer.id,
+          email: subscription.customer.email,
+          userId,
+          plan,
+          status: "canceled",
+          currentPeriodEnd: subscription.current_period_end ?? null,
+        });
+        break;
+
+      default:
+        // trialing / paused / update / scheduled_cancel — acknowledged, no
+        // state transition applied for these in v1.
+        break;
     }
-  } else if (
-    // NOTE: "checkout.expired" / "checkout.failed" are not confirmed in
-    // Creem's docs (only checkout.completed was verified) — check the
-    // actual event names in your Creem dashboard's webhook log during
-    // sandbox testing and adjust these if they differ.
-    event.eventType === "checkout.expired" ||
-    event.eventType === "checkout.failed"
-  ) {
-    if (orderId) {
-      try {
-        await markOrderFailed(orderId);
-      } catch (err) {
-        console.error("Failed to mark order failed", orderId, err);
-        return NextResponse.json({ error: "Processing failed" }, { status: 500 });
-      }
-    }
+  } catch (err) {
+    console.error("Failed to process Creem subscription webhook", event.eventType, err);
+    return NextResponse.json({ error: "Processing failed" }, { status: 500 });
   }
 
   return NextResponse.json({ received: true });

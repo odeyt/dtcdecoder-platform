@@ -1,6 +1,12 @@
+import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
-import { getUserOrders } from "@/lib/orders";
-import { formatPrice } from "@/lib/format";
+import { getEffectivePlan } from "@/lib/subscriptions";
+
+const PLAN_LABEL = {
+  free: "Free",
+  pro: "Pro Technician",
+  workshop: "Workshop",
+};
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -10,46 +16,31 @@ export default async function AccountPage() {
 
   // Layout above already redirects if there's no user, so this is just
   // satisfying the type — user is guaranteed here at runtime.
-  const orders = user ? await getUserOrders(user.id) : [];
+  const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
 
   return (
     <div>
-      <h1 className="text-2xl font-bold">My Purchases</h1>
+      <h1 className="text-2xl font-bold text-white">My Account</h1>
+      <p className="mt-2 text-zinc-400">{user?.email}</p>
 
-      {orders.length === 0 ? (
-        <p className="mt-6 text-zinc-600 dark:text-zinc-400">
-          No purchases yet. Browse the{" "}
-          <a href="/catalog" className="underline">
-            catalog
-          </a>{" "}
-          to get started.
-        </p>
-      ) : (
-        <ul className="mt-6 flex flex-col gap-4">
-          {orders.map((order) =>
-            order.order_items.map((item) => (
-              <li
-                key={item.id}
-                className="flex items-center justify-between rounded-lg border border-zinc-200 p-4 dark:border-zinc-800"
-              >
-                <div>
-                  <p className="font-medium">{item.product.title}</p>
-                  <p className="text-sm text-zinc-500">
-                    {formatPrice(item.unit_price_cents, order.currency)} ·{" "}
-                    {new Date(order.created_at).toLocaleDateString()}
-                  </p>
-                </div>
-                <a
-                  href={`/api/downloads/${item.id}`}
-                  className="rounded-md bg-zinc-900 px-4 py-2 text-sm font-semibold text-white hover:bg-zinc-700 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
-                >
-                  Download
-                </a>
-              </li>
-            )),
-          )}
-        </ul>
-      )}
+      <div className="mt-6 rounded-xl border border-white/10 bg-white/5 p-6 backdrop-blur-md">
+        <p className="text-sm text-zinc-400">Current plan</p>
+        <p className="mt-1 text-xl font-bold text-white">{PLAN_LABEL[plan]}</p>
+        {plan === "free" && (
+          <Link
+            href="/pricing"
+            className="mt-4 inline-block rounded-full bg-red-600 px-5 py-2 text-sm font-semibold text-white transition hover:bg-red-500"
+          >
+            Upgrade to Pro
+          </Link>
+        )}
+      </div>
+
+      <div className="mt-6">
+        <Link href="/ai-assistant" className="text-red-400 underline">
+          Go to the AI Diagnostic Assistant
+        </Link>
+      </div>
     </div>
   );
 }

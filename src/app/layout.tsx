@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import { CategoryNav } from "@/components/CategoryNav";
+import { SiteNav } from "@/components/SiteNav";
+import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -15,11 +16,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "DTCDecoder — Wiring Diagrams & Automotive Software",
-    template: "%s | DTCDecoder",
+    default: "DTC Decoder — AI-Powered Automotive Diagnostic Intelligence",
+    template: "%s | DTC Decoder",
   },
   description:
-    "Buy vehicle-specific wiring diagrams and automotive diagnostic software as instant digital downloads.",
+    "Instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
 };
 
 export default function RootLayout({
@@ -32,9 +33,10 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
-      <body className="min-h-full flex flex-col">
-        <CategoryNav />
+      <body className="flex min-h-full flex-col">
+        <SiteNav />
         <main className="flex flex-1 flex-col">{children}</main>
+        <SiteFooter />
       </body>
     </html>
   );

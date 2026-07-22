@@ -5,117 +5,140 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/admin-auth";
 import {
-  createProductWithFiles,
-  updateProduct,
-  setProductPublished,
-  type ProductInput,
-} from "@/lib/admin-products";
+  createDtcCode,
+  updateDtcCode,
+  setDtcCodePublished,
+  type DtcCodeInput,
+} from "@/lib/admin-dtc";
+import { createAdminClient } from "@/lib/supabase/admin";
+import type { DtcDifficulty, DtcFaqEntry, BlogCategory } from "@/lib/types";
 
-const productFieldsSchema = z.object({
-  title: z.string().min(1),
-  description: z.string().default(""),
-  category: z.enum(["wiring_diagram", "software_tool"]),
-  vehicleMake: z.string().default(""),
-  vehicleModel: z.string().default(""),
-  vehicleYearStart: z.string().default(""),
-  vehicleYearEnd: z.string().default(""),
-  vehicleSystem: z.string().default(""),
-  price: z.string().min(1),
-});
+function linesToArray(value: FormDataEntryValue | null): string[] {
+  return String(value ?? "")
+    .split("\n")
+    .map((line) => line.trim())
+    .filter(Boolean);
+}
 
-const MAX_THUMBNAIL_BYTES = 5 * 1024 * 1024;
-const MAX_PRODUCT_FILE_BYTES = 100 * 1024 * 1024;
-const MAX_PRODUCT_FILES = 10;
-const ALLOWED_THUMBNAIL_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const ALLOWED_PRODUCT_FILE_TYPES = new Set([
-  "application/pdf",
-  "application/zip",
-  "application/x-zip-compressed",
-  "application/octet-stream",
-]);
+function parseFaq(value: FormDataEntryValue | null): DtcFaqEntry[] {
+  const raw = String(value ?? "").trim();
+  if (!raw) return [];
+  // One FAQ per line, "question :: answer".
+  return raw
+    .split("\n")
+    .map((line) => line.split("::"))
+    .filter((parts) => parts.length === 2)
+    .map(([q, a]) => ({ q: q.trim(), a: a.trim() }));
+}
 
-function parseProductInput(formData: FormData): ProductInput {
-  const parsed = productFieldsSchema.parse({
-    title: formData.get("title"),
-    description: formData.get("description"),
-    category: formData.get("category"),
-    vehicleMake: formData.get("vehicleMake"),
-    vehicleModel: formData.get("vehicleModel"),
-    vehicleYearStart: formData.get("vehicleYearStart"),
-    vehicleYearEnd: formData.get("vehicleYearEnd"),
-    vehicleSystem: formData.get("vehicleSystem"),
-    price: formData.get("price"),
-  });
-
-  const priceCents = Math.round(parseFloat(parsed.price) * 100);
-  if (!Number.isFinite(priceCents) || priceCents <= 0) {
-    throw new Error("Invalid price");
-  }
+function parseDtcInput(formData: FormData): DtcCodeInput {
+  const difficulty = String(formData.get("difficulty") ?? "moderate") as DtcDifficulty;
 
   return {
-    title: parsed.title,
-    description: parsed.description,
-    category: parsed.category,
-    vehicleMake: parsed.vehicleMake,
-    vehicleModel: parsed.vehicleModel,
-    vehicleYearStart: parsed.vehicleYearStart ? Number(parsed.vehicleYearStart) : null,
-    vehicleYearEnd: parsed.vehicleYearEnd ? Number(parsed.vehicleYearEnd) : null,
-    vehicleSystem: parsed.vehicleSystem,
-    priceCents,
+    code: String(formData.get("code") ?? "").trim(),
+    make: String(formData.get("make") ?? "").trim().toLowerCase() || null,
+    model: String(formData.get("model") ?? "").trim() || null,
+    engineCode: String(formData.get("engineCode") ?? "").trim().toLowerCase() || null,
+    slug: String(formData.get("slug") ?? "").trim().toLowerCase(),
+    title: String(formData.get("title") ?? "").trim(),
+    metaDescription: String(formData.get("metaDescription") ?? "").trim(),
+    meaning: String(formData.get("meaning") ?? "").trim(),
+    symptoms: linesToArray(formData.get("symptoms")),
+    causes: linesToArray(formData.get("causes")),
+    diagnosticSteps: linesToArray(formData.get("diagnosticSteps")),
+    commonMistakes: String(formData.get("commonMistakes") ?? "").trim(),
+    difficulty,
+    relatedMakes: linesToArray(formData.get("relatedMakes")),
+    faq: parseFaq(formData.get("faq")),
+    pdfUrl: String(formData.get("pdfUrl") ?? "").trim(),
+    youtubeUrl: String(formData.get("youtubeUrl") ?? "").trim(),
   };
 }
 
-export async function createProductAction(formData: FormData) {
+export async function createDtcCodeAction(formData: FormData) {
   await requireAdmin();
-
-  const input = parseProductInput(formData);
-
-  const thumbnail = formData.get("thumbnail");
-  if (!(thumbnail instanceof File) || thumbnail.size === 0) {
-    throw new Error("Thumbnail image is required");
-  }
-  if (!ALLOWED_THUMBNAIL_TYPES.has(thumbnail.type) || thumbnail.size > MAX_THUMBNAIL_BYTES) {
-    throw new Error("Thumbnail must be a JPEG, PNG, or WebP image no larger than 5 MB");
-  }
-
-  const files = formData
-    .getAll("files")
-    .filter((f): f is File => f instanceof File && f.size > 0);
-
-  if (files.length === 0) {
-    throw new Error("At least one downloadable file is required");
-  }
-  if (files.length > MAX_PRODUCT_FILES) {
-    throw new Error(`No more than ${MAX_PRODUCT_FILES} downloadable files are allowed`);
-  }
-  if (files.some((file) => !ALLOWED_PRODUCT_FILE_TYPES.has(file.type))) {
-    throw new Error("Download files must be PDF or ZIP files");
-  }
-  if (files.some((file) => file.size > MAX_PRODUCT_FILE_BYTES)) {
-    throw new Error("Each downloadable file must be no larger than 100 MB");
-  }
-
-  const product = await createProductWithFiles(input, thumbnail, files);
-
-  revalidatePath("/admin");
-  redirect(`/admin/products/${product.id}/edit`);
+  const input = parseDtcInput(formData);
+  const dtc = await createDtcCode(input);
+  revalidatePath("/admin/dtc-codes");
+  redirect(`/admin/dtc-codes/${dtc.id}/edit`);
 }
 
-export async function updateProductAction(id: string, formData: FormData) {
+export async function updateDtcCodeAction(id: string, formData: FormData) {
   await requireAdmin();
-
-  const input = parseProductInput(formData);
-  await updateProduct(id, input);
-
-  revalidatePath("/admin");
-  revalidatePath(`/admin/products/${id}/edit`);
+  const input = parseDtcInput(formData);
+  await updateDtcCode(id, input);
+  revalidatePath("/admin/dtc-codes");
+  revalidatePath(`/admin/dtc-codes/${id}/edit`);
 }
 
-export async function togglePublishAction(id: string, isPublished: boolean) {
+export async function toggleDtcPublishAction(id: string, isPublished: boolean) {
   await requireAdmin();
+  await setDtcCodePublished(id, isPublished);
+  revalidatePath("/admin/dtc-codes");
+}
 
-  await setProductPublished(id, isPublished);
+const blogPostSchema = z.object({
+  title: z.string().min(1),
+  slug: z.string().min(1),
+  category: z.string(),
+  excerpt: z.string().default(""),
+  content: z.string().min(1),
+});
 
-  revalidatePath("/admin");
-  revalidatePath(`/admin/products/${id}/edit`);
+export async function saveBlogPostAction(id: string | null, formData: FormData) {
+  await requireAdmin();
+  const parsed = blogPostSchema.parse({
+    title: formData.get("title"),
+    slug: formData.get("slug"),
+    category: formData.get("category"),
+    excerpt: formData.get("excerpt") ?? "",
+    content: formData.get("content"),
+  });
+
+  const supabase = createAdminClient();
+  const payload = {
+    title: parsed.title,
+    slug: parsed.slug.toLowerCase(),
+    category: parsed.category as BlogCategory,
+    excerpt: parsed.excerpt || null,
+    content: parsed.content,
+  };
+
+  if (id) {
+    const { error } = await supabase.from("blog_posts").update(payload).eq("id", id);
+    if (error) throw error;
+  } else {
+    const { error } = await supabase.from("blog_posts").insert(payload);
+    if (error) throw error;
+  }
+
+  revalidatePath("/admin/blog");
+  redirect("/admin/blog");
+}
+
+export async function toggleBlogPublishAction(id: string, isPublished: boolean) {
+  await requireAdmin();
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("blog_posts")
+    .update({
+      is_published: isPublished,
+      published_at: isPublished ? new Date().toISOString() : null,
+    })
+    .eq("id", id);
+  if (error) throw error;
+  revalidatePath("/admin/blog");
+}
+
+export async function updateAiSystemPromptAction(formData: FormData) {
+  await requireAdmin();
+  const value = String(formData.get("prompt") ?? "").trim();
+
+  const supabase = createAdminClient();
+  const { error } = await supabase
+    .from("admin_settings")
+    .upsert({ key: "ai_system_prompt", value }, { onConflict: "key" });
+
+  if (error) throw error;
+  revalidatePath("/admin/settings");
 }

@@ -31,8 +31,13 @@ export const env = {
     required("CREEM_WEBHOOK_SECRET", process.env.CREEM_WEBHOOK_SECRET),
   creemSuccessUrl: () =>
     required("CREEM_SUCCESS_URL", process.env.CREEM_SUCCESS_URL),
-  creemGenericProductId: () =>
-    required("CREEM_GENERIC_PRODUCT_ID", process.env.CREEM_GENERIC_PRODUCT_ID),
+  creemProProductId: () =>
+    required("CREEM_PRO_PRODUCT_ID", process.env.CREEM_PRO_PRODUCT_ID),
+  creemWorkshopProductId: () =>
+    required("CREEM_WORKSHOP_PRODUCT_ID", process.env.CREEM_WORKSHOP_PRODUCT_ID),
+
+  anthropicApiKey: () =>
+    required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),
 
   adminAllowedEmails: () =>
     (process.env.ADMIN_ALLOWED_EMAILS ?? "")
@@ -40,8 +45,6 @@ export const env = {
       .map((e) => e.trim().toLowerCase())
       .filter(Boolean),
 
-  storageBucketFiles: () =>
-    process.env.SUPABASE_STORAGE_BUCKET_FILES ?? "product-files",
   storageBucketPreviews: () =>
     process.env.SUPABASE_STORAGE_BUCKET_PREVIEWS ?? "product-previews",
 };
