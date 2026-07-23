@@ -4,12 +4,22 @@ import { buildParsedScanReportFromText } from "@/lib/scan-diagnostics/parsers/pl
 import { txtParser } from "@/lib/scan-diagnostics/parsers/txt-parser";
 import { csvParser } from "@/lib/scan-diagnostics/parsers/csv-parser";
 import { jsonParser } from "@/lib/scan-diagnostics/parsers/json-parser";
+import { xmlParser } from "@/lib/scan-diagnostics/parsers/xml-parser";
+import { htmlParser } from "@/lib/scan-diagnostics/parsers/html-parser";
+import { pdfParser } from "@/lib/scan-diagnostics/parsers/pdf-parser";
 
 // Ordered by specificity: a future vendor-specific parser (Autel, Launch,
 // ...) would be prepended here so its detect() gets first refusal before
 // the generic format parsers below — no rewrite of runExtraction() needed
 // to add one later.
-export const PARSERS: ScanReportParser[] = [txtParser, csvParser, jsonParser];
+export const PARSERS: ScanReportParser[] = [
+  txtParser,
+  csvParser,
+  jsonParser,
+  xmlParser,
+  htmlParser,
+  pdfParser,
+];
 
 export function selectParser(
   buffer: Buffer,
