@@ -40,3 +40,72 @@ export const ExtractionReviewInputSchema = z.object({
 });
 
 export type ExtractionReviewInput = z.infer<typeof ExtractionReviewInputSchema>;
+
+// --- AI diagnostic reasoning ---------------------------------------------
+// The canonical, bounded payload sent to the AI provider — never the raw
+// uploaded file. Built server-side from persisted extraction + review data
+// (see the analyze route), not parsed directly from client input, but
+// still validated through this schema before ever leaving the process.
+
+const CanonicalDtcSchema = z.object({
+  module: z.string().nullable().optional(),
+  code: z.string(),
+  status: z.string().nullable().optional(),
+  descriptionRaw: z.string().nullable().optional(),
+  knownMeaning: z.string().nullable().optional(),
+  knownSeverity: z.string().nullable().optional(),
+});
+
+export const CanonicalDiagnosticInputSchema = z.object({
+  caseId: z.string(),
+  vehicle: z.object({
+    vin: z.string().nullable().optional(),
+    year: z.number().nullable().optional(),
+    make: z.string().nullable().optional(),
+    model: z.string().nullable().optional(),
+    engine: z.string().nullable().optional(),
+    mileage: z.number().nullable().optional(),
+  }),
+  complaint: z.string().nullable().optional(),
+  symptoms: z.array(z.string()),
+  recentRepairs: z.string().nullable().optional(),
+  batteryCondition: z.string().nullable().optional(),
+  technicianNotes: z.string().nullable().optional(),
+  modules: z.array(z.object({ name: z.string(), status: z.string().optional() })),
+  dtcs: z.array(CanonicalDtcSchema),
+  freezeFrame: z.array(z.record(z.string(), z.unknown())),
+  liveData: z.array(z.record(z.string(), z.unknown())),
+  imageOnlyPdf: z.boolean(),
+  extractionWarnings: z.array(z.string()),
+});
+
+export type CanonicalDiagnosticInput = z.infer<typeof CanonicalDiagnosticInputSchema>;
+
+const RankedCauseSchema = z.object({
+  cause: z.string(),
+  probabilityPercent: z.number().min(0).max(100),
+  rationale: z.string(),
+  supportingEvidence: z.array(z.string()),
+  contradictingEvidence: z.array(z.string()),
+});
+
+const RecommendedTestSchema = z.object({
+  step: z.string(),
+  purpose: z.string(),
+  expectedResult: z.string(),
+});
+
+// Every AI response is safeParse'd against this schema (see
+// AnthropicDiagnosticProvider) — a failed parse is treated as a provider
+// failure, never passed through as free text.
+export const DiagnosticAiOutputSchema = z.object({
+  summary: z.string(),
+  rankedCauses: z.array(RankedCauseSchema).min(1),
+  recommendedTests: z.array(RecommendedTestSchema),
+  safetyWarnings: z.array(z.string()),
+  missingInformation: z.array(z.string()),
+});
+
+export type DiagnosticAiOutput = z.infer<typeof DiagnosticAiOutputSchema>;
+export type RankedCause = z.infer<typeof RankedCauseSchema>;
+export type RecommendedTest = z.infer<typeof RecommendedTestSchema>;
