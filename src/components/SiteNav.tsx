@@ -5,6 +5,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
+import { env } from "@/lib/env";
 
 // Auth state is fetched client-side (not passed from the root layout) so
 // that marketing/static pages (home, privacy, terms, etc.) can still be
@@ -15,6 +16,7 @@ export function SiteNav() {
   const NAV_LINKS = [
     { href: "/dtc", label: t("dtcLookup") },
     { href: "/ai-assistant", label: t("aiDiagnostic") },
+    ...(env.scanDiagnosticsEnabled() ? [{ href: "/diagnostics", label: t("scanDiagnostics") }] : []),
     { href: "/repair-pdfs", label: t("repairLibrary") },
     { href: "/history", label: t("history") },
     { href: "/pricing", label: t("pricing") },

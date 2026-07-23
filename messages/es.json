@@ -2,6 +2,7 @@
   "nav": {
     "dtcLookup": "Buscar Código DTC",
     "aiDiagnostic": "Diagnóstico IA",
+    "scanDiagnostics": "Análisis de Reporte de Escaneo",
     "repairLibrary": "Biblioteca de Reparación",
     "history": "Historial",
     "pricing": "Precios",

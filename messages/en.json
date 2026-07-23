@@ -2,6 +2,7 @@
   "nav": {
     "dtcLookup": "DTC Lookup",
     "aiDiagnostic": "AI Diagnostic",
+    "scanDiagnostics": "Scan Report Analysis",
     "repairLibrary": "Repair Library",
     "history": "History",
     "pricing": "Pricing",
