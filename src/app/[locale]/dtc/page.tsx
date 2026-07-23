@@ -3,17 +3,24 @@ import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { searchDtcCodes } from "@/lib/dtc";
 import { incrementDtcSearchCount } from "@/lib/admin-dtc";
-
-export const metadata: Metadata = {
-  title: "DTC Lookup",
-  description:
-    "Search any diagnostic trouble code, symptom, or vehicle issue for an instant explanation.",
-};
+import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 
 type Props = {
   params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const alternates = await buildLocaleAlternates(locale, "/dtc");
+
+  return {
+    title: t("dtcSearchTitle"),
+    description: t("dtcSearchDescription"),
+    alternates,
+  };
+}
 
 export default async function DtcLookupPage({ params, searchParams }: Props) {
   const { locale } = await params;

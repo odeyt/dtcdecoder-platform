@@ -8,10 +8,15 @@ import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell
 import { PricingPlans } from "@/components/PricingPlans";
 import { UsageMeter } from "@/components/UsageMeter";
 
-export const metadata: Metadata = {
-  title: "Pricing",
-  description: "Free, Pro Technician, and Workshop plans for DTC Decoder.",
-};
+// Locale-aware (reads the same resolved preference/cookie as the page body)
+// but no hreflang/canonical alternates here — (app)-tree routes don't have
+// per-locale URLs (see the multilingual rollout plan), so there's nothing
+// for search engines to disambiguate between.
+export async function generateMetadata(): Promise<Metadata> {
+  const locale = await resolveAppShellLocale();
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return { title: t("pricingTitle"), description: t("pricingDescription") };
+}
 
 export default async function PricingPage() {
   const supabase = await createClient();

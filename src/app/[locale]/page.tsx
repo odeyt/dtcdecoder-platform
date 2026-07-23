@@ -1,11 +1,26 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
+import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 import { HeroSearch } from "@/components/HeroSearch";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 
 type Props = {
   params: Promise<{ locale: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  const alternates = await buildLocaleAlternates(locale, "/");
+
+  return {
+    title: t("homeTitle"),
+    description: t("homeDescription"),
+    alternates,
+    openGraph: { title: t("homeTitle"), description: t("homeDescription"), locale },
+  };
+}
 
 // getTranslations (async, from next-intl/server) — not useTranslations
 // (the sync-only hook from "next-intl") — since this is itself an async

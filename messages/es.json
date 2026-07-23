@@ -207,5 +207,15 @@
     "decodeACode": "Decodificar un código",
     "lookup": "BÚSQUEDA",
     "aiQuestion": "PREGUNTA IA"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — Inteligencia de Diagnóstico Automotriz con IA",
+    "homeDescription": "Decodifica códigos de falla al instante, entiende síntomas, encuentra causas comunes y sigue pasos de diagnóstico profesionales antes de reemplazar piezas.",
+    "dtcSearchTitle": "Buscar código DTC",
+    "dtcSearchDescription": "Busca cualquier código de falla, síntoma o problema del vehículo para obtener una explicación instantánea.",
+    "pricingTitle": "Precios",
+    "pricingDescription": "Planes Gratis, Pro Técnico y Taller para DTC Decoder.",
+    "blogTitle": "Blog",
+    "blogDescription": "Guías de diagnóstico, explicaciones de DTC y casos de estudio de reparación."
   }
 }

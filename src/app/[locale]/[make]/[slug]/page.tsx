@@ -5,6 +5,7 @@ import { DtcCodeResult } from "@/components/DtcCodeResult";
 import { isReservedMakeSlug } from "@/lib/reserved-slugs";
 import { createClient } from "@/lib/supabase/server";
 import { recordSearchHistory } from "@/lib/search-history";
+import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 
 export const revalidate = 3600;
 
@@ -13,7 +14,7 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { make, slug } = await params;
+  const { locale, make, slug } = await params;
   if (isReservedMakeSlug(make)) return {};
 
   const dtc = await getMakeDtcCode(make.toLowerCase(), slug.toLowerCase());
@@ -22,6 +23,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   return {
     title: dtc.title,
     description: dtc.meta_description ?? dtc.meaning,
+    alternates: await buildLocaleAlternates(locale, `/${make.toLowerCase()}/${slug.toLowerCase()}`),
   };
 }
 

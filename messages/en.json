@@ -207,5 +207,15 @@
     "decodeACode": "Decode a code",
     "lookup": "LOOKUP",
     "aiQuestion": "AI QUESTION"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — AI-Powered Automotive Diagnostic Intelligence",
+    "homeDescription": "Instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
+    "dtcSearchTitle": "DTC Lookup",
+    "dtcSearchDescription": "Search any diagnostic trouble code, symptom, or vehicle issue for an instant explanation.",
+    "pricingTitle": "Pricing",
+    "pricingDescription": "Free, Pro Technician, and Workshop plans for DTC Decoder.",
+    "blogTitle": "Blog",
+    "blogDescription": "Diagnostic guides, DTC breakdowns, and repair case studies."
   }
 }

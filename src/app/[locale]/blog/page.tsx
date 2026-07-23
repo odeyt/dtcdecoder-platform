@@ -1,16 +1,24 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { listPublishedBlogPosts, BLOG_CATEGORY_LABELS } from "@/lib/blog";
+import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 import type { BlogCategory } from "@/lib/types";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  description: "Diagnostic guides, DTC breakdowns, and repair case studies.",
-};
-
 type Props = {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ category?: string }>;
 };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "meta" });
+  return {
+    title: t("blogTitle"),
+    description: t("blogDescription"),
+    alternates: await buildLocaleAlternates(locale, "/blog"),
+  };
+}
 
 export default async function BlogIndexPage({ searchParams }: Props) {
   const { category } = await searchParams;

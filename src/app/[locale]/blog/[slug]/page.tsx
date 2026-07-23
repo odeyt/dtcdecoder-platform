@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { marked } from "marked";
 import { getPublishedBlogPost, BLOG_CATEGORY_LABELS } from "@/lib/blog";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
+import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 
 export const revalidate = 3600;
 
@@ -11,13 +12,14 @@ type Props = {
 };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const post = await getPublishedBlogPost(slug);
   if (!post) return {};
 
   return {
     title: post.title,
     description: post.excerpt ?? undefined,
+    alternates: await buildLocaleAlternates(locale, `/blog/${slug}`),
   };
 }
 
