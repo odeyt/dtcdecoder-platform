@@ -61,4 +61,17 @@ export const env = {
 
   storageBucketPreviews: () =>
     process.env.SUPABASE_STORAGE_BUCKET_PREVIEWS ?? "product-previews",
+
+  // Diagnostic Scan Report Analysis — flagged off by default (see
+  // NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED below) until go-live.
+  scanFilesBucket: () =>
+    process.env.SUPABASE_STORAGE_BUCKET_SCAN_FILES ?? "diagnostic-scan-files",
+  scanFileMaxSizeBytes: () =>
+    Number(process.env.SCAN_FILE_MAX_SIZE_BYTES ?? 15 * 1024 * 1024),
+  // Must stay `process.env.NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED` as a
+  // static literal (not routed through a shared helper) so Next.js can
+  // inline it into client bundles — see the file-header comment and
+  // billingEnabled() above for the same requirement.
+  scanDiagnosticsEnabled: () =>
+    process.env.NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED === "true",
 };

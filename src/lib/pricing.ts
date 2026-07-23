@@ -33,3 +33,13 @@ export function effectiveMonthlyPriceUsd(plan: PaidPlan, interval: BillingInterv
   if (interval === "monthly") return PAID_PLANS[plan].monthlyPriceUsd;
   return yearlyPriceUsd(plan) / 12;
 }
+
+// Diagnostic Scan Report Analysis entitlement limits. A separate map from
+// PAID_PLANS because the free plan needs a limit here too (PAID_PLANS only
+// covers pro/workshop pricing). See src/lib/scan-diagnostics/entitlements.ts
+// for the functions that read this.
+export const SCAN_DIAGNOSTIC_LIMITS = {
+  free: { monthlyAnalyses: 2, fullExport: false, feedbackHistory: false },
+  pro: { monthlyAnalyses: 25, fullExport: true, feedbackHistory: false },
+  workshop: { monthlyAnalyses: 100, fullExport: true, feedbackHistory: true },
+} as const;
