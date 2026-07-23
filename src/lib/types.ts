@@ -140,6 +140,21 @@ export interface Currency {
   updated_at: string;
 }
 
+// Static, admin-managed FX rate for display estimates only — never used
+// for actual checkout/settlement (Creem bills in USD regardless).
+export interface CurrencyRate {
+  id: string;
+  base_currency: string;
+  quote_currency: string;
+  rate: number;
+  effective_at: string;
+  expires_at: string | null;
+  source_label: string;
+  enabled: boolean;
+  updated_by: string | null;
+  updated_at: string;
+}
+
 export interface TerminologyGlossaryEntry {
   id: string;
   term_en: string;

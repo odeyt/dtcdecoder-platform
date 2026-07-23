@@ -6,6 +6,8 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { getUserPreferences, DEFAULT_PREFERENCES } from "@/lib/preferences";
 import { listAllLanguages, listAllCurrencies } from "@/lib/i18n/languages";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
+import { getDisplayPriceEstimate } from "@/lib/currency";
+import { PAID_PLANS } from "@/lib/pricing";
 import { AccountPreferencesForm } from "@/components/AccountPreferencesForm";
 
 export const metadata: Metadata = {
@@ -33,6 +35,17 @@ export default async function AccountPreferencesPage() {
   const messages = await getAppShellMessages(locale);
   const t = await getTranslations({ locale, namespace: "preferences" });
 
+  // A representative example (Pro's monthly USD price) shown in the
+  // currently-saved display currency — a real estimate computed from the
+  // admin-entered rate (or a USD fallback when none exists), never a fake
+  // number. Recomputed against whichever currency the user has actually
+  // saved, not the form's live (unsaved) selection.
+  const priceEstimate = await getDisplayPriceEstimate(
+    PAID_PLANS.pro.monthlyPriceUsd,
+    preferences.preferred_currency ?? "USD",
+    currencies.find((c) => c.code === preferences.preferred_currency)?.decimal_places ?? 2,
+  );
+
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
       <div className="space-y-6">
@@ -41,7 +54,13 @@ export default async function AccountPreferencesPage() {
           <p className="mt-2 text-[var(--text-secondary)]">{t("subtitle")}</p>
         </div>
 
-        <AccountPreferencesForm plan={plan} preferences={preferences} languages={languages} currencies={currencies} />
+        <AccountPreferencesForm
+          plan={plan}
+          preferences={preferences}
+          languages={languages}
+          currencies={currencies}
+          priceEstimate={priceEstimate}
+        />
       </div>
     </NextIntlClientProvider>
   );

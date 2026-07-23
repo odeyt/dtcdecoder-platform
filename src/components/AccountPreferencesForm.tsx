@@ -4,7 +4,9 @@ import { useActionState } from "react";
 import { useTranslations } from "next-intl";
 import { savePreferencesAction } from "@/app/(app)/account/actions";
 import { UpgradeCard } from "@/components/UpgradeCard";
+import { PAID_PLANS } from "@/lib/pricing";
 import type { Currency, Language, SubscriptionPlan, UserPreferences } from "@/lib/types";
+import type { DisplayPriceEstimate } from "@/lib/currency";
 
 interface Props {
   plan: SubscriptionPlan;
@@ -13,9 +15,10 @@ interface Props {
   };
   languages: Language[];
   currencies: Currency[];
+  priceEstimate: DisplayPriceEstimate;
 }
 
-export function AccountPreferencesForm({ plan, preferences, languages, currencies }: Props) {
+export function AccountPreferencesForm({ plan, preferences, languages, currencies, priceEstimate }: Props) {
   const t = useTranslations("preferences");
   const isPaid = plan === "pro" || plan === "workshop";
   const [state, formAction, pending] = useActionState(
@@ -213,6 +216,18 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             </select>
           </Field>
           <p className="mt-3 text-xs text-[var(--text-muted)]">{t("currencyDisclaimer")}</p>
+          {preferences.preferred_currency && preferences.preferred_currency !== "USD" && (
+            <p className="mt-2 text-xs text-[var(--text-secondary)]">
+              {priceEstimate.isEstimate
+                ? t("exampleEstimateReal", {
+                    usdPrice: PAID_PLANS.pro.monthlyPriceUsd,
+                    amount: priceEstimate.formatted,
+                  })
+                : t("exampleEstimateFallback")}
+              {" "}
+              {t("checkoutUsdNote")}
+            </p>
+          )}
         </div>
       </section>
 
