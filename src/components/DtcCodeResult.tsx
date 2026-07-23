@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations, useLocale } from "next-intl";
 import type { DtcCode } from "@/lib/types";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 import { SeverityBadge } from "@/components/SeverityBadge";
@@ -7,14 +8,17 @@ import { ResultSection } from "@/components/ResultSection";
 import { CauseCard } from "@/components/CauseCard";
 import { detectSafetyWarnings } from "@/lib/safety-warnings";
 
-const DIFFICULTY_LABEL: Record<DtcCode["difficulty"], string> = {
-  easy: "Easy — most DIYers can verify this",
-  moderate: "Moderate — some diagnostic tools helpful",
-  hard: "Hard — scan tool and experience recommended",
-  professional: "Professional — a shop visit is the safer path",
-};
-
 export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
+  const t = useTranslations("dtcResult");
+  const locale = useLocale();
+
+  const DIFFICULTY_LABEL: Record<DtcCode["difficulty"], string> = {
+    easy: t("difficultyEasy"),
+    moderate: t("difficultyModerate"),
+    hard: t("difficultyHard"),
+    professional: t("difficultyProfessional"),
+  };
+
   const warningText = [dtc.meaning, dtc.symptoms.join(" "), dtc.causes.join(" "), dtc.drive_recommendation ?? ""].join(" ");
   const safetyWarnings = detectSafetyWarnings(warningText);
 
@@ -24,7 +28,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       <header className="glass-panel rounded-[var(--radius-xl)] p-6 sm:p-8">
         <p className="font-mono text-sm tracking-widest text-[var(--accent-red)]">
           {dtc.code}
-          {dtc.make ? ` · ${dtc.make.toUpperCase()}` : " · Generic"}
+          {dtc.make ? ` · ${dtc.make.toUpperCase()}` : ` · ${t("generic")}`}
         </p>
         <h1 className="mt-1 text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
           {dtc.title}
@@ -44,21 +48,22 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             </span>
           ))}
         </div>
-        <p className="mt-4 text-xs text-[var(--text-muted)]">
-          Sourced from our reviewed reference database — not AI-generated.
-        </p>
+        <p className="mt-4 text-xs text-[var(--text-muted)]">{t("sourcedFrom")}</p>
+        {locale !== "en" && (
+          <p className="mt-1 text-xs text-[var(--text-muted)]">{t("contentNotLocalizedNote")}</p>
+        )}
       </header>
 
       {/* Immediate safety guidance */}
       <SafetyAlert warnings={safetyWarnings} />
       {dtc.drive_recommendation && (
-        <ResultSection title="Drive recommendation">
+        <ResultSection title={t("driveRecommendation")}>
           <p className="text-sm text-[var(--text-secondary)]">{dtc.drive_recommendation}</p>
         </ResultSection>
       )}
 
       {/* Most likely causes */}
-      <ResultSection title="Most likely causes">
+      <ResultSection title={t("mostLikelyCauses")}>
         <div className="space-y-2">
           {dtc.causes.map((cause, i) => (
             <CauseCard key={i} cause={cause} rank={i + 1} />
@@ -67,7 +72,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       </ResultSection>
 
       {/* Evidence from reported symptoms */}
-      <ResultSection title="Reported symptoms">
+      <ResultSection title={t("reportedSymptoms")}>
         <ul className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "disc" }}>
           {dtc.symptoms.map((s, i) => (
             <li key={i}>{s}</li>
@@ -76,7 +81,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       </ResultSection>
 
       {/* Recommended diagnostic checks */}
-      <ResultSection title="Recommended diagnostic checks">
+      <ResultSection title={t("diagnosticChecks")}>
         <ol className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "decimal" }}>
           {dtc.diagnostic_steps.map((step, i) => (
             <li key={i}>{step}</li>
@@ -86,7 +91,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
 
       {/* What not to replace yet */}
       {dtc.common_mistakes && (
-        <ResultSection title="What not to replace yet">
+        <ResultSection title={t("commonMistakes")}>
           <p
             className="rounded-[var(--radius-lg)] border p-4 text-sm text-[var(--text-secondary)]"
             style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
@@ -106,7 +111,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             className="rounded-[var(--radius-lg)] border border-[var(--border-red)] bg-[var(--surface-burgundy)] p-5 text-center font-semibold text-[var(--text-primary)] transition hover:brightness-110"
             style={{ boxShadow: "var(--shadow-accent)" }}
           >
-            Get the Full Repair PDF
+            {t("getRepairPdf")}
           </a>
         )}
         {dtc.youtube_url && (
@@ -116,14 +121,14 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             rel="noopener noreferrer"
             className="glass-panel rounded-[var(--radius-lg)] p-5 text-center font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
           >
-            Watch the Diagnostic Walkthrough
+            {t("watchWalkthrough")}
           </a>
         )}
       </section>
 
       {/* FAQ */}
       {dtc.faq.length > 0 && (
-        <ResultSection title="Frequently asked questions">
+        <ResultSection title={t("faq")}>
           <div className="space-y-3">
             {dtc.faq.map((entry, i) => (
               <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
@@ -136,25 +141,25 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       )}
 
       {/* Technical details */}
-      <ResultSection title="Technical details">
+      <ResultSection title={t("technicalDetails")}>
         <dl className="grid grid-cols-2 gap-x-6 gap-y-2 font-mono text-xs text-[var(--text-secondary)] sm:grid-cols-4">
           <div>
-            <dt className="text-[var(--text-muted)]">Code</dt>
+            <dt className="text-[var(--text-muted)]">{t("code")}</dt>
             <dd>{dtc.code}</dd>
           </div>
           <div>
-            <dt className="text-[var(--text-muted)]">Make</dt>
-            <dd>{dtc.make ?? "Generic"}</dd>
+            <dt className="text-[var(--text-muted)]">{t("make")}</dt>
+            <dd>{dtc.make ?? t("generic")}</dd>
           </div>
           {dtc.model && (
             <div>
-              <dt className="text-[var(--text-muted)]">Model</dt>
+              <dt className="text-[var(--text-muted)]">{t("model")}</dt>
               <dd>{dtc.model}</dd>
             </div>
           )}
           {dtc.engine_code && (
             <div>
-              <dt className="text-[var(--text-muted)]">Engine</dt>
+              <dt className="text-[var(--text-muted)]">{t("engine")}</dt>
               <dd>{dtc.engine_code}</dd>
             </div>
           )}
@@ -163,22 +168,17 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
 
       {/* Disclaimer — preserved */}
       <p className="border-t border-[var(--border-subtle)] pt-6 text-xs text-[var(--text-muted)]">
-        This information is for diagnostic guidance only and is not a
-        substitute for a qualified technician&apos;s in-person inspection.
-        Always confirm a cause with the recommended tests before replacing
-        parts.
+        {t("disclaimer")}
       </p>
 
       <section className="glass-panel rounded-[var(--radius-xl)] p-6 text-center">
-        <p className="text-sm text-[var(--text-secondary)]">
-          Want a much larger monthly AI diagnostic allowance?
-        </p>
+        <p className="text-sm text-[var(--text-secondary)]">{t("upgradeCta")}</p>
         <Link
           href="/pricing"
           className="mt-3 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
           style={{ boxShadow: "var(--shadow-accent)" }}
         >
-          Upgrade to Pro
+          {t("upgradeButton")}
         </Link>
       </section>
 

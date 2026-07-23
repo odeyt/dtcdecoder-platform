@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 export function SubscribeButton({
   plan,
@@ -13,6 +14,8 @@ export function SubscribeButton({
   label: string;
   signedIn: boolean;
 }) {
+  const t = useTranslations("pricing");
+  const tc = useTranslations("common");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,14 +37,14 @@ export function SubscribeButton({
       const data = await res.json();
 
       if (!res.ok || !data.checkoutUrl) {
-        setError(data.error ?? "Something went wrong. Try again.");
+        setError(data.error ?? tc("genericError"));
         setLoading(false);
         return;
       }
 
       window.location.href = data.checkoutUrl;
     } catch {
-      setError("Something went wrong. Try again.");
+      setError(tc("genericError"));
       setLoading(false);
     }
   }
@@ -54,7 +57,7 @@ export function SubscribeButton({
         className="min-h-11 w-full rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        {loading ? "Redirecting…" : label}
+        {loading ? t("redirecting") : label}
       </button>
       {error && <p className="mt-2 text-center text-xs text-[var(--accent-red)]">{error}</p>}
     </div>

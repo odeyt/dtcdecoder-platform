@@ -1,7 +1,10 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { getAllowedOutputLocales } from "@/lib/i18n/languages";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { AiAssistantChat } from "@/components/AiAssistantChat";
 
 export const metadata: Metadata = {
@@ -28,16 +31,19 @@ export default async function AiAssistantPage() {
       .map((l) => ({ code: l.locale_code, name: l.english_name }));
   }
 
+  const locale = await resolveAppShellLocale();
+  const messages = await getAppShellMessages(locale);
+  const t = await getTranslations({ locale, namespace: "aiAssistant" });
+
   return (
-    <div className="mx-auto max-w-3xl px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">DTC AI Assistant</h1>
-      <p className="mt-2 text-zinc-400">
-        Instantly decode fault codes, understand symptoms, find common causes, and
-        follow professional diagnostic steps before replacing parts.
-      </p>
-      <div className="mt-8">
-        <AiAssistantChat signedIn={Boolean(user)} outputLocaleOptions={outputLocaleOptions} />
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
+      <div className="mx-auto max-w-3xl px-6 py-16">
+        <h1 className="text-3xl font-bold text-white">{t("title")}</h1>
+        <p className="mt-2 text-zinc-400">{t("subtitle")}</p>
+        <div className="mt-8">
+          <AiAssistantChat signedIn={Boolean(user)} outputLocaleOptions={outputLocaleOptions} />
+        </div>
       </div>
-    </div>
+    </NextIntlClientProvider>
   );
 }

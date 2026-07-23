@@ -1,15 +1,12 @@
 import Link from "next/link";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { getUsageSummary } from "@/lib/ai/assistant";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { UsageMeter } from "@/components/UsageMeter";
 import { UpgradeCard } from "@/components/UpgradeCard";
-
-const PLAN_LABEL = {
-  free: "Free",
-  pro: "Pro Technician",
-  workshop: "Workshop",
-};
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -23,43 +20,50 @@ export default async function AccountPage() {
   const usage = user ? await getUsageSummary(user.id, plan) : null;
   const nearLimit = usage ? usage.used / usage.limit >= 0.8 : false;
 
+  const locale = await resolveAppShellLocale();
+  const messages = await getAppShellMessages(locale);
+  const t = await getTranslations({ locale, namespace: "account" });
+  const tp = await getTranslations({ locale, namespace: "pricing" });
+  const planLabelKey = plan === "pro" ? "planPro" : plan === "workshop" ? "planWorkshop" : "planFree";
+  const planLabel = tp(planLabelKey);
+
   return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">My Account</h1>
-        <p className="mt-2 text-[var(--text-secondary)]">{user?.email}</p>
-      </div>
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t("title")}</h1>
+          <p className="mt-2 text-[var(--text-secondary)]">{user?.email}</p>
+        </div>
 
-      <div className="glass-panel rounded-[var(--radius-xl)] p-6">
-        <p className="text-sm text-[var(--text-secondary)]">Current plan</p>
-        <p className="mt-1 text-xl font-bold text-[var(--text-primary)]">{PLAN_LABEL[plan]}</p>
-        {plan === "free" && (
-          <Link
-            href="/pricing"
-            className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
-          >
-            Upgrade to Pro
+        <div className="glass-panel rounded-[var(--radius-xl)] p-6">
+          <p className="text-sm text-[var(--text-secondary)]">{t("currentPlan")}</p>
+          <p className="mt-1 text-xl font-bold text-[var(--text-primary)]">{planLabel}</p>
+          {plan === "free" && (
+            <Link
+              href="/pricing"
+              className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+            >
+              {t("upgradeToPro")}
+            </Link>
+          )}
+        </div>
+
+        {usage && <UsageMeter summary={usage} planLabel={planLabel} />}
+
+        {nearLimit && plan === "free" && <UpgradeCard reason={t("nearLimitReason")} />}
+
+        <div className="flex flex-wrap gap-6 text-sm">
+          <Link href="/ai-assistant" className="text-[var(--accent-red)] underline">
+            {t("goToAiAssistant")}
           </Link>
-        )}
+          <Link href="/history" className="text-[var(--accent-red)] underline">
+            {t("viewHistory")}
+          </Link>
+          <Link href="/account/preferences" className="text-[var(--accent-red)] underline">
+            {t("languagePreferences")}
+          </Link>
+        </div>
       </div>
-
-      {usage && <UsageMeter summary={usage} planLabel={PLAN_LABEL[plan]} />}
-
-      {nearLimit && plan === "free" && (
-        <UpgradeCard reason="You're close to today's Free plan AI limit. Pro gives you a much larger monthly allowance." />
-      )}
-
-      <div className="flex flex-wrap gap-6 text-sm">
-        <Link href="/ai-assistant" className="text-[var(--accent-red)] underline">
-          Go to the AI Diagnostic Assistant
-        </Link>
-        <Link href="/history" className="text-[var(--accent-red)] underline">
-          View search history
-        </Link>
-        <Link href="/account/preferences" className="text-[var(--accent-red)] underline">
-          Language &amp; region preferences
-        </Link>
-      </div>
-    </div>
+    </NextIntlClientProvider>
   );
 }

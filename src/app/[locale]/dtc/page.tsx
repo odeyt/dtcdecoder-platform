@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { getTranslations } from "next-intl/server";
 import { searchDtcCodes } from "@/lib/dtc";
 import { incrementDtcSearchCount } from "@/lib/admin-dtc";
 
@@ -10,13 +11,16 @@ export const metadata: Metadata = {
 };
 
 type Props = {
+  params: Promise<{ locale: string }>;
   searchParams: Promise<{ q?: string }>;
 };
 
-export default async function DtcLookupPage({ searchParams }: Props) {
+export default async function DtcLookupPage({ params, searchParams }: Props) {
+  const { locale } = await params;
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
   const results = query ? await searchDtcCodes(query) : [];
+  const t = await getTranslations({ locale, namespace: "dtcSearch" });
 
   if (query && results[0]) {
     incrementDtcSearchCount(results[0].id).catch(() => {});
@@ -25,37 +29,34 @@ export default async function DtcLookupPage({ searchParams }: Props) {
   return (
     <div className="container-app px-6 py-16">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-3xl font-bold text-[var(--text-primary)]">DTC Lookup</h1>
-        <p className="mt-2 text-[var(--text-secondary)]">
-          Enter a fault code, symptom, or vehicle issue.
-        </p>
+        <h1 className="text-3xl font-bold text-[var(--text-primary)]">{t("title")}</h1>
+        <p className="mt-2 text-[var(--text-secondary)]">{t("subtitle")}</p>
 
         <form className="mt-6 flex gap-3">
           <label htmlFor="dtc-search" className="sr-only">
-            Enter a DTC code, symptom, or vehicle issue
+            {t("searchLabel")}
           </label>
           <input
             id="dtc-search"
             type="text"
             name="q"
             defaultValue={query}
-            placeholder="Enter DTC code, symptom, or vehicle issue..."
+            placeholder={t("placeholder")}
             className="min-h-11 flex-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
           />
           <button
             type="submit"
             className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
           >
-            Decode
+            {t("decode")}
           </button>
         </form>
 
         {query && results.length === 0 && (
           <p className="mt-8 text-[var(--text-secondary)]">
-            No published results for &ldquo;{query}&rdquo; yet. Try a specific
-            code like P0420, or ask the{" "}
+            {t("noResults", { query })}{" "}
             <Link href="/ai-assistant" className="text-[var(--accent-red)] underline">
-              AI assistant
+              {t("askAiAssistant")}
             </Link>
             .
           </p>

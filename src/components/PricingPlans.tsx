@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import {
   PAID_PLANS,
@@ -12,6 +13,7 @@ import {
 } from "@/lib/pricing";
 
 export function PricingPlans({ signedIn }: { signedIn: boolean }) {
+  const t = useTranslations("pricing");
   const [interval, setInterval] = useState<BillingInterval>("yearly");
 
   return (
@@ -26,7 +28,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
               : "text-[var(--text-muted)]"
           }`}
         >
-          Yearly — Save ${YEARLY_FLAT_DISCOUNT_USD}
+          {t("yearlySave", { amount: YEARLY_FLAT_DISCOUNT_USD })}
         </button>
         <button
           onClick={() => setInterval("monthly")}
@@ -37,60 +39,58 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
               : "text-[var(--text-muted)]"
           }`}
         >
-          Monthly
+          {t("monthly")}
         </button>
       </div>
 
       <div className="mt-8 grid gap-6 md:grid-cols-3">
-        <PlanCard title="Free" price="$0" priceSuffix="/mo">
+        <PlanCard title={t("freeTitle")} price="$0" priceSuffix="/mo">
           <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
-            <li>Basic DTC lookup</li>
-            <li>5 AI searches per day</li>
-            <li>Search history</li>
-            <li>Safety warnings</li>
+            <li>{t("freeBullet1")}</li>
+            <li>{t("freeBullet2")}</li>
+            <li>{t("freeBullet3")}</li>
+            <li>{t("freeBullet4")}</li>
           </ul>
           <Link
             href={signedIn ? "/dtc" : "/account/login"}
             className="mt-6 block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 text-center font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
           >
-            Start Free
+            {t("startFree")}
           </Link>
         </PlanCard>
 
         <PaidPlanCard
           planKey="pro"
-          title={PAID_PLANS.pro.label}
+          title={t("planPro")}
           interval={interval}
           highlighted
           bullets={[
-            `Up to ${PAID_PLANS.pro.monthlyTokenLimit.toLocaleString()} AI tokens/mo`,
-            "Advanced diagnostic workflows",
-            "Premium PDF access",
-            "OEM-style test procedures",
+            t("proBulletTokens", { tokens: PAID_PLANS.pro.monthlyTokenLimit.toLocaleString() }),
+            t("proBullet2"),
+            t("proBullet3"),
+            t("proBullet4"),
           ]}
+          buttonLabel={t("upgradeToPro")}
           signedIn={signedIn}
         />
 
         <PaidPlanCard
           planKey="workshop"
-          title={PAID_PLANS.workshop.label}
+          title={t("planWorkshop")}
           interval={interval}
           bullets={[
-            `Up to ${PAID_PLANS.workshop.monthlyTokenLimit.toLocaleString()} AI tokens/mo`,
-            "Multiple technician accounts",
-            "Saved customer cases",
-            "Repair notes",
-            "Priority diagnostic support",
+            t("workshopBulletTokens", { tokens: PAID_PLANS.workshop.monthlyTokenLimit.toLocaleString() }),
+            t("workshopBullet2"),
+            t("workshopBullet3"),
+            t("workshopBullet4"),
+            t("workshopBullet5"),
           ]}
+          buttonLabel={t("workshopAccess")}
           signedIn={signedIn}
         />
       </div>
 
-      <p className="mt-6 text-center text-xs text-[var(--text-muted)]">
-        AI token allowances reset monthly and are a fair-use limit to keep
-        the service reliable for everyone — most technicians never come
-        close to them.
-      </p>
+      <p className="mt-6 text-center text-xs text-[var(--text-muted)]">{t("fairUseNote")}</p>
     </div>
   );
 }
@@ -100,6 +100,7 @@ function PaidPlanCard({
   title,
   interval,
   bullets,
+  buttonLabel,
   signedIn,
   highlighted,
 }: {
@@ -107,9 +108,11 @@ function PaidPlanCard({
   title: string;
   interval: BillingInterval;
   bullets: string[];
+  buttonLabel: string;
   signedIn: boolean;
   highlighted?: boolean;
 }) {
+  const t = useTranslations("pricing");
   const monthly = PAID_PLANS[planKey].monthlyPriceUsd;
   const displayPrice =
     interval === "yearly" ? yearlyPriceUsd(planKey) : monthly;
@@ -124,7 +127,10 @@ function PaidPlanCard({
       highlighted={highlighted}
       subline={
         interval === "yearly"
-          ? `~$${effectiveMonthly.toFixed(2)}/mo — save $${YEARLY_FLAT_DISCOUNT_USD} vs. monthly`
+          ? t("yearlySubline", {
+              amount: effectiveMonthly.toFixed(2),
+              discount: YEARLY_FLAT_DISCOUNT_USD,
+            })
           : undefined
       }
     >
@@ -134,12 +140,7 @@ function PaidPlanCard({
         ))}
       </ul>
       <div className="mt-6">
-        <SubscribeButton
-          plan={planKey}
-          interval={interval}
-          label={planKey === "pro" ? "Upgrade to Pro" : "Workshop Access"}
-          signedIn={signedIn}
-        />
+        <SubscribeButton plan={planKey} interval={interval} label={buttonLabel} signedIn={signedIn} />
       </div>
     </PlanCard>
   );

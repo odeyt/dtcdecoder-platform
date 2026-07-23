@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { useTranslations } from "next-intl";
 import { savePreferencesAction } from "@/app/(app)/account/actions";
 import { UpgradeCard } from "@/components/UpgradeCard";
 import type { Currency, Language, SubscriptionPlan, UserPreferences } from "@/lib/types";
@@ -14,19 +15,20 @@ interface Props {
   currencies: Currency[];
 }
 
-const REPORT_MODE_LABEL: Record<string, string> = {
-  single: "One language only",
-  bilingual: "English + one other language",
-  multilingual: "Multiple languages",
-};
-
 export function AccountPreferencesForm({ plan, preferences, languages, currencies }: Props) {
+  const t = useTranslations("preferences");
   const isPaid = plan === "pro" || plan === "workshop";
   const [state, formAction, pending] = useActionState(
     async (_prev: { error?: string; success?: boolean }, formData: FormData) =>
       savePreferencesAction(formData),
     {},
   );
+
+  const REPORT_MODE_LABEL: Record<string, string> = {
+    single: t("reportModeSingle"),
+    bilingual: t("reportModeBilingual"),
+    multilingual: t("reportModeMultilingual"),
+  };
 
   // Interface language: any enabled language (paid users aren't limited to
   // the public-only subset — they're entitled to preview any active
@@ -39,14 +41,12 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
 
   return (
     <form action={formAction} className="space-y-8">
-      {!isPaid && (
-        <UpgradeCard reason="Language, AI report, and currency preferences are saved for Pro and Workshop plans. Free accounts can still switch the interface language temporarily on any page." />
-      )}
+      {!isPaid && <UpgradeCard reason={t("upgradeReason")} />}
 
       <section className="glass-panel rounded-[var(--radius-xl)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)]">Language preferences</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">{t("languageSection")}</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Default interface language" htmlFor="interfaceLocale">
+          <Field label={t("interfaceLanguage")} htmlFor="interfaceLocale">
             <select
               id="interfaceLocale"
               name="interfaceLocale"
@@ -63,7 +63,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             </select>
           </Field>
 
-          <Field label="AI report language" htmlFor="aiReportLocale">
+          <Field label={t("aiReportLanguage")} htmlFor="aiReportLocale">
             <select
               id="aiReportLocale"
               name="aiReportLocale"
@@ -71,7 +71,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
-              <option value="">English (default)</option>
+              <option value="">{t("englishDefault")}</option>
               {aiOutputOptions
                 .filter((l) => l.locale_code !== "en")
                 .map((l) => (
@@ -82,7 +82,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             </select>
           </Field>
 
-          <Field label="Secondary report language" htmlFor="secondaryReportLocale">
+          <Field label={t("secondaryLanguage")} htmlFor="secondaryReportLocale">
             <select
               id="secondaryReportLocale"
               name="secondaryReportLocale"
@@ -90,7 +90,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
-              <option value="">None</option>
+              <option value="">{t("none")}</option>
               {aiOutputOptions
                 .filter((l) => l.locale_code !== "en")
                 .map((l) => (
@@ -101,7 +101,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             </select>
           </Field>
 
-          <Field label="Report mode" htmlFor="reportMode">
+          <Field label={t("reportMode")} htmlFor="reportMode">
             <select
               id="reportMode"
               name="reportMode"
@@ -125,21 +125,21 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
       </section>
 
       <section className="glass-panel rounded-[var(--radius-xl)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)]">Region &amp; display</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">{t("regionSection")}</h2>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
-          <Field label="Region" htmlFor="regionCode">
+          <Field label={t("region")} htmlFor="regionCode">
             <input
               id="regionCode"
               name="regionCode"
               type="text"
               defaultValue={preferences.region_code ?? ""}
               disabled={disabled}
-              placeholder="e.g. US, MX, TH"
+              placeholder={t("regionPlaceholder")}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] disabled:opacity-60"
             />
           </Field>
 
-          <Field label="Measurement system" htmlFor="measurementSystem">
+          <Field label={t("measurementSystem")} htmlFor="measurementSystem">
             <select
               id="measurementSystem"
               name="measurementSystem"
@@ -147,12 +147,12 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
-              <option value="metric">Metric</option>
-              <option value="imperial">Imperial</option>
+              <option value="metric">{t("metric")}</option>
+              <option value="imperial">{t("imperial")}</option>
             </select>
           </Field>
 
-          <Field label="Temperature unit" htmlFor="temperatureUnit">
+          <Field label={t("temperatureUnit")} htmlFor="temperatureUnit">
             <select
               id="temperatureUnit"
               name="temperatureUnit"
@@ -160,12 +160,12 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
-              <option value="celsius">Celsius</option>
-              <option value="fahrenheit">Fahrenheit</option>
+              <option value="celsius">{t("celsius")}</option>
+              <option value="fahrenheit">{t("fahrenheit")}</option>
             </select>
           </Field>
 
-          <Field label="Time format" htmlFor="timeFormat">
+          <Field label={t("timeFormat")} htmlFor="timeFormat">
             <select
               id="timeFormat"
               name="timeFormat"
@@ -173,12 +173,12 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
-              <option value="24h">24-hour</option>
-              <option value="12h">12-hour</option>
+              <option value="24h">{t("format24h")}</option>
+              <option value="12h">{t("format12h")}</option>
             </select>
           </Field>
 
-          <Field label="Date format" htmlFor="dateFormat">
+          <Field label={t("dateFormat")} htmlFor="dateFormat">
             <select
               id="dateFormat"
               name="dateFormat"
@@ -195,9 +195,9 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
       </section>
 
       <section className="glass-panel rounded-[var(--radius-xl)] p-6">
-        <h2 className="text-lg font-semibold text-[var(--text-primary)]">Currency</h2>
+        <h2 className="text-lg font-semibold text-[var(--text-primary)]">{t("currencySection")}</h2>
         <div className="mt-4">
-          <Field label="Preferred display currency" htmlFor="preferredCurrency">
+          <Field label={t("preferredCurrency")} htmlFor="preferredCurrency">
             <select
               id="preferredCurrency"
               name="preferredCurrency"
@@ -212,23 +212,19 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               ))}
             </select>
           </Field>
-          <p className="mt-3 text-xs text-[var(--text-muted)]">
-            Display estimate only — checkout and billing are always in USD, the
-            currency Creem actually settles in. Changing this doesn&apos;t affect an
-            existing subscription&apos;s charge amount or currency.
-          </p>
+          <p className="mt-3 text-xs text-[var(--text-muted)]">{t("currencyDisclaimer")}</p>
         </div>
       </section>
 
       {state.error && <p className="text-sm text-[var(--accent-red)]">{state.error}</p>}
-      {state.success && <p className="text-sm text-emerald-400">Preferences saved.</p>}
+      {state.success && <p className="text-sm text-emerald-400">{t("saved")}</p>}
 
       <button
         type="submit"
         disabled={disabled}
         className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {pending ? "Saving…" : "Save preferences"}
+        {pending ? t("saving") : t("save")}
       </button>
     </form>
   );

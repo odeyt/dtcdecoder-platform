@@ -1,8 +1,11 @@
 import type { Metadata } from "next";
+import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { getUserPreferences, DEFAULT_PREFERENCES } from "@/lib/preferences";
 import { listAllLanguages, listAllCurrencies } from "@/lib/i18n/languages";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { AccountPreferencesForm } from "@/components/AccountPreferencesForm";
 
 export const metadata: Metadata = {
@@ -26,18 +29,20 @@ export default async function AccountPreferencesPage() {
   // just the currently-active subset.
   const [languages, currencies] = await Promise.all([listAllLanguages(), listAllCurrencies()]);
 
-  return (
-    <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">
-          Language &amp; Region Preferences
-        </h1>
-        <p className="mt-2 text-[var(--text-secondary)]">
-          Choose your interface language, AI report language, and display currency.
-        </p>
-      </div>
+  const locale = await resolveAppShellLocale();
+  const messages = await getAppShellMessages(locale);
+  const t = await getTranslations({ locale, namespace: "preferences" });
 
-      <AccountPreferencesForm plan={plan} preferences={preferences} languages={languages} currencies={currencies} />
-    </div>
+  return (
+    <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
+      <div className="space-y-6">
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t("title")}</h1>
+          <p className="mt-2 text-[var(--text-secondary)]">{t("subtitle")}</p>
+        </div>
+
+        <AccountPreferencesForm plan={plan} preferences={preferences} languages={languages} currencies={currencies} />
+      </div>
+    </NextIntlClientProvider>
   );
 }

@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 
 interface ChatMessage {
@@ -17,12 +18,6 @@ const EXAMPLES = [
   "Car has no crank and U0101",
 ];
 
-const BASE_AI_STAGES = [
-  "Validating request",
-  "Searching diagnostic database for grounding data",
-  "Consulting the AI diagnostic model",
-];
-
 interface OutputLocaleOption {
   code: string;
   name: string;
@@ -35,6 +30,7 @@ export function AiAssistantChat({
   signedIn: boolean;
   outputLocaleOptions?: OutputLocaleOption[];
 }) {
+  const t = useTranslations("aiAssistant");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");
@@ -42,6 +38,7 @@ export function AiAssistantChat({
   const [outputLocale, setOutputLocale] = useState("en");
   const abortRef = useRef<AbortController | null>(null);
 
+  const baseStages = [t("stageValidating"), t("stageSearching"), t("stageConsulting")];
   const selectedLocaleName = outputLocaleOptions.find((o) => o.code === outputLocale)?.name;
   // A non-English request skips streaming the English answer entirely (see
   // the API route) — the whole English generation, then the translation,
@@ -49,8 +46,8 @@ export function AiAssistantChat({
   // rather than reusing the English-only stage list.
   const aiStages =
     outputLocale !== "en" && selectedLocaleName
-      ? [...BASE_AI_STAGES, `Translating the diagnosis into ${selectedLocaleName}`]
-      : BASE_AI_STAGES;
+      ? [...baseStages, t("stageTranslating", { language: selectedLocaleName })]
+      : baseStages;
 
   async function sendMessage(text: string) {
     if (!text.trim() || status === "waiting" || status === "streaming") return;
@@ -72,7 +69,7 @@ export function AiAssistantChat({
 
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        setErrorMessage(data.error ?? "Something went wrong. Try again.");
+        setErrorMessage(data.error ?? t("error"));
         setStatus("error");
         setMessages((prev) => prev.slice(0, -1));
         return;
@@ -102,7 +99,7 @@ export function AiAssistantChat({
         setStatus("idle");
         return;
       }
-      setErrorMessage("Something went wrong. Try again.");
+      setErrorMessage(t("error"));
       setStatus("error");
     } finally {
       abortRef.current = null;
@@ -116,15 +113,13 @@ export function AiAssistantChat({
   if (!signedIn) {
     return (
       <div className="glass-panel rounded-[var(--radius-xl)] p-10 text-center">
-        <p className="text-[var(--text-primary)]">Sign in to use the DTC AI Assistant.</p>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">
-          Free accounts get 5 AI questions a day — Pro and Workshop get a much larger monthly allowance.
-        </p>
+        <p className="text-[var(--text-primary)]">{t("signInPrompt")}</p>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("signInSubtext")}</p>
         <Link
           href="/account/login"
           className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
         >
-          Sign In
+          {t("signIn")}
         </Link>
       </div>
     );
@@ -137,7 +132,7 @@ export function AiAssistantChat({
     <div className="flex flex-col gap-4">
       {outputLocaleOptions.length > 0 && (
         <div className="flex items-center justify-end gap-2 text-sm text-[var(--text-secondary)]">
-          <label htmlFor="ai-output-locale">Answer in:</label>
+          <label htmlFor="ai-output-locale">{t("answerIn")}</label>
           <select
             id="ai-output-locale"
             value={outputLocale}
@@ -145,7 +140,7 @@ export function AiAssistantChat({
             disabled={status === "waiting" || status === "streaming"}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
           >
-            <option value="en">English</option>
+            <option value="en">{t("english")}</option>
             {outputLocaleOptions.map((option) => (
               <option key={option.code} value={option.code}>
                 {option.name}
@@ -171,9 +166,7 @@ export function AiAssistantChat({
 
       <div className="glass-panel min-h-[200px] space-y-4 rounded-[var(--radius-xl)] p-6">
         {messages.length === 0 && (
-          <p className="text-sm text-[var(--text-muted)]">
-            Describe a code, symptom, or vehicle issue and get a technician-style diagnosis.
-          </p>
+          <p className="text-sm text-[var(--text-muted)]">{t("emptyState")}</p>
         )}
         {messages.map((m, i) => {
           const isPendingAssistantBubble =
@@ -206,14 +199,14 @@ export function AiAssistantChat({
         className="flex gap-3"
       >
         <label htmlFor="ai-assistant-input" className="sr-only">
-          Describe your vehicle issue
+          {t("describeLabel")}
         </label>
         <input
           id="ai-assistant-input"
           type="text"
           value={input}
           onChange={(e) => setInput(e.target.value)}
-          placeholder="Describe your issue…"
+          placeholder={t("describePlaceholder")}
           className="min-h-11 flex-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
         />
         <button
@@ -221,7 +214,7 @@ export function AiAssistantChat({
           disabled={status === "waiting" || status === "streaming"}
           className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
         >
-          {status === "waiting" || status === "streaming" ? "Thinking…" : "Ask"}
+          {status === "waiting" || status === "streaming" ? t("thinking") : t("ask")}
         </button>
       </form>
     </div>
