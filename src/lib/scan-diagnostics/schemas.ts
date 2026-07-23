@@ -109,3 +109,15 @@ export const DiagnosticAiOutputSchema = z.object({
 export type DiagnosticAiOutput = z.infer<typeof DiagnosticAiOutputSchema>;
 export type RankedCause = z.infer<typeof RankedCauseSchema>;
 export type RecommendedTest = z.infer<typeof RecommendedTestSchema>;
+
+// --- Technician repair-confirmation feedback ------------------------------
+
+export const FeedbackInputSchema = z.object({
+  diagnosisWasCorrect: z.boolean().optional(),
+  actualRootCause: z.string().trim().max(1000).optional(),
+  confirmedFix: z.string().trim().max(1000).optional(),
+  partsReplaced: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
+  notes: z.string().trim().max(4000).optional(),
+});
+
+export type FeedbackInput = z.infer<typeof FeedbackInputSchema>;
