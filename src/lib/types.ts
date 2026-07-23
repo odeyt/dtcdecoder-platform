@@ -219,3 +219,98 @@ export interface DiagnosticReportLocalization {
   translation_status: "pending" | "completed" | "failed";
   generated_at: string | null;
 }
+
+// --- Diagnostic Scan Report Analysis ------------------------------------
+// Unrelated to DiagnosticReport above (that's a saved AI-chat answer). This
+// is the scan-file-upload workflow: a user uploads a scan-tool report and
+// gets a structured AI diagnostic analysis. Tables use a scan_ prefix to
+// keep the two features' vocabulary from colliding — see
+// supabase/migrations/0012_scan_diagnostics_core.sql.
+
+export type ScanCaseStatus =
+  | "draft"
+  | "uploaded"
+  | "extracting"
+  | "extraction_review"
+  | "ready_for_analysis"
+  | "analyzing"
+  | "completed"
+  | "failed";
+
+export interface ScanCase {
+  id: string;
+  user_id: string;
+  status: ScanCaseStatus;
+  status_updated_at: string;
+  error_message: string | null;
+  complaint: string | null;
+  symptoms: string[];
+  mileage: number | null;
+  recent_repairs: string | null;
+  battery_condition: string | null;
+  technician_notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ScanFileFormat = "pdf" | "txt" | "csv" | "json" | "xml" | "html" | "unknown";
+
+export interface ScanCaseFile {
+  id: string;
+  case_id: string;
+  storage_path: string;
+  original_filename: string;
+  declared_mime_type: string;
+  detected_format: ScanFileFormat | null;
+  file_size_bytes: number;
+  file_sha256: string;
+  uploaded_at: string;
+}
+
+export interface ScanModule {
+  name: string;
+  status?: string;
+}
+
+export interface ScanExtraction {
+  id: string;
+  case_id: string;
+  file_id: string;
+  parser_id: string;
+  parser_version: string;
+  vin: string | null;
+  make: string | null;
+  model: string | null;
+  model_year: number | null;
+  engine: string | null;
+  odometer_miles: number | null;
+  modules: ScanModule[];
+  freeze_frame: Record<string, unknown>[];
+  live_data: Record<string, unknown>[];
+  image_only_pdf: boolean;
+  warnings: string[];
+  reviewed_fields: Record<string, unknown>;
+  extracted_at: string;
+  reviewed_at: string | null;
+}
+
+export type ScanDtcStatus =
+  | "current"
+  | "history"
+  | "pending"
+  | "permanent"
+  | "intermittent"
+  | "stored";
+
+export type ScanDtcSource = "extracted" | "user_added" | "user_edited";
+
+export interface ScanDtcRecord {
+  id: string;
+  case_id: string;
+  module: string | null;
+  code: string;
+  status: ScanDtcStatus | null;
+  description_raw: string | null;
+  source: ScanDtcSource;
+  created_at: string;
+}
