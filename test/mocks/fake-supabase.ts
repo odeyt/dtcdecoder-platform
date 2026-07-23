@@ -176,8 +176,11 @@ export function createFakeSupabase(): FakeSupabase {
       for (const key of Object.keys(tables)) delete tables[key];
       for (const key of Object.keys(rpcHandlers)) delete rpcHandlers[key];
     },
+    // Appends rather than replaces — calling seed() multiple times for the
+    // same table (e.g. once per fixture case) accumulates rows instead of
+    // each call wiping out the previous one.
     seed(name, rows) {
-      tables[name] = [...rows];
+      tables[name] = [...(tables[name] ?? []), ...rows];
     },
     dump(name) {
       return table(name);

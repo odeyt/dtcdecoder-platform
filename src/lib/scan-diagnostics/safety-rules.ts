@@ -110,3 +110,44 @@ export function runSafetyReview(
 
   return { verdict, findings };
 }
+
+const REDACTION_NOTICE =
+  "[This recommendation required an in-person qualified technician review and was not included automatically — see safety warnings below.]";
+
+// Maps each "block" rule to the pattern(s) that should trigger redaction of
+// the specific text that tripped it — never a blanket wipe of the whole
+// report, and never a silent deletion (the redaction notice is visible,
+// and the rule's message is appended to safetyWarnings).
+const BLOCK_RULE_PATTERNS: Record<string, RegExp[]> = {
+  "high-cost-module-replacement-no-tests": [HIGH_COST_MODULE_PATTERN],
+  "ev-high-voltage-missing-ppe-warning": [HIGH_VOLTAGE_PATTERN],
+  "airbag-squib-circuit-probing": [AIRBAG_SQUIB_PATTERN, AIRBAG_SQUIB_PATTERN_REVERSE],
+  "immobilizer-security-bypass": [IMMOBILIZER_BYPASS_PATTERN],
+};
+
+export function redactBlockedContent(
+  output: DiagnosticAiOutput,
+  findings: SafetyFinding[],
+): DiagnosticAiOutput {
+  const blockFindings = findings.filter((f) => f.severity === "block");
+  if (blockFindings.length === 0) return output;
+
+  const patterns = blockFindings.flatMap((f) => BLOCK_RULE_PATTERNS[f.ruleId] ?? []);
+  const redactText = (text: string) => (patterns.some((p) => p.test(text)) ? REDACTION_NOTICE : text);
+
+  return {
+    ...output,
+    rankedCauses: output.rankedCauses.map((c) => ({
+      ...c,
+      cause: redactText(c.cause),
+      rationale: redactText(c.rationale),
+    })),
+    recommendedTests: output.recommendedTests.map((t) => ({
+      ...t,
+      step: redactText(t.step),
+      purpose: redactText(t.purpose),
+      expectedResult: redactText(t.expectedResult),
+    })),
+    safetyWarnings: [...output.safetyWarnings, ...blockFindings.map((f) => f.message)],
+  };
+}
