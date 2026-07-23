@@ -14,3 +14,29 @@ export const CaseInfoInputSchema = z.object({
 });
 
 export type CaseInfoInput = z.infer<typeof CaseInfoInputSchema>;
+
+const DtcCodeInputSchema = z.object({
+  module: z.string().trim().max(100).optional(),
+  code: z.string().trim().min(1).max(20),
+  status: z.string().trim().max(50).optional(),
+  descriptionRaw: z.string().trim().max(500).optional(),
+});
+
+const DtcCodeEditSchema = DtcCodeInputSchema.partial().extend({
+  id: z.string().uuid(),
+});
+
+export const ExtractionReviewInputSchema = z.object({
+  vin: z.string().trim().max(17).optional(),
+  make: z.string().trim().max(100).optional(),
+  model: z.string().trim().max(100).optional(),
+  modelYear: z.number().int().min(1950).max(2100).optional(),
+  engine: z.string().trim().max(200).optional(),
+  odometerMiles: z.number().int().min(0).max(1_000_000).optional(),
+  addDtcs: z.array(DtcCodeInputSchema).max(100).optional(),
+  editDtcs: z.array(DtcCodeEditSchema).max(100).optional(),
+  removeDtcIds: z.array(z.string().uuid()).max(100).optional(),
+  confirm: z.boolean().optional(),
+});
+
+export type ExtractionReviewInput = z.infer<typeof ExtractionReviewInputSchema>;
