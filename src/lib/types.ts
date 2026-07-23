@@ -314,3 +314,48 @@ export interface ScanDtcRecord {
   source: ScanDtcSource;
   created_at: string;
 }
+
+export type ScanAiRunStatus = "running" | "completed" | "failed";
+
+export interface ScanAiRun {
+  id: string;
+  case_id: string;
+  provider_id: string;
+  model_id: string;
+  status: ScanAiRunStatus;
+  output: Record<string, unknown> | null;
+  safety_review: Record<string, unknown> | null;
+  confidence: number | null;
+  confidence_breakdown: Record<string, unknown> | null;
+  input_tokens: number | null;
+  output_tokens: number | null;
+  error_message: string | null;
+  started_at: string;
+  completed_at: string | null;
+}
+
+export interface ScanReport {
+  id: string;
+  case_id: string;
+  ai_run_id: string;
+  ranked_causes: Record<string, unknown>[];
+  recommended_tests: Record<string, unknown>[];
+  safety_warnings: Record<string, unknown>[];
+  missing_information: string[];
+  confidence: number;
+  confidence_rationale: string[];
+  generated_at: string;
+}
+
+export interface ScanFeedback {
+  id: string;
+  case_id: string;
+  report_id: string;
+  user_id: string;
+  diagnosis_was_correct: boolean | null;
+  actual_root_cause: string | null;
+  confirmed_fix: string | null;
+  parts_replaced: string[];
+  notes: string | null;
+  submitted_at: string;
+}
