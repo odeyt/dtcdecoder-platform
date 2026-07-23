@@ -90,6 +90,7 @@ export interface EmailSignup {
   id: string;
   name: string | null;
   email: string;
+  signup_locale: string | null;
   created_at: string;
 }
 

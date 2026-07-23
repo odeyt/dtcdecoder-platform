@@ -20,6 +20,7 @@ export default async function AdminSignupsPage() {
             <tr className="border-b border-white/10 text-zinc-500">
               <th className="py-2">Name</th>
               <th className="py-2">Email</th>
+              <th className="py-2">Signup language</th>
               <th className="py-2">Date</th>
             </tr>
           </thead>
@@ -28,6 +29,7 @@ export default async function AdminSignupsPage() {
               <tr key={s.id} className="border-b border-white/5">
                 <td className="py-2">{s.name ?? "—"}</td>
                 <td className="py-2">{s.email}</td>
+                <td className="py-2 font-mono text-xs text-zinc-400">{s.signup_locale ?? "—"}</td>
                 <td className="py-2">{new Date(s.created_at).toLocaleDateString()}</td>
               </tr>
             ))}
