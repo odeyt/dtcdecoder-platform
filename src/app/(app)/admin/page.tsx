@@ -13,6 +13,9 @@ export default async function AdminDashboardPage() {
         <AdminNavCard href="/admin/blog" title="Blog Posts" description="Add and edit articles" />
         <AdminNavCard href="/admin/signups" title="Email Signups" description="View captured leads" />
         <AdminNavCard href="/admin/settings" title="AI Prompt Settings" description="Edit the assistant's system prompt" />
+        <AdminNavCard href="/admin/languages" title="Language Registry" description="Enable languages, set support tiers" />
+        <AdminNavCard href="/admin/glossary" title="Automotive Glossary" description="Approved terminology per language" />
+        <AdminNavCard href="/admin/currencies" title="Currency Registry" description="Enable display currencies" />
       </div>
 
       <div className="mt-10">
