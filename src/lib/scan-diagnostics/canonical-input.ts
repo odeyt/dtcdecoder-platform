@@ -4,6 +4,7 @@
 // easy to unit-test independent of the database.
 import type { ScanCase, ScanExtraction, ScanDtcRecord } from "@/lib/types";
 import type { CanonicalDiagnosticInput } from "@/lib/scan-diagnostics/schemas";
+import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 
 function reviewedOr<T>(reviewed: Record<string, unknown>, key: string, fallback: T | null): T | null {
   const value = reviewed[key];
@@ -47,5 +48,6 @@ export function buildCanonicalDiagnosticInput(
     liveData: extraction?.live_data ?? [],
     imageOnlyPdf: extraction?.image_only_pdf ?? false,
     extractionWarnings: extraction?.warnings ?? [],
+    dtcCategoryClassification: classifyDtcCategories(dtcRecords, extraction?.modules ?? []),
   };
 }

@@ -34,15 +34,42 @@ export class InvalidCaseStatusError extends Error {
   }
 }
 
+// Thrown by AnthropicDiagnosticProvider when the model either doesn't
+// return a structured tool call, or its structured output fails
+// DiagnosticAiOutputSchema validation. Distinct from a network/timeout
+// failure — this is "the AI responded but we could not trust the shape of
+// what it said," which the API surfaces as a specific, retryable error
+// code (see toSafeErrorResponse) rather than a generic 500.
+export class AiResponseValidationError extends Error {
+  readonly code = "AI_RESPONSE_VALIDATION_FAILED";
+  readonly retryable = true;
+
+  constructor(message: string) {
+    super(message);
+    this.name = "AiResponseValidationError";
+  }
+}
+
 // Thrown by the analyze orchestrator when the AI provider call itself
 // fails (network error, timeout, invalid structured output) after the
 // usage slot has already been consumed and the case transitioned to
 // "failed" — carries that already-updated case so the route can return it
-// alongside the error rather than making the client re-fetch.
+// alongside the error rather than making the client re-fetch. `code`/
+// `retryable` are forwarded from the underlying cause when it was an
+// AiResponseValidationError; otherwise default to a generic retryable
+// provider-failure code.
 export class ScanAnalysisFailedError extends Error {
-  constructor(public readonly scanCase: ScanCase) {
+  readonly code: string;
+  readonly retryable: boolean;
+
+  constructor(
+    public readonly scanCase: ScanCase,
+    options?: { code?: string; retryable?: boolean },
+  ) {
     super("AI analysis failed. Please try again.");
     this.name = "ScanAnalysisFailedError";
+    this.code = options?.code ?? "AI_PROVIDER_CALL_FAILED";
+    this.retryable = options?.retryable ?? true;
   }
 }
 
@@ -75,11 +102,23 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
     return NextResponse.json({ error: err.message }, { status: 404 });
   }
   if (err instanceof ScanAnalysisFailedError) {
-    return NextResponse.json({ case: err.scanCase, error: err.message }, { status: 502 });
+    // `error` (string) is the original, still-supported contract every
+    // existing frontend caller reads; `code`/`retryable` are additive so
+    // nothing that only reads `.error` breaks.
+    return NextResponse.json(
+      { case: err.scanCase, error: err.message, code: err.code, retryable: err.retryable },
+      { status: 502 },
+    );
+  }
+  if (err instanceof AiResponseValidationError) {
+    return NextResponse.json(
+      { error: "The diagnostic response could not be validated.", code: err.code, retryable: err.retryable },
+      { status: 502 },
+    );
   }
 
   return NextResponse.json(
-    { error: "Something went wrong processing your request. Please try again." },
+    { error: "Something went wrong processing your request. Please try again.", retryable: false },
     { status: 500 },
   );
 }

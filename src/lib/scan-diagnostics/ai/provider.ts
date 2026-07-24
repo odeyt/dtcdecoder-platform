@@ -9,6 +9,7 @@ import type { CanonicalDiagnosticInput, DiagnosticAiOutput } from "@/lib/scan-di
 export interface DiagnosticAIProviderResult {
   providerId: string;
   modelId: string;
+  promptVersion: string;
   output: DiagnosticAiOutput;
   tokens: { input: number; output: number };
 }

@@ -11,7 +11,7 @@ import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
-import { ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
+import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, SubscriptionPlan } from "@/lib/types";
 
@@ -58,12 +58,14 @@ export async function runScanAnalysis(
   } catch (err) {
     console.error("[scan-diagnostics] AI provider call failed", err);
 
+    const isValidationFailure = err instanceof AiResponseValidationError;
+
     await admin.from("scan_ai_runs").insert({
       case_id: caseId,
       provider_id: provider.id,
       model_id: "unknown",
       status: "failed",
-      error_message: "AI provider call failed.",
+      error_message: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
       started_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
     });
@@ -72,7 +74,10 @@ export async function runScanAnalysis(
       error_message: "AI analysis failed. Please try again.",
     });
 
-    throw new ScanAnalysisFailedError(failedCase);
+    throw new ScanAnalysisFailedError(
+      failedCase,
+      isValidationFailure ? { code: err.code, retryable: err.retryable } : undefined,
+    );
   }
 
   const safety = runSafetyReview(providerResult.output, input);
@@ -84,11 +89,13 @@ export async function runScanAnalysis(
       case_id: caseId,
       provider_id: providerResult.providerId,
       model_id: providerResult.modelId,
+      prompt_version: providerResult.promptVersion,
       status: "completed",
       output: providerResult.output,
       safety_review: safety,
-      confidence: confidence.confidence,
-      confidence_breakdown: { rationale: confidence.rationale },
+      // Deprecated numeric field, kept for audit/debug only — see report.ts.
+      confidence: confidence.internalScore,
+      confidence_breakdown: { confidenceLevel: confidence.confidenceLevel, rationale: confidence.rationale },
       input_tokens: providerResult.tokens.input,
       output_tokens: providerResult.tokens.output,
       completed_at: new Date().toISOString(),

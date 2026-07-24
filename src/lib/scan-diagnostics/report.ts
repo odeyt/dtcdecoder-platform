@@ -27,8 +27,13 @@ export async function assembleAndPersistReport(
         recommended_tests: redacted.recommendedTests,
         safety_warnings: safety.findings,
         missing_information: redacted.missingInformation,
-        confidence: confidence.confidence,
+        // Deprecated numeric field — kept populated for audit/debug
+        // continuity only; confidence_level is the field the UI and API
+        // actually surface. See docs/DIAGNOSTIC_SCHEMA_V2.md.
+        confidence: confidence.internalScore,
+        confidence_level: confidence.confidenceLevel,
         confidence_rationale: confidence.rationale,
+        schema_version: "2.0",
         generated_at: new Date().toISOString(),
       },
       { onConflict: "case_id" },

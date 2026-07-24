@@ -322,9 +322,13 @@ export interface ScanAiRun {
   case_id: string;
   provider_id: string;
   model_id: string;
+  prompt_version: string | null;
   status: ScanAiRunStatus;
   output: Record<string, unknown> | null;
   safety_review: Record<string, unknown> | null;
+  // Deprecated numeric field (kept for audit/debug only) — see
+  // confidence_breakdown.confidenceLevel and ScanReport.confidence_level
+  // for the value actually surfaced to users. docs/DIAGNOSTIC_SCHEMA_V2.md.
   confidence: number | null;
   confidence_breakdown: Record<string, unknown> | null;
   input_tokens: number | null;
@@ -334,6 +338,9 @@ export interface ScanAiRun {
   completed_at: string | null;
 }
 
+export type ScanReportSchemaVersion = "1.0" | "2.0";
+export type ScanConfidenceLevel = "high" | "medium" | "low" | "insufficient_evidence";
+
 export interface ScanReport {
   id: string;
   case_id: string;
@@ -342,8 +349,14 @@ export interface ScanReport {
   recommended_tests: Record<string, unknown>[];
   safety_warnings: Record<string, unknown>[];
   missing_information: string[];
+  // Deprecated (schema_version "1.0" rows only) — never render directly;
+  // schema_version "2.0" rows populate confidence_level instead and this
+  // is kept only for audit/debug continuity. See
+  // docs/DIAGNOSTIC_SCHEMA_V2.md and docs/DIAGNOSTIC_MIGRATION_PLAN.md.
   confidence: number;
+  confidence_level: ScanConfidenceLevel | null;
   confidence_rationale: string[];
+  schema_version: ScanReportSchemaVersion;
   generated_at: string;
 }
 

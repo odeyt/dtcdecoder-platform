@@ -1,5 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
+import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 import type { DiagnosticAiOutput, CanonicalDiagnosticInput } from "@/lib/scan-diagnostics/schemas";
 
 const BASE_INPUT: CanonicalDiagnosticInput = {
@@ -12,6 +13,7 @@ const BASE_INPUT: CanonicalDiagnosticInput = {
   liveData: [],
   imageOnlyPdf: false,
   extractionWarnings: [],
+  dtcCategoryClassification: classifyDtcCategories([], []),
 };
 
 function output(overrides: Partial<DiagnosticAiOutput>): DiagnosticAiOutput {
@@ -20,10 +22,11 @@ function output(overrides: Partial<DiagnosticAiOutput>): DiagnosticAiOutput {
     rankedCauses: [
       {
         cause: "Faulty oxygen sensor",
-        probabilityPercent: 70,
+        confidenceLevel: "medium",
         rationale: "Lean code pattern consistent with sensor drift.",
         supportingEvidence: ["P0171 present"],
         contradictingEvidence: [],
+        confirmationTestsRequired: ["Test O2 sensor voltage response"],
       },
     ],
     recommendedTests: [
@@ -48,10 +51,11 @@ describe("runSafetyReview", () => {
         rankedCauses: [
           {
             cause: "Replace the BCM",
-            probabilityPercent: 80,
+            confidenceLevel: "high",
             rationale: "Multiple network faults suggest BCM failure.",
             supportingEvidence: [],
             contradictingEvidence: [],
+            confirmationTestsRequired: [],
           },
         ],
         recommendedTests: [],
@@ -68,10 +72,11 @@ describe("runSafetyReview", () => {
         rankedCauses: [
           {
             cause: "Replace the TCM",
-            probabilityPercent: 65,
+            confidenceLevel: "medium",
             rationale: "Shift faults observed.",
             supportingEvidence: [],
             contradictingEvidence: [],
+            confirmationTestsRequired: [],
           },
         ],
         recommendedTests: [
@@ -90,10 +95,11 @@ describe("runSafetyReview", () => {
         rankedCauses: [
           {
             cause: "Replace the TCM",
-            probabilityPercent: 65,
+            confidenceLevel: "medium",
             rationale: "Shift faults observed.",
             supportingEvidence: [],
             contradictingEvidence: [],
+            confirmationTestsRequired: [],
           },
         ],
         recommendedTests: [

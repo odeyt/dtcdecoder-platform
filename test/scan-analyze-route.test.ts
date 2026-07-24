@@ -19,7 +19,14 @@ function fake(): FakeSupabase {
 const VALID_OUTPUT: DiagnosticAiOutput = {
   summary: "Likely a vacuum leak.",
   rankedCauses: [
-    { cause: "Vacuum leak", probabilityPercent: 60, rationale: "P0171 lean code", supportingEvidence: [], contradictingEvidence: [] },
+    {
+      cause: "Vacuum leak",
+      confidenceLevel: "medium",
+      rationale: "P0171 lean code",
+      supportingEvidence: [],
+      contradictingEvidence: [],
+      confirmationTestsRequired: ["Smoke test"],
+    },
   ],
   recommendedTests: [{ step: "Smoke test", purpose: "Find leak", expectedResult: "Smoke visible at leak" }],
   safetyWarnings: [],
@@ -33,6 +40,7 @@ function fakeProvider(overrides: Partial<DiagnosticAIProviderResult> = {}): Diag
       return {
         providerId: "fake-provider",
         modelId: "fake-model",
+        promptVersion: "2026-07-safety-v2",
         output: VALID_OUTPUT,
         tokens: { input: 100, output: 200 },
         ...overrides,
@@ -46,6 +54,20 @@ function failingProvider(): DiagnosticAIProvider {
     id: "fake-provider",
     async runDiagnosis() {
       throw new Error("simulated provider outage");
+    },
+  };
+}
+
+function malformedJsonProvider(): DiagnosticAIProvider {
+  return {
+    id: "fake-provider",
+    async runDiagnosis() {
+      // Simulates AnthropicDiagnosticProvider's own AiResponseValidationError
+      // path (missing tool_use block, or a safeParse failure) — the
+      // orchestrator must handle this exactly like any other provider
+      // failure: no crash, case moves to "failed", usage isn't double-charged.
+      const { AiResponseValidationError } = await import("@/lib/scan-diagnostics/api-errors");
+      throw new AiResponseValidationError("Model did not return a structured tool call.");
     },
   };
 }
@@ -117,12 +139,14 @@ describe("runScanAnalysis", () => {
     const result = await runScanAnalysis("user-1", "case-1", "free", fakeProvider());
 
     expect(result.case.status).toBe("completed");
-    expect(result.report.confidence).toBeGreaterThan(0);
+    expect(["high", "medium", "low", "insufficient_evidence"]).toContain(result.report.confidence_level);
+    expect(result.report.schema_version).toBe("2.0");
     expect(result.report.ranked_causes).toHaveLength(1);
 
     const runs = fake().dump("scan_ai_runs");
     expect(runs).toHaveLength(1);
     expect(runs[0].status).toBe("completed");
+    expect(runs[0].prompt_version).toBe("2026-07-safety-v2");
   });
 
   it("provider failure: case ends up failed, and a retry does not double-charge usage", async () => {
@@ -145,6 +169,26 @@ describe("runScanAnalysis", () => {
 
     const usageRows = fake().dump("scan_usage");
     expect(usageRows.filter((r) => r.case_id === "case-2")).toHaveLength(1);
+  });
+
+  it("malformed AI structured output: handled safely, no crash, case fails with a controlled error", async () => {
+    seedCase("case-malformed", "user-1");
+
+    let caught: unknown;
+    try {
+      await runScanAnalysis("user-1", "case-malformed", "free", malformedJsonProvider());
+    } catch (err) {
+      caught = err;
+    }
+
+    expect(caught).toBeInstanceOf(Error);
+    const { ScanAnalysisFailedError } = await import("@/lib/scan-diagnostics/api-errors");
+    expect(caught).toBeInstanceOf(ScanAnalysisFailedError);
+    expect((caught as InstanceType<typeof ScanAnalysisFailedError>).code).toBe("AI_RESPONSE_VALIDATION_FAILED");
+    expect((caught as InstanceType<typeof ScanAnalysisFailedError>).retryable).toBe(true);
+
+    const caseAfter = fake().dump("scan_cases").find((c) => c.id === "case-malformed");
+    expect(caseAfter?.status).toBe("failed");
   });
 
   it("usage limit exceeded: case stays ready_for_analysis and no AI run is created", async () => {

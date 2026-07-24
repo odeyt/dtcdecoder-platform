@@ -1,12 +1,22 @@
 import { ResultSection } from "@/components/ResultSection";
+import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
+import { CONFIDENCE_LABEL, isLegacyReport, resolveConfidenceLabel } from "@/lib/scan-diagnostics/report-presentation";
+import type { DtcCategory } from "@/lib/scan-diagnostics/schemas";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport } from "@/lib/types";
 
+// Confidence/rank fields are all OPTIONAL here on purpose: a schema_version
+// "1.0" report row (written before Diagnostic Safety v2) has neither
+// confidenceLevel nor confirmationTestsRequired — only the deprecated
+// numeric probabilityPercent. Legacy rows must still render without
+// crashing; they just never display a fabricated or reinterpreted number.
+// See docs/DIAGNOSTIC_SCHEMA_V2.md.
 interface RankedCause {
   cause: string;
-  probabilityPercent: number;
+  confidenceLevel?: "high" | "medium" | "low" | "insufficient_evidence";
   rationale: string;
   supportingEvidence: string[];
   contradictingEvidence: string[];
+  confirmationTestsRequired?: string[];
 }
 
 interface RecommendedTest {
@@ -28,38 +38,93 @@ interface ScanReportViewProps {
   report: ScanReport;
 }
 
+const CONFIDENCE_COLOR: Record<string, string> = {
+  high: "var(--severity-low)",
+  medium: "var(--accent-amber)",
+  low: "var(--severity-high)",
+  insufficient_evidence: "var(--text-muted)",
+};
+
+function ConfidenceBadge({ level }: { level?: string | null }) {
+  const label = resolveConfidenceLabel(level);
+  const isEstablished = level && CONFIDENCE_LABEL[level];
+  return (
+    <span
+      aria-label={`Diagnostic confidence: ${label}`}
+      className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+      style={{
+        borderColor: isEstablished ? CONFIDENCE_COLOR[level as string] : "var(--border-subtle)",
+        color: isEstablished ? CONFIDENCE_COLOR[level as string] : "var(--text-muted)",
+      }}
+    >
+      {label.toUpperCase()}
+    </span>
+  );
+}
+
+function CategoryBadge({ label, category }: { label: string; category: DtcCategory }) {
+  const found = category.status === "found";
+  const noneReported = category.status === "none_reported";
+  return (
+    <div className="glass-panel flex flex-col gap-1 rounded-[var(--radius-lg)] p-4">
+      <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
+      <p
+        className="font-mono text-[10px] uppercase tracking-wide"
+        style={{ color: found ? "var(--accent-red)" : "var(--text-muted)" }}
+      >
+        {found ? "Found" : noneReported ? "None reported" : "Not stated in report"}
+      </p>
+      {found && category.codes.length > 0 && (
+        <p className="font-mono text-xs text-[var(--text-secondary)]">{category.codes.join(", ")}</p>
+      )}
+    </div>
+  );
+}
+
 // AI-generated content is always visually distinguished from extracted/
 // user-entered data (the section headers below make this explicit) and is
-// never presented as OEM service information — see docs/SCAN_REPORT_ANALYSIS.md.
+// never presented as OEM service information — see docs/SCAN_REPORT_ANALYSIS.md
+// and docs/DIAGNOSTIC_SAFETY_RULES.md.
 export function ScanReportView({ scanCase, extraction, dtcRecords, report }: ScanReportViewProps) {
   const rankedCauses = report.ranked_causes as unknown as RankedCause[];
   const recommendedTests = report.recommended_tests as unknown as RecommendedTest[];
   const safetyFindings = report.safety_warnings as unknown as SafetyFinding[];
+  const categories = classifyDtcCategories(dtcRecords, extraction?.modules ?? []);
+  const legacyReport = isLegacyReport(report);
 
   return (
     <div className="flex flex-col gap-10 print:gap-6">
       <header className="print:hidden">
         <p className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">Diagnostic report</p>
-        <div className="mt-2 flex items-center gap-3">
+        <div className="mt-2 flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-[var(--border-subtle)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
             AI-generated — not OEM service information
           </span>
         </div>
+        <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">
+          These findings are AI-assisted evidence review, not a confirmed diagnosis. They do not replace OEM service
+          information or a qualified technician&apos;s in-person verification.
+        </p>
       </header>
 
       <ResultSection title="Vehicle information">
         <div className="glass-panel grid gap-2 rounded-[var(--radius-lg)] p-5 text-sm text-[var(--text-secondary)] sm:grid-cols-2">
-          <p>VIN: <span className="text-[var(--text-primary)]">{extraction?.vin ?? "not provided"}</span></p>
+          <p>VIN: <span className="text-[var(--text-primary)]">{extraction?.vin ?? "Not provided in report"}</span></p>
           <p>
             Vehicle:{" "}
             <span className="text-[var(--text-primary)]">
-              {extraction?.model_year ?? "?"} {extraction?.make ?? ""} {extraction?.model ?? ""}
+              {extraction?.model_year && extraction?.make && extraction?.model
+                ? `${extraction.model_year} ${extraction.make} ${extraction.model}`
+                : "Not provided in report"}
             </span>
           </p>
-          {extraction?.engine && <p>Engine: <span className="text-[var(--text-primary)]">{extraction.engine}</span></p>}
-          {extraction?.odometer_miles && (
-            <p>Mileage: <span className="text-[var(--text-primary)]">{extraction.odometer_miles.toLocaleString()}</span></p>
-          )}
+          <p>Engine: <span className="text-[var(--text-primary)]">{extraction?.engine ?? "Not provided in report"}</span></p>
+          <p>
+            Mileage:{" "}
+            <span className="text-[var(--text-primary)]">
+              {extraction?.odometer_miles ? extraction.odometer_miles.toLocaleString() : "Not provided in report"}
+            </span>
+          </p>
         </div>
       </ResultSection>
 
@@ -70,7 +135,21 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
         )}
       </ResultSection>
 
-      <ResultSection title="DTCs found">
+      <ResultSection title="Fault code categories">
+        <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+          <CategoryBadge label="Pending codes" category={categories.pendingCodes} />
+          <CategoryBadge label="Permanent codes" category={categories.permanentCodes} />
+          <CategoryBadge label="Network faults" category={categories.networkFaults} />
+          <CategoryBadge label="Lost-communication faults" category={categories.lostCommunicationFaults} />
+          <CategoryBadge label="Battery-related faults" category={categories.batteryRelatedFaults} />
+        </div>
+        <p className="mt-2 text-xs text-[var(--text-muted)]">
+          &ldquo;Not stated in report&rdquo; means the source report gave no evidence either way — it is not the same
+          as the report confirming zero findings in that category.
+        </p>
+      </ResultSection>
+
+      <ResultSection title="DTCs recorded for this case">
         <div className="flex flex-wrap gap-2">
           {dtcRecords.map((dtc) => (
             <span
@@ -81,24 +160,27 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
               {dtc.module ? ` (${dtc.module})` : ""}
             </span>
           ))}
-          {dtcRecords.length === 0 && <p className="text-sm text-[var(--text-muted)]">None</p>}
+          {dtcRecords.length === 0 && (
+            <p className="text-sm text-[var(--text-muted)]">No DTC records for this case.</p>
+          )}
         </div>
       </ResultSection>
 
-      <ResultSection title="Ranked root causes (AI-generated)">
+      <ResultSection title="Components or systems requiring testing (AI-generated, not confirmed)">
         <div className="flex flex-col gap-4">
           {rankedCauses.map((cause, i) => (
             <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
-              <div className="flex items-start gap-3">
+              <div className="flex flex-wrap items-center gap-2">
                 <span
-                  className="mt-0.5 shrink-0 rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+                  className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
                   style={{
                     borderColor: i === 0 ? "var(--accent-red)" : "var(--border-subtle)",
                     color: i === 0 ? "var(--accent-red)" : "var(--text-muted)",
                   }}
                 >
-                  {i === 0 ? "MOST LIKELY" : `#${i + 1}`} · {cause.probabilityPercent}%
+                  {i === 0 ? "TOP CANDIDATE" : `CANDIDATE #${i + 1}`}
                 </span>
+                <ConfidenceBadge level={cause.confidenceLevel} />
               </div>
               <p className="mt-2 font-semibold text-[var(--text-primary)]">{cause.cause}</p>
               <p className="mt-1 text-sm text-[var(--text-secondary)]">{cause.rationale}</p>
@@ -114,12 +196,18 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
                   {cause.contradictingEvidence.join("; ")}
                 </div>
               )}
+              <div className="mt-2 text-xs text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text-primary)]">Required before replacing anything: </span>
+                {cause.confirmationTestsRequired && cause.confirmationTestsRequired.length > 0
+                  ? cause.confirmationTestsRequired.join("; ")
+                  : "Not established for this legacy result — see recommended test sequence below."}
+              </div>
             </div>
           ))}
         </div>
       </ResultSection>
 
-      <ResultSection title="Recommended test sequence (AI-generated)">
+      <ResultSection title="Recommended confirmation test sequence (AI-generated)">
         <ol className="flex flex-col gap-3">
           {recommendedTests.map((test, i) => (
             <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
@@ -163,14 +251,29 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
         </ResultSection>
       )}
 
-      <ResultSection title="Confidence">
+      <ResultSection title="Diagnostic confidence">
         <div className="glass-panel rounded-[var(--radius-lg)] p-5">
-          <p className="text-2xl font-bold text-[var(--text-primary)]">{report.confidence}%</p>
-          <ul className="mt-3 flex flex-col gap-1 text-xs text-[var(--text-secondary)]">
-            {report.confidence_rationale.map((r, i) => (
-              <li key={i}>{r}</li>
-            ))}
-          </ul>
+          {legacyReport ? (
+            <>
+              <p className="text-lg font-bold text-[var(--text-muted)]">Not established</p>
+              <p className="mt-2 text-xs text-[var(--text-secondary)]">
+                This report was generated before categorical confidence levels were introduced. Numerical confidence
+                is not shown because the available evidence at the time did not support a calibrated probability, and
+                the original number is not reinterpreted here as a level.
+              </p>
+            </>
+          ) : (
+            <>
+              <ConfidenceBadge level={report.confidence_level ?? undefined} />
+              <ul className="mt-3 flex flex-col gap-1 text-xs text-[var(--text-secondary)]">
+                {report.confidence_rationale
+                  .filter((r) => !/^Internal score/.test(r))
+                  .map((r, i) => (
+                    <li key={i}>{r}</li>
+                  ))}
+              </ul>
+            </>
+          )}
         </div>
       </ResultSection>
 

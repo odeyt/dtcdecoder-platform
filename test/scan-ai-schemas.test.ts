@@ -1,15 +1,17 @@
 import { describe, expect, it } from "vitest";
 import { DiagnosticAiOutputSchema, CanonicalDiagnosticInputSchema } from "@/lib/scan-diagnostics/schemas";
+import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 
 const VALID_OUTPUT = {
   summary: "Likely a vacuum leak causing a lean condition.",
   rankedCauses: [
     {
       cause: "Vacuum leak at intake manifold gasket",
-      probabilityPercent: 60,
+      confidenceLevel: "medium",
       rationale: "P0171 lean code with rough idle matches a common vacuum leak pattern.",
       supportingEvidence: ["P0171 present", "Rough idle reported"],
       contradictingEvidence: [],
+      confirmationTestsRequired: ["Smoke test intake system"],
     },
   ],
   recommendedTests: [
@@ -34,12 +36,38 @@ describe("DiagnosticAiOutputSchema", () => {
     expect(DiagnosticAiOutputSchema.safeParse({ ...VALID_OUTPUT, rankedCauses: [] }).success).toBe(false);
   });
 
-  it("rejects a probabilityPercent outside 0-100", () => {
+  it("rejects a numerical probabilityPercent field — confidenceLevel is the only accepted shape", () => {
     const invalid = {
       ...VALID_OUTPUT,
-      rankedCauses: [{ ...VALID_OUTPUT.rankedCauses[0], probabilityPercent: 150 }],
+      rankedCauses: [
+        {
+          cause: "Vacuum leak at intake manifold gasket",
+          probabilityPercent: 60,
+          rationale: "r",
+          supportingEvidence: [],
+          contradictingEvidence: [],
+        },
+      ],
     };
     expect(DiagnosticAiOutputSchema.safeParse(invalid).success).toBe(false);
+  });
+
+  it("rejects an invalid confidenceLevel value (not one of the four fixed labels)", () => {
+    const invalid = {
+      ...VALID_OUTPUT,
+      rankedCauses: [{ ...VALID_OUTPUT.rankedCauses[0], confidenceLevel: "very high" }],
+    };
+    expect(DiagnosticAiOutputSchema.safeParse(invalid).success).toBe(false);
+  });
+
+  it("accepts every one of the four fixed confidence levels", () => {
+    for (const level of ["high", "medium", "low", "insufficient_evidence"]) {
+      const candidate = {
+        ...VALID_OUTPUT,
+        rankedCauses: [{ ...VALID_OUTPUT.rankedCauses[0], confidenceLevel: level }],
+      };
+      expect(DiagnosticAiOutputSchema.safeParse(candidate).success).toBe(true);
+    }
   });
 
   it("rejects a plain-text-only response shape", () => {
@@ -61,6 +89,7 @@ describe("CanonicalDiagnosticInputSchema", () => {
       liveData: [],
       imageOnlyPdf: false,
       extractionWarnings: [],
+      dtcCategoryClassification: classifyDtcCategories([], []),
     };
     expect(CanonicalDiagnosticInputSchema.safeParse(minimal).success).toBe(true);
   });
@@ -72,6 +101,22 @@ describe("CanonicalDiagnosticInputSchema", () => {
       symptoms: [],
       modules: [],
       dtcs: [{ module: "ECM" }],
+      freezeFrame: [],
+      liveData: [],
+      imageOnlyPdf: false,
+      extractionWarnings: [],
+      dtcCategoryClassification: classifyDtcCategories([], []),
+    };
+    expect(CanonicalDiagnosticInputSchema.safeParse(invalid).success).toBe(false);
+  });
+
+  it("rejects an input missing the dtcCategoryClassification field entirely", () => {
+    const invalid = {
+      caseId: "case-1",
+      vehicle: {},
+      symptoms: [],
+      modules: [],
+      dtcs: [],
       freezeFrame: [],
       liveData: [],
       imageOnlyPdf: false,

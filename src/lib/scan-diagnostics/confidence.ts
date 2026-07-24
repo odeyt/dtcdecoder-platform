@@ -1,11 +1,19 @@
 // Deterministic, documented confidence scoring — deliberately NOT a number
 // the AI model itself picks. Combines model agreement (inert today since
 // there's only one provider, but written to extend), evidence
-// completeness, and the safety-review outcome into one headline number,
+// completeness, and the safety-review outcome into an internal score,
 // while keeping every contributing factor visible in `rationale` so the
-// report can explain *why* the score is what it is rather than just
-// showing a bare percentage.
-import type { CanonicalDiagnosticInput } from "@/lib/scan-diagnostics/schemas";
+// report can explain *why* the level is what it is.
+//
+// The internal numeric score (`internalScore`) is a validated deterministic
+// calculation with fully documented evidence inputs — it is NOT hidden, but
+// it is also never the primary thing shown to a user. `confidenceLevel`
+// (high/medium/low/insufficient_evidence), banded from that score, is what
+// the UI and API surface as the headline value — see
+// docs/DIAGNOSTIC_SCHEMA_V2.md and docs/DIAGNOSTIC_SAFETY_RULES.md for why
+// a bare percentage is never presented as a calibrated real-world
+// probability.
+import type { CanonicalDiagnosticInput, ConfidenceLevel } from "@/lib/scan-diagnostics/schemas";
 import type { DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
 import type { SafetyReviewResult } from "@/lib/scan-diagnostics/safety-rules";
 
@@ -14,8 +22,24 @@ const MAX_CONFIDENCE = 95;
 const MAX_MISSING_INFO_DEDUCTION = 20;
 const PER_MISSING_INFO_DEDUCTION = 5;
 
+// Banding thresholds — deliberately conservative: a single AI opinion with
+// nothing missing lands at "medium" (70), not "high", since "high" is
+// reserved for either independently-corroborated multi-provider agreement
+// or a near-complete evidence set with no safety concerns.
+const HIGH_THRESHOLD = 75;
+const MEDIUM_THRESHOLD = 50;
+const LOW_THRESHOLD = 30;
+
+function bandConfidence(score: number): ConfidenceLevel {
+  if (score >= HIGH_THRESHOLD) return "high";
+  if (score >= MEDIUM_THRESHOLD) return "medium";
+  if (score >= LOW_THRESHOLD) return "low";
+  return "insufficient_evidence";
+}
+
 export interface ConfidenceResult {
-  confidence: number;
+  confidenceLevel: ConfidenceLevel;
+  internalScore: number;
   rationale: string[];
 }
 
@@ -91,5 +115,8 @@ export function computeConfidence(
     rationale.push(`Clamped to the ${MIN_CONFIDENCE}-${MAX_CONFIDENCE} range (never claims full certainty or total failure).`);
   }
 
-  return { confidence: clamped, rationale };
+  const confidenceLevel = bandConfidence(clamped);
+  rationale.push(`Internal score ${clamped}/100 maps to confidence level "${confidenceLevel}".`);
+
+  return { confidenceLevel, internalScore: clamped, rationale };
 }
