@@ -1,6 +1,6 @@
 # Production Verification — Diagnostic Safety v2
 
-Status as of this writing: **preview build verified, migration `0015` applied and verified against the real (shared) Supabase database, production code deployment NOT yet authorized.** This document will be updated once the remaining items below are completed and production deployment is explicitly authorized.
+Status as of this writing: **deployed to production.** `feature/diagnostic-safety-v2` was merged into `main` and pushed, triggering an automatic Production build that completed successfully and is now live on `dtcdecoder.com`.
 
 ## 1. Local verification (completed)
 
@@ -47,13 +47,17 @@ Between the migration landing and the *code* being merged to `main`, production 
 
 This turns out to be harmless by construction: `isLegacyReport()` (`report-presentation.ts`) checks `schema_version === "1.0" || !confidence_level` — old code never sets `confidence_level` either, so the second condition catches it regardless of what `schema_version` ends up being. The UI would still correctly render "Not established" rather than misrepresenting old data as calibrated v2 output. Moot in any case here, since `scan_reports` is confirmed empty — no such row was ever created.
 
-## 5. What's still needed before production code deployment
+## 5. Production deployment
 
-1. **Merge `feature/diagnostic-safety-v2` into `main`** (the database is now ready for it — this was the blocking dependency).
-2. A live run through production of: upload a synthetic scan report → extract → review → analyze → view the report (confirm categorical badges render, no `%` appears, "Fault code categories" shows `not_stated` correctly) → submit feedback.
-3. Mobile-viewport check of the report page.
-4. Confirm the usage counter increments exactly once even if `/analyze` is retried after a failure (already covered by unit tests; a live confirmation would corroborate it against the real ledger).
+| Field | Value |
+|---|---|
+| Merge | `feature/diagnostic-safety-v2` → `main`, fast-forward, no conflicts |
+| Commit | `46c41fe` (`main` and the feature branch tip are identical) |
+| Trigger | Push to `origin/main` auto-triggered a Production build via Vercel's GitHub integration |
+| Build | ✅ Ready — `https://dtcdecoder-2ea66gv4v-redlined1-s-projects.vercel.app` |
+| Domain aliasing | Confirmed: `dtcdecoder.com`, `www.dtcdecoder.com`, `dtcdecoder.vercel.app` all point at this new deployment |
+| Smoke test | Homepage loads correctly, no console errors. `/diagnostics` correctly redirects an unauthenticated visitor to sign-in (not a 500, not an open page) |
 
-## 6. Production deployment status
+## 6. Remaining item: a real, signed-in, end-to-end run
 
-**Code not yet merged or deployed.** Database migration is complete and verified. Per Phase 9's explicit instruction and this session's established practice, merging to `main` (which auto-deploys to production) remains a separate, deliberate step — waiting on your go-ahead.
+Everything above confirms the deployment is healthy and nothing crashed. What hasn't been done yet — and requires a **signed-in real account**, which this automated pass doesn't have — is an actual upload → extract → review → analyze → report cycle confirming: categorical badges render (no `%` anywhere), the "Fault code categories" section shows the right found/not_stated states for a real report, mobile layout holds up, and the usage counter behaves correctly on a retry. This is the one item left for you (or a follow-up session with real credentials) to confirm directly against production.
