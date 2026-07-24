@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "Buscar Código DTC",
-    "aiDiagnostic": "Diagnóstico IA",
+    "aiDiagnostic": "Asistente DTC",
     "scanDiagnostics": "Análisis de Reporte de Escaneo",
     "repairLibrary": "Biblioteca de Reparación",
     "history": "Historial",
@@ -35,9 +35,17 @@
     "trustLine": "Diagnósticos asistidos por IA basados en datos de referencia verificados · Las búsquedas con sesión iniciada se guardan en tu historial",
     "eyebrow": "DIAGNÓSTICO VEHICULAR CON IA",
     "headline": "Entiende lo que tu vehículo te está diciendo.",
-    "subheadline": "Decodifica códigos de falla, evalúa las causas probables y sigue un proceso de diagnóstico más seguro antes de reemplazar piezas."
+    "subheadline": "Decodifica códigos de falla, evalúa las causas probables y sigue un proceso de diagnóstico más seguro antes de reemplazar piezas.",
+    "searching": "Buscando…"
   },
   "home": {
+    "valuePropsHeading": "Diseñado para cómo trabajan realmente los técnicos",
+    "valueProp1Title": "Resultados instantáneos",
+    "valueProp1Body": "Obtén un desglose diagnóstico estructurado en segundos — sin esperar en espera ni buscar en foros.",
+    "valueProp2Title": "Basado en datos verificados",
+    "valueProp2Body": "Cada búsqueda se verifica contra una base de datos de referencia curada antes de aplicar el razonamiento de IA.",
+    "valueProp3Title": "Seguridad ante todo",
+    "valueProp3Body": "Las recomendaciones indican las pruebas necesarias antes de reemplazar una pieza — nunca al revés.",
     "pdfHeading": "¿Necesitas el flujo de trabajo de reparación profesional completo?",
     "pdfBody": "Descarga el PDF de Diagnóstico Maestro completo con revisiones de cableado, datos del escáner, pasos de prueba y guía de reparación.",
     "getRepairPdf": "Obtener PDF de Reparación",

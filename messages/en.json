@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "DTC Lookup",
-    "aiDiagnostic": "AI Diagnostic",
+    "aiDiagnostic": "DTC Assistant",
     "scanDiagnostics": "Scan Report Analysis",
     "repairLibrary": "Repair Library",
     "history": "History",
@@ -35,9 +35,17 @@
     "trustLine": "AI-assisted diagnostics grounded in verified reference data · Signed-in searches are saved to your history",
     "eyebrow": "AI-POWERED VEHICLE DIAGNOSTICS",
     "headline": "Understand what your vehicle is telling you.",
-    "subheadline": "Decode trouble codes, assess likely causes, and follow a safer diagnostic path before replacing parts."
+    "subheadline": "Decode trouble codes, assess likely causes, and follow a safer diagnostic path before replacing parts.",
+    "searching": "Searching…"
   },
   "home": {
+    "valuePropsHeading": "Built for how technicians actually work",
+    "valueProp1Title": "Instant results",
+    "valueProp1Body": "Get a structured diagnostic breakdown in seconds — no waiting on hold or digging through forums.",
+    "valueProp2Title": "Grounded in verified data",
+    "valueProp2Body": "Every lookup is checked against a curated reference database before AI reasoning is layered on top.",
+    "valueProp3Title": "Safety-first guidance",
+    "valueProp3Body": "Recommendations flag the tests you need before replacing a part — never the other way around.",
     "pdfHeading": "Need the complete professional repair workflow?",
     "pdfBody": "Download the full Master Diagnostic PDF with wiring checks, scan tool data, testing steps, and repair direction.",
     "getRepairPdf": "Get Repair PDF",

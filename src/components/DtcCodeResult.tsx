@@ -108,9 +108,18 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             href={dtc.pdf_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="rounded-[var(--radius-lg)] border border-[var(--border-red)] bg-[var(--surface-burgundy)] p-5 text-center font-semibold text-[var(--text-primary)] transition hover:brightness-110"
+            className="hover-lift flex items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-red)] bg-[var(--surface-burgundy)] p-5 text-center font-semibold text-[var(--text-primary)]"
             style={{ boxShadow: "var(--shadow-accent)" }}
           >
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path
+                d="M12 3v12m0 0 4-4m-4 4-4-4M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2"
+                stroke="currentColor"
+                strokeWidth="2"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
             {t("getRepairPdf")}
           </a>
         )}
@@ -119,8 +128,11 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             href={dtc.youtube_url}
             target="_blank"
             rel="noopener noreferrer"
-            className="glass-panel rounded-[var(--radius-lg)] p-5 text-center font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
+            className="hover-lift glass-panel flex items-center justify-center gap-2 rounded-[var(--radius-lg)] p-5 text-center font-semibold text-[var(--text-primary)]"
           >
+            <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none">
+              <path d="M8 5v14l11-7z" fill="currentColor" />
+            </svg>
             {t("watchWalkthrough")}
           </a>
         )}
@@ -131,7 +143,7 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
         <ResultSection title={t("faq")}>
           <div className="space-y-3">
             {dtc.faq.map((entry, i) => (
-              <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
+              <div key={i} className="hover-lift glass-panel rounded-[var(--radius-lg)] p-4">
                 <p className="font-medium text-[var(--text-primary)]">{entry.q}</p>
                 <p className="mt-1 text-sm text-[var(--text-secondary)]">{entry.a}</p>
               </div>

@@ -168,3 +168,43 @@ body {
   font-size: 0.875em;
   font-family: var(--font-mono);
 }
+
+/* Reusable hover-lift for cards/tiles — subtle, deliberate motion using the
+   existing motion tokens, not a generic "everything bounces" effect. */
+.hover-lift {
+  transition:
+    transform var(--motion-base) var(--motion-ease),
+    border-color var(--motion-base) var(--motion-ease),
+    box-shadow var(--motion-base) var(--motion-ease);
+}
+.hover-lift:hover {
+  transform: translateY(-2px);
+  border-color: var(--border-red);
+  box-shadow: var(--shadow-accent);
+}
+
+/* Honest, indeterminate spinner — used only while a real request/navigation
+   is actually in flight (see HeroSearch), never as decoration. */
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.spinner {
+  animation: spin 0.7s linear infinite;
+}
+
+/* Gentle entrance for above-the-fold sections on first paint. */
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-in-up {
+  animation: fade-in-up var(--motion-slow) var(--motion-ease) both;
+}
