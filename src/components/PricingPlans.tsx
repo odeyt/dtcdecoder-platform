@@ -12,6 +12,14 @@ import {
   type BillingInterval,
 } from "@/lib/pricing";
 
+// Report-count allowances and prices come from src/lib/pricing.ts
+// (AI_DIAGNOSTIC_ENTITLEMENTS / PAID_PLANS) — the numbers below are spelled
+// out as static copy rather than interpolated from a raw limit field
+// because the spec explicitly requires customer-facing copy to read as
+// "30 full AI diagnostic reports/month," never a bare number pulled
+// mechanically from internal config (which is how the old token-count
+// bullets worked, and exactly what's being replaced here).
+
 export function PricingPlans({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("pricing");
   const [interval, setInterval] = useState<BillingInterval>("yearly");
@@ -50,6 +58,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
             <li>{t("freeBullet2")}</li>
             <li>{t("freeBullet3")}</li>
             <li>{t("freeBullet4")}</li>
+            <li>{t("freeBullet5")}</li>
           </ul>
           <Link
             href={signedIn ? "/dtc" : "/account/login"}
@@ -65,10 +74,13 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
           interval={interval}
           highlighted
           bullets={[
-            t("proBulletTokens", { tokens: PAID_PLANS.pro.monthlyTokenLimit.toLocaleString() }),
+            t("proBullet1"),
             t("proBullet2"),
             t("proBullet3"),
             t("proBullet4"),
+            t("proBullet5"),
+            t("proBullet6"),
+            t("proBullet7"),
           ]}
           buttonLabel={t("upgradeToPro")}
           signedIn={signedIn}
@@ -79,11 +91,12 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
           title={t("planWorkshop")}
           interval={interval}
           bullets={[
-            t("workshopBulletTokens", { tokens: PAID_PLANS.workshop.monthlyTokenLimit.toLocaleString() }),
+            t("workshopBullet1"),
             t("workshopBullet2"),
             t("workshopBullet3"),
             t("workshopBullet4"),
             t("workshopBullet5"),
+            t("workshopBullet6"),
           ]}
           buttonLabel={t("workshopAccess")}
           signedIn={signedIn}

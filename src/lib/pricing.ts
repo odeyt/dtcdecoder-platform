@@ -1,6 +1,9 @@
-// Single source of truth for plan pricing, token limits, and the yearly
-// discount — used by both the pricing page UI and the checkout/rate-limit
-// server logic, so the displayed price and the actual charge never drift.
+// Single source of truth for plan pricing, AI diagnostic entitlements, and
+// the yearly discount — used by both the pricing page UI and the
+// checkout/entitlement server logic, so the displayed price/limits and the
+// actual enforcement never drift.
+
+import type { SubscriptionPlan } from "@/lib/types";
 
 export type BillingInterval = "monthly" | "yearly";
 
@@ -10,16 +13,10 @@ export const PAID_PLANS = {
   pro: {
     label: "Pro Technician",
     monthlyPriceUsd: 19,
-    // Monthly token budgets are a deliberate safety valve, not a hard "fair
-    // use" promise advertised to the customer — generous enough that no
-    // real technician hits it in normal use, bounded enough that a script
-    // hammering the endpoint can't run up unbounded Claude API spend.
-    monthlyTokenLimit: 500_000,
   },
   workshop: {
     label: "Workshop",
     monthlyPriceUsd: 49,
-    monthlyTokenLimit: 2_000_000,
   },
 } as const;
 
@@ -34,12 +31,63 @@ export function effectiveMonthlyPriceUsd(plan: PaidPlan, interval: BillingInterv
   return yearlyPriceUsd(plan) / 12;
 }
 
-// Diagnostic Scan Report Analysis entitlement limits. A separate map from
-// PAID_PLANS because the free plan needs a limit here too (PAID_PLANS only
-// covers pro/workshop pricing). See src/lib/scan-diagnostics/entitlements.ts
-// for the functions that read this.
-export const SCAN_DIAGNOSTIC_LIMITS = {
-  free: { monthlyAnalyses: 2, fullExport: false, feedbackHistory: false },
-  pro: { monthlyAnalyses: 25, fullExport: true, feedbackHistory: false },
-  workshop: { monthlyAnalyses: 100, fullExport: true, feedbackHistory: true },
-} as const;
+// Canonical AI-diagnostic entitlement shape shared by both AI features
+// ("DTC Assistant" chat and "Scan Report Analysis"). This is the ONLY
+// registry of AI usage limits in the codebase — pricing UI, account page,
+// server-side usage enforcement (src/lib/ai-diagnostics/*), and both
+// features' entitlement wrappers all read this, so a limit changed here is
+// changed everywhere at once.
+//
+// - aiDiagnosticPreviewDailyLimit: free-tier redacted previews per day.
+//   `null` on paid plans (they don't consume the preview counter at all —
+//   they get full reports instead, gated below).
+// - fullDiagnosticMonthlyLimit / fullDiagnosticDailyLimit: paid-tier full
+//   (unredacted) AI diagnostic reports. Free is 0/0 — free never gets a
+//   full report, only previews.
+// - technicianSeatLimit / sharedCases: Workshop's multi-seat entitlement is
+//   modeled here for pricing/display honesty, but no invite or shared-login
+//   mechanism is implemented yet — see docs/PRICING_AND_ENTITLEMENTS.md.
+// - prioritySupport: only ever true once the business actually provides it.
+export interface AiDiagnosticEntitlements {
+  basicDtcLookup: boolean;
+  aiDiagnosticPreviewDailyLimit: number | null;
+  fullDiagnosticMonthlyLimit: number;
+  fullDiagnosticDailyLimit: number;
+  technicianSeatLimit: number;
+  pdfExport: boolean;
+  sharedCases: boolean;
+  prioritySupport: boolean;
+}
+
+export const AI_DIAGNOSTIC_ENTITLEMENTS: Record<SubscriptionPlan, AiDiagnosticEntitlements> = {
+  free: {
+    basicDtcLookup: true,
+    aiDiagnosticPreviewDailyLimit: 2,
+    fullDiagnosticMonthlyLimit: 0,
+    fullDiagnosticDailyLimit: 0,
+    technicianSeatLimit: 1,
+    pdfExport: false,
+    sharedCases: false,
+    prioritySupport: false,
+  },
+  pro: {
+    basicDtcLookup: true,
+    aiDiagnosticPreviewDailyLimit: null,
+    fullDiagnosticMonthlyLimit: 30,
+    fullDiagnosticDailyLimit: 5,
+    technicianSeatLimit: 1,
+    pdfExport: true,
+    sharedCases: false,
+    prioritySupport: false,
+  },
+  workshop: {
+    basicDtcLookup: true,
+    aiDiagnosticPreviewDailyLimit: null,
+    fullDiagnosticMonthlyLimit: 120,
+    fullDiagnosticDailyLimit: 15,
+    technicianSeatLimit: 3,
+    pdfExport: true,
+    sharedCases: false,
+    prioritySupport: false,
+  },
+};

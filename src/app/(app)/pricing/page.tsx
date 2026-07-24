@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
-import { getUsageSummary } from "@/lib/ai/assistant";
+import { getAiDiagnosticUsageSummary, toLegacyUsageSummary } from "@/lib/ai-diagnostics/usage";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { PricingPlans } from "@/components/PricingPlans";
 import { UsageMeter } from "@/components/UsageMeter";
@@ -26,7 +26,8 @@ export default async function PricingPage() {
   const signedIn = Boolean(user);
 
   const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : null;
-  const usage = user && plan ? await getUsageSummary(user.id, plan) : null;
+  const usage =
+    user && plan ? toLegacyUsageSummary(await getAiDiagnosticUsageSummary(user.id, plan)) : null;
 
   const locale = await resolveAppShellLocale();
   const messages = await getAppShellMessages(locale);

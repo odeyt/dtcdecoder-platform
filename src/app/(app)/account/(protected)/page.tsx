@@ -3,7 +3,7 @@ import { NextIntlClientProvider } from "next-intl";
 import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
-import { getUsageSummary } from "@/lib/ai/assistant";
+import { getAiDiagnosticUsageSummary, toLegacyUsageSummary } from "@/lib/ai-diagnostics/usage";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { UsageMeter } from "@/components/UsageMeter";
 import { UpgradeCard } from "@/components/UpgradeCard";
@@ -17,7 +17,7 @@ export default async function AccountPage() {
   // Layout above already redirects if there's no user, so this is just
   // satisfying the type — user is guaranteed here at runtime.
   const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
-  const usage = user ? await getUsageSummary(user.id, plan) : null;
+  const usage = user ? toLegacyUsageSummary(await getAiDiagnosticUsageSummary(user.id, plan)) : null;
   const nearLimit = usage ? usage.used / usage.limit >= 0.8 : false;
 
   const locale = await resolveAppShellLocale();

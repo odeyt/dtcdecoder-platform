@@ -4,10 +4,18 @@ import { useRef, useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
+import { LockedResultPanel } from "@/components/LockedResultCard";
+import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
+import type { SubscriptionPlan } from "@/lib/types";
 
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
+  // Free-tier responses are generated preview-scoped from the start (see
+  // src/lib/ai/assistant.ts) — this just tells the UI whether to show the
+  // static locked-sections panel below this bubble, never a data source in
+  // itself.
+  isPreview?: boolean;
 }
 
 const EXAMPLES = [
@@ -25,9 +33,11 @@ interface OutputLocaleOption {
 
 export function AiAssistantChat({
   signedIn,
+  plan,
   outputLocaleOptions = [],
 }: {
   signedIn: boolean;
+  plan: SubscriptionPlan;
   outputLocaleOptions?: OutputLocaleOption[];
 }) {
   const t = useTranslations("aiAssistant");
@@ -35,8 +45,10 @@ export function AiAssistantChat({
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [resetAt, setResetAt] = useState<string | null>(null);
   const [outputLocale, setOutputLocale] = useState("en");
   const abortRef = useRef<AbortController | null>(null);
+  const isFreePlan = plan === "free";
 
   const baseStages = [t("stageValidating"), t("stageSearching"), t("stageConsulting")];
   const selectedLocaleName = outputLocaleOptions.find((o) => o.code === outputLocale)?.name;
@@ -52,24 +64,41 @@ export function AiAssistantChat({
   async function sendMessage(text: string) {
     if (!text.trim() || status === "waiting" || status === "streaming") return;
     setErrorMessage(null);
+    setResetAt(null);
     setStatus("waiting");
-    setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
+    setMessages((prev) => [
+      ...prev,
+      { role: "user", content: text },
+      { role: "assistant", content: "", isPreview: isFreePlan },
+    ]);
     setInput("");
 
     const controller = new AbortController();
     abortRef.current = controller;
+    // Idempotency key for server-side usage recording — a retry of this
+    // exact send (e.g. after an abort/network error) must not double-count
+    // against the daily/monthly AI diagnostic allowance.
+    const requestId = crypto.randomUUID();
 
     try {
       const res = await fetch("/api/ai/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, outputLocale }),
+        body: JSON.stringify({ message: text, outputLocale, requestId }),
         signal: controller.signal,
       });
 
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        setErrorMessage(data.error ?? t("error"));
+        // Two possible shapes reach this branch: the plain `{error: string}`
+        // used by auth/validation errors, and the structured
+        // `{success:false, error:{code,message,upgradeRequired,resetAt}}`
+        // used specifically for an exhausted AI diagnostic allowance.
+        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? t("error"));
+        setErrorMessage(message);
+        if (data.error && typeof data.error === "object" && data.error.resetAt) {
+          setResetAt(data.error.resetAt);
+        }
         setStatus("error");
         setMessages((prev) => prev.slice(0, -1));
         return;
@@ -87,7 +116,8 @@ export function AiAssistantChat({
         setStatus("streaming");
         setMessages((prev) => {
           const next = [...prev];
-          next[next.length - 1] = { role: "assistant", content: accumulated };
+          const current = next[next.length - 1];
+          next[next.length - 1] = { role: "assistant", content: accumulated, isPreview: current.isPreview };
           return next;
         });
       }
@@ -174,21 +204,41 @@ export function AiAssistantChat({
           if (isPendingAssistantBubble) {
             return <DiagnosticProgress key={i} stages={aiStages} onCancel={cancel} />;
           }
+          const isLastMessage = i === messages.length - 1;
+          const showLockedPanel =
+            m.role === "assistant" && m.isPreview && m.content.length > 0 && !(isLastMessage && status === "streaming");
+
           return (
-            <div key={i} className={m.role === "user" ? "text-right" : ""}>
-              <p
-                className={`inline-block max-w-full rounded-[var(--radius-lg)] px-4 py-2 text-sm whitespace-pre-wrap ${
-                  m.role === "user"
-                    ? "bg-[var(--accent-red)] text-white"
-                    : "bg-white/[0.06] text-[var(--text-primary)]"
-                }`}
-              >
-                {m.content}
-              </p>
+            <div key={i}>
+              <div className={m.role === "user" ? "text-right" : ""}>
+                <p
+                  className={`inline-block max-w-full rounded-[var(--radius-lg)] px-4 py-2 text-sm whitespace-pre-wrap ${
+                    m.role === "user"
+                      ? "bg-[var(--accent-red)] text-white"
+                      : "bg-white/[0.06] text-[var(--text-primary)]"
+                  }`}
+                >
+                  {m.content}
+                </p>
+              </div>
+              {showLockedPanel && (
+                <div className="mt-3">
+                  <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+                </div>
+              )}
             </div>
           );
         })}
-        {errorMessage && <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>}
+        {errorMessage && (
+          <div>
+            <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>
+            {resetAt && (
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
+                Resets {new Date(resetAt).toLocaleString()}.
+              </p>
+            )}
+          </div>
+        )}
       </div>
 
       <form

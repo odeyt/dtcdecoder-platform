@@ -7,17 +7,22 @@ import { recordSearchHistory, updateSearchHistoryAiResponse } from "@/lib/search
 import { canSelectAiReportLanguage } from "@/lib/i18n/entitlements";
 import { isAiOutputEnabledLocale, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
+import { streamAssistantResponse, translateDiagnosticText } from "@/lib/ai/assistant";
 import {
-  checkRateLimit,
-  recordTokenUsage,
-  streamAssistantResponse,
-  translateDiagnosticText,
-  RateLimitExceededError,
-} from "@/lib/ai/assistant";
+  recordAiDiagnosticUsage,
+  releaseAiDiagnosticUsage,
+  recordAiDiagnosticRun,
+  AiDiagnosticLimitExceededError,
+} from "@/lib/ai-diagnostics/usage";
 
 const requestSchema = z.object({
   message: z.string().trim().min(1).max(2000),
   outputLocale: z.string().trim().toLowerCase().min(2).max(10).optional(),
+  // Client-generated per-send id — the idempotency key for usage recording,
+  // so a client retry of the same send (e.g. after a network hiccup) never
+  // double-charges the daily/monthly allowance. Never trusted for anything
+  // beyond deduplication (plan/entitlement always come from the server).
+  requestId: z.string().trim().min(1).max(100),
 });
 
 export async function POST(request: NextRequest) {
@@ -47,11 +52,29 @@ export async function POST(request: NextRequest) {
 
   const plan = await getEffectivePlan(user.id, user.email ?? null);
 
+  let accessLevel;
   try {
-    await checkRateLimit(user.id, plan);
+    accessLevel = await recordAiDiagnosticUsage({
+      userId: user.id,
+      requestId: parsed.data.requestId,
+      feature: "chat",
+      plan,
+    });
   } catch (err) {
-    if (err instanceof RateLimitExceededError) {
-      return NextResponse.json({ error: err.message }, { status: 429 });
+    if (err instanceof AiDiagnosticLimitExceededError) {
+      return NextResponse.json(
+        {
+          success: false,
+          error: {
+            code: err.code,
+            message: err.message,
+            basicLookupAvailable: err.basicLookupAvailable,
+            upgradeRequired: err.upgradeRequired,
+            resetAt: err.resetAt,
+          },
+        },
+        { status: 429 },
+      );
     }
     throw err;
   }
@@ -92,7 +115,7 @@ export async function POST(request: NextRequest) {
     console.error("Failed to record AI search history", err);
   }
 
-  const englishStream = await streamAssistantResponse(parsed.data.message, groundingRows);
+  const englishStream = await streamAssistantResponse(parsed.data.message, groundingRows, accessLevel);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({
@@ -116,7 +139,8 @@ export async function POST(request: NextRequest) {
         }
         const englishText = englishChunks.join("");
         const englishFinal = await englishStream.finalMessage();
-        let totalTokens = englishFinal.usage.input_tokens + englishFinal.usage.output_tokens;
+        let totalInputTokens = englishFinal.usage.input_tokens;
+        let totalOutputTokens = englishFinal.usage.output_tokens;
         let translatedText: string | null = null;
 
         if (outputLocale) {
@@ -139,13 +163,28 @@ export async function POST(request: NextRequest) {
           translatedText = translatedChunks.join("");
 
           const translateFinal = await translateStream.finalMessage();
-          totalTokens += translateFinal.usage.input_tokens + translateFinal.usage.output_tokens;
+          totalInputTokens += translateFinal.usage.input_tokens;
+          totalOutputTokens += translateFinal.usage.output_tokens;
         }
 
-        // Record actual token spend (both calls, when translation ran) for
-        // paid-plan monthly budget enforcement — only knowable once every
-        // stream involved has fully completed.
-        await recordTokenUsage(user.id, plan, totalTokens);
+        // Cost/observability log only — never gates anything, never
+        // exposed to the customer. The usage SLOT was already reserved
+        // before this stream started (see recordAiDiagnosticUsage above);
+        // reaching here means the generation succeeded, so the reservation
+        // stands as the consumed slot and nothing further needs recording
+        // for enforcement purposes.
+        await recordAiDiagnosticRun({
+          userId: user.id,
+          requestId: parsed.data.requestId,
+          feature: "chat",
+          plan,
+          providerId: "anthropic",
+          modelId: "claude-sonnet-5",
+          status: "completed",
+          accessLevelRequested: accessLevel,
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+        });
 
         if (searchHistoryId) {
           await updateSearchHistoryAiResponse(searchHistoryId, englishText, translatedText).catch(
@@ -154,6 +193,25 @@ export async function POST(request: NextRequest) {
         }
       } catch (err) {
         console.error("AI assistant stream failed", err);
+
+        // Generation failed partway through the stream — release the
+        // reserved slot so this attempt never consumed a free preview or a
+        // paid report allowance, mirroring the scan-diagnostics orchestrator's
+        // failure handling.
+        await releaseAiDiagnosticUsage(user.id, parsed.data.requestId).catch((releaseErr) =>
+          console.error("[ai-assistant] failed to release usage reservation after stream failure", releaseErr),
+        );
+        await recordAiDiagnosticRun({
+          userId: user.id,
+          requestId: parsed.data.requestId,
+          feature: "chat",
+          plan,
+          providerId: "anthropic",
+          modelId: "claude-sonnet-5",
+          status: "failed",
+          accessLevelRequested: accessLevel,
+          errorMessage: err instanceof Error ? err.message : "Unknown error",
+        });
       } finally {
         controller.close();
       }

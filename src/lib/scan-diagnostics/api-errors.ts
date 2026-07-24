@@ -4,6 +4,7 @@
 // the client only ever sees the safe, typed message below.
 import "server-only";
 import { NextResponse } from "next/server";
+import { AiDiagnosticLimitExceededError } from "@/lib/ai-diagnostics/usage";
 import type { ScanCase } from "@/lib/types";
 
 export class ScanCaseNotFoundError extends Error {
@@ -17,13 +18,6 @@ export class UnsupportedFileError extends Error {
   constructor(message: string) {
     super(message);
     this.name = "UnsupportedFileError";
-  }
-}
-
-export class ScanUsageLimitExceededError extends Error {
-  constructor(message: string) {
-    super(message);
-    this.name = "ScanUsageLimitExceededError";
   }
 }
 
@@ -92,8 +86,24 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
   if (err instanceof UnsupportedFileError) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
-  if (err instanceof ScanUsageLimitExceededError) {
-    return NextResponse.json({ error: err.message }, { status: 429 });
+  if (err instanceof AiDiagnosticLimitExceededError) {
+    // Exact shape from the entitlement spec's "over-limit experience" —
+    // basic DTC lookup always stays available even when the AI diagnostic
+    // allowance is exhausted, which is why basicLookupAvailable is always
+    // true here rather than conditional.
+    return NextResponse.json(
+      {
+        success: false,
+        error: {
+          code: err.code,
+          message: err.message,
+          basicLookupAvailable: err.basicLookupAvailable,
+          upgradeRequired: err.upgradeRequired,
+          resetAt: err.resetAt,
+        },
+      },
+      { status: 429 },
+    );
   }
   if (err instanceof InvalidCaseStatusError) {
     return NextResponse.json({ error: err.message }, { status: 409 });

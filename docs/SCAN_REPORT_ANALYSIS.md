@@ -55,7 +55,7 @@ Migrations `0012`–`0014` (additive only — new tables/bucket, no changes to e
 - **`scan_ai_runs`** — one row per AI attempt (not upserted — a retry after failure creates a new row, so the failure history is preserved).
 - **`scan_reports`** — one row per case (unique on `case_id`; re-analyzing overwrites).
 - **`scan_feedback`** — one row per case (unique on `case_id`; resubmitting corrects the earlier entry).
-- **`scan_usage`** — the monthly-limit ledger: one row per case that has consumed a slot. Counting ledger rows *is* the monthly count, which is what makes a retry after a provider failure free (see `consume_scan_usage_slot()`).
+- **`scan_usage`** — superseded (kept, unused) by the shared `ai_diagnostic_usage` ledger introduced by the subscription/entitlement overhaul — see `docs/AI_USAGE_LIMITS.md` and `docs/PRICING_ROLLBACK_PLAN.md`. Usage enforcement and free-tier preview redaction for this feature now live in `src/lib/ai-diagnostics/*`, not in this feature's own `usage.ts` (removed).
 
 Named with a `scan_` prefix specifically to avoid colliding with the pre-existing `diagnostic_reports` / `diagnostic_report_localizations` tables, which store saved AI-**chat** answers and are unrelated to this feature.
 
@@ -95,15 +95,17 @@ A `block` finding causes `redactBlockedContent()` to replace only the specific o
 
 ## Entitlements
 
-| Plan | Monthly analyses | Export | Feedback history |
-|---|---|---|---|
-| Free | 2 | No | No |
-| Pro | 25 | Yes | No |
-| Workshop | 100 | Yes | Yes |
+**Superseded by the subscription/entitlement overhaul** (`docs/PRICING_AND_ENTITLEMENTS.md`) — the table below is historical. Current numbers:
 
-`src/lib/scan-diagnostics/entitlements.ts` + `SCAN_DIAGNOSTIC_LIMITS` in `src/lib/pricing.ts`. Feedback *submission* is available on every plan (closing the loop on one's own case is low-cost); only the cross-case feedback-history rollup is Workshop-gated.
+| Plan | Full reports/month | Full reports/day | Export | Feedback history |
+|---|---|---|---|---|
+| Free | 0 (2 previews/day instead — shared with the chat feature) | — | No | No |
+| Pro | 30 | 5 | Yes | No |
+| Workshop | 120 | 15 | Yes | Yes |
 
-Usage is idempotent per case: `consume_scan_usage_slot()` returns success without re-checking the limit if the case already has a ledger row, so retrying an analysis after a transient provider failure never double-charges and never gets newly blocked.
+`src/lib/scan-diagnostics/entitlements.ts` now delegates to the canonical `AI_DIAGNOSTIC_ENTITLEMENTS` registry in `src/lib/pricing.ts` rather than its own `SCAN_DIAGNOSTIC_LIMITS` (removed). Feedback *submission* is available on every plan (closing the loop on one's own case is low-cost); only the cross-case feedback-history rollup is Workshop-gated.
+
+Usage is idempotent per case via the shared `ai_diagnostic_usage` ledger (`recordAiDiagnosticUsage`/`releaseAiDiagnosticUsage`, see `docs/AI_USAGE_LIMITS.md`) — a retry after a released failure re-reserves fresh; a retry after success is a no-op.
 
 ## Known limitations
 

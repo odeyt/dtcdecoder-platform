@@ -111,25 +111,37 @@ function seedCase(caseId: string, userId: string, status = "ready_for_analysis")
 
 beforeEach(() => {
   fake().reset();
-  // reset() clears registered RPC handlers too — re-register a fresh
-  // per-user ledger simulation before every test.
-  const consumedByUser = new Map<string, Set<string>>();
-  fake().setRpcHandler("consume_scan_usage_slot", (args) => {
+  // reset() clears registered RPC handlers too — re-register a fresh fake
+  // of the shared ai_diagnostic_usage RPC before every test. Mirrors the
+  // real record_ai_diagnostic_usage's logic closely enough for these
+  // orchestration tests (see test/ai-diagnostics-usage.test.ts for the
+  // dedicated unit tests of the usage module itself).
+  fake().setRpcHandler("record_ai_diagnostic_usage", (args) => {
     const userId = args.p_user_id as string;
-    const caseId = args.p_case_id as string;
-    const limit = args.p_limit as number;
-    const consumed = consumedByUser.get(userId) ?? new Set<string>();
-    consumedByUser.set(userId, consumed);
-    if (consumed.has(caseId)) return true;
-    if (consumed.size >= limit) return false;
-    consumed.add(caseId);
-    // Mirrors the real consume_scan_usage_slot RPC's ledger insert so
-    // assertions can inspect the scan_usage table directly, not just the
-    // in-memory decision logic above.
-    fake().seed("scan_usage", [{ case_id: caseId, user_id: userId }]);
-    return true;
+    const requestId = args.p_request_id as string;
+    const feature = args.p_feature as string;
+    const accessLevel = args.p_access_level as string;
+    const dailyLimit = args.p_daily_limit as number | null;
+    const monthlyLimit = args.p_monthly_limit as number | null;
+
+    const rows = fake().dump("ai_diagnostic_usage");
+    const already = rows.some((r) => r.user_id === userId && r.request_id === requestId);
+    if (already) return "already_recorded";
+
+    if (dailyLimit !== null) {
+      const dailyCount = rows.filter((r) => r.user_id === userId && r.access_level === accessLevel).length;
+      if (dailyCount >= dailyLimit) return "daily_limit_exceeded";
+    }
+    if (monthlyLimit !== null) {
+      const monthlyCount = rows.filter((r) => r.user_id === userId && r.access_level === accessLevel).length;
+      if (monthlyCount >= monthlyLimit) return "monthly_limit_exceeded";
+    }
+
+    fake().seed("ai_diagnostic_usage", [
+      { user_id: userId, request_id: requestId, feature, access_level: accessLevel, created_at: new Date().toISOString() },
+    ]);
+    return "recorded";
   });
-  fake().setRpcHandler("get_monthly_scan_usage", (args) => consumedByUser.get(args.p_user_id as string)?.size ?? 0);
 });
 
 describe("runScanAnalysis", () => {
@@ -163,12 +175,17 @@ describe("runScanAnalysis", () => {
     expect(failedRuns).toHaveLength(1);
     expect(failedRuns[0].status).toBe("failed");
 
+    // The failed attempt's reservation must have been released — otherwise
+    // it would silently burn one of this user's 2 free daily previews for
+    // nothing.
+    expect(fake().dump("ai_diagnostic_usage").filter((r) => r.request_id === "case-2")).toHaveLength(0);
+
     // Retry with a working provider — must succeed without a second usage charge.
     const result = await runScanAnalysis("user-1", "case-2", "free", fakeProvider());
     expect(result.case.status).toBe("completed");
 
-    const usageRows = fake().dump("scan_usage");
-    expect(usageRows.filter((r) => r.case_id === "case-2")).toHaveLength(1);
+    const usageRows = fake().dump("ai_diagnostic_usage");
+    expect(usageRows.filter((r) => r.request_id === "case-2")).toHaveLength(1);
   });
 
   it("malformed AI structured output: handled safely, no crash, case fails with a controlled error", async () => {
@@ -196,11 +213,14 @@ describe("runScanAnalysis", () => {
     seedCase("case-4", "user-1");
     seedCase("case-5", "user-1");
 
-    // Free plan limit is 2/month — consume it with two other cases first.
+    // Free plan gets 2 AI diagnostic previews per day (shared with the DTC
+    // Assistant chat feature) — consume it with two other cases first.
     await runScanAnalysis("user-1", "case-3", "free", fakeProvider());
     await runScanAnalysis("user-1", "case-4", "free", fakeProvider());
 
-    await expect(runScanAnalysis("user-1", "case-5", "free", fakeProvider())).rejects.toThrow(/allowance/i);
+    await expect(runScanAnalysis("user-1", "case-5", "free", fakeProvider())).rejects.toThrow(
+      /free AI diagnostic previews/i,
+    );
 
     const case5 = fake().dump("scan_cases").find((c) => c.id === "case-5");
     expect(case5?.status).toBe("ready_for_analysis");

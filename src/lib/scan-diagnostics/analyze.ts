@@ -6,7 +6,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCaseForOwner, transitionCaseStatus } from "@/lib/scan-diagnostics/cases";
-import { consumeScanUsageSlot } from "@/lib/scan-diagnostics/usage";
+import { recordAiDiagnosticUsage, releaseAiDiagnosticUsage } from "@/lib/ai-diagnostics/usage";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
@@ -28,10 +28,14 @@ export async function runScanAnalysis(
 ): Promise<ScanAnalysisResult> {
   await getCaseForOwner(userId, caseId);
 
-  // Idempotent per case: a retry after a provider failure re-enters here,
-  // finds the ledger row already present, and proceeds without a second
-  // charge or a newly-blocked limit.
-  await consumeScanUsageSlot(userId, caseId, plan);
+  // Reserve the slot atomically (before the expensive AI call) using the
+  // case's own id as the idempotency key — a retry after a released
+  // failure (see the catch block below) re-enters here as a fresh
+  // reservation; a retry after a successful analysis finds the row still
+  // present and is a no-op, never a double charge. Shared with the DTC
+  // Assistant chat feature's daily preview/monthly+daily full-report
+  // allowance — see src/lib/ai-diagnostics/usage.ts.
+  await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
 
   await transitionCaseStatus(caseId, ["ready_for_analysis", "failed"], "analyzing");
 
@@ -57,6 +61,13 @@ export async function runScanAnalysis(
     providerResult = await provider.runDiagnosis(input);
   } catch (err) {
     console.error("[scan-diagnostics] AI provider call failed", err);
+
+    // Release the reserved usage slot — a failed generation must never
+    // consume a free preview or a paid report allowance. A subsequent
+    // retry re-enters at the top of this function and reserves fresh.
+    await releaseAiDiagnosticUsage(userId, caseId).catch((releaseErr) =>
+      console.error("[scan-diagnostics] failed to release usage reservation after provider failure", releaseErr),
+    );
 
     const isValidationFailure = err instanceof AiResponseValidationError;
 

@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { env } from "@/lib/env";
 import { getCaseDetail } from "@/lib/scan-diagnostics/cases";
+import { resolveReportAccess } from "@/lib/scan-diagnostics/report-access";
 import { getFeedbackForCase } from "@/lib/scan-diagnostics/feedback";
 import { canExportScanReport } from "@/lib/scan-diagnostics/entitlements";
 import { ScanCaseActionBar } from "@/components/ScanCaseActionBar";
@@ -32,9 +33,10 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
   if (!user) redirect("/account/login");
 
   const detail = await getCaseDetail(user.id, caseId);
-  const { case: scanCase, extraction, dtcRecords, report } = detail;
+  const { case: scanCase, extraction, dtcRecords } = detail;
 
   const plan = await getEffectivePlan(user.id, user.email ?? null);
+  const reportAccess = await resolveReportAccess(user.id, user.email ?? null, detail);
   const feedback = scanCase.status === "completed" ? await getFeedbackForCase(user.id, caseId) : null;
 
   return (
@@ -75,7 +77,7 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
           </div>
         )}
 
-        {scanCase.status === "completed" && report && (
+        {scanCase.status === "completed" && reportAccess && (
           <div className="mt-6 flex flex-col gap-8">
             <div className="flex justify-end print:hidden">
               {canExportScanReport(plan) ? (
@@ -84,7 +86,12 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
                 <UpgradeCard reason="Upgrade to Pro or Workshop to export and print your diagnostic report." />
               )}
             </div>
-            <ScanReportView scanCase={scanCase} extraction={extraction} dtcRecords={dtcRecords} report={report} />
+            <ScanReportView
+              scanCase={scanCase}
+              extraction={extraction}
+              dtcRecords={dtcRecords}
+              reportAccess={reportAccess}
+            />
             <div className="print:hidden">
               <ScanFeedbackForm caseId={scanCase.id} existingFeedback={feedback} />
             </div>

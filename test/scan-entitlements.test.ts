@@ -9,10 +9,12 @@ import type { SubscriptionPlan } from "@/lib/types";
 const PLANS: SubscriptionPlan[] = ["free", "pro", "workshop"];
 
 describe("scanMonthlyLimit", () => {
-  it("returns 2 for free, 25 for pro, 100 for workshop", () => {
-    expect(scanMonthlyLimit("free")).toBe(2);
-    expect(scanMonthlyLimit("pro")).toBe(25);
-    expect(scanMonthlyLimit("workshop")).toBe(100);
+  // Free never gets a full scan report (preview-only, gated by the separate
+  // daily preview counter, not this monthly full-report limit).
+  it("returns 0 for free, 30 for pro, 120 for workshop", () => {
+    expect(scanMonthlyLimit("free")).toBe(0);
+    expect(scanMonthlyLimit("pro")).toBe(30);
+    expect(scanMonthlyLimit("workshop")).toBe(120);
   });
 });
 

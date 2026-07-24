@@ -1,8 +1,11 @@
 import { ResultSection } from "@/components/ResultSection";
+import { UpgradeCard } from "@/components/UpgradeCard";
+import { LockedResultPanel } from "@/components/LockedResultCard";
 import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 import { CONFIDENCE_LABEL, isLegacyReport, resolveConfidenceLabel } from "@/lib/scan-diagnostics/report-presentation";
 import type { DtcCategory } from "@/lib/scan-diagnostics/schemas";
-import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport } from "@/lib/types";
+import type { ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
+import type { ScanCase, ScanDtcRecord, ScanExtraction } from "@/lib/types";
 
 // Confidence/rank fields are all OPTIONAL here on purpose: a schema_version
 // "1.0" report row (written before Diagnostic Safety v2) has neither
@@ -35,7 +38,9 @@ interface ScanReportViewProps {
   scanCase: ScanCase;
   extraction: ScanExtraction | null;
   dtcRecords: ScanDtcRecord[];
-  report: ScanReport;
+  // Already server-redacted for the viewer's real, current plan — never
+  // the raw ScanReport row. See src/lib/scan-diagnostics/report-access.ts.
+  reportAccess: ScanReportAccessResult;
 }
 
 const CONFIDENCE_COLOR: Record<string, string> = {
@@ -85,12 +90,14 @@ function CategoryBadge({ label, category }: { label: string; category: DtcCatego
 // user-entered data (the section headers below make this explicit) and is
 // never presented as OEM service information — see docs/SCAN_REPORT_ANALYSIS.md
 // and docs/DIAGNOSTIC_SAFETY_RULES.md.
-export function ScanReportView({ scanCase, extraction, dtcRecords, report }: ScanReportViewProps) {
-  const rankedCauses = report.ranked_causes as unknown as RankedCause[];
-  const recommendedTests = report.recommended_tests as unknown as RecommendedTest[];
-  const safetyFindings = report.safety_warnings as unknown as SafetyFinding[];
+export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess }: ScanReportViewProps) {
+  const { visibleResult, accessLevel, lockedSections } = reportAccess;
+  const isFull = accessLevel === "full";
+  const safetyFindings = visibleResult.safety.findings as unknown as SafetyFinding[];
   const categories = classifyDtcCategories(dtcRecords, extraction?.modules ?? []);
-  const legacyReport = isLegacyReport(report);
+  const legacyReport = isFull
+    ? isLegacyReport({ schema_version: visibleResult.schemaVersion, confidence_level: visibleResult.confidenceLevel ?? null })
+    : false;
 
   return (
     <div className="flex flex-col gap-10 print:gap-6">
@@ -100,6 +107,11 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
           <span className="rounded-full border border-[var(--border-subtle)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
             AI-generated — not OEM service information
           </span>
+          {!isFull && (
+            <span className="rounded-full border border-[var(--border-red)] px-3 py-1 text-xs font-semibold text-[var(--accent-red)]">
+              Free preview
+            </span>
+          )}
         </div>
         <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">
           These findings are AI-assisted evidence review, not a confirmed diagnosis. They do not replace OEM service
@@ -107,22 +119,26 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
         </p>
       </header>
 
+      {!isFull && (
+        <UpgradeCard reason="This is a limited free preview. Upgrade to Pro Technician for the complete root-cause ranking, full test sequence, expected readings, and programming/calibration guidance." />
+      )}
+
       <ResultSection title="Vehicle information">
         <div className="glass-panel grid gap-2 rounded-[var(--radius-lg)] p-5 text-sm text-[var(--text-secondary)] sm:grid-cols-2">
-          <p>VIN: <span className="text-[var(--text-primary)]">{extraction?.vin ?? "Not provided in report"}</span></p>
+          <p>VIN: <span className="text-[var(--text-primary)]">{visibleResult.vehicleSummary.vin ?? "Not provided in report"}</span></p>
           <p>
             Vehicle:{" "}
             <span className="text-[var(--text-primary)]">
-              {extraction?.model_year && extraction?.make && extraction?.model
-                ? `${extraction.model_year} ${extraction.make} ${extraction.model}`
+              {visibleResult.vehicleSummary.modelYear && visibleResult.vehicleSummary.make && visibleResult.vehicleSummary.model
+                ? `${visibleResult.vehicleSummary.modelYear} ${visibleResult.vehicleSummary.make} ${visibleResult.vehicleSummary.model}`
                 : "Not provided in report"}
             </span>
           </p>
-          <p>Engine: <span className="text-[var(--text-primary)]">{extraction?.engine ?? "Not provided in report"}</span></p>
+          <p>Engine: <span className="text-[var(--text-primary)]">{visibleResult.vehicleSummary.engine ?? "Not provided in report"}</span></p>
           <p>
             Mileage:{" "}
             <span className="text-[var(--text-primary)]">
-              {extraction?.odometer_miles ? extraction.odometer_miles.toLocaleString() : "Not provided in report"}
+              {visibleResult.vehicleSummary.odometerMiles ? visibleResult.vehicleSummary.odometerMiles.toLocaleString() : "Not provided in report"}
             </span>
           </p>
         </div>
@@ -151,26 +167,86 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
 
       <ResultSection title="DTCs recorded for this case">
         <div className="flex flex-wrap gap-2">
-          {dtcRecords.map((dtc) => (
+          {visibleResult.dtcs.map((dtc, i) => (
             <span
-              key={dtc.id}
+              key={i}
               className="rounded-full border border-[var(--border-subtle)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)]"
             >
               {dtc.code}
               {dtc.module ? ` (${dtc.module})` : ""}
             </span>
           ))}
-          {dtcRecords.length === 0 && (
+          {visibleResult.dtcs.length === 0 && (
             <p className="text-sm text-[var(--text-muted)]">No DTC records for this case.</p>
           )}
         </div>
       </ResultSection>
 
-      <ResultSection title="Components or systems requiring testing (AI-generated, not confirmed)">
-        <div className="flex flex-col gap-4">
-          {rankedCauses.map((cause, i) => (
-            <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
-              <div className="flex flex-wrap items-center gap-2">
+      {isFull ? (
+        <>
+          <ResultSection title="Components or systems requiring testing (AI-generated, not confirmed)">
+            <div className="flex flex-col gap-4">
+              {(visibleResult.rankedCauses as unknown as RankedCause[])!.map((cause, i) => (
+                <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <span
+                      className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+                      style={{
+                        borderColor: i === 0 ? "var(--accent-red)" : "var(--border-subtle)",
+                        color: i === 0 ? "var(--accent-red)" : "var(--text-muted)",
+                      }}
+                    >
+                      {i === 0 ? "TOP CANDIDATE" : `CANDIDATE #${i + 1}`}
+                    </span>
+                    <ConfidenceBadge level={cause.confidenceLevel} />
+                  </div>
+                  <p className="mt-2 font-semibold text-[var(--text-primary)]">{cause.cause}</p>
+                  <p className="mt-1 text-sm text-[var(--text-secondary)]">{cause.rationale}</p>
+                  {cause.supportingEvidence.length > 0 && (
+                    <div className="mt-2 text-xs text-[var(--text-secondary)]">
+                      <span className="font-semibold text-[var(--text-primary)]">Supporting evidence: </span>
+                      {cause.supportingEvidence.join("; ")}
+                    </div>
+                  )}
+                  {cause.contradictingEvidence.length > 0 && (
+                    <div className="mt-1 text-xs text-[var(--text-secondary)]">
+                      <span className="font-semibold text-[var(--text-primary)]">Contradicting evidence: </span>
+                      {cause.contradictingEvidence.join("; ")}
+                    </div>
+                  )}
+                  <div className="mt-2 text-xs text-[var(--text-secondary)]">
+                    <span className="font-semibold text-[var(--text-primary)]">Required before replacing anything: </span>
+                    {cause.confirmationTestsRequired && cause.confirmationTestsRequired.length > 0
+                      ? cause.confirmationTestsRequired.join("; ")
+                      : "Not established for this legacy result — see recommended test sequence below."}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </ResultSection>
+
+          <ResultSection title="Recommended confirmation test sequence (AI-generated)">
+            <ol className="flex flex-col gap-3">
+              {(visibleResult.recommendedTests as unknown as RecommendedTest[])!.map((test, i) => (
+                <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
+                    {i + 1}. {test.step}
+                  </p>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">Purpose: {test.purpose}</p>
+                  <p className="mt-1 text-xs text-[var(--text-secondary)]">Expected result: {test.expectedResult}</p>
+                </li>
+              ))}
+              {visibleResult.recommendedTests!.length === 0 && (
+                <p className="text-sm text-[var(--text-muted)]">None recommended.</p>
+              )}
+            </ol>
+          </ResultSection>
+        </>
+      ) : (
+        <ResultSection title="Preview findings (AI-generated, not confirmed)">
+          <div className="flex flex-col gap-4">
+            {visibleResult.previewFindings!.map((finding, i) => (
+              <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
                 <span
                   className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
                   style={{
@@ -180,47 +256,25 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
                 >
                   {i === 0 ? "TOP CANDIDATE" : `CANDIDATE #${i + 1}`}
                 </span>
-                <ConfidenceBadge level={cause.confidenceLevel} />
+                <p className="mt-2 font-semibold text-[var(--text-primary)]">{finding.cause}</p>
+                <p className="mt-1 text-sm text-[var(--text-secondary)]">{finding.rationale}</p>
               </div>
-              <p className="mt-2 font-semibold text-[var(--text-primary)]">{cause.cause}</p>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">{cause.rationale}</p>
-              {cause.supportingEvidence.length > 0 && (
-                <div className="mt-2 text-xs text-[var(--text-secondary)]">
-                  <span className="font-semibold text-[var(--text-primary)]">Supporting evidence: </span>
-                  {cause.supportingEvidence.join("; ")}
-                </div>
-              )}
-              {cause.contradictingEvidence.length > 0 && (
-                <div className="mt-1 text-xs text-[var(--text-secondary)]">
-                  <span className="font-semibold text-[var(--text-primary)]">Contradicting evidence: </span>
-                  {cause.contradictingEvidence.join("; ")}
-                </div>
-              )}
-              <div className="mt-2 text-xs text-[var(--text-secondary)]">
-                <span className="font-semibold text-[var(--text-primary)]">Required before replacing anything: </span>
-                {cause.confirmationTestsRequired && cause.confirmationTestsRequired.length > 0
-                  ? cause.confirmationTestsRequired.join("; ")
-                  : "Not established for this legacy result — see recommended test sequence below."}
-              </div>
-            </div>
-          ))}
-        </div>
-      </ResultSection>
-
-      <ResultSection title="Recommended confirmation test sequence (AI-generated)">
-        <ol className="flex flex-col gap-3">
-          {recommendedTests.map((test, i) => (
-            <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
-              <p className="text-sm font-semibold text-[var(--text-primary)]">
-                {i + 1}. {test.step}
-              </p>
-              <p className="mt-1 text-xs text-[var(--text-secondary)]">Purpose: {test.purpose}</p>
-              <p className="mt-1 text-xs text-[var(--text-secondary)]">Expected result: {test.expectedResult}</p>
-            </li>
-          ))}
-          {recommendedTests.length === 0 && <p className="text-sm text-[var(--text-muted)]">None recommended.</p>}
-        </ol>
-      </ResultSection>
+            ))}
+          </div>
+          <div className="mt-4">
+            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+              First recommended checks
+            </p>
+            <ul className="flex flex-col gap-2">
+              {visibleResult.previewTests!.map((test, i) => (
+                <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-3 text-sm text-[var(--text-secondary)]">
+                  {i + 1}. {test.step}
+                </li>
+              ))}
+            </ul>
+          </div>
+        </ResultSection>
+      )}
 
       {safetyFindings.length > 0 && (
         <ResultSection title="Safety warnings">
@@ -241,41 +295,49 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, report }: Sca
         </ResultSection>
       )}
 
-      {report.missing_information.length > 0 && (
+      {isFull && visibleResult.missingInformation!.length > 0 && (
         <ResultSection title="Missing information">
           <ul className="list-disc pl-5 text-sm text-[var(--text-secondary)]">
-            {report.missing_information.map((m, i) => (
+            {visibleResult.missingInformation!.map((m, i) => (
               <li key={i}>{m}</li>
             ))}
           </ul>
         </ResultSection>
       )}
 
-      <ResultSection title="Diagnostic confidence">
-        <div className="glass-panel rounded-[var(--radius-lg)] p-5">
-          {legacyReport ? (
-            <>
-              <p className="text-lg font-bold text-[var(--text-muted)]">Not established</p>
-              <p className="mt-2 text-xs text-[var(--text-secondary)]">
-                This report was generated before categorical confidence levels were introduced. Numerical confidence
-                is not shown because the available evidence at the time did not support a calibrated probability, and
-                the original number is not reinterpreted here as a level.
-              </p>
-            </>
-          ) : (
-            <>
-              <ConfidenceBadge level={report.confidence_level ?? undefined} />
-              <ul className="mt-3 flex flex-col gap-1 text-xs text-[var(--text-secondary)]">
-                {report.confidence_rationale
-                  .filter((r) => !/^Internal score/.test(r))
-                  .map((r, i) => (
-                    <li key={i}>{r}</li>
-                  ))}
-              </ul>
-            </>
-          )}
-        </div>
-      </ResultSection>
+      {isFull && (
+        <ResultSection title="Diagnostic confidence">
+          <div className="glass-panel rounded-[var(--radius-lg)] p-5">
+            {legacyReport ? (
+              <>
+                <p className="text-lg font-bold text-[var(--text-muted)]">Not established</p>
+                <p className="mt-2 text-xs text-[var(--text-secondary)]">
+                  This report was generated before categorical confidence levels were introduced. Numerical confidence
+                  is not shown because the available evidence at the time did not support a calibrated probability, and
+                  the original number is not reinterpreted here as a level.
+                </p>
+              </>
+            ) : (
+              <>
+                <ConfidenceBadge level={visibleResult.confidenceLevel ?? undefined} />
+                <ul className="mt-3 flex flex-col gap-1 text-xs text-[var(--text-secondary)]">
+                  {visibleResult.confidenceRationale!
+                    .filter((r) => !/^Internal score/.test(r))
+                    .map((r, i) => (
+                      <li key={i}>{r}</li>
+                    ))}
+                </ul>
+              </>
+            )}
+          </div>
+        </ResultSection>
+      )}
+
+      {!isFull && lockedSections.length > 0 && (
+        <ResultSection title="Locked in this preview">
+          <LockedResultPanel sections={lockedSections} />
+        </ResultSection>
+      )}
 
       {scanCase.technician_notes && (
         <ResultSection title="Technician notes">

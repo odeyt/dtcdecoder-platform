@@ -23,8 +23,8 @@ export default async function AiAssistantPage() {
   // offered when both the plan allows it and the language is actually
   // ai_output_enabled today (currently just English + Spanish).
   let outputLocaleOptions: { code: string; name: string }[] = [];
+  const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
   if (user) {
-    const plan = await getEffectivePlan(user.id, user.email ?? null);
     const locales = await getAllowedOutputLocales(plan);
     outputLocaleOptions = locales
       .filter((l) => l.locale_code !== "en")
@@ -41,7 +41,7 @@ export default async function AiAssistantPage() {
         <h1 className="text-3xl font-bold text-white">{t("title")}</h1>
         <p className="mt-2 text-zinc-400">{t("subtitle")}</p>
         <div className="mt-8">
-          <AiAssistantChat signedIn={Boolean(user)} outputLocaleOptions={outputLocaleOptions} />
+          <AiAssistantChat signedIn={Boolean(user)} plan={plan} outputLocaleOptions={outputLocaleOptions} />
         </div>
       </div>
     </NextIntlClientProvider>
