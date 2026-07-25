@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Refund Policy",
 };
 
-export default function RefundPolicyPage() {
+function RefundEn() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
       <h1 className="text-3xl font-bold text-white">DTCDecoder Refund Policy</h1>
@@ -52,4 +53,64 @@ export default function RefundPolicyPage() {
       </p>
     </div>
   );
+}
+
+function RefundEs() {
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
+      <h1 className="text-3xl font-bold text-white">Política de Reembolsos de DTCDecoder</h1>
+      <p className="mt-2 text-sm text-zinc-500">Fecha de vigencia: 25 de julio de 2026</p>
+
+      <p className="mt-6">Los pagos son procesados por Creem.io.</p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Suscripciones Mensuales</h2>
+      <ul className="mt-4 list-disc space-y-2 pl-5">
+        <li>Puedes cancelar tu suscripción en cualquier momento.</li>
+        <li>La cancelación evita renovaciones futuras.</li>
+        <li>
+          Las cuotas de suscripción ya pagadas generalmente no son reembolsables, salvo cuando la ley
+          lo exija.
+        </li>
+      </ul>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Planes Anuales</h2>
+      <p className="mt-4">
+        Las suscripciones anuales pueden ser elegibles para un reembolso solo si:
+      </p>
+      <ul className="mt-4 list-disc space-y-2 pl-5">
+        <li>Se solicita dentro de los 14 días posteriores a la compra</li>
+        <li>Hubo un uso mínimo de la plataforma</li>
+        <li>Lo exige la ley aplicable</li>
+      </ul>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Productos Digitales</h2>
+      <p className="mt-4">
+        Los productos digitales descargados, las guías de reparación y los reportes generalmente no
+        son reembolsables.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Cargos Duplicados</h2>
+      <p className="mt-4">
+        Los cargos duplicados o accidentales se reembolsarán tras su verificación.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Fraude</h2>
+      <p className="mt-4">
+        Las transacciones fraudulentas se investigarán y gestionarán conforme a las leyes aplicables.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Contacto</h2>
+      <p className="mt-4">
+        Correo:{" "}
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
+        </a>
+      </p>
+    </div>
+  );
+}
+
+export default async function RefundPolicyPage() {
+  const locale = await getLocale();
+  return locale === "es" ? <RefundEs /> : <RefundEn />;
 }

@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
+import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "Cookie Policy",
 };
 
-export default function CookiePolicyPage() {
+function CookiesEn() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
       <h1 className="text-3xl font-bold text-white">DTCDecoder Cookie Policy</h1>
@@ -69,4 +70,77 @@ export default function CookiePolicyPage() {
       </p>
     </div>
   );
+}
+
+function CookiesEs() {
+  return (
+    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
+      <h1 className="text-3xl font-bold text-white">Política de Cookies de DTCDecoder</h1>
+      <p className="mt-2 text-sm text-zinc-500">Fecha de vigencia: 25 de julio de 2026</p>
+
+      <p className="mt-6">
+        Esta Política de Cookies explica cómo DTCDecoder utiliza cookies y tecnologías similares
+        cuando usas nuestro sitio web y servicios.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Qué Son las Cookies</h2>
+      <p className="mt-4">
+        Las cookies son pequeños archivos de texto almacenados en tu dispositivo que ayudan a que los
+        sitios web funcionen y recuerden información sobre tu visita.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Tipos de Cookies Que Usamos</h2>
+      <ul className="mt-4 list-disc space-y-2 pl-5">
+        <li>
+          <strong className="text-white">Esenciales</strong> — necesarias para la autenticación, el
+          inicio de sesión seguro y las funciones básicas del sitio. No se pueden desactivar.
+        </li>
+        <li>
+          <strong className="text-white">Preferencias</strong> — recuerdan opciones como el idioma y
+          la configuración de visualización.
+        </li>
+        <li>
+          <strong className="text-white">Analíticas</strong> — nos ayudan a entender cómo se usa la
+          plataforma para mejorar el rendimiento.
+        </li>
+        <li>
+          <strong className="text-white">Seguridad</strong> — ayudan a detectar y prevenir fraudes y
+          abusos.
+        </li>
+      </ul>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Cookies de Terceros</h2>
+      <p className="mt-4">
+        Algunas cookies pueden ser establecidas por terceros de confianza que dan soporte a nuestros
+        Servicios, como nuestro procesador de pagos Creem.io y proveedores de infraestructura. Estas
+        partes procesan los datos conforme a sus propias políticas de privacidad.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Gestión de Cookies</h2>
+      <p className="mt-4">
+        Puedes controlar o eliminar las cookies desde la configuración de tu navegador. Desactivar
+        las cookies esenciales puede impedir que partes de la plataforma funcionen correctamente,
+        incluido el inicio de sesión.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Cambios</h2>
+      <p className="mt-4">
+        Podemos actualizar esta Política de Cookies ocasionalmente. El uso continuado de los
+        Servicios constituye la aceptación de la política revisada.
+      </p>
+
+      <h2 className="mt-10 text-xl font-bold text-white">Contacto</h2>
+      <p className="mt-4">
+        Correo:{" "}
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
+        </a>
+      </p>
+    </div>
+  );
+}
+
+export default async function CookiePolicyPage() {
+  const locale = await getLocale();
+  return locale === "es" ? <CookiesEs /> : <CookiesEn />;
 }
