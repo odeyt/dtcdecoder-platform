@@ -58,6 +58,9 @@ export function SiteFooter() {
               <Link href="/terms" className="hover:text-[var(--text-primary)]">
                 {t("terms")}
               </Link>
+              <Link href="/refund" className="hover:text-[var(--text-primary)]">
+                {t("refundPolicy")}
+              </Link>
               <Link href="/affiliate-disclosure" className="hover:text-[var(--text-primary)]">
                 {t("affiliateDisclosure")}
               </Link>
