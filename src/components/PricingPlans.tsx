@@ -22,7 +22,7 @@ import {
 
 export function PricingPlans({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("pricing");
-  const [interval, setInterval] = useState<BillingInterval>("yearly");
+  const [interval, setInterval] = useState<BillingInterval>("monthly");
 
   return (
     <div>
