@@ -101,7 +101,8 @@
     "workshopAccess": "Workshop Access",
     "fairUseNote": "AI diagnostic allowances reset daily (free previews) or monthly (paid full reports) and are a fair-use limit to keep the service reliable for everyone — most technicians never come close to them.",
     "yearlySubline": "~${amount}/mo — save ${discount} vs. monthly",
-    "redirecting": "Redirecting…"
+    "redirecting": "Redirecting…",
+    "emailForCheckout": "Email address"
   },
   "account": {
     "title": "My Account",

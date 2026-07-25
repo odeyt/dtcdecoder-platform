@@ -101,7 +101,8 @@
     "workshopAccess": "Acceso Taller",
     "fairUseNote": "Las asignaciones de diagnóstico con IA se reinician a diario (vistas previas gratuitas) o mensualmente (reportes completos de pago) y son un límite de uso justo para mantener el servicio confiable para todos — la mayoría de los técnicos nunca se acercan a ellas.",
     "yearlySubline": "~${amount}/mes — ahorra ${discount} frente al plan mensual",
-    "redirecting": "Redirigiendo…"
+    "redirecting": "Redirigiendo…",
+    "emailForCheckout": "Correo electrónico"
   },
   "account": {
     "title": "Mi Cuenta",
