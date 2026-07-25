@@ -3,10 +3,11 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { env } from "@/lib/env";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { localizeContentHref } from "@/lib/i18n/localized-href";
 
 // Auth state is fetched client-side (not passed from the root layout) so
 // that marketing/static pages (home, privacy, terms, etc.) can still be
@@ -14,6 +15,8 @@ import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 // know whether to show "Sign In" or an account email in the header.
 export function SiteNav() {
   const t = useTranslations("nav");
+  const locale = useLocale();
+  const href = (path: string) => localizeContentHref(path, locale);
   const NAV_LINKS = [
     { href: "/dtc", label: t("dtcLookup") },
     { href: "/ai-assistant", label: t("aiDiagnostic") },
@@ -45,8 +48,9 @@ export function SiteNav() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  function isActive(href: string) {
-    return pathname === href || pathname.startsWith(`${href}/`);
+  function isActive(path: string) {
+    const h = href(path);
+    return pathname === h || pathname.startsWith(`${h}/`);
   }
 
   return (
@@ -59,7 +63,7 @@ export function SiteNav() {
     >
       <div className="container-app flex items-center justify-between px-6 py-4">
         <Link
-          href="/"
+          href={href("/")}
           className="flex items-baseline gap-1 text-lg font-bold tracking-tight text-[var(--text-primary)]"
         >
           <span className="text-[var(--accent-red)]">DTC</span>
@@ -70,7 +74,7 @@ export function SiteNav() {
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={href(link.href)}
               aria-current={isActive(link.href) ? "page" : undefined}
               className={`rounded-[var(--radius-sm)] px-3 py-2 text-sm font-medium transition-colors ${
                 isActive(link.href)
@@ -106,7 +110,7 @@ export function SiteNav() {
             </Link>
           )}
           <Link
-            href="/dtc"
+            href={href("/dtc")}
             className="rounded-[var(--radius-md)] bg-[var(--accent-red)] px-4 py-2 text-sm font-semibold text-white transition hover:brightness-110"
             style={{ boxShadow: "var(--shadow-accent)" }}
           >
@@ -150,7 +154,7 @@ export function SiteNav() {
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
-              href={link.href}
+              href={href(link.href)}
               onClick={() => setMenuOpen(false)}
               className="block min-h-11 rounded-[var(--radius-sm)] px-2 py-3 text-base text-[var(--text-secondary)]"
             >
@@ -162,18 +166,18 @@ export function SiteNav() {
               <LanguageSwitcher />
             </div>
             <Link
-              href={userEmail ? "/account" : "/account/login"}
+              href={href(userEmail ? "/account" : "/account/login")}
               onClick={() => setMenuOpen(false)}
               className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-3 text-center text-sm text-[var(--text-primary)]"
             >
               {userEmail ? userEmail : t("signIn")}
             </Link>
             <Link
-              href="/dtc"
+              href={href("/dtc")}
               onClick={() => setMenuOpen(false)}
               className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-3 py-3 text-center text-sm font-semibold text-white"
             >
-              Decode a Code
+              {t("decodeACode")}
             </Link>
           </div>
         </nav>

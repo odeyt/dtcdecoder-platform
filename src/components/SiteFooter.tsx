@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
+import { localizeContentHref } from "@/lib/i18n/localized-href";
 
 export function SiteFooter() {
   const t = useTranslations("footer");
+  const locale = useLocale();
 
   return (
     <footer className="mt-24 border-t border-[var(--border-subtle)] bg-[var(--surface-1)]">
@@ -19,7 +21,7 @@ export function SiteFooter() {
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 {t("product")}
               </span>
-              <Link href="/blog" className="hover:text-[var(--text-primary)]">
+              <Link href={localizeContentHref("/blog", locale)} className="hover:text-[var(--text-primary)]">
                 {t("blog")}
               </Link>
               <Link href="/videos" className="hover:text-[var(--text-primary)]">

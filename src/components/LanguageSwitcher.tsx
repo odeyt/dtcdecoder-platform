@@ -1,7 +1,7 @@
 "use client";
 
 import { usePathname, useRouter } from "next/navigation";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import {
   LIVE_LOCALES,
   getLocaleInfo,
@@ -10,37 +10,44 @@ import {
 import { APP_SHELL_TOP_LEVEL_SEGMENTS } from "@/lib/i18n/app-shell-routes";
 import { APP_LOCALE_COOKIE_NAME } from "@/lib/i18n/app-shell-locale-constants";
 
-// User-facing language picker for the localized public content tree
-// (homepage, /dtc, /blog, /[make]/[slug]). English content is served
-// unprefixed; other live locales are path-prefixed (e.g. /es/dtc/p0420).
-//
-// The (app) shell (account/pricing/legal/etc.) is English-only today — its
-// layout is fixed to English so it can stay statically generated — so this
-// switcher renders nothing on those routes rather than pretend to switch a
-// page it can't. When the app shell becomes locale-aware, drop the
-// app-shell guard below.
+// User-facing language picker. Two locale mechanisms are in play:
+//  - Public content tree (homepage, /dtc, /blog, /[make]/[slug]): locale is
+//    a URL segment — English unprefixed, other live locales path-prefixed
+//    (e.g. /es/dtc/p0420). Switching swaps the prefix.
+//  - (app) shell (account/pricing/legal/etc.): no URL locale segment; the
+//    shell reads the dtc_interface_locale cookie. Switching sets the cookie
+//    and refreshes in place.
 export function LanguageSwitcher() {
   const pathname = usePathname() || "/";
   const router = useRouter();
   const t = useTranslations("nav");
+  // The actually-resolved locale (URL segment for the content tree, cookie
+  // for the app shell) — both layouts feed it to NextIntlClientProvider, so
+  // this is correct on either tree and matches server render (no hydration
+  // mismatch).
+  const currentLocale = useLocale();
 
   const segments = pathname.split("/").filter(Boolean);
   const first = segments[0];
   const hasLocalePrefix = first ? (LIVE_LOCALES as readonly string[]).includes(first) : false;
-  const currentLocale = hasLocalePrefix ? (first as string) : DEFAULT_LOCALE;
   const rest = hasLocalePrefix ? segments.slice(1) : segments;
 
   const restFirst = rest[0];
   const isAppShellRoute = restFirst ? APP_SHELL_TOP_LEVEL_SEGMENTS.has(restFirst) : false;
-  if (isAppShellRoute) return null;
 
   function switchTo(locale: string) {
     if (locale === currentLocale) return;
 
-    // Forward-compatible: also record the anonymous interface-locale cookie
-    // the (app) shell reads, so once the shell is locale-aware the choice
-    // carries over. A saved account preference still wins over this cookie.
+    // The (app) shell reads this cookie to pick its language; a saved
+    // account preference (Pro/Workshop) still wins over it.
     document.cookie = `${APP_LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
+
+    if (isAppShellRoute) {
+      // App-shell routes carry no locale prefix — the cookie above drives the
+      // language, so just re-render the current page.
+      router.refresh();
+      return;
+    }
 
     const basePath = `/${rest.join("/")}`;
     const target =
