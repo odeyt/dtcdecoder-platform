@@ -25,6 +25,10 @@ export const LOCALE_CODES: readonly LocaleCodeInfo[] = [
   { code: "es", englishName: "Spanish", nativeName: "Español", direction: "ltr" },
   { code: "fr", englishName: "French", nativeName: "Français", direction: "ltr" },
   { code: "de", englishName: "German", nativeName: "Deutsch", direction: "ltr" },
+  // Brazilian Portuguese is a distinct, first-class locale — never treated as
+  // generic Portuguese (pt). The generic `pt` entry below stays for routing
+  // recognition only; the production menu uses pt-BR.
+  { code: "pt-BR", englishName: "Portuguese (Brazil)", nativeName: "Português (Brasil)", direction: "ltr" },
   { code: "pt", englishName: "Portuguese", nativeName: "Português", direction: "ltr" },
   { code: "it", englishName: "Italian", nativeName: "Italiano", direction: "ltr" },
   { code: "nl", englishName: "Dutch", nativeName: "Nederlands", direction: "ltr" },
@@ -64,7 +68,7 @@ export const LOCALE_CODES: readonly LocaleCodeInfo[] = [
   { code: "id", englishName: "Indonesian", nativeName: "Bahasa Indonesia", direction: "ltr" },
   { code: "ms", englishName: "Malay", nativeName: "Bahasa Melayu", direction: "ltr" },
   { code: "fil", englishName: "Filipino", nativeName: "Filipino", direction: "ltr" },
-  { code: "zh-CN", englishName: "Chinese (Simplified)", nativeName: "简体中文", direction: "ltr" },
+  { code: "zh-CN", englishName: "Chinese (Simplified)", nativeName: "中文", direction: "ltr" },
   { code: "zh-TW", englishName: "Chinese (Traditional)", nativeName: "繁體中文", direction: "ltr" },
   { code: "ja", englishName: "Japanese", nativeName: "日本語", direction: "ltr" },
   { code: "ko", englishName: "Korean", nativeName: "한국어", direction: "ltr" },
@@ -92,6 +96,26 @@ export const DEFAULT_LOCALE = "en";
 export const LIVE_LOCALES = ["en", "es"] as const;
 export type LiveLocale = (typeof LIVE_LOCALES)[number];
 
+// The nine production language options, in the exact display order the
+// language selector must render (spec-defined). This is the single source of
+// truth for the menu — every selector placement (desktop nav, mobile nav,
+// account menu, preferences, report toolbar) generates its options from
+// here, so options are never hardcoded per component. A code appearing here
+// is a *target* language; getMenuLocales() below filters to the ones that
+// are actually built (isLiveLocale) so the menu never offers a language that
+// would render English under a foreign <html lang>.
+export const LANGUAGE_MENU_ORDER = [
+  "en",
+  "zh-CN",
+  "es",
+  "pt-BR",
+  "de",
+  "fr",
+  "ja",
+  "ko",
+  "th",
+] as const;
+
 const LOCALE_CODE_SET = new Set(LOCALE_CODES.map((l) => l.code.toLowerCase()));
 const LIVE_LOCALE_SET = new Set<string>(LIVE_LOCALES);
 const LOCALE_INFO_BY_CODE = new Map(LOCALE_CODES.map((l) => [l.code.toLowerCase(), l]));
@@ -113,4 +137,15 @@ export function getLocaleInfo(code: string): LocaleCodeInfo | undefined {
 
 export function directionForLocale(code: string): "ltr" | "rtl" {
   return getLocaleInfo(code)?.direction ?? "ltr";
+}
+
+// The ordered list of languages the selector should render right now: the
+// spec's nine-language menu order, filtered to locales that are actually
+// built (have a catalog). New locales appear automatically the moment they
+// are added to LIVE_LOCALES — no selector code change. Callers get full
+// LocaleCodeInfo (code + native name + direction) so nothing is hardcoded.
+export function getMenuLocales(): LocaleCodeInfo[] {
+  return LANGUAGE_MENU_ORDER.filter(isLiveLocale)
+    .map((code) => getLocaleInfo(code))
+    .filter((info): info is LocaleCodeInfo => info !== undefined);
 }
