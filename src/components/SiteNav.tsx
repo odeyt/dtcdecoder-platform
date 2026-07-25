@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { env } from "@/lib/env";
+import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 
 // Auth state is fetched client-side (not passed from the root layout) so
 // that marketing/static pages (home, privacy, terms, etc.) can still be
@@ -88,6 +89,7 @@ export function SiteNav() {
         </nav>
 
         <div className="hidden items-center gap-3 md:flex">
+          <LanguageSwitcher />
           {userEmail ? (
             <Link
               href="/account"
@@ -156,6 +158,9 @@ export function SiteNav() {
             </Link>
           ))}
           <div className="mt-2 flex flex-col gap-2 border-t border-[var(--border-subtle)] pt-3">
+            <div className="px-2 py-1">
+              <LanguageSwitcher />
+            </div>
             <Link
               href={userEmail ? "/account" : "/account/login"}
               onClick={() => setMenuOpen(false)}

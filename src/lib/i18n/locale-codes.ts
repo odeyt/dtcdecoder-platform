@@ -79,11 +79,32 @@ export const LOCALE_CODES: readonly LocaleCodeInfo[] = [
 
 export const DEFAULT_LOCALE = "en";
 
+// The locales that are actually BUILT and publicly routable today: each has
+// a real next-intl message catalog (messages/<code>.json) with fully
+// translated UI strings AND translated content. Every other entry in
+// LOCALE_CODES above is recognized for routing identity but not yet
+// translated — proxy.ts redirects those prefixes to English rather than
+// serving mislabeled English under a foreign <html lang>. This is the
+// single source of truth shared by the proxy, the [locale] layout, the
+// request-config catalog loader, and the user-facing language switcher.
+// Add a locale here only once its messages/<code>.json exists and its
+// content is translated.
+export const LIVE_LOCALES = ["en", "es"] as const;
+export type LiveLocale = (typeof LIVE_LOCALES)[number];
+
 const LOCALE_CODE_SET = new Set(LOCALE_CODES.map((l) => l.code.toLowerCase()));
+const LIVE_LOCALE_SET = new Set<string>(LIVE_LOCALES);
 const LOCALE_INFO_BY_CODE = new Map(LOCALE_CODES.map((l) => [l.code.toLowerCase(), l]));
 
 export function isRecognizedLocaleCode(code: string): boolean {
   return LOCALE_CODE_SET.has(code.toLowerCase());
+}
+
+// True only for locales with a real catalog + translated content (see
+// LIVE_LOCALES). Distinct from isRecognizedLocaleCode, which is true for
+// every routing-registered code including untranslated ones.
+export function isLiveLocale(code: string): boolean {
+  return LIVE_LOCALE_SET.has(code.toLowerCase());
 }
 
 export function getLocaleInfo(code: string): LocaleCodeInfo | undefined {

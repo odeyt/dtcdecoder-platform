@@ -11,7 +11,8 @@
     "openMenu": "Abrir menú",
     "closeMenu": "Cerrar menú",
     "primaryNav": "Principal",
-    "mobileNav": "Móvil"
+    "mobileNav": "Móvil",
+    "language": "Idioma"
   },
   "footer": {
     "tagline": "Inteligencia de diagnóstico automotriz asistida por IA — no sustituye el diagnóstico presencial de un técnico calificado.",

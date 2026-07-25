@@ -11,7 +11,8 @@
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
     "primaryNav": "Primary",
-    "mobileNav": "Mobile"
+    "mobileNav": "Mobile",
+    "language": "Language"
   },
   "footer": {
     "tagline": "AI-assisted automotive diagnostic intelligence — not a substitute for a qualified technician's in-person diagnosis.",

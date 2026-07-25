@@ -7,6 +7,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import {
   isRecognizedLocaleCode,
+  isLiveLocale,
   directionForLocale,
   DEFAULT_LOCALE,
 } from "@/lib/i18n/locale-codes";
@@ -43,11 +44,11 @@ type Props = {
 // for the other. proxy.ts rewrites unprefixed requests to /en/... first, so
 // `locale` here is always a real path segment, never inferred.
 //
-// Only English and Spanish have real next-intl message catalogs today (see
-// messages/en.json, messages/es.json, and the multilingual rollout plan) —
-// every other recognized locale code still renders through this same tree
-// structurally, falling back to English messages.
-const LOCALES_WITH_CATALOGS = new Set(["en", "es"]);
+// Only built locales (LIVE_LOCALES: messages/en.json, messages/es.json)
+// have a real next-intl message catalog. proxy.ts now redirects every other
+// recognized-but-unbuilt locale prefix to English before it reaches this
+// layout, but the isLiveLocale() catalog fallback below stays as defense in
+// depth for any direct/edge hit that bypasses the proxy.
 
 // Only English is a real, enabled locale in the registry today — pre-render
 // that one statically (restoring the homepage's previous static generation)
@@ -71,7 +72,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   setRequestLocale(locale);
 
   const direction = directionForLocale(locale);
-  const catalogLocale = LOCALES_WITH_CATALOGS.has(locale) ? locale : DEFAULT_LOCALE;
+  const catalogLocale = isLiveLocale(locale) ? locale : DEFAULT_LOCALE;
   // Loaded directly (not via next-intl's async request-config derivation)
   // and passed as explicit props below — any *unset* NextIntlClientProvider
   // prop (now/timeZone/formats) triggers an internal getConfig() call that

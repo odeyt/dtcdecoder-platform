@@ -3,13 +3,15 @@ import { cookies } from "next/headers";
 import { createClient } from "@/lib/supabase/server";
 import { getUserPreferences } from "@/lib/preferences";
 import { isEnabledLocale } from "@/lib/i18n/languages";
-import { DEFAULT_LOCALE } from "@/lib/i18n/locale-codes";
+import { DEFAULT_LOCALE, isLiveLocale } from "@/lib/i18n/locale-codes";
+import { APP_LOCALE_COOKIE_NAME } from "@/lib/i18n/app-shell-locale-constants";
 
-// Anonymous/free "temporary" language switching, never persisted — a saved
-// account preference (Pro/Workshop only) always wins over this cookie when
-// both exist. Distinct from the [locale] segment used by the public content
-// tree, since (app)-shell routes don't carry a locale in the URL.
-export const APP_LOCALE_COOKIE_NAME = "dtc_interface_locale";
+// Re-exported for existing server-side importers. The literal now lives in
+// app-shell-locale-constants.ts so the client-side language switcher can
+// read it without pulling in this "server-only" module. Distinct from the
+// [locale] segment used by the public content tree, since (app)-shell routes
+// don't carry a locale in the URL.
+export { APP_LOCALE_COOKIE_NAME };
 
 // Only call this from pages that are ALREADY dynamic (account, pricing,
 // preferences, ai-assistant, history all read auth/DB already) — reading
@@ -40,12 +42,11 @@ export async function resolveAppShellLocale(): Promise<string> {
   return DEFAULT_LOCALE;
 }
 
-// Only English and Spanish have real catalogs today — see the multilingual
-// rollout plan. Mirrors the same fallback used by src/i18n/request.ts for
-// the [locale] tree, kept here rather than imported from there since that
-// file is next-intl's own request-config entry point, not a general helper.
+// Only built (LIVE_LOCALES) locales have a real catalog. Mirrors the same
+// fallback used by src/i18n/request.ts for the [locale] tree, kept here
+// rather than imported from there since that file is next-intl's own
+// request-config entry point, not a general helper.
 export async function getAppShellMessages(locale: string) {
-  const hasCatalog = locale === "en" || locale === "es";
-  const catalogLocale = hasCatalog ? locale : DEFAULT_LOCALE;
+  const catalogLocale = isLiveLocale(locale) ? locale : DEFAULT_LOCALE;
   return (await import(`../../../messages/${catalogLocale}.json`)).default;
 }
