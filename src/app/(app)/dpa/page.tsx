@@ -84,8 +84,8 @@ export default function DpaPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         To request a signed DPA or ask about data processing, email{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>
         .
       </p>

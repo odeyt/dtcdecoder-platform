@@ -51,8 +51,8 @@ export default function PrivacyRightsPage() {
       <h2 className="mt-10 text-xl font-bold text-white">How to Exercise Your Rights</h2>
       <p className="mt-4">
         To make a request, email{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>{" "}
         with the details of your request. We may need to verify your identity before responding.
       </p>
@@ -66,8 +66,8 @@ export default function PrivacyRightsPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>
       </p>
     </div>

@@ -151,8 +151,8 @@ export default function TermsPage() {
       <h2 className="mt-10 text-xl font-bold text-white">16. Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>
       </p>
     </div>

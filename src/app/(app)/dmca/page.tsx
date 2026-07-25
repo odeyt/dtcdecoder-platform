@@ -39,8 +39,8 @@ export default function DmcaPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Designated Contact</h2>
       <p className="mt-4">
         Send DMCA notices to{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>{" "}
         with the subject line &quot;DMCA Notice.&quot;
       </p>
@@ -61,8 +61,8 @@ export default function DmcaPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
-          support@dtcdecoder.com
+        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
+          support@redlined1.com
         </a>
       </p>
     </div>
