@@ -55,14 +55,40 @@ export function SiteFooter() {
               <Link href="/contact" className="hover:text-[var(--text-primary)]">
                 {t("contact")}
               </Link>
+            </nav>
+            <nav className="flex flex-col gap-2 text-sm text-[var(--text-secondary)]">
+              <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
+                {t("legal")}
+              </span>
               <Link href="/privacy" className="hover:text-[var(--text-primary)]">
                 {t("privacyPolicy")}
+              </Link>
+              <Link href="/privacy-rights" className="hover:text-[var(--text-primary)]">
+                {t("privacyRights")}
               </Link>
               <Link href="/terms" className="hover:text-[var(--text-primary)]">
                 {t("terms")}
               </Link>
+              <Link href="/cookies" className="hover:text-[var(--text-primary)]">
+                {t("cookiePolicy")}
+              </Link>
+              <Link href="/acceptable-use" className="hover:text-[var(--text-primary)]">
+                {t("acceptableUse")}
+              </Link>
+              <Link href="/ai-disclaimer" className="hover:text-[var(--text-primary)]">
+                {t("aiDisclaimer")}
+              </Link>
+              <Link href="/subscription-billing" className="hover:text-[var(--text-primary)]">
+                {t("subscriptionBilling")}
+              </Link>
               <Link href="/refund" className="hover:text-[var(--text-primary)]">
                 {t("refundPolicy")}
+              </Link>
+              <Link href="/dmca" className="hover:text-[var(--text-primary)]">
+                {t("dmca")}
+              </Link>
+              <Link href="/dpa" className="hover:text-[var(--text-primary)]">
+                {t("dpa")}
               </Link>
               <Link href="/affiliate-disclosure" className="hover:text-[var(--text-primary)]">
                 {t("affiliateDisclosure")}
