@@ -49,6 +49,9 @@ export function SiteFooter() {
               <span className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
                 {t("company")}
               </span>
+              <Link href="/faq" className="hover:text-[var(--text-primary)]">
+                {t("faq")}
+              </Link>
               <Link href="/contact" className="hover:text-[var(--text-primary)]">
                 {t("contact")}
               </Link>

@@ -15,6 +15,8 @@ export const APP_SHELL_TOP_LEVEL_SEGMENTS = new Set([
   "contact",
   "privacy",
   "terms",
+  "refund",
+  "faq",
   "affiliate-disclosure",
   "repair-pdfs",
   "videos",
