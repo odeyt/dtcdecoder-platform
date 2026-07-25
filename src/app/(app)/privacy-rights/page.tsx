@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "GDPR & CCPA Privacy Rights",
@@ -13,9 +14,9 @@ export default function PrivacyRightsPage() {
       <p className="mt-6">
         This page describes the privacy rights available to residents of the European Economic Area,
         the United Kingdom, and California, and how to exercise them. It supplements our{" "}
-        <a href="/privacy" className="text-[var(--accent-red)] underline">
+        <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Privacy Policy
-        </a>
+        </Link>
         .
       </p>
 
@@ -51,8 +52,8 @@ export default function PrivacyRightsPage() {
       <h2 className="mt-10 text-xl font-bold text-white">How to Exercise Your Rights</h2>
       <p className="mt-4">
         To make a request, email{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>{" "}
         with the details of your request. We may need to verify your identity before responding.
       </p>
@@ -66,8 +67,8 @@ export default function PrivacyRightsPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Subscription & Billing Policy",
@@ -63,17 +64,17 @@ export default function SubscriptionBillingPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Refunds</h2>
       <p className="mt-4">
         Refund eligibility is described in our{" "}
-        <a href="/refund" className="text-[var(--accent-red)] underline">
+        <Link href="/refund" className="text-[var(--accent-red)] underline">
           Refund Policy
-        </a>
+        </Link>
         .
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>

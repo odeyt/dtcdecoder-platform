@@ -92,8 +92,8 @@ export default function PrivacyPage() {
 
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>

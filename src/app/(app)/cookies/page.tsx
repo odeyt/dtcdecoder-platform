@@ -64,8 +64,8 @@ function CookiesEn() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>
@@ -132,8 +132,8 @@ function CookiesEs() {
       <h2 className="mt-10 text-xl font-bold text-white">Contacto</h2>
       <p className="mt-4">
         Correo:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>

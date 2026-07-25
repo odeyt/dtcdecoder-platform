@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -49,9 +50,9 @@ const faqsEn: Faq[] = [
     answer: (
       <>
         Please see our{" "}
-        <a href="/refund" className="text-[var(--accent-red)] underline">
+        <Link href="/refund" className="text-[var(--accent-red)] underline">
           Refund Policy
-        </a>
+        </Link>
         .
       </>
     ),
@@ -80,8 +81,8 @@ const faqsEn: Faq[] = [
     answer: (
       <>
         Email:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </>
     ),
@@ -129,9 +130,9 @@ const faqsEs: Faq[] = [
     answer: (
       <>
         Consulta nuestra{" "}
-        <a href="/refund" className="text-[var(--accent-red)] underline">
+        <Link href="/refund" className="text-[var(--accent-red)] underline">
           Política de Reembolsos
-        </a>
+        </Link>
         .
       </>
     ),
@@ -161,8 +162,8 @@ const faqsEs: Faq[] = [
     answer: (
       <>
         Correo:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </>
     ),

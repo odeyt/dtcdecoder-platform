@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { getLocale } from "next-intl/server";
 
 export const metadata: Metadata = {
@@ -54,17 +55,17 @@ function AiDisclaimerEn() {
       <p className="mt-4">
         Diagnostic information you submit may be processed by our AI provider (Anthropic) to generate
         recommendations. See our{" "}
-        <a href="/privacy" className="text-[var(--accent-red)] underline">
+        <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Privacy Policy
-        </a>{" "}
+        </Link>{" "}
         for details on data handling.
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         Email:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>
@@ -120,17 +121,17 @@ function AiDisclaimerEs() {
       <p className="mt-4">
         La información de diagnóstico que envíes puede ser procesada por nuestro proveedor de IA
         (Anthropic) para generar recomendaciones. Consulta nuestra{" "}
-        <a href="/privacy" className="text-[var(--accent-red)] underline">
+        <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Política de Privacidad
-        </a>{" "}
+        </Link>{" "}
         para conocer los detalles sobre el manejo de datos.
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">Contacto</h2>
       <p className="mt-4">
         Correo:{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
       </p>
     </div>

@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 
 export const metadata: Metadata = {
   title: "Data Processing Addendum",
@@ -13,13 +14,13 @@ export default function DpaPage() {
       <p className="mt-6">
         This Data Processing Addendum (&quot;DPA&quot;) applies to business customers on whose behalf
         DTCDecoder processes personal data. It supplements our{" "}
-        <a href="/terms" className="text-[var(--accent-red)] underline">
+        <Link href="/terms" className="text-[var(--accent-red)] underline">
           Terms of Service
-        </a>{" "}
+        </Link>{" "}
         and{" "}
-        <a href="/privacy" className="text-[var(--accent-red)] underline">
+        <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Privacy Policy
-        </a>
+        </Link>
         . A signed copy for enterprise agreements is available on request.
       </p>
 
@@ -84,8 +85,8 @@ export default function DpaPage() {
       <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
       <p className="mt-4">
         To request a signed DPA or ask about data processing, email{" "}
-        <a href="mailto:support@redlined1.com" className="text-[var(--accent-red)] underline">
-          support@redlined1.com
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
         </a>
         .
       </p>
