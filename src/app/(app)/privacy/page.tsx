@@ -7,13 +7,13 @@ export const metadata: Metadata = {
 export default function PrivacyPage() {
   return (
     <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
-      <h1 className="text-3xl font-bold text-white">Privacy Policy</h1>
-      <p className="mt-2 text-sm text-zinc-500">Last updated: [Insert Date]</p>
+      <h1 className="text-3xl font-bold text-white">DTCDecoder Privacy Policy</h1>
+      <p className="mt-2 text-sm text-zinc-500">Effective Date: July 25, 2026</p>
 
       <p className="mt-6">
-        This Privacy Policy explains how [Your Legal Business Name] (&quot;we,&quot; &quot;us,&quot; or
-        &quot;our&quot;) collects, uses, and shares information when you use DTC Decoder (the
-        &quot;Service&quot;).
+        This Privacy Policy explains how DTCDecoder (&quot;Company,&quot; &quot;we,&quot; &quot;our,&quot;
+        or &quot;us&quot;) collects, uses, and shares information when you use our website, software, AI
+        diagnostic tools, and related services (the &quot;Services&quot;).
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">1. Information We Collect</h2>
@@ -42,7 +42,7 @@ export default function PrivacyPage() {
 
       <h2 className="mt-10 text-xl font-bold text-white">3. Third-Party Service Providers</h2>
       <p className="mt-4">
-        We share information with the following service providers, only as needed to operate the Service:
+        We share information with the following service providers, only as needed to operate the Services:
       </p>
       <ul className="mt-4 list-disc space-y-2 pl-5">
         <li>
@@ -79,8 +79,12 @@ export default function PrivacyPage() {
       <h2 className="mt-10 text-xl font-bold text-white">6. Your Rights and Choices</h2>
       <p className="mt-4">
         You may request access to, correction of, or deletion of your personal information by contacting
-        us at [Support Email]. If you cancel a paid subscription, we retain billing records as required by
-        law even if you later request account deletion.
+        us at{" "}
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
+        </a>
+        . If you cancel a paid subscription, we retain billing records as required by law even if you
+        later request account deletion.
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">7. Data Security</h2>
@@ -93,20 +97,23 @@ export default function PrivacyPage() {
 
       <h2 className="mt-10 text-xl font-bold text-white">8. Children&apos;s Privacy</h2>
       <p className="mt-4">
-        The Service is not directed to children under 13, and we do not knowingly collect personal
+        The Services are not directed to children under 13, and we do not knowingly collect personal
         information from children under 13.
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">9. Changes to This Policy</h2>
       <p className="mt-4">
         We may update this Privacy Policy from time to time. Material changes will be reflected by an
-        updated &quot;Last updated&quot; date above.
+        updated &quot;Effective Date&quot; above.
       </p>
 
       <h2 className="mt-10 text-xl font-bold text-white">10. Contact Us</h2>
       <p className="mt-4">
-        Questions about this Privacy Policy or your data? Contact us at [Support Email] or via our Contact
-        page.
+        Questions about this Privacy Policy or your data? Contact us at{" "}
+        <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
+          support@dtcdecoder.com
+        </a>{" "}
+        or via our Contact page.
       </p>
     </div>
   );
