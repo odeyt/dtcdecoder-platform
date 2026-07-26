@@ -7,14 +7,19 @@ import { recordSearchHistory, updateSearchHistoryAiResponse } from "@/lib/search
 import { canSelectAiReportLanguage } from "@/lib/i18n/entitlements";
 import { isAiOutputEnabledLocale, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
-import { streamAssistantResponse, translateDiagnosticText } from "@/lib/ai/assistant";
+import { streamAssistantResponse, translateDiagnosticText, estimateChatInputTokens } from "@/lib/ai/assistant";
 import { verifyTokenPreservation } from "@/lib/ai/token-preservation";
+import { CHAT_FULL_MAX_TOKENS } from "@/lib/ai-diagnostics/redaction";
 import {
   recordAiDiagnosticUsage,
   releaseAiDiagnosticUsage,
   recordAiDiagnosticRun,
   AiDiagnosticLimitExceededError,
 } from "@/lib/ai-diagnostics/usage";
+import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
+import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
+
+const CHAT_MODEL_ID = "claude-sonnet-5";
 
 const requestSchema = z.object({
   message: z.string().trim().min(1).max(2000),
@@ -116,6 +121,46 @@ export async function POST(request: NextRequest) {
     console.error("Failed to record AI search history", err);
   }
 
+  // Pre-flight cost estimate + hard-ceiling guard, run AFTER the report-
+  // count slot is reserved above but BEFORE the AI provider is ever
+  // called — a request estimated over COST_GUARDS.hardCeilingUsd is
+  // rejected here instead of being sent to Anthropic. The reservation made
+  // above must still be released on this path, exactly like a genuine
+  // provider failure, so a rejected request never consumes an allowance.
+  const estimatedInputTokens = await estimateChatInputTokens(parsed.data.message, groundingRows);
+  const costEstimate = estimateCostMicros({
+    modelId: CHAT_MODEL_ID,
+    estimatedInputTokens,
+    estimatedOutputTokens: CHAT_FULL_MAX_TOKENS,
+  });
+  try {
+    guardCostCeiling(costEstimate);
+  } catch (err) {
+    if (err instanceof CostCeilingExceededError) {
+      await releaseAiDiagnosticUsage(user.id, parsed.data.requestId).catch((releaseErr) =>
+        console.error("[ai-assistant] failed to release usage reservation after cost-ceiling rejection", releaseErr),
+      );
+      await recordAiDiagnosticRun({
+        userId: user.id,
+        requestId: parsed.data.requestId,
+        feature: "chat",
+        plan,
+        providerId: "anthropic",
+        modelId: CHAT_MODEL_ID,
+        status: "failed",
+        accessLevelRequested: accessLevel,
+        errorMessage: err.message,
+        estimatedTotalCostMicros: costEstimate.totalCostMicros,
+      });
+      return NextResponse.json(
+        { error: "This request is too large to process right now. Try a shorter question." },
+        { status: 413 },
+      );
+    }
+    throw err;
+  }
+
+  const requestStartedAt = Date.now();
   const englishStream = await streamAssistantResponse(parsed.data.message, groundingRows);
 
   const encoder = new TextEncoder();
@@ -189,18 +234,30 @@ export async function POST(request: NextRequest) {
         // before this stream started (see recordAiDiagnosticUsage above);
         // reaching here means the generation succeeded, so the reservation
         // stands as the consumed slot and nothing further needs recording
-        // for enforcement purposes.
+        // for enforcement purposes. Cost here is computed from the real
+        // token usage the provider reported (englishFinal/translateFinal),
+        // not the pre-flight estimate — the estimate only ever gates.
+        const actualCost = computeActualCostMicros({
+          modelId: CHAT_MODEL_ID,
+          inputTokens: totalInputTokens,
+          outputTokens: totalOutputTokens,
+        });
         await recordAiDiagnosticRun({
           userId: user.id,
           requestId: parsed.data.requestId,
           feature: "chat",
           plan,
           providerId: "anthropic",
-          modelId: "claude-sonnet-5",
+          modelId: CHAT_MODEL_ID,
           status: "completed",
           accessLevelRequested: accessLevel,
           inputTokens: totalInputTokens,
           outputTokens: totalOutputTokens,
+          creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.standardReport,
+          estimatedInputCostMicros: actualCost.inputCostMicros,
+          estimatedOutputCostMicros: actualCost.outputCostMicros,
+          estimatedTotalCostMicros: actualCost.totalCostMicros,
+          latencyMs: Date.now() - requestStartedAt,
         });
 
         if (searchHistoryId) {
@@ -224,10 +281,11 @@ export async function POST(request: NextRequest) {
           feature: "chat",
           plan,
           providerId: "anthropic",
-          modelId: "claude-sonnet-5",
+          modelId: CHAT_MODEL_ID,
           status: "failed",
           accessLevelRequested: accessLevel,
           errorMessage: err instanceof Error ? err.message : "Unknown error",
+          latencyMs: Date.now() - requestStartedAt,
         });
       } finally {
         controller.close();

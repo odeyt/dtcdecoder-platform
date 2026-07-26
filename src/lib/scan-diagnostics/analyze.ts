@@ -6,12 +6,15 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCaseForOwner, transitionCaseStatus } from "@/lib/scan-diagnostics/cases";
-import { recordAiDiagnosticUsage, releaseAiDiagnosticUsage } from "@/lib/ai-diagnostics/usage";
+import { recordAiDiagnosticUsage, releaseAiDiagnosticUsage, recordAiDiagnosticRun } from "@/lib/ai-diagnostics/usage";
+import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
+import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
 import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
+import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, SubscriptionPlan } from "@/lib/types";
 
@@ -35,9 +38,7 @@ export async function runScanAnalysis(
   // present and is a no-op, never a double charge. Shared with the DTC
   // Assistant chat feature's daily preview/monthly+daily full-report
   // allowance — see src/lib/ai-diagnostics/usage.ts.
-  await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
-
-  await transitionCaseStatus(caseId, ["ready_for_analysis", "failed"], "analyzing");
+  const accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
 
   const admin = createAdminClient();
   const [{ data: caseRow, error: caseError }, { data: extraction, error: extractionError }, { data: dtcRecords, error: dtcError }] =
@@ -56,6 +57,48 @@ export async function runScanAnalysis(
     (dtcRecords as ScanDtcRecord[]) ?? [],
   );
 
+  // Pre-flight cost estimate + hard-ceiling guard, run AFTER the
+  // report-count slot is reserved above but BEFORE the case is even
+  // transitioned to "analyzing" or the AI provider is called — a request
+  // estimated over COST_GUARDS.hardCeilingUsd is rejected here, leaving
+  // the case in its original status, exactly like the "usage limit
+  // exceeded" path above. Estimation assumes the production Anthropic
+  // provider's configured model/token budget (the only provider wired in
+  // today) rather than the `provider` argument's own id, since the actual
+  // model isn't known until after the call returns.
+  const estimatedInputTokens = Math.ceil(JSON.stringify(input).length / 4);
+  const costEstimate = estimateCostMicros({
+    modelId: SCAN_REPORT_MODEL_ID,
+    estimatedInputTokens,
+    estimatedOutputTokens: SCAN_REPORT_MAX_TOKENS,
+  });
+  try {
+    guardCostCeiling(costEstimate);
+  } catch (err) {
+    if (err instanceof CostCeilingExceededError) {
+      await releaseAiDiagnosticUsage(userId, caseId).catch((releaseErr) =>
+        console.error("[scan-diagnostics] failed to release usage reservation after cost-ceiling rejection", releaseErr),
+      );
+      await recordAiDiagnosticRun({
+        userId,
+        requestId: caseId,
+        feature: "scan_report",
+        plan,
+        providerId: provider.id,
+        modelId: SCAN_REPORT_MODEL_ID,
+        status: "failed",
+        accessLevelRequested: accessLevel,
+        errorMessage: err.message,
+        diagnosticCaseId: caseId,
+        estimatedTotalCostMicros: costEstimate.totalCostMicros,
+      });
+    }
+    throw err;
+  }
+
+  await transitionCaseStatus(caseId, ["ready_for_analysis", "failed"], "analyzing");
+
+  const requestStartedAt = Date.now();
   let providerResult;
   try {
     providerResult = await provider.runDiagnosis(input);
@@ -79,6 +122,19 @@ export async function runScanAnalysis(
       error_message: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
       started_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
+    });
+    await recordAiDiagnosticRun({
+      userId,
+      requestId: caseId,
+      feature: "scan_report",
+      plan,
+      providerId: provider.id,
+      modelId: SCAN_REPORT_MODEL_ID,
+      status: "failed",
+      accessLevelRequested: accessLevel,
+      errorMessage: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
+      diagnosticCaseId: caseId,
+      latencyMs: Date.now() - requestStartedAt,
     });
 
     const failedCase = await transitionCaseStatus(caseId, "analyzing", "failed", {
@@ -117,6 +173,34 @@ export async function runScanAnalysis(
 
   const report = await assembleAndPersistReport(caseId, aiRun.id, providerResult, safety, confidence);
   const completedCase = await transitionCaseStatus(caseId, "analyzing", "completed");
+
+  // Cost/observability log only — never gates anything, never exposed to
+  // the customer. Computed from the provider's real reported token usage,
+  // not the pre-flight estimate above (which only ever gates).
+  const actualCost = computeActualCostMicros({
+    modelId: providerResult.modelId,
+    inputTokens: providerResult.tokens.input,
+    outputTokens: providerResult.tokens.output,
+  });
+  await recordAiDiagnosticRun({
+    userId,
+    requestId: caseId,
+    feature: "scan_report",
+    plan,
+    providerId: providerResult.providerId,
+    modelId: providerResult.modelId,
+    status: "completed",
+    accessLevelRequested: accessLevel,
+    inputTokens: providerResult.tokens.input,
+    outputTokens: providerResult.tokens.output,
+    diagnosticCaseId: caseId,
+    reportId: report.id,
+    creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.standardReport,
+    estimatedInputCostMicros: actualCost.inputCostMicros,
+    estimatedOutputCostMicros: actualCost.outputCostMicros,
+    estimatedTotalCostMicros: actualCost.totalCostMicros,
+    latencyMs: Date.now() - requestStartedAt,
+  });
 
   return { case: completedCase, report };
 }

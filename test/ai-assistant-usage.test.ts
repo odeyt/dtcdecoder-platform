@@ -40,7 +40,7 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
-const { streamAssistantResponse } = await import("@/lib/ai/assistant");
+const { streamAssistantResponse, estimateChatInputTokens } = await import("@/lib/ai/assistant");
 const { CHAT_FULL_MAX_TOKENS } = await import("@/lib/ai-diagnostics/redaction");
 
 describe("streamAssistantResponse", () => {
@@ -52,5 +52,46 @@ describe("streamAssistantResponse", () => {
     expect(args).not.toBeNull();
     expect(args!.max_tokens).toBe(CHAT_FULL_MAX_TOKENS);
     expect(String(args!.system)).not.toMatch(/FREE-TIER PREVIEW MODE/);
+  });
+});
+
+describe("estimateChatInputTokens", () => {
+  it("grows with a longer user message", async () => {
+    const short = await estimateChatInputTokens("P0420?", []);
+    const long = await estimateChatInputTokens("P0420?".repeat(1000), []);
+    expect(long).toBeGreaterThan(short);
+  });
+
+  it("grows with more grounding rows appended to the system prompt", async () => {
+    const noGrounding = await estimateChatInputTokens("What causes P0420?", []);
+    const withGrounding = await estimateChatInputTokens("What causes P0420?", [
+      {
+        id: "dtc-1",
+        code: "P0420",
+        make: null,
+        model: null,
+        engine_code: null,
+        slug: "p0420",
+        title: "Catalyst efficiency",
+        meta_description: null,
+        meaning: "Catalyst below threshold",
+        symptoms: [],
+        causes: ["Worn catalytic converter"],
+        diagnostic_steps: ["Check oxygen sensors"],
+        common_mistakes: null,
+        difficulty: "moderate",
+        severity: "moderate",
+        drive_recommendation: null,
+        related_makes: [],
+        faq: [],
+        pdf_url: null,
+        youtube_url: null,
+        search_count: 0,
+        is_published: true,
+        created_at: new Date(0).toISOString(),
+        updated_at: new Date(0).toISOString(),
+      },
+    ]);
+    expect(withGrounding).toBeGreaterThan(noGrounding);
   });
 });

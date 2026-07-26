@@ -160,15 +160,16 @@ export const BASIC_SEARCH_LIMITS: Record<SubscriptionPlan, BasicSearchLimits> = 
   workshop: { dailyLimit: null, monthlyLimit: null },
 };
 
-// Internal diagnostic-credit weights — the unit `ai_diagnostic_usage`
-// actually reserves/consumes underneath the customer-facing "report"
-// language. A plan's fullDiagnosticMonthlyLimit/fullDiagnosticDailyLimit
-// above are credit budgets, not raw operation counts: a standard report
-// costs 1 credit, but a long scanner-report analysis or an extra
-// reviewer/language/regeneration/follow-up costs more, debited from the
-// same budget. Never expose these numbers as "credits" in customer-facing
-// copy unless explicitly asked — the product decision is to keep saying
-// "reports."
+// Internal diagnostic-credit weights, tracked in the AI cost ledger
+// (ai_diagnostic_runs.credits_consumed — migration 0023) purely for cost
+// observability and, once add-on packs exist, add-on-credit consumption.
+// The customer-facing fullDiagnosticMonthlyLimit/fullDiagnosticDailyLimit
+// above stay a flat report count, enforced by ai_diagnostic_usage exactly
+// as before (1 reservation = 1 unit against the limit, regardless of
+// operation type) — a follow-up or extra language never fractionally
+// debits a plan's included report allowance. Never expose these numbers as
+// "credits" in customer-facing copy unless explicitly asked — the product
+// decision is to keep saying "reports."
 export const DIAGNOSTIC_CREDIT_WEIGHTS = {
   standardReport: 1,
   longScannerReport: 2,

@@ -69,6 +69,19 @@ function buildGroundingContext(rows: DtcCode[]): string {
   return `\n\nMatched reference content from our database (ground your answer in this, and recommend the linked PDF/video by name if present):\n\n${entries}`;
 }
 
+// Rough pre-flight token estimate used only for the cost-ceiling guard
+// (src/lib/ai-diagnostics/cost.ts guardCostCeiling) — never the source of
+// truth for billing, which always uses the provider's real reported usage
+// after generation completes. ~4 characters per token is a standard rough
+// approximation for English prose; good enough to catch a wildly oversized
+// request, not precise enough to bill from.
+const CHARS_PER_TOKEN_ESTIMATE = 4;
+
+export async function estimateChatInputTokens(userMessage: string, groundingRows: DtcCode[]): Promise<number> {
+  const systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);
+  return Math.ceil((systemPrompt.length + userMessage.length) / CHARS_PER_TOKEN_ESTIMATE);
+}
+
 export async function streamAssistantResponse(userMessage: string, groundingRows: DtcCode[]) {
   const client = new Anthropic({ apiKey: env.anthropicApiKey() });
   const systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);

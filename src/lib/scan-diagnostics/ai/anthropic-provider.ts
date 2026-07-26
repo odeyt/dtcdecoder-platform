@@ -18,6 +18,13 @@ import type { DiagnosticAIProvider, DiagnosticAIProviderResult } from "@/lib/sca
 // instructions that produced them. See docs/DIAGNOSTIC_SAFETY_RULES.md.
 export const DTCDECODER_DIAGNOSTIC_PROMPT_VERSION = "2026-07-safety-v2";
 
+// Exported so the analyze orchestrator's pre-flight cost estimate
+// (src/lib/scan-diagnostics/analyze.ts) can use the SAME worst-case output
+// budget this provider actually requests, instead of a second, possibly
+// stale copy of the number.
+export const SCAN_REPORT_MODEL_ID = "claude-sonnet-5";
+export const SCAN_REPORT_MAX_TOKENS = 4096;
+
 // Deliberately a SEPARATE admin_settings key from the AI chat assistant's
 // ai_system_prompt (src/lib/ai/assistant.ts) — this is an independent
 // prompt for an independent feature, not a shared/overloaded setting.
@@ -234,8 +241,8 @@ export class AnthropicDiagnosticProvider implements DiagnosticAIProvider {
     ]);
 
     const message = await client.messages.create({
-      model: "claude-sonnet-5",
-      max_tokens: 4096,
+      model: SCAN_REPORT_MODEL_ID,
+      max_tokens: SCAN_REPORT_MAX_TOKENS,
       system: systemPrompt,
       thinking: { type: "adaptive" },
       output_config: { effort: "medium" },

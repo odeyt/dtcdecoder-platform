@@ -187,6 +187,18 @@ export function toLegacyUsageSummary(summary: AiDiagnosticUsageSummary): LegacyU
   return { used: summary.fullReportsUsedThisMonth, limit: summary.fullMonthlyLimit, unit: "reports" };
 }
 
+// The credit-weighted operation type actually performed — matches
+// DIAGNOSTIC_CREDIT_WEIGHTS in src/lib/pricing.ts. Tracked for cost
+// observability and (once add-on packs exist) add-on-credit consumption;
+// never affects the flat report-count gate in recordAiDiagnosticUsage.
+export type AiDiagnosticOperationType =
+  | "standard_report"
+  | "long_scanner_report"
+  | "additional_reviewer"
+  | "additional_language"
+  | "major_regeneration"
+  | "follow_up_round";
+
 export interface AiDiagnosticRunRecord {
   userId: string;
   requestId: string;
@@ -199,8 +211,20 @@ export interface AiDiagnosticRunRecord {
   inputTokens?: number | null;
   outputTokens?: number | null;
   cachedTokens?: number | null;
+  toolCalls?: number;
+  /** @deprecated superseded by estimatedTotalCostMicros (migration 0023) — kept only for legacy readers of the old numeric(10,6) column. */
   estimatedCostUsd?: number | null;
   errorMessage?: string | null;
+  // Cost-ledger fields (migration 0023) — all optional so existing callers
+  // that haven't been updated to compute cost yet keep working unchanged.
+  diagnosticCaseId?: string | null;
+  reportId?: string | null;
+  operationType?: AiDiagnosticOperationType;
+  creditsConsumed?: number;
+  estimatedInputCostMicros?: number | null;
+  estimatedOutputCostMicros?: number | null;
+  estimatedTotalCostMicros?: number | null;
+  latencyMs?: number | null;
 }
 
 // Internal cost/observability logging only — never read by any
@@ -221,8 +245,17 @@ export async function recordAiDiagnosticRun(record: AiDiagnosticRunRecord): Prom
     input_tokens: record.inputTokens ?? null,
     output_tokens: record.outputTokens ?? null,
     cached_tokens: record.cachedTokens ?? null,
+    tool_calls: record.toolCalls ?? 0,
     estimated_cost_usd: record.estimatedCostUsd ?? null,
     error_message: record.errorMessage ?? null,
+    diagnostic_case_id: record.diagnosticCaseId ?? null,
+    report_id: record.reportId ?? null,
+    operation_type: record.operationType ?? "standard_report",
+    credits_consumed: record.creditsConsumed ?? 1,
+    estimated_input_cost_micros: record.estimatedInputCostMicros ?? null,
+    estimated_output_cost_micros: record.estimatedOutputCostMicros ?? null,
+    estimated_total_cost_micros: record.estimatedTotalCostMicros ?? null,
+    latency_ms: record.latencyMs ?? null,
   });
   if (error) console.error("[ai-diagnostics] failed to record cost/observability run", error);
 }

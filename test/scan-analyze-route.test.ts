@@ -72,13 +72,13 @@ function malformedJsonProvider(): DiagnosticAIProvider {
   };
 }
 
-function seedCase(caseId: string, userId: string, status = "ready_for_analysis") {
+function seedCase(caseId: string, userId: string, status = "ready_for_analysis", complaint = "Check engine light") {
   fake().seed("scan_cases", [
     {
       id: caseId,
       user_id: userId,
       status,
-      complaint: "Check engine light",
+      complaint,
       symptoms: ["rough idle"],
       mileage: 60000,
       recent_repairs: null,
@@ -243,5 +243,48 @@ describe("runScanAnalysis", () => {
 
     const runsForCase6 = fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-6");
     expect(runsForCase6).toHaveLength(0);
+  });
+
+  it("cost ceiling exceeded: rejected before the AI provider is ever called, usage reservation released, case untouched", async () => {
+    // A deliberately huge complaint pushes the pre-flight cost estimate
+    // (based on the canonical input's JSON size) well past
+    // COST_GUARDS.hardCeilingUsd — see src/lib/ai-diagnostics/cost.ts.
+    seedCase("case-huge", "user-1", "ready_for_analysis", "x".repeat(3_000_000));
+
+    let calledProvider = false;
+    const provider: DiagnosticAIProvider = {
+      id: "fake-provider",
+      async runDiagnosis() {
+        calledProvider = true;
+        return {
+          providerId: "fake-provider",
+          modelId: "fake-model",
+          promptVersion: "2026-07-safety-v2",
+          output: VALID_OUTPUT,
+          tokens: { input: 100, output: 200 },
+        };
+      },
+    };
+
+    await expect(runScanAnalysis("user-1", "case-huge", "pro", provider)).rejects.toThrow(
+      /exceeds the hard ceiling/i,
+    );
+
+    expect(calledProvider).toBe(false);
+
+    // The case never transitioned to "analyzing" — the guard runs before
+    // that transition, so it stays exactly where it started.
+    const caseAfter = fake().dump("scan_cases").find((c) => c.id === "case-huge");
+    expect(caseAfter?.status).toBe("ready_for_analysis");
+
+    // Reservation released — a rejected request must never consume a
+    // report allowance.
+    expect(fake().dump("ai_diagnostic_usage").filter((r) => r.request_id === "case-huge")).toHaveLength(0);
+
+    // A failed cost-ledger row was still recorded for observability.
+    const runsForCase = fake().dump("ai_diagnostic_runs").filter((r) => r.request_id === "case-huge");
+    expect(runsForCase).toHaveLength(1);
+    expect(runsForCase[0].status).toBe("failed");
+    expect(runsForCase[0].estimated_total_cost_micros).toBeGreaterThan(1_500_000);
   });
 });

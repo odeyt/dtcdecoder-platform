@@ -5,6 +5,7 @@
 import "server-only";
 import { NextResponse } from "next/server";
 import { AiDiagnosticLimitExceededError } from "@/lib/ai-diagnostics/usage";
+import { CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import type { ScanCase } from "@/lib/types";
 
 export class ScanCaseNotFoundError extends Error {
@@ -103,6 +104,12 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
         },
       },
       { status: 429 },
+    );
+  }
+  if (err instanceof CostCeilingExceededError) {
+    return NextResponse.json(
+      { error: "This case is too large to analyze right now. Try a smaller scan report or fewer symptoms." },
+      { status: 413 },
     );
   }
   if (err instanceof InvalidCaseStatusError) {
