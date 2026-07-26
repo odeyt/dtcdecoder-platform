@@ -57,12 +57,18 @@ and confirms each survives in the translation:
     promptVersion, resolvedLocale, translatedAt, latencyMs).
   The translate step is injected, so the fallback/validation/metadata logic is
   unit-tested without a live key (`test/translation-provider.test.ts`).
-  Persistence columns exist via migration `0020_report_translation_metadata`
-  (`source_locale, requested_locale, resolved_locale, provider, model,
-  glossary_version, prompt_version, fallback_used, translated_at, latency_ms`).
-  **Remaining wiring:** a writer that runs this provider and persists the result
-  into `diagnostic_report_localizations` (the assistant path streams and does
-  not yet persist per-locale rows through this provider).
+
+  **Persistence is NOT yet built.** The `diagnostic_reports` /
+  `diagnostic_report_localizations` tables (migration `0007`) were never applied
+  to production and are not referenced by any `src/` code — orphaned scaffolding
+  (see CONTENT_LOCALIZATION_AUDIT.md). So `AnthropicTranslationProvider` today
+  returns a `LocalizedDiagnosticReport` object that nothing persists yet. Wiring
+  a stored-localization writer requires first deciding which live flow (the
+  streaming assistant vs. scan-diagnostics `scan_reports`) owns the canonical
+  report, then a migration that creates the persistence table with the audit
+  columns (`source/requested/resolved_locale, provider, model, glossary_version,
+  prompt_version, fallback_used, translated_at, latency_ms`). A premature
+  columns-only migration was reverted because its target table does not exist.
 
 ### Caching
 

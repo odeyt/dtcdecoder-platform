@@ -32,11 +32,11 @@ tested loader for no functional gain).
 
 | Requirement | Status | Evidence / gap |
 |---|---|---|
-| Canonical English report, single diagnosis | **PASS** | `diagnostic_reports.canonical_locale='en'` CHECK; assistant route generates English then translates fixed text (anti-drift comment) |
+| Canonical-English-then-translate flow (single diagnosis, anti-drift) | **PASS** | assistant route generates English then translates the fixed text — this behavior is real and live |
 | Glossary-protected translation | **PASS** | `translateDiagnosticText` + `buildTranslationSystemPrompt` inject `terminology_glossary` |
-| Technical-token preservation | **PASS** | translation prompt enumerates DTC/VIN/acronyms/measurements/CAN/connector rules |
+| Technical-token preservation | **PASS** | translation prompt enumerates DTC/VIN/acronyms/measurements/CAN/connector rules; + `verifyTokenPreservation` post-check |
 | Server-only provider, no client keys | **PASS** | Anthropic calls in server routes only |
-| Per-locale localization store, no overwrite | **PASS** | `diagnostic_report_localizations` (unique per report+locale) |
+| **Per-locale report PERSISTENCE store** | **MISSING (corrected 2026-07-26)** | `diagnostic_reports` + `diagnostic_report_localizations` are defined in migration `0007` but **that migration was NEVER applied to production** (`relation does not exist`) and **no `src/` code references either table**. The tables are orphaned scaffolding. The live assistant translates on the fly and stores English+translated text in `search_history`; scan-diagnostics uses `scan_reports` (0013). There is no canonical-report + per-locale-localization persistence in the running app. A prior version of this audit wrongly marked this PASS by reading migration files instead of the live DB. |
 | Entitlement gating of output locales | **PASS** | `getAllowedOutputLocales(plan)` (plan + `ai_output_enabled`) |
 | Usage reservation + refund on failure | **PASS** | `recordAiDiagnosticUsage` / release; failed attempt never consumes a slot |
 | Report offered in all 12 locales | **PARTIAL/BLOCKED** | only `ai_output_enabled` locales (en+es) offered; extending to beta locales is a **pending safety decision** (translating safety-critical prose unreviewed) |
