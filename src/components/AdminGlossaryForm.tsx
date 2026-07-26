@@ -49,14 +49,63 @@ export function AdminGlossaryForm({ entry, action }: Props) {
         />
       </Field>
 
+      <Field label="Acronym (optional)" htmlFor="acronym">
+        <input
+          id="acronym"
+          name="acronym"
+          type="text"
+          defaultValue={entry?.acronym ?? ""}
+          placeholder="e.g. PCM, ABS, SRS"
+          maxLength={50}
+          className="min-h-11 w-full max-w-xs rounded-lg border border-white/10 bg-white/5 px-3 text-white placeholder:text-zinc-500"
+        />
+      </Field>
+
       <Field label="Category (optional)" htmlFor="category">
         <input
           id="category"
           name="category"
           type="text"
           defaultValue={entry?.category ?? ""}
-          placeholder="e.g. acronym, module_name, symptom, measurement"
+          placeholder="e.g. engine_management, abs, can_communication, ev_high_voltage"
+          maxLength={100}
           className="min-h-11 w-full rounded-lg border border-white/10 bg-white/5 px-3 text-white placeholder:text-zinc-500"
+        />
+      </Field>
+
+      <div className="flex flex-col gap-4 sm:flex-row">
+        <Field label="Manufacturer context (optional)" htmlFor="manufacturerContext">
+          <input
+            id="manufacturerContext"
+            name="manufacturerContext"
+            type="text"
+            defaultValue={entry?.manufacturer_context ?? ""}
+            placeholder="e.g. Toyota, VAG"
+            maxLength={100}
+            className="min-h-11 w-full rounded-lg border border-white/10 bg-white/5 px-3 text-white placeholder:text-zinc-500"
+          />
+        </Field>
+        <Field label="System context (optional)" htmlFor="systemContext">
+          <input
+            id="systemContext"
+            name="systemContext"
+            type="text"
+            defaultValue={entry?.system_context ?? ""}
+            placeholder="e.g. transmission, charging"
+            maxLength={100}
+            className="min-h-11 w-full rounded-lg border border-white/10 bg-white/5 px-3 text-white placeholder:text-zinc-500"
+          />
+        </Field>
+      </div>
+
+      <Field label="Alternative translation (optional)" htmlFor="alternativeTranslation">
+        <input
+          id="alternativeTranslation"
+          name="alternativeTranslation"
+          type="text"
+          defaultValue={entry?.alternative_translation ?? ""}
+          maxLength={500}
+          className="min-h-11 w-full rounded-lg border border-white/10 bg-white/5 px-3 text-white"
         />
       </Field>
 

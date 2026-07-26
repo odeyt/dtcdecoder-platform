@@ -161,12 +161,17 @@ export interface TerminologyGlossaryEntry {
   term_en: string;
   locale_code: string;
   translated_term: string;
+  acronym: string | null;
   category: string | null;
+  manufacturer_context: string | null;
+  system_context: string | null;
+  alternative_translation: string | null;
   notes: string | null;
   do_not_translate: boolean;
   safety_critical: boolean;
   review_status: "draft" | "reviewed" | "approved";
   reviewed_by: string | null;
+  reviewed_at: string | null;
   glossary_version: number;
   updated_at: string;
 }

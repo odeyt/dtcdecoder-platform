@@ -1,34 +1,26 @@
 "use server";
 
-import { z } from "zod";
 import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/admin-auth";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRecognizedLocaleCode } from "@/lib/i18n/locale-codes";
-
-const glossarySchema = z.object({
-  termEn: z.string().min(1),
-  localeCode: z.string().min(2).max(10),
-  translatedTerm: z.string().min(1),
-  category: z.string().optional(),
-  notes: z.string().optional(),
-  doNotTranslate: z.boolean(),
-  safetyCritical: z.boolean(),
-  reviewStatus: z.enum(["draft", "reviewed", "approved"]),
-  reviewedBy: z.string().optional(),
-});
+import { glossaryEntrySchema, resolveReviewedAt } from "@/lib/glossary-schema";
 
 export async function saveGlossaryEntryAction(id: string | null, formData: FormData): Promise<void> {
   await requireAdmin();
 
   const localeCode = String(formData.get("localeCode") ?? "").trim().toLowerCase();
 
-  const parsed = glossarySchema.parse({
+  const parsed = glossaryEntrySchema.parse({
     termEn: formData.get("termEn"),
     localeCode,
     translatedTerm: formData.get("translatedTerm"),
+    acronym: formData.get("acronym") || undefined,
     category: formData.get("category") || undefined,
+    manufacturerContext: formData.get("manufacturerContext") || undefined,
+    systemContext: formData.get("systemContext") || undefined,
+    alternativeTranslation: formData.get("alternativeTranslation") || undefined,
     notes: formData.get("notes") || undefined,
     doNotTranslate: formData.get("doNotTranslate") === "on",
     safetyCritical: formData.get("safetyCritical") === "on",
@@ -45,12 +37,17 @@ export async function saveGlossaryEntryAction(id: string | null, formData: FormD
     term_en: parsed.termEn,
     locale_code: parsed.localeCode,
     translated_term: parsed.translatedTerm,
+    acronym: parsed.acronym ?? null,
     category: parsed.category ?? null,
+    manufacturer_context: parsed.manufacturerContext ?? null,
+    system_context: parsed.systemContext ?? null,
+    alternative_translation: parsed.alternativeTranslation ?? null,
     notes: parsed.notes ?? null,
     do_not_translate: parsed.doNotTranslate,
     safety_critical: parsed.safetyCritical,
     review_status: parsed.reviewStatus,
     reviewed_by: parsed.reviewedBy ?? null,
+    reviewed_at: resolveReviewedAt(parsed.reviewStatus),
   };
 
   if (id) {
