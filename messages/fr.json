@@ -94,6 +94,7 @@
     "freeBullet3": "Historique de recherche DTC",
     "freeBullet4": "Avertissements de sécurité essentiels",
     "freeBullet5": "Aperçu de diagnostic limité",
+    "freeBullet6": "Diagnostics IA disponibles sur les forfaits payants",
     "startFree": "Commencer gratuitement",
     "proBullet1": "30 rapports de diagnostic IA complets/mois",
     "proBullet2": "Maximum 5 rapports/jour",
@@ -227,7 +228,9 @@
     "stageValidating": "Validation de la demande",
     "stageSearching": "Recherche de données de référence dans la base de diagnostic",
     "stageConsulting": "Consultation du modèle de diagnostic IA",
-    "stageTranslating": "Traduction du diagnostic en {language}"
+    "stageTranslating": "Traduction du diagnostic en {language}",
+    "freeLockedBody": "L'assistant de diagnostic IA n'est pas inclus dans le forfait gratuit. Passez à Pro Technician ou Workshop pour des diagnostics complets générés par IA comme ceux-ci :",
+    "freeLockedCta": "Voir les forfaits"
   },
   "history": {
     "title": "Historique de recherche",

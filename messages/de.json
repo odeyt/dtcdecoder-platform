@@ -94,6 +94,7 @@
     "freeBullet3": "DTC-Suchverlauf",
     "freeBullet4": "Wesentliche Sicherheitswarnungen",
     "freeBullet5": "Begrenzte Diagnosevorschau",
+    "freeBullet6": "KI-Diagnosen auf kostenpflichtigen Plänen verfügbar",
     "startFree": "Kostenlos starten",
     "proBullet1": "30 vollständige KI-Diagnoseberichte/Monat",
     "proBullet2": "Maximal 5 Berichte/Tag",
@@ -227,7 +228,9 @@
     "stageValidating": "Anfrage wird geprüft",
     "stageSearching": "Diagnosedatenbank wird nach Referenzdaten durchsucht",
     "stageConsulting": "KI-Diagnosemodell wird konsultiert",
-    "stageTranslating": "Diagnose wird ins {language} übersetzt"
+    "stageTranslating": "Diagnose wird ins {language} übersetzt",
+    "freeLockedBody": "Der KI-Diagnoseassistent ist im kostenlosen Plan nicht enthalten. Upgraden Sie auf Pro Technician oder Workshop für vollständige KI-generierte Diagnosen wie diese:",
+    "freeLockedCta": "Pläne ansehen"
   },
   "history": {
     "title": "Suchverlauf",

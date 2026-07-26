@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
+import { UpgradeCard } from "@/components/UpgradeCard";
 import type { ScanCaseStatus } from "@/lib/types";
 
 const EXTRACT_STAGES = ["Parsing the scan report", "Extracting DTCs and vehicle info"];
@@ -18,11 +19,16 @@ interface ScanCaseActionBarProps {
   status: ScanCaseStatus;
   hasExtraction: boolean;
   errorMessage?: string | null;
+  // Whether the viewer's current plan can run AI diagnostic analysis at
+  // all (Free never can — see AI_DIAGNOSTIC_ENTITLEMENTS in
+  // src/lib/pricing.ts). Extraction stays available regardless: it's
+  // deterministic parsing, not an AI diagnostic call.
+  canAnalyze: boolean;
 }
 
 // Real, honest actions only — one button per case status, reflecting what
 // this exact request actually does (see the endpoint each button calls).
-export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage }: ScanCaseActionBarProps) {
+export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage, canAnalyze }: ScanCaseActionBarProps) {
   const router = useRouter();
   const [running, setRunning] = useState<"extract" | "analyze" | null>(null);
   const [error, setError] = useState<string | null>(null);
@@ -74,6 +80,15 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage 
           : null;
 
   if (!action) return null;
+
+  if (action.stage === "analyze" && !canAnalyze) {
+    return (
+      <div className="flex flex-col gap-3">
+        {status === "failed" && errorMessage && <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>}
+        <UpgradeCard reason="AI diagnostic analysis isn't included on the Free plan. Upgrade to Pro Technician or Workshop to analyze this case." />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-3">

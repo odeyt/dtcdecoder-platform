@@ -45,15 +45,6 @@ interface DtcSummary {
   status: string | null;
 }
 
-interface PreviewFinding {
-  cause: string;
-  rationale: string;
-}
-
-interface PreviewTest {
-  step: string;
-}
-
 export interface ScanReportVisibleResult {
   vehicleSummary: VehicleSummary;
   dtcs: DtcSummary[];
@@ -62,9 +53,6 @@ export interface ScanReportVisibleResult {
   // can still detect a pre-v2 legacy report (see isLegacyReport in
   // report-presentation.ts) regardless of access level.
   schemaVersion: ScanReport["schema_version"];
-  // Present only when accessLevel === "preview".
-  previewFindings?: PreviewFinding[];
-  previewTests?: PreviewTest[];
   // Present only when accessLevel === "full" — structurally absent
   // (not just empty) from a preview response.
   rankedCauses?: RankedCause[];
@@ -154,9 +142,14 @@ export function filterScanReportForAccessLevel(params: {
     };
   }
 
-  const rankedCauses = report.ranked_causes as unknown as RankedCause[];
-  const recommendedTests = report.recommended_tests as unknown as RecommendedTest[];
-
+  // No real AI-generated content is ever shown at this access level — the
+  // Free plan gets zero AI diagnostic report generations
+  // (aiDiagnosticPreviewDailyLimit = 0 in src/lib/pricing.ts), so the only
+  // way to reach this branch at all is a paid-plan report being viewed
+  // AFTER the owner has downgraded to Free. Per the product requirement
+  // ("No saved cases" on Free), that owner sees only the deterministic,
+  // non-AI base fields above plus the locked-section catalog — never a
+  // slice of their old report's real findings.
   return {
     accessLevel,
     usage: {
@@ -164,34 +157,10 @@ export function filterScanReportForAccessLevel(params: {
       usedToday: usage.previewsUsedToday,
       remainingToday: Math.max(0, (usage.previewDailyLimit ?? 0) - usage.previewsUsedToday),
     },
-    visibleResult: {
-      ...base,
-      previewFindings: rankedCauses.slice(0, 2).map((c) => ({ cause: c.cause, rationale: c.rationale })),
-      previewTests: recommendedTests.slice(0, 2).map((t) => ({ step: t.step })),
-    },
+    visibleResult: base,
     lockedSections: LOCKED_SECTION_CATALOG.map(({ key, title }) => ({ key, title })),
     upgradeRequired: true,
   };
 }
 
-// System-prompt addendum for a free-tier DTC Assistant chat request. Chat
-// has no structured "sections" to redact after the fact, so free-tier
-// requests are generated within these bounds from the start — the model
-// is never asked for, and therefore never produces, the locked content in
-// the first place. Paired with a lower max_tokens (see
-// CHAT_PREVIEW_MAX_TOKENS) as a second, independent bound.
-export function buildChatPreviewSystemPromptAddendum(): string {
-  return `
-
-FREE-TIER PREVIEW MODE — this response is a limited preview, not the full diagnostic. Include only:
-- A short, plain-language explanation of what the code/symptom establishes.
-- A basic severity/safety classification.
-- The first two most likely diagnostic areas, named briefly with one line of reasoning each.
-- The first two recommended checks, named briefly (no detailed step-by-step procedure).
-- A short closing line noting that the complete root-cause ranking, full test sequence, expected readings, and programming/calibration guidance are available on Pro Technician.
-
-Do not include a complete ranked list of causes, a full diagnostic test sequence, expected test readings or pass/fail interpretation, or programming/calibration instructions. Keep the whole response concise.`;
-}
-
-export const CHAT_PREVIEW_MAX_TOKENS = 500;
 export const CHAT_FULL_MAX_TOKENS = 2048;

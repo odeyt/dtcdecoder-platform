@@ -148,7 +148,7 @@ describe("runScanAnalysis", () => {
   it("happy path: transitions through analyzing to completed and persists a report", async () => {
     seedCase("case-1", "user-1");
 
-    const result = await runScanAnalysis("user-1", "case-1", "free", fakeProvider());
+    const result = await runScanAnalysis("user-1", "case-1", "pro", fakeProvider());
 
     expect(result.case.status).toBe("completed");
     expect(["high", "medium", "low", "insufficient_evidence"]).toContain(result.report.confidence_level);
@@ -164,7 +164,7 @@ describe("runScanAnalysis", () => {
   it("provider failure: case ends up failed, and a retry does not double-charge usage", async () => {
     seedCase("case-2", "user-1");
 
-    await expect(runScanAnalysis("user-1", "case-2", "free", failingProvider())).rejects.toThrow(
+    await expect(runScanAnalysis("user-1", "case-2", "pro", failingProvider())).rejects.toThrow(
       "AI analysis failed",
     );
 
@@ -176,12 +176,12 @@ describe("runScanAnalysis", () => {
     expect(failedRuns[0].status).toBe("failed");
 
     // The failed attempt's reservation must have been released — otherwise
-    // it would silently burn one of this user's 2 free daily previews for
+    // it would silently burn one of this user's daily report allowance for
     // nothing.
     expect(fake().dump("ai_diagnostic_usage").filter((r) => r.request_id === "case-2")).toHaveLength(0);
 
     // Retry with a working provider — must succeed without a second usage charge.
-    const result = await runScanAnalysis("user-1", "case-2", "free", fakeProvider());
+    const result = await runScanAnalysis("user-1", "case-2", "pro", fakeProvider());
     expect(result.case.status).toBe("completed");
 
     const usageRows = fake().dump("ai_diagnostic_usage");
@@ -193,7 +193,7 @@ describe("runScanAnalysis", () => {
 
     let caught: unknown;
     try {
-      await runScanAnalysis("user-1", "case-malformed", "free", malformedJsonProvider());
+      await runScanAnalysis("user-1", "case-malformed", "pro", malformedJsonProvider());
     } catch (err) {
       caught = err;
     }
@@ -208,24 +208,40 @@ describe("runScanAnalysis", () => {
     expect(caseAfter?.status).toBe("failed");
   });
 
-  it("usage limit exceeded: case stays ready_for_analysis and no AI run is created", async () => {
-    seedCase("case-3", "user-1");
-    seedCase("case-4", "user-1");
-    seedCase("case-5", "user-1");
+  it("free plan: blocked immediately — never reaches the AI provider or transitions the case", async () => {
+    seedCase("case-free", "user-1");
 
-    // Free plan gets 2 AI diagnostic previews per day (shared with the DTC
-    // Assistant chat feature) — consume it with two other cases first.
-    await runScanAnalysis("user-1", "case-3", "free", fakeProvider());
-    await runScanAnalysis("user-1", "case-4", "free", fakeProvider());
-
-    await expect(runScanAnalysis("user-1", "case-5", "free", fakeProvider())).rejects.toThrow(
+    await expect(runScanAnalysis("user-1", "case-free", "free", fakeProvider())).rejects.toThrow(
       /free AI diagnostic previews/i,
     );
 
-    const case5 = fake().dump("scan_cases").find((c) => c.id === "case-5");
-    expect(case5?.status).toBe("ready_for_analysis");
+    const caseAfter = fake().dump("scan_cases").find((c) => c.id === "case-free");
+    expect(caseAfter?.status).toBe("ready_for_analysis");
 
-    const runsForCase5 = fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-5");
-    expect(runsForCase5).toHaveLength(0);
+    const runsForCase = fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-free");
+    expect(runsForCase).toHaveLength(0);
+  });
+
+  it("pro plan: daily report limit exceeded — case stays ready_for_analysis and no AI run is created", async () => {
+    seedCase("case-3", "user-1");
+    seedCase("case-4", "user-1");
+    seedCase("case-5", "user-1");
+    seedCase("case-6", "user-1");
+
+    // Pro gets 3 full AI diagnostic reports per day — consume it with three
+    // other cases first.
+    await runScanAnalysis("user-1", "case-3", "pro", fakeProvider());
+    await runScanAnalysis("user-1", "case-4", "pro", fakeProvider());
+    await runScanAnalysis("user-1", "case-5", "pro", fakeProvider());
+
+    await expect(runScanAnalysis("user-1", "case-6", "pro", fakeProvider())).rejects.toThrow(
+      /daily.*limit/i,
+    );
+
+    const case6 = fake().dump("scan_cases").find((c) => c.id === "case-6");
+    expect(case6?.status).toBe("ready_for_analysis");
+
+    const runsForCase6 = fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-6");
+    expect(runsForCase6).toHaveLength(0);
   });
 });

@@ -215,7 +215,7 @@
     "title": "Asistente de Diagnóstico IA",
     "subtitle": "Decodifica códigos de falla al instante, entiende síntomas, encuentra causas comunes y sigue pasos de diagnóstico profesionales antes de reemplazar piezas.",
     "signInPrompt": "Inicia sesión para usar el Asistente de Diagnóstico IA.",
-    "signInSubtext": "Las cuentas gratuitas obtienen 5 preguntas de IA al día — Pro y Taller obtienen una asignación mensual mucho mayor.",
+    "signInSubtext": "El diagnóstico con IA está disponible en los planes Pro y Taller.",
     "signIn": "Iniciar Sesión",
     "describePlaceholder": "Describe tu problema…",
     "describeLabel": "Describe el problema de tu vehículo",
@@ -228,7 +228,9 @@
     "stageValidating": "Validando la solicitud",
     "stageSearching": "Buscando en la base de datos de diagnóstico",
     "stageConsulting": "Consultando el modelo de diagnóstico IA",
-    "stageTranslating": "Traduciendo el diagnóstico al {language}"
+    "stageTranslating": "Traduciendo el diagnóstico al {language}",
+    "freeLockedBody": "El asistente de diagnóstico IA no está incluido en el plan Gratis. Mejora a Pro o Taller para obtener diagnósticos completos generados por IA como estos:",
+    "freeLockedCta": "Ver planes"
   },
   "history": {
     "title": "Historial de Búsquedas",

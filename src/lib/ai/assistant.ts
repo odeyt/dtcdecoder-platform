@@ -2,12 +2,7 @@ import "server-only";
 import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
-import {
-  buildChatPreviewSystemPromptAddendum,
-  CHAT_FULL_MAX_TOKENS,
-  CHAT_PREVIEW_MAX_TOKENS,
-} from "@/lib/ai-diagnostics/redaction";
-import type { AiDiagnosticAccessLevel } from "@/lib/ai-diagnostics/entitlements";
+import { CHAT_FULL_MAX_TOKENS } from "@/lib/ai-diagnostics/redaction";
 import type { DtcCode, TerminologyGlossaryEntry } from "@/lib/types";
 
 const DEFAULT_SYSTEM_PROMPT = `You are DTC AI Assistant, a master automotive diagnostic technician with decades of hands-on experience. A user will describe a fault code, symptom, or vehicle issue. Respond the way an experienced tech would explain it to another tech:
@@ -42,12 +37,14 @@ export async function getSystemPrompt(): Promise<string> {
   return (data?.value || DEFAULT_SYSTEM_PROMPT) + SAFETY_SUFFIX;
 }
 
-// Usage gating/recording for this feature now lives in the shared
+// Usage gating for this feature lives in the shared
 // src/lib/ai-diagnostics/usage.ts module (one ledger shared with Scan
-// Report Analysis) — see src/app/api/ai/assistant/route.ts for where it's
-// called. Free-tier access level is enforced here only in the sense that
-// streamAssistantResponse constrains WHAT gets generated (see below); the
-// route is what decides whether a request is allowed to run at all.
+// Report Analysis) — see src/app/api/ai/assistant/route.ts. The Free plan's
+// AI diagnostic preview allowance is 0 (src/lib/pricing.ts), so
+// recordAiDiagnosticUsage always rejects a Free request before this module
+// is ever called — streamAssistantResponse is only ever reached for a plan
+// that's genuinely entitled to a full generation. There is no reduced/
+// "preview" generation mode to select between.
 
 function buildGroundingContext(rows: DtcCode[]): string {
   if (rows.length === 0) return "";
@@ -72,25 +69,13 @@ function buildGroundingContext(rows: DtcCode[]): string {
   return `\n\nMatched reference content from our database (ground your answer in this, and recommend the linked PDF/video by name if present):\n\n${entries}`;
 }
 
-// accessLevel "preview" (free tier) constrains WHAT the model is asked to
-// produce (a shorter, bounded system-prompt addendum + a lower max_tokens)
-// rather than generating a full answer and discarding part of it — the
-// full-cost/full-detail answer is never generated for a free-tier request
-// in the first place. See src/lib/ai-diagnostics/redaction.ts.
-export async function streamAssistantResponse(
-  userMessage: string,
-  groundingRows: DtcCode[],
-  accessLevel: AiDiagnosticAccessLevel,
-) {
+export async function streamAssistantResponse(userMessage: string, groundingRows: DtcCode[]) {
   const client = new Anthropic({ apiKey: env.anthropicApiKey() });
-  let systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);
-  if (accessLevel === "preview") {
-    systemPrompt += buildChatPreviewSystemPromptAddendum();
-  }
+  const systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);
 
   return client.messages.stream({
     model: "claude-sonnet-5",
-    max_tokens: accessLevel === "preview" ? CHAT_PREVIEW_MAX_TOKENS : CHAT_FULL_MAX_TOKENS,
+    max_tokens: CHAT_FULL_MAX_TOKENS,
     system: systemPrompt,
     thinking: { type: "adaptive" },
     output_config: { effort: "medium" },

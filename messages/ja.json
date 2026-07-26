@@ -94,6 +94,7 @@
     "freeBullet3": "DTC 検索履歴",
     "freeBullet4": "重要な安全警告",
     "freeBullet5": "限定的な診断プレビュー",
+    "freeBullet6": "AI診断は有料プランでご利用いただけます",
     "startFree": "無料で開始",
     "proBullet1": "月 30 件の完全な AI 診断レポート",
     "proBullet2": "1 日最大 5 件のレポート",
@@ -227,7 +228,9 @@
     "stageValidating": "リクエストを検証中",
     "stageSearching": "診断データベースで参照データを検索中",
     "stageConsulting": "AI 診断モデルに問い合わせ中",
-    "stageTranslating": "診断を{language}に翻訳中"
+    "stageTranslating": "診断を{language}に翻訳中",
+    "freeLockedBody": "AI診断アシスタントは無料プランには含まれていません。次のような完全なAI生成診断を利用するには、Pro TechnicianまたはWorkshopにアップグレードしてください：",
+    "freeLockedCta": "プランを見る"
   },
   "history": {
     "title": "検索履歴",

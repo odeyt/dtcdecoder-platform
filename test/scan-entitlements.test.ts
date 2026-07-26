@@ -11,10 +11,10 @@ const PLANS: SubscriptionPlan[] = ["free", "pro", "workshop"];
 describe("scanMonthlyLimit", () => {
   // Free never gets a full scan report (preview-only, gated by the separate
   // daily preview counter, not this monthly full-report limit).
-  it("returns 0 for free, 30 for pro, 120 for workshop", () => {
+  it("returns 0 for free, 20 for pro, 75 for workshop", () => {
     expect(scanMonthlyLimit("free")).toBe(0);
-    expect(scanMonthlyLimit("pro")).toBe(30);
-    expect(scanMonthlyLimit("workshop")).toBe(120);
+    expect(scanMonthlyLimit("pro")).toBe(20);
+    expect(scanMonthlyLimit("workshop")).toBe(75);
   });
 });
 

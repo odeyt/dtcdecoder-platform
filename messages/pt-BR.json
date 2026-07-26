@@ -94,6 +94,7 @@
     "freeBullet3": "Histórico de buscas de DTC",
     "freeBullet4": "Avisos de segurança essenciais",
     "freeBullet5": "Prévia de diagnóstico limitada",
+    "freeBullet6": "Diagnósticos de IA disponíveis nos planos pagos",
     "startFree": "Começar de graça",
     "proBullet1": "30 relatórios completos de diagnóstico com IA/mês",
     "proBullet2": "Máximo de 5 relatórios/dia",
@@ -227,7 +228,9 @@
     "stageValidating": "Validando a solicitação",
     "stageSearching": "Buscando dados de referência no banco de dados de diagnóstico",
     "stageConsulting": "Consultando o modelo de diagnóstico com IA",
-    "stageTranslating": "Traduzindo o diagnóstico para {language}"
+    "stageTranslating": "Traduzindo o diagnóstico para {language}",
+    "freeLockedBody": "O assistente de diagnóstico com IA não está incluído no plano gratuito. Faça upgrade para o Pro Technician ou Workshop para obter diagnósticos completos gerados por IA como estes:",
+    "freeLockedCta": "Ver planos"
   },
   "history": {
     "title": "Histórico de buscas",

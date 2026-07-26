@@ -17,7 +17,7 @@ describe("getEntitlements", () => {
   it("matches the canonical field shape for every plan", () => {
     expect(getEntitlements("free")).toEqual({
       basicDtcLookup: true,
-      aiDiagnosticPreviewDailyLimit: 2,
+      aiDiagnosticPreviewDailyLimit: 0,
       fullDiagnosticMonthlyLimit: 0,
       fullDiagnosticDailyLimit: 0,
       technicianSeatLimit: 1,
@@ -28,8 +28,8 @@ describe("getEntitlements", () => {
     expect(getEntitlements("pro")).toEqual({
       basicDtcLookup: true,
       aiDiagnosticPreviewDailyLimit: null,
-      fullDiagnosticMonthlyLimit: 30,
-      fullDiagnosticDailyLimit: 5,
+      fullDiagnosticMonthlyLimit: 20,
+      fullDiagnosticDailyLimit: 3,
       technicianSeatLimit: 1,
       pdfExport: true,
       sharedCases: false,
@@ -38,8 +38,8 @@ describe("getEntitlements", () => {
     expect(getEntitlements("workshop")).toEqual({
       basicDtcLookup: true,
       aiDiagnosticPreviewDailyLimit: null,
-      fullDiagnosticMonthlyLimit: 120,
-      fullDiagnosticDailyLimit: 15,
+      fullDiagnosticMonthlyLimit: 75,
+      fullDiagnosticDailyLimit: 8,
       technicianSeatLimit: 3,
       pdfExport: true,
       sharedCases: false,
@@ -55,9 +55,10 @@ describe("getEntitlements", () => {
 });
 
 describe("canAccessFullDiagnostics / accessLevelForPlan", () => {
-  it("free never gets full diagnostics — preview only", () => {
+  it("free never gets full diagnostics — preview only, and its preview allowance is zero", () => {
     expect(canAccessFullDiagnostics("free")).toBe(false);
     expect(accessLevelForPlan("free")).toBe("preview");
+    expect(previewDailyLimit("free")).toBe(0);
   });
 
   it("pro and workshop get full diagnostics", () => {
@@ -69,22 +70,22 @@ describe("canAccessFullDiagnostics / accessLevelForPlan", () => {
 });
 
 describe("previewDailyLimit", () => {
-  it("is 2 for free, null (unmetered by the preview counter) for paid plans", () => {
-    expect(previewDailyLimit("free")).toBe(2);
+  it("is 0 for free (no runtime AI diagnostic calls at all), null (unmetered by the preview counter) for paid plans", () => {
+    expect(previewDailyLimit("free")).toBe(0);
     expect(previewDailyLimit("pro")).toBeNull();
     expect(previewDailyLimit("workshop")).toBeNull();
   });
 });
 
 describe("fullDailyLimit / fullMonthlyLimit", () => {
-  it("matches the spec's exact numbers", () => {
+  it("matches the canonical registry's exact numbers", () => {
     expect(fullDailyLimit("free")).toBe(0);
-    expect(fullDailyLimit("pro")).toBe(5);
-    expect(fullDailyLimit("workshop")).toBe(15);
+    expect(fullDailyLimit("pro")).toBe(3);
+    expect(fullDailyLimit("workshop")).toBe(8);
 
     expect(fullMonthlyLimit("free")).toBe(0);
-    expect(fullMonthlyLimit("pro")).toBe(30);
-    expect(fullMonthlyLimit("workshop")).toBe(120);
+    expect(fullMonthlyLimit("pro")).toBe(20);
+    expect(fullMonthlyLimit("workshop")).toBe(75);
   });
 });
 

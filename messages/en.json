@@ -215,7 +215,7 @@
     "title": "DTC AI Assistant",
     "subtitle": "Instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
     "signInPrompt": "Sign in to use the DTC AI Assistant.",
-    "signInSubtext": "Free accounts get 5 AI questions a day — Pro and Workshop get a much larger monthly allowance.",
+    "signInSubtext": "AI diagnostics are available on Pro Technician and Workshop plans.",
     "signIn": "Sign In",
     "describePlaceholder": "Describe your issue…",
     "describeLabel": "Describe your vehicle issue",
@@ -228,7 +228,9 @@
     "stageValidating": "Validating request",
     "stageSearching": "Searching diagnostic database for grounding data",
     "stageConsulting": "Consulting the AI diagnostic model",
-    "stageTranslating": "Translating the diagnosis into {language}"
+    "stageTranslating": "Translating the diagnosis into {language}",
+    "freeLockedBody": "The AI diagnostic assistant isn't included on the Free plan. Upgrade to Pro Technician or Workshop for full AI-generated diagnoses like these:",
+    "freeLockedCta": "View plans"
   },
   "history": {
     "title": "Search History",

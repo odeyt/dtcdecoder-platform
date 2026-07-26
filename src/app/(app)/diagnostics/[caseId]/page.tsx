@@ -8,6 +8,7 @@ import { getCaseDetail } from "@/lib/scan-diagnostics/cases";
 import { resolveReportAccess } from "@/lib/scan-diagnostics/report-access";
 import { getFeedbackForCase } from "@/lib/scan-diagnostics/feedback";
 import { canExportScanReport } from "@/lib/scan-diagnostics/entitlements";
+import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
 import { ScanCaseActionBar } from "@/components/ScanCaseActionBar";
 import { ScanExtractionReviewForm } from "@/components/ScanExtractionReviewForm";
 import { ScanReportView } from "@/components/ScanReportView";
@@ -67,6 +68,7 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
               status={scanCase.status}
               hasExtraction={Boolean(extraction)}
               errorMessage={scanCase.error_message}
+              canAnalyze={canAccessFullDiagnostics(plan)}
             />
           </div>
         )}

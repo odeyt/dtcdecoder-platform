@@ -1,15 +1,13 @@
 import { describe, expect, it, vi } from "vitest";
 
-// streamAssistantResponse's usage/entitlement enforcement itself now lives
-// in the shared src/lib/ai-diagnostics/usage.ts module (see
-// test/ai-diagnostics-usage.test.ts for its dedicated tests, and
-// test/ai-diagnostics-redaction.test.ts for the preview system-prompt
-// addendum content). This file covers the one piece of NEW behavior that
-// lives in assistant.ts itself: that a free-tier ("preview") request is
-// generated within a strictly smaller token budget and a constrained
-// system prompt, never the full-cost/full-detail generation, matching this
-// repo's precedent of mocking the Supabase admin client (not the AI
-// provider boundary) for orchestration-level tests.
+// streamAssistantResponse's usage/entitlement enforcement lives in the
+// shared src/lib/ai-diagnostics/usage.ts module (see
+// test/ai-diagnostics-usage.test.ts) — the Free plan's AI diagnostic
+// preview allowance is 0, so recordAiDiagnosticUsage always rejects a Free
+// request before streamAssistantResponse is ever called (see
+// src/app/api/ai/assistant/route.ts). There is no reduced-generation
+// "preview" mode left to test here — this file just pins that every
+// (necessarily paid) call generates at the one full token budget.
 
 let capturedStreamArgs: Record<string, unknown> | null = null;
 
@@ -43,30 +41,16 @@ vi.mock("@/lib/supabase/admin", () => ({
 }));
 
 const { streamAssistantResponse } = await import("@/lib/ai/assistant");
-const { CHAT_PREVIEW_MAX_TOKENS, CHAT_FULL_MAX_TOKENS } = await import("@/lib/ai-diagnostics/redaction");
+const { CHAT_FULL_MAX_TOKENS } = await import("@/lib/ai-diagnostics/redaction");
 
-describe("streamAssistantResponse — access-level-scoped generation", () => {
-  it("preview (free tier): uses the smaller token budget and appends the preview-constrained system prompt", async () => {
+describe("streamAssistantResponse", () => {
+  it("always generates at the full token budget, with no preview/reduced mode", async () => {
     capturedStreamArgs = null;
-    await streamAssistantResponse("What causes P0420?", [], "preview");
-
-    const args = capturedStreamArgs as Record<string, unknown> | null;
-    expect(args).not.toBeNull();
-    expect(args!.max_tokens).toBe(CHAT_PREVIEW_MAX_TOKENS);
-    expect(String(args!.system)).toMatch(/FREE-TIER PREVIEW MODE/);
-  });
-
-  it("full (paid tier): uses the full token budget and does NOT include the preview constraint", async () => {
-    capturedStreamArgs = null;
-    await streamAssistantResponse("What causes P0420?", [], "full");
+    await streamAssistantResponse("What causes P0420?", []);
 
     const args = capturedStreamArgs as Record<string, unknown> | null;
     expect(args).not.toBeNull();
     expect(args!.max_tokens).toBe(CHAT_FULL_MAX_TOKENS);
     expect(String(args!.system)).not.toMatch(/FREE-TIER PREVIEW MODE/);
-  });
-
-  it("the preview budget is strictly smaller than the full budget", () => {
-    expect(CHAT_PREVIEW_MAX_TOKENS).toBeLessThan(CHAT_FULL_MAX_TOKENS);
   });
 });

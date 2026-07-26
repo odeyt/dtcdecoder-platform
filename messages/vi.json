@@ -94,6 +94,7 @@
     "freeBullet3": "Lịch sử tìm kiếm DTC",
     "freeBullet4": "Cảnh báo an toàn thiết yếu",
     "freeBullet5": "Bản xem trước chẩn đoán giới hạn",
+    "freeBullet6": "Chẩn đoán AI có sẵn trên các gói trả phí",
     "startFree": "Bắt đầu miễn phí",
     "proBullet1": "30 báo cáo chẩn đoán AI đầy đủ/tháng",
     "proBullet2": "Tối đa 5 báo cáo/ngày",
@@ -227,7 +228,9 @@
     "stageValidating": "Đang xác thực yêu cầu",
     "stageSearching": "Đang tìm dữ liệu tham chiếu trong cơ sở dữ liệu chẩn đoán",
     "stageConsulting": "Đang tham vấn mô hình chẩn đoán AI",
-    "stageTranslating": "Đang dịch chẩn đoán sang {language}"
+    "stageTranslating": "Đang dịch chẩn đoán sang {language}",
+    "freeLockedBody": "Trợ lý chẩn đoán AI không được bao gồm trong gói Miễn phí. Nâng cấp lên Pro Technician hoặc Workshop để nhận chẩn đoán đầy đủ do AI tạo ra như thế này:",
+    "freeLockedCta": "Xem các gói"
   },
   "history": {
     "title": "Lịch sử tìm kiếm",

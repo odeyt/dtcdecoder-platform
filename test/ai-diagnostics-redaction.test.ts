@@ -1,9 +1,5 @@
 import { describe, expect, it } from "vitest";
-import {
-  filterScanReportForAccessLevel,
-  LOCKED_SECTION_CATALOG,
-  buildChatPreviewSystemPromptAddendum,
-} from "@/lib/ai-diagnostics/redaction";
+import { filterScanReportForAccessLevel, LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
 import type { AiDiagnosticUsageSummary } from "@/lib/ai-diagnostics/usage";
 import type { ScanReport, ScanExtraction, ScanDtcRecord } from "@/lib/types";
 
@@ -121,39 +117,27 @@ describe("filterScanReportForAccessLevel — preview", () => {
     expect(result.visibleResult.safety.findings).toHaveLength(1);
   });
 
-  it("includes only the first two ranked causes, reduced to cause+rationale", () => {
-    expect(result.visibleResult.previewFindings).toEqual([
-      { cause: "Vacuum leak at intake manifold gasket", rationale: "P0171 lean code with rough idle matches a common vacuum leak pattern." },
-      { cause: "Failed PCV valve", rationale: "Secondary possibility given similar symptom profile." },
-    ]);
-  });
-
-  it("includes only the first two recommended tests, reduced to the step name", () => {
-    expect(result.visibleResult.previewTests).toEqual([
-      { step: "Smoke test intake system" },
-      { step: "Inspect PCV valve" },
-    ]);
-  });
-
-  it("does NOT include the full ranked causes, full tests, confidence detail, or missing-info fields at all", () => {
+  it("does NOT include any real AI-generated content — no ranked causes, tests, confidence detail, or missing-info fields at all", () => {
     expect(result.visibleResult).not.toHaveProperty("rankedCauses");
     expect(result.visibleResult).not.toHaveProperty("recommendedTests");
     expect(result.visibleResult).not.toHaveProperty("confidenceLevel");
     expect(result.visibleResult).not.toHaveProperty("confidenceRationale");
     expect(result.visibleResult).not.toHaveProperty("missingInformation");
+    expect(result.visibleResult).not.toHaveProperty("previewFindings");
+    expect(result.visibleResult).not.toHaveProperty("previewTests");
   });
 
-  it("never includes supportingEvidence/contradictingEvidence/confirmationTestsRequired detail, even for the two visible causes", () => {
+  it("never leaks any ranked-cause or recommended-test text anywhere in the serialized result", () => {
     const serialized = JSON.stringify(result);
     expect(serialized).not.toContain("supportingEvidence");
     expect(serialized).not.toContain("confirmationTestsRequired");
     expect(serialized).not.toContain("purpose");
     expect(serialized).not.toContain("expectedResult");
-  });
-
-  it("does not leak the third (locked) ranked cause or test anywhere in the serialized result", () => {
-    const serialized = JSON.stringify(result);
+    expect(serialized).not.toContain("Vacuum leak at intake manifold gasket");
+    expect(serialized).not.toContain("Failed PCV valve");
     expect(serialized).not.toContain("Cracked intake boot");
+    expect(serialized).not.toContain("Smoke test intake system");
+    expect(serialized).not.toContain("Inspect PCV valve");
     expect(serialized).not.toContain("Visual inspection of intake boot");
   });
 
@@ -192,13 +176,5 @@ describe("filterScanReportForAccessLevel — full", () => {
   it("has no locked sections and does not require an upgrade", () => {
     expect(result.lockedSections).toEqual([]);
     expect(result.upgradeRequired).toBe(false);
-  });
-});
-
-describe("buildChatPreviewSystemPromptAddendum", () => {
-  it("instructs the model to withhold full root-cause ranking and programming guidance", () => {
-    const addendum = buildChatPreviewSystemPromptAddendum();
-    expect(addendum).toMatch(/first two/i);
-    expect(addendum).toMatch(/do not include/i);
   });
 });

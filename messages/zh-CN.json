@@ -94,6 +94,7 @@
     "freeBullet3": "DTC 搜索历史",
     "freeBullet4": "基本安全警告",
     "freeBullet5": "有限的诊断预览",
+    "freeBullet6": "AI 诊断功能仅限付费套餐使用",
     "startFree": "免费开始",
     "proBullet1": "每月 30 份完整 AI 诊断报告",
     "proBullet2": "每天最多 5 份报告",
@@ -227,7 +228,9 @@
     "stageValidating": "正在验证请求",
     "stageSearching": "正在诊断数据库中搜索参考数据",
     "stageConsulting": "正在咨询 AI 诊断模型",
-    "stageTranslating": "正在将诊断翻译为{language}"
+    "stageTranslating": "正在将诊断翻译为{language}",
+    "freeLockedBody": "AI 诊断助手不包含在免费套餐中。升级到 Pro Technician 或 Workshop 即可获得完整的 AI 生成诊断，例如：",
+    "freeLockedCta": "查看套餐"
   },
   "history": {
     "title": "搜索历史",

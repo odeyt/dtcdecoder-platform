@@ -116,7 +116,7 @@ export async function POST(request: NextRequest) {
     console.error("Failed to record AI search history", err);
   }
 
-  const englishStream = await streamAssistantResponse(parsed.data.message, groundingRows, accessLevel);
+  const englishStream = await streamAssistantResponse(parsed.data.message, groundingRows);
 
   const encoder = new TextEncoder();
   const stream = new ReadableStream<Uint8Array>({

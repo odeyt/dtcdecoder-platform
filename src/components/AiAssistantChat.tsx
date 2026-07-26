@@ -11,11 +11,6 @@ import type { SubscriptionPlan } from "@/lib/types";
 interface ChatMessage {
   role: "user" | "assistant";
   content: string;
-  // Free-tier responses are generated preview-scoped from the start (see
-  // src/lib/ai/assistant.ts) — this just tells the UI whether to show the
-  // static locked-sections panel below this bubble, never a data source in
-  // itself.
-  isPreview?: boolean;
 }
 
 const EXAMPLES = [
@@ -66,11 +61,7 @@ export function AiAssistantChat({
     setErrorMessage(null);
     setResetAt(null);
     setStatus("waiting");
-    setMessages((prev) => [
-      ...prev,
-      { role: "user", content: text },
-      { role: "assistant", content: "", isPreview: isFreePlan },
-    ]);
+    setMessages((prev) => [...prev, { role: "user", content: text }, { role: "assistant", content: "" }]);
     setInput("");
 
     const controller = new AbortController();
@@ -116,8 +107,7 @@ export function AiAssistantChat({
         setStatus("streaming");
         setMessages((prev) => {
           const next = [...prev];
-          const current = next[next.length - 1];
-          next[next.length - 1] = { role: "assistant", content: accumulated, isPreview: current.isPreview };
+          next[next.length - 1] = { role: "assistant", content: accumulated };
           return next;
         });
       }
@@ -157,6 +147,39 @@ export function AiAssistantChat({
 
   const isPendingFirstToken =
     status === "waiting" && messages[messages.length - 1]?.content === "";
+
+  // The Free plan gets zero AI diagnostic generations (see
+  // src/lib/pricing.ts) — every request from a free-plan user would be
+  // rejected server-side before any AI call happens. Rather than let a
+  // free user submit and hit a 429, show the locked state up front: static
+  // example questions (never real generated answers) and the same locked-
+  // sections catalog used elsewhere, with a clear upgrade path.
+  if (isFreePlan) {
+    return (
+      <div className="flex flex-col gap-6">
+        <div className="glass-panel rounded-[var(--radius-xl)] p-6">
+          <p className="text-sm text-[var(--text-secondary)]">{t("freeLockedBody")}</p>
+          <div className="mt-4 flex flex-wrap gap-2">
+            {EXAMPLES.map((example) => (
+              <span
+                key={example}
+                className="rounded-full border border-[var(--border-subtle)] px-4 py-2 text-sm text-[var(--text-muted)]"
+              >
+                {example}
+              </span>
+            ))}
+          </div>
+          <Link
+            href="/pricing"
+            className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
+          >
+            {t("freeLockedCta")}
+          </Link>
+        </div>
+        <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col gap-4">
@@ -204,10 +227,6 @@ export function AiAssistantChat({
           if (isPendingAssistantBubble) {
             return <DiagnosticProgress key={i} stages={aiStages} onCancel={cancel} />;
           }
-          const isLastMessage = i === messages.length - 1;
-          const showLockedPanel =
-            m.role === "assistant" && m.isPreview && m.content.length > 0 && !(isLastMessage && status === "streaming");
-
           return (
             <div key={i}>
               <div className={m.role === "user" ? "text-right" : ""}>
@@ -221,11 +240,6 @@ export function AiAssistantChat({
                   {m.content}
                 </p>
               </div>
-              {showLockedPanel && (
-                <div className="mt-3">
-                  <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
-                </div>
-              )}
             </div>
           );
         })}

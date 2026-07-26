@@ -108,35 +108,10 @@ beforeEach(() => {
   registerFakeRpcHandlers();
 });
 
-describe("recordAiDiagnosticUsage — free plan (preview access)", () => {
-  it("grants the first two previews of the day", async () => {
-    const first = await recordAiDiagnosticUsage({
-      userId: "user-1",
-      requestId: "req-1",
-      feature: "chat",
-      plan: "free",
-    });
-    expect(first).toBe("preview");
-
-    const second = await recordAiDiagnosticUsage({
-      userId: "user-1",
-      requestId: "req-2",
-      feature: "scan_report",
-      plan: "free",
-    });
-    expect(second).toBe("preview");
-  });
-
-  it("blocks the third preview of the day with FREE_DAILY_AI_LIMIT_REACHED", async () => {
-    await recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-1", feature: "chat", plan: "free" });
-    await recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-2", feature: "chat", plan: "free" });
-
-    await expect(
-      recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-3", feature: "chat", plan: "free" }),
-    ).rejects.toThrow(AiDiagnosticLimitExceededError);
-
+describe("recordAiDiagnosticUsage — free plan (zero AI diagnostic calls)", () => {
+  it("blocks the very first request with FREE_DAILY_AI_LIMIT_REACHED — no row is ever inserted", async () => {
     try {
-      await recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-3", feature: "chat", plan: "free" });
+      await recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-1", feature: "chat", plan: "free" });
       expect.unreachable("should have thrown");
     } catch (err) {
       expect(err).toBeInstanceOf(AiDiagnosticLimitExceededError);
@@ -146,36 +121,39 @@ describe("recordAiDiagnosticUsage — free plan (preview access)", () => {
       expect(typed.upgradeRequired).toBe(true);
       expect(typed.resetAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
     }
+
+    expect(fake().dump("ai_diagnostic_usage")).toHaveLength(0);
   });
 
-  it("does not consume a second slot on a retry with the same requestId", async () => {
-    await recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-a", feature: "chat", plan: "free" });
-    await recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-a", feature: "chat", plan: "free" });
-    await recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-a", feature: "chat", plan: "free" });
+  it("blocks every retry identically — a free request never transitions from blocked to granted", async () => {
+    for (let i = 0; i < 3; i++) {
+      await expect(
+        recordAiDiagnosticUsage({ userId: "user-1", requestId: "req-1", feature: "chat", plan: "free" }),
+      ).rejects.toThrow(AiDiagnosticLimitExceededError);
+    }
+    expect(fake().dump("ai_diagnostic_usage")).toHaveLength(0);
+  });
 
-    const rows = fake()
-      .dump("ai_diagnostic_usage")
-      .filter((r) => r.user_id === "user-2");
-    expect(rows).toHaveLength(1);
-
-    // A second, genuinely distinct request still has its full allowance —
-    // the retries above didn't silently burn through it.
+  it("blocks both chat and scan_report features identically", async () => {
     await expect(
-      recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-b", feature: "chat", plan: "free" }),
-    ).resolves.toBe("preview");
+      recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-chat", feature: "chat", plan: "free" }),
+    ).rejects.toThrow(AiDiagnosticLimitExceededError);
+    await expect(
+      recordAiDiagnosticUsage({ userId: "user-2", requestId: "req-scan", feature: "scan_report", plan: "free" }),
+    ).rejects.toThrow(AiDiagnosticLimitExceededError);
   });
 });
 
 describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
-  it("grants up to the daily limit, then blocks with DAILY_REPORT_LIMIT_REACHED", async () => {
-    for (let i = 0; i < 5; i++) {
+  it("grants up to pro's daily limit (3), then blocks with DAILY_REPORT_LIMIT_REACHED", async () => {
+    for (let i = 0; i < 3; i++) {
       await expect(
         recordAiDiagnosticUsage({ userId: "user-pro", requestId: `req-${i}`, feature: "scan_report", plan: "pro" }),
       ).resolves.toBe("full");
     }
 
     try {
-      await recordAiDiagnosticUsage({ userId: "user-pro", requestId: "req-6th", feature: "scan_report", plan: "pro" });
+      await recordAiDiagnosticUsage({ userId: "user-pro", requestId: "req-4th", feature: "scan_report", plan: "pro" });
       expect.unreachable("should have thrown");
     } catch (err) {
       expect(err).toBeInstanceOf(AiDiagnosticLimitExceededError);
@@ -183,11 +161,11 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
     }
   });
 
-  it("blocks with MONTHLY_REPORT_LIMIT_REACHED once the monthly cap is hit, even with daily room left", async () => {
-    // Seed 30 prior full-report rows spread across the current month (not
+  it("blocks with MONTHLY_REPORT_LIMIT_REACHED once pro's monthly cap (20) is hit, even with daily room left", async () => {
+    // Seed 20 prior full-report rows spread across the current month (not
     // today), so the daily check (0 used today) passes but the monthly
-    // check (30 used, limit 30) does not.
-    const seeded = Array.from({ length: 30 }, (_, i) => ({
+    // check (20 used, limit 20) does not.
+    const seeded = Array.from({ length: 20 }, (_, i) => ({
       user_id: "user-pro-2",
       request_id: `seed-${i}`,
       feature: "scan_report",
@@ -210,19 +188,19 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
     }
   });
 
-  it("workshop's higher allowance is enforced independently of pro's", async () => {
-    for (let i = 0; i < 15; i++) {
+  it("workshop's higher allowance (8/day) is enforced independently of pro's", async () => {
+    for (let i = 0; i < 8; i++) {
       await expect(
         recordAiDiagnosticUsage({ userId: "user-ws", requestId: `req-${i}`, feature: "chat", plan: "workshop" }),
       ).resolves.toBe("full");
     }
     await expect(
-      recordAiDiagnosticUsage({ userId: "user-ws", requestId: "req-16th", feature: "chat", plan: "workshop" }),
+      recordAiDiagnosticUsage({ userId: "user-ws", requestId: "req-9th", feature: "chat", plan: "workshop" }),
     ).rejects.toThrow(AiDiagnosticLimitExceededError);
   });
 
-  it("blocks workshop with MONTHLY_REPORT_LIMIT_REACHED after 120 reports this month", async () => {
-    const seeded = Array.from({ length: 120 }, (_, i) => ({
+  it("blocks workshop with MONTHLY_REPORT_LIMIT_REACHED after 75 reports this month", async () => {
+    const seeded = Array.from({ length: 75 }, (_, i) => ({
       user_id: "user-ws-2",
       request_id: `seed-${i}`,
       feature: "scan_report",
@@ -244,46 +222,44 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
 
   it("concurrent requests for the same user never grant more slots than the daily limit", async () => {
     const attempts = Array.from({ length: 10 }, (_, i) =>
-      recordAiDiagnosticUsage({ userId: "user-concurrent", requestId: `req-${i}`, feature: "chat", plan: "free" }).catch(
+      recordAiDiagnosticUsage({ userId: "user-concurrent", requestId: `req-${i}`, feature: "chat", plan: "pro" }).catch(
         () => null,
       ),
     );
     const results = await Promise.all(attempts);
-    const granted = results.filter((r) => r === "preview");
-    // Free plan's daily preview limit is 2 — no matter how many requests
-    // race in at once, at most 2 may be granted.
-    expect(granted.length).toBe(2);
+    const granted = results.filter((r) => r === "full");
+    // Pro plan's daily report limit is 3 — no matter how many requests
+    // race in at once, at most 3 may be granted.
+    expect(granted.length).toBe(3);
   });
 
   it("a plan change takes effect immediately — the same user's limit reflects their CURRENT plan, not a cached one", async () => {
     await recordAiDiagnosticUsage({ userId: "user-switch", requestId: "req-1", feature: "chat", plan: "pro" });
     const proSummary = await getAiDiagnosticUsageSummary("user-switch", "pro");
-    expect(proSummary.fullMonthlyLimit).toBe(30);
+    expect(proSummary.fullMonthlyLimit).toBe(20);
 
     // Same user, downgraded to free — the entitlement function has no
     // per-user state to go stale; it's purely a function of the plan
     // passed in, which the caller always re-resolves via getEffectivePlan.
     const freeSummary = await getAiDiagnosticUsageSummary("user-switch", "free");
-    expect(freeSummary.previewDailyLimit).toBe(2);
+    expect(freeSummary.previewDailyLimit).toBe(0);
     expect(freeSummary.accessLevel).toBe("preview");
   });
 });
 
 describe("getAiDiagnosticUsageSummary", () => {
-  it("reflects real recorded usage, not a placeholder", async () => {
-    await recordAiDiagnosticUsage({ userId: "user-3", requestId: "req-1", feature: "chat", plan: "free" });
-
+  it("free plan always reports zero usage and a zero limit — nothing can ever be recorded for it", async () => {
     const summary = await getAiDiagnosticUsageSummary("user-3", "free");
     expect(summary.accessLevel).toBe("preview");
-    expect(summary.previewsUsedToday).toBe(1);
-    expect(summary.previewDailyLimit).toBe(2);
+    expect(summary.previewsUsedToday).toBe(0);
+    expect(summary.previewDailyLimit).toBe(0);
   });
 
-  it("returns all zeros for a brand-new user with no usage rows", async () => {
+  it("returns all zeros for a brand-new paid user with no usage rows", async () => {
     const summary = await getAiDiagnosticUsageSummary("user-never-used", "pro");
     expect(summary.fullReportsUsedToday).toBe(0);
     expect(summary.fullReportsUsedThisMonth).toBe(0);
-    expect(summary.fullDailyLimit).toBe(5);
-    expect(summary.fullMonthlyLimit).toBe(30);
+    expect(summary.fullDailyLimit).toBe(3);
+    expect(summary.fullMonthlyLimit).toBe(20);
   });
 });

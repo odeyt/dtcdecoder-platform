@@ -243,35 +243,13 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
           </ResultSection>
         </>
       ) : (
-        <ResultSection title="Preview findings (AI-generated, not confirmed)">
-          <div className="flex flex-col gap-4">
-            {visibleResult.previewFindings!.map((finding, i) => (
-              <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
-                <span
-                  className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
-                  style={{
-                    borderColor: i === 0 ? "var(--accent-red)" : "var(--border-subtle)",
-                    color: i === 0 ? "var(--accent-red)" : "var(--text-muted)",
-                  }}
-                >
-                  {i === 0 ? "TOP CANDIDATE" : `CANDIDATE #${i + 1}`}
-                </span>
-                <p className="mt-2 font-semibold text-[var(--text-primary)]">{finding.cause}</p>
-                <p className="mt-1 text-sm text-[var(--text-secondary)]">{finding.rationale}</p>
-              </div>
-            ))}
-          </div>
-          <div className="mt-4">
-            <p className="mb-2 text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-              First recommended checks
+        <ResultSection title="AI diagnostic report locked">
+          <div className="glass-panel rounded-[var(--radius-lg)] p-5">
+            <p className="text-sm text-[var(--text-secondary)]">
+              AI-generated root-cause findings and test steps for this case are available on Pro Technician or
+              Workshop. The Free plan doesn&apos;t include AI diagnostic report generation or access to previously
+              generated reports.
             </p>
-            <ul className="flex flex-col gap-2">
-              {visibleResult.previewTests!.map((test, i) => (
-                <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-3 text-sm text-[var(--text-secondary)]">
-                  {i + 1}. {test.step}
-                </li>
-              ))}
-            </ul>
           </div>
         </ResultSection>
       )}
