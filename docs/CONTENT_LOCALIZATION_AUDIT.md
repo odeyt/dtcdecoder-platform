@@ -115,6 +115,12 @@ validation; wire glossary_version into report metadata.
 
 ## Blocked / decision-required
 
+- **Canonical report owner — SETTLED 2026-07-26:** the report-persistence layer
+  will hang off scan-diagnostics **`scan_reports`** (structured, live, code-
+  referenced), NOT the orphaned `0007` model or the chat assistant. Design in
+  CONTENT_LOCALIZATION_ARCHITECTURE.md. Next slice (after confirming the
+  scan tables exist in prod) builds `scan_report_localizations` + writer +
+  entitlement gating + the `ScanReportView` selector.
 - **Enabling report output / safety translation into human-unreviewed beta
   locales** (esp. Lao/Khmer) is a product+safety decision, not a code gap.
   Everything localized so far is AI-translated **beta, not human-verified**.
