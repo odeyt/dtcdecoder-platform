@@ -58,7 +58,7 @@ describe("language menu", () => {
   });
 
   it("menu order is a subset of the canonical order", () => {
-    const order = [...LANGUAGE_MENU_ORDER];
+    const order: string[] = [...LANGUAGE_MENU_ORDER];
     const positions = menu.map((m) => order.indexOf(m.code));
     expect(positions).toEqual([...positions].sort((a, b) => a - b));
   });

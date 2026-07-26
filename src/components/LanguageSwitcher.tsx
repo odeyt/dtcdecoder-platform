@@ -12,6 +12,12 @@ import {
 import { APP_SHELL_TOP_LEVEL_SEGMENTS } from "@/lib/i18n/app-shell-routes";
 import { APP_LOCALE_COOKIE_NAME } from "@/lib/i18n/app-shell-locale-constants";
 
+// Module-level so the document.cookie write is a plain DOM side effect, not a
+// mutation inside component scope.
+function persistInterfaceLocaleCookie(locale: string) {
+  document.cookie = `${APP_LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
+}
+
 // Premium account-menu-style language selector. Options are generated from
 // the central registry (getMenuLocales) — never hardcoded per placement.
 //
@@ -61,20 +67,20 @@ export function LanguageSwitcher({ align = "end" }: { align?: "start" | "end" })
   }, [open]);
 
   useEffect(() => {
-    if (open) {
-      const activeAt = Math.max(
-        0,
-        menuLocales.findIndex((l) => l.code.toLowerCase() === currentLocale.toLowerCase()),
-      );
-      setActiveIndex(activeAt);
-      // Focus the active option once the menu paints.
-      requestAnimationFrame(() => itemRefs.current[activeAt]?.focus());
-    }
-  }, [open, currentLocale, menuLocales]);
+    // Focus the active option once the menu paints (DOM side effect only —
+    // activeIndex is set by openMenu, not here, to avoid a setState-in-effect
+    // cascade).
+    if (open) requestAnimationFrame(() => itemRefs.current[activeIndex]?.focus());
+  }, [open, activeIndex]);
 
   if (!hasChoice) return null;
 
   function openMenu() {
+    const activeAt = Math.max(
+      0,
+      menuLocales.findIndex((l) => l.code.toLowerCase() === currentLocale.toLowerCase()),
+    );
+    setActiveIndex(activeAt);
     setOpen(true);
   }
 
@@ -89,7 +95,7 @@ export function LanguageSwitcher({ align = "end" }: { align?: "start" | "end" })
 
     // The (app) shell reads this cookie; a saved account preference
     // (Pro/Workshop) still wins over it.
-    document.cookie = `${APP_LOCALE_COOKIE_NAME}=${locale}; path=/; max-age=31536000; samesite=lax`;
+    persistInterfaceLocaleCookie(locale);
 
     if (isAppShellRoute) {
       router.refresh();

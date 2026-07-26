@@ -8,6 +8,7 @@ import { canSelectAiReportLanguage } from "@/lib/i18n/entitlements";
 import { isAiOutputEnabledLocale, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
 import { streamAssistantResponse, translateDiagnosticText } from "@/lib/ai/assistant";
+import { verifyTokenPreservation } from "@/lib/ai/token-preservation";
 import {
   recordAiDiagnosticUsage,
   releaseAiDiagnosticUsage,
@@ -165,6 +166,22 @@ export async function POST(request: NextRequest) {
           const translateFinal = await translateStream.finalMessage();
           totalInputTokens += translateFinal.usage.input_tokens;
           totalOutputTokens += translateFinal.usage.output_tokens;
+        }
+
+        // Post-translation protected-token check (observability). The
+        // translation was already streamed to the client, so this cannot
+        // retract it — it flags any diagnosis whose translation dropped or
+        // altered a DTC code, VIN, acronym, or measurement so the glossary/
+        // prompt can be corrected. The reject-and-fall-back-to-English
+        // enforcement applies to the stored localized-report path (see
+        // docs/DYNAMIC_REPORT_TRANSLATION.md).
+        if (outputLocale && translatedText) {
+          const preservation = verifyTokenPreservation(englishText, translatedText);
+          if (!preservation.ok) {
+            console.warn(
+              `[ai-assistant] translation to ${outputLocale} dropped/altered protected tokens: ${preservation.missing.join(", ")}`,
+            );
+          }
         }
 
         // Cost/observability log only — never gates anything, never
