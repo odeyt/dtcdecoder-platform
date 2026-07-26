@@ -93,7 +93,7 @@ export const DEFAULT_LOCALE = "en";
 // request-config catalog loader, and the user-facing language switcher.
 // Add a locale here only once its messages/<code>.json exists and its
 // content is translated.
-export const LIVE_LOCALES = ["en", "es"] as const;
+export const LIVE_LOCALES = ["en", "es", "fr", "th", "lo", "vi", "km"] as const;
 export type LiveLocale = (typeof LIVE_LOCALES)[number];
 
 // The nine production language options, in the exact display order the
@@ -106,14 +106,17 @@ export type LiveLocale = (typeof LIVE_LOCALES)[number];
 // would render English under a foreign <html lang>.
 export const LANGUAGE_MENU_ORDER = [
   "en",
-  "zh-CN",
+  "fr",
+  "th",
+  "lo",
+  "vi",
+  "km",
   "es",
+  "zh-CN",
   "pt-BR",
   "de",
-  "fr",
   "ja",
   "ko",
-  "th",
 ] as const;
 
 const LOCALE_CODE_SET = new Set(LOCALE_CODES.map((l) => l.code.toLowerCase()));

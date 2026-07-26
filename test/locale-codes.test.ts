@@ -12,21 +12,20 @@ import {
 // (/en, /es) renders. If the built/recognized distinction breaks, untranslated
 // locales would serve English under a foreign <html lang> again.
 describe("locale gating helpers", () => {
-  it("treats only English and Spanish as live today", () => {
-    expect([...LIVE_LOCALES].sort()).toEqual(["en", "es"]);
-  });
-
   it("includes the default locale in the live set", () => {
     expect(isLiveLocale(DEFAULT_LOCALE)).toBe(true);
   });
 
-  it("marks live locales as live", () => {
-    expect(isLiveLocale("en")).toBe(true);
-    expect(isLiveLocale("es")).toBe(true);
+  it("marks every built locale as live", () => {
+    for (const code of ["en", "es", "fr", "th", "lo", "vi", "km"]) {
+      expect(isLiveLocale(code)).toBe(true);
+    }
   });
 
   it("marks recognized-but-unbuilt locales as not live", () => {
-    for (const code of ["fr", "de", "ar", "zh-CN", "pt"]) {
+    // Registered for routing but no catalog yet — must NOT be live, or they
+    // would render English under a foreign <html lang>.
+    for (const code of ["de", "ar", "zh-CN", "pt", "pt-BR", "ja", "ko"]) {
       expect(isRecognizedLocaleCode(code)).toBe(true);
       expect(isLiveLocale(code)).toBe(false);
     }
