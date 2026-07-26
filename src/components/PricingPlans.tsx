@@ -6,19 +6,29 @@ import { useTranslations } from "next-intl";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import {
   PAID_PLANS,
-  YEARLY_FLAT_DISCOUNT_USD,
   yearlyPriceUsd,
+  yearlySavingsUsd,
   effectiveMonthlyPriceUsd,
   type BillingInterval,
+  type PaidPlan,
 } from "@/lib/pricing";
+
+// Pro and Workshop no longer share a flat yearly discount (Pro saves
+// $78/yr, Workshop saves $198/yr) — the toggle button shows the largest
+// figure as an honest "up to" claim; each card's own subline shows its
+// real, plan-specific savings via yearlySavingsUsd().
+const MAX_YEARLY_SAVINGS_USD = Math.max(
+  ...(Object.keys(PAID_PLANS) as PaidPlan[]).map((plan) => yearlySavingsUsd(plan)),
+);
 
 // Report-count allowances and prices come from src/lib/pricing.ts
 // (AI_DIAGNOSTIC_ENTITLEMENTS / PAID_PLANS) — the numbers below are spelled
-// out as static copy rather than interpolated from a raw limit field
-// because the spec explicitly requires customer-facing copy to read as
-// "30 full AI diagnostic reports/month," never a bare number pulled
-// mechanically from internal config (which is how the old token-count
-// bullets worked, and exactly what's being replaced here).
+// out as static translated copy (messages/en.json, messages/es.json)
+// rather than interpolated from a raw limit field, so the bullet always
+// reads naturally ("20 full AI diagnostic reports/month") instead of a
+// bare number pulled mechanically from internal config. Keep the copy in
+// sync with pricing.ts by hand when either changes — there is no
+// automated check tying the two together yet.
 
 export function PricingPlans({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("pricing");
@@ -36,7 +46,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
               : "text-[var(--text-muted)]"
           }`}
         >
-          {t("yearlySave", { amount: YEARLY_FLAT_DISCOUNT_USD })}
+          {t("yearlySave", { amount: MAX_YEARLY_SAVINGS_USD })}
         </button>
         <button
           onClick={() => setInterval("monthly")}
@@ -59,6 +69,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
             <li>{t("freeBullet3")}</li>
             <li>{t("freeBullet4")}</li>
             <li>{t("freeBullet5")}</li>
+            <li>{t("freeBullet6")}</li>
           </ul>
           <Link
             href={signedIn ? "/dtc" : "/account/login"}
@@ -142,7 +153,7 @@ function PaidPlanCard({
         interval === "yearly"
           ? t("yearlySubline", {
               amount: effectiveMonthly.toFixed(2),
-              discount: YEARLY_FLAT_DISCOUNT_USD,
+              discount: yearlySavingsUsd(planKey),
             })
           : undefined
       }
