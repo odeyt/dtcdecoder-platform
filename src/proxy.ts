@@ -3,6 +3,7 @@ import { createServerClient } from "@supabase/ssr";
 import { env } from "@/lib/env";
 import { isRecognizedLocaleCode, isLiveLocale, DEFAULT_LOCALE } from "@/lib/i18n/locale-codes";
 import { APP_SHELL_TOP_LEVEL_SEGMENTS } from "@/lib/i18n/app-shell-routes";
+import { ANON_SEARCH_ID_COOKIE } from "@/lib/basic-search/constants";
 
 // Next.js 16 renamed `middleware.ts` to `proxy.ts` (see
 // node_modules/next/dist/docs/01-app/03-api-reference/03-file-conventions/proxy.md).
@@ -61,8 +62,9 @@ function resolveLocaleRouting(request: NextRequest): LocaleRouting | null {
 // state must not reset server-side limits" holds for anything short of the
 // visitor clearing cookies entirely (a known, documented limitation, not a
 // hardened anti-bot mechanism). Never used for anything but this rate
-// limit — not an auth token, not linked to any account.
-export const ANON_SEARCH_ID_COOKIE = "dtc_anon_id";
+// limit — not an auth token, not linked to any account. Cookie name lives
+// in src/lib/basic-search/constants.ts so page code reading it doesn't
+// need to import this middleware module.
 const ANON_SEARCH_ID_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
 
 // This refreshes the Supabase auth session cookie on every request so
