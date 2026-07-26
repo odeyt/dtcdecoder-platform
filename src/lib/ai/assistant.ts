@@ -3,7 +3,10 @@ import Anthropic from "@anthropic-ai/sdk";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
 import { CHAT_FULL_MAX_TOKENS } from "@/lib/ai-diagnostics/redaction";
+import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 import type { DtcCode, TerminologyGlossaryEntry } from "@/lib/types";
+
+export const CHAT_TRANSLATION_MAX_TOKENS = 2048;
 
 const DEFAULT_SYSTEM_PROMPT = `You are DTC AI Assistant, a master automotive diagnostic technician with decades of hands-on experience. A user will describe a fault code, symptom, or vehicle issue. Respond the way an experienced tech would explain it to another tech:
 
@@ -87,7 +90,7 @@ export async function streamAssistantResponse(userMessage: string, groundingRows
   const systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);
 
   return client.messages.stream({
-    model: "claude-sonnet-5",
+    model: modelForTask("chatGeneration"),
     max_tokens: CHAT_FULL_MAX_TOKENS,
     system: systemPrompt,
     thinking: { type: "adaptive" },
@@ -127,6 +130,13 @@ Non-negotiable rules:
 // once, in English, and every other language is a faithful translation of
 // that fixed text. Returns the same kind of streaming object as
 // streamAssistantResponse so the API route can treat both uniformly.
+//
+// Routed to the economical model tier (model-routing.ts "chatTranslation")
+// rather than the same model used for the diagnosis itself — translating
+// fixed text is a lower-reasoning task than the original diagnosis, and
+// verifyTokenPreservation() independently catches a translation that drops
+// or alters a protected technical token regardless of which model produced
+// it, so this doesn't trade away the safety guarantee for a lower price.
 export async function translateDiagnosticText(
   englishText: string,
   outputLocale: string,
@@ -137,8 +147,8 @@ export async function translateDiagnosticText(
   const systemPrompt = buildTranslationSystemPrompt(outputLanguageName, outputLocale, glossary);
 
   return client.messages.stream({
-    model: "claude-sonnet-5",
-    max_tokens: 2048,
+    model: modelForTask("chatTranslation"),
+    max_tokens: CHAT_TRANSLATION_MAX_TOKENS,
     system: systemPrompt,
     thinking: { type: "adaptive" },
     output_config: { effort: "low" },

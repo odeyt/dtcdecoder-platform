@@ -9,6 +9,7 @@ import {
   type DtcCategory,
 } from "@/lib/scan-diagnostics/schemas";
 import { AiResponseValidationError } from "@/lib/scan-diagnostics/api-errors";
+import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 import type { DiagnosticAIProvider, DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
 
 // Bump this whenever DEFAULT_SYSTEM_PROMPT, SAFETY_SUFFIX, or
@@ -20,9 +21,9 @@ export const DTCDECODER_DIAGNOSTIC_PROMPT_VERSION = "2026-07-safety-v2";
 
 // Exported so the analyze orchestrator's pre-flight cost estimate
 // (src/lib/scan-diagnostics/analyze.ts) can use the SAME worst-case output
-// budget this provider actually requests, instead of a second, possibly
-// stale copy of the number.
-export const SCAN_REPORT_MODEL_ID = "claude-sonnet-5";
+// budget and routed model this provider actually requests, instead of a
+// second, possibly stale copy of either.
+export const SCAN_REPORT_MODEL_ID = modelForTask("scanMainAnalysis");
 export const SCAN_REPORT_MAX_TOKENS = 4096;
 
 // Deliberately a SEPARATE admin_settings key from the AI chat assistant's

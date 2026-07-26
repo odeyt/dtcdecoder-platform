@@ -17,9 +17,11 @@ import {
   AiDiagnosticLimitExceededError,
 } from "@/lib/ai-diagnostics/usage";
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
+import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 
-const CHAT_MODEL_ID = "claude-sonnet-5";
+const CHAT_GENERATION_MODEL_ID = modelForTask("chatGeneration");
+const CHAT_TRANSLATION_MODEL_ID = modelForTask("chatTranslation");
 
 const requestSchema = z.object({
   message: z.string().trim().min(1).max(2000),
@@ -129,7 +131,7 @@ export async function POST(request: NextRequest) {
   // provider failure, so a rejected request never consumes an allowance.
   const estimatedInputTokens = await estimateChatInputTokens(parsed.data.message, groundingRows);
   const costEstimate = estimateCostMicros({
-    modelId: CHAT_MODEL_ID,
+    modelId: CHAT_GENERATION_MODEL_ID,
     estimatedInputTokens,
     estimatedOutputTokens: CHAT_FULL_MAX_TOKENS,
   });
@@ -146,7 +148,7 @@ export async function POST(request: NextRequest) {
         feature: "chat",
         plan,
         providerId: "anthropic",
-        modelId: CHAT_MODEL_ID,
+        modelId: CHAT_GENERATION_MODEL_ID,
         status: "failed",
         accessLevelRequested: accessLevel,
         errorMessage: err.message,
@@ -185,13 +187,49 @@ export async function POST(request: NextRequest) {
         }
         const englishText = englishChunks.join("");
         const englishFinal = await englishStream.finalMessage();
-        let totalInputTokens = englishFinal.usage.input_tokens;
-        let totalOutputTokens = englishFinal.usage.output_tokens;
+        const englishCompletedAt = Date.now();
         let translatedText: string | null = null;
+
+        // Cost/observability log only — never gates anything, never
+        // exposed to the customer. The usage SLOT was already reserved
+        // before this stream started (see recordAiDiagnosticUsage above);
+        // reaching here means the generation succeeded, so the reservation
+        // stands as the consumed slot and nothing further needs recording
+        // for enforcement purposes. Cost is computed from the real token
+        // usage the provider reported, not the pre-flight estimate above
+        // (which only ever gates) — and recorded as its OWN row so the
+        // routed model (docs/PRICING_AND_AI_COST_AUDIT.md §6.4 "store
+        // route decisions and model versions in the audit record") is
+        // traceable per operation, not blended with the translation call
+        // below, which is routed to a different, cheaper model.
+        const generationCost = computeActualCostMicros({
+          modelId: CHAT_GENERATION_MODEL_ID,
+          inputTokens: englishFinal.usage.input_tokens,
+          outputTokens: englishFinal.usage.output_tokens,
+        });
+        await recordAiDiagnosticRun({
+          userId: user.id,
+          requestId: parsed.data.requestId,
+          feature: "chat",
+          plan,
+          providerId: "anthropic",
+          modelId: CHAT_GENERATION_MODEL_ID,
+          status: "completed",
+          accessLevelRequested: accessLevel,
+          inputTokens: englishFinal.usage.input_tokens,
+          outputTokens: englishFinal.usage.output_tokens,
+          operationType: "standard_report",
+          creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.standardReport,
+          estimatedInputCostMicros: generationCost.inputCostMicros,
+          estimatedOutputCostMicros: generationCost.outputCostMicros,
+          estimatedTotalCostMicros: generationCost.totalCostMicros,
+          latencyMs: englishCompletedAt - requestStartedAt,
+        });
 
         if (outputLocale) {
           const localeInfo = getLocaleInfo(outputLocale);
           const glossary = await listGlossaryForLocale(outputLocale);
+          const translationStartedAt = Date.now();
           const translateStream = await translateDiagnosticText(
             englishText,
             outputLocale,
@@ -209,8 +247,29 @@ export async function POST(request: NextRequest) {
           translatedText = translatedChunks.join("");
 
           const translateFinal = await translateStream.finalMessage();
-          totalInputTokens += translateFinal.usage.input_tokens;
-          totalOutputTokens += translateFinal.usage.output_tokens;
+          const translationCost = computeActualCostMicros({
+            modelId: CHAT_TRANSLATION_MODEL_ID,
+            inputTokens: translateFinal.usage.input_tokens,
+            outputTokens: translateFinal.usage.output_tokens,
+          });
+          await recordAiDiagnosticRun({
+            userId: user.id,
+            requestId: parsed.data.requestId,
+            feature: "chat",
+            plan,
+            providerId: "anthropic",
+            modelId: CHAT_TRANSLATION_MODEL_ID,
+            status: "completed",
+            accessLevelRequested: accessLevel,
+            inputTokens: translateFinal.usage.input_tokens,
+            outputTokens: translateFinal.usage.output_tokens,
+            operationType: "additional_language",
+            creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.additionalLanguage,
+            estimatedInputCostMicros: translationCost.inputCostMicros,
+            estimatedOutputCostMicros: translationCost.outputCostMicros,
+            estimatedTotalCostMicros: translationCost.totalCostMicros,
+            latencyMs: Date.now() - translationStartedAt,
+          });
         }
 
         // Post-translation protected-token check (observability). The
@@ -228,37 +287,6 @@ export async function POST(request: NextRequest) {
             );
           }
         }
-
-        // Cost/observability log only — never gates anything, never
-        // exposed to the customer. The usage SLOT was already reserved
-        // before this stream started (see recordAiDiagnosticUsage above);
-        // reaching here means the generation succeeded, so the reservation
-        // stands as the consumed slot and nothing further needs recording
-        // for enforcement purposes. Cost here is computed from the real
-        // token usage the provider reported (englishFinal/translateFinal),
-        // not the pre-flight estimate — the estimate only ever gates.
-        const actualCost = computeActualCostMicros({
-          modelId: CHAT_MODEL_ID,
-          inputTokens: totalInputTokens,
-          outputTokens: totalOutputTokens,
-        });
-        await recordAiDiagnosticRun({
-          userId: user.id,
-          requestId: parsed.data.requestId,
-          feature: "chat",
-          plan,
-          providerId: "anthropic",
-          modelId: CHAT_MODEL_ID,
-          status: "completed",
-          accessLevelRequested: accessLevel,
-          inputTokens: totalInputTokens,
-          outputTokens: totalOutputTokens,
-          creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.standardReport,
-          estimatedInputCostMicros: actualCost.inputCostMicros,
-          estimatedOutputCostMicros: actualCost.outputCostMicros,
-          estimatedTotalCostMicros: actualCost.totalCostMicros,
-          latencyMs: Date.now() - requestStartedAt,
-        });
 
         if (searchHistoryId) {
           await updateSearchHistoryAiResponse(searchHistoryId, englishText, translatedText).catch(
@@ -281,7 +309,7 @@ export async function POST(request: NextRequest) {
           feature: "chat",
           plan,
           providerId: "anthropic",
-          modelId: CHAT_MODEL_ID,
+          modelId: CHAT_GENERATION_MODEL_ID,
           status: "failed",
           accessLevelRequested: accessLevel,
           errorMessage: err instanceof Error ? err.message : "Unknown error",

@@ -40,8 +40,11 @@ vi.mock("@/lib/supabase/admin", () => ({
   }),
 }));
 
-const { streamAssistantResponse, estimateChatInputTokens } = await import("@/lib/ai/assistant");
+const { streamAssistantResponse, translateDiagnosticText, estimateChatInputTokens } = await import(
+  "@/lib/ai/assistant"
+);
 const { CHAT_FULL_MAX_TOKENS } = await import("@/lib/ai-diagnostics/redaction");
+const { CLAUDE_SONNET_5, CLAUDE_HAIKU_4_5 } = await import("@/lib/ai-diagnostics/model-routing");
 
 describe("streamAssistantResponse", () => {
   it("always generates at the full token budget, with no preview/reduced mode", async () => {
@@ -52,6 +55,21 @@ describe("streamAssistantResponse", () => {
     expect(args).not.toBeNull();
     expect(args!.max_tokens).toBe(CHAT_FULL_MAX_TOKENS);
     expect(String(args!.system)).not.toMatch(/FREE-TIER PREVIEW MODE/);
+  });
+
+  it("routes to the main-generation model (Sonnet), not the economical tier", async () => {
+    capturedStreamArgs = null;
+    await streamAssistantResponse("What causes P0420?", []);
+    expect(capturedStreamArgs!.model).toBe(CLAUDE_SONNET_5);
+  });
+});
+
+describe("translateDiagnosticText", () => {
+  it("routes to the economical model tier (Haiku), not the main-generation model", async () => {
+    capturedStreamArgs = null;
+    await translateDiagnosticText("Likely a vacuum leak.", "es", "Spanish", []);
+    expect(capturedStreamArgs!.model).toBe(CLAUDE_HAIKU_4_5);
+    expect(capturedStreamArgs!.model).not.toBe(CLAUDE_SONNET_5);
   });
 });
 

@@ -1,4 +1,5 @@
 import { verifyTokenPreservation } from "@/lib/ai/token-preservation";
+import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 
 // Provider abstraction for translating a CANONICAL English diagnostic report
 // into a target locale. This is the non-streaming, stored-report path (distinct
@@ -63,9 +64,15 @@ export type ReportTranslateStep = (input: {
   glossaryVersion: string;
 }) => Promise<string>;
 
+// NOTE: this class is not currently instantiated by any route or
+// orchestrator — scan-report translation (docs/DYNAMIC_REPORT_TRANSLATION.md)
+// is built here and unit-tested, but nothing wires it into the live
+// case-detail flow yet. Routing its model is still correct/harmless to do
+// now (see model-routing.ts "scanReportTranslation"), just not yet
+// observable anywhere.
 export class AnthropicTranslationProvider implements TranslationProvider {
   readonly id = "anthropic";
-  readonly model = "claude-sonnet-5";
+  readonly model = modelForTask("scanReportTranslation");
 
   constructor(
     private readonly translate: ReportTranslateStep,

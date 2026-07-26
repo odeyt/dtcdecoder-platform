@@ -14,15 +14,15 @@ const MICROS_PER_USD = 1_000_000;
 // number is the human-readable $/million-token rate, not a pre-divided
 // magic constant).
 //
-// IMPORTANT: these rates are estimates carried over from the Claude Sonnet
+// IMPORTANT: these rates are estimates carried over from each model
 // family's known pricing tier at the time this file was written, NOT
 // pulled from a live Anthropic pricing API (none exists) or confirmed
-// against the current Anthropic pricing page for "claude-sonnet-5"
-// specifically. Verify against https://www.anthropic.com/pricing before
-// treating any cost/margin number derived from this table as accurate —
-// per the task's own instruction, "Do not claim margins are verified
-// until real production usage data exists." Update this table (and note
-// the date/source) whenever real pricing is confirmed.
+// against the current Anthropic pricing page for these specific model
+// ids. Verify against https://www.anthropic.com/pricing before treating
+// any cost/margin number derived from this table as accurate — per the
+// task's own instruction, "Do not claim margins are verified until real
+// production usage data exists." Update this table (and note the
+// date/source) whenever real pricing is confirmed.
 interface ModelRate {
   inputUsdPerMillionTokens: number;
   outputUsdPerMillionTokens: number;
@@ -30,6 +30,9 @@ interface ModelRate {
 
 export const MODEL_PRICING: Record<string, ModelRate> = {
   "claude-sonnet-5": { inputUsdPerMillionTokens: 3, outputUsdPerMillionTokens: 15 },
+  // The economical routing tier (src/lib/ai-diagnostics/model-routing.ts) —
+  // rate is a rough Haiku-tier estimate, same verification caveat as above.
+  "claude-haiku-4-5": { inputUsdPerMillionTokens: 1, outputUsdPerMillionTokens: 5 },
 };
 
 // Fallback rate for any model id not yet in MODEL_PRICING — deliberately
