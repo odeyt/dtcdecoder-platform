@@ -44,14 +44,33 @@ and confirms each survives in the translation:
   streamed live, it cannot be retracted mid-stream — the log surfaces
   glossary/prompt gaps for correction. Unit-tested in
   `test/token-preservation.test.ts`.
-- **Stored localized reports (future path):** when a localized report is
-  persisted (`diagnostic_report_localizations`), a failed check MUST reject the
-  translation and store/serve the English canonical with `fallback_used=true`,
-  and MUST NOT consume paid translation quota. The metadata columns for this
+- **Stored localized reports (`TranslationProvider`):**
+  `src/lib/ai/translation-provider.ts` defines the `TranslationProvider`
+  interface and `AnthropicTranslationProvider`, which:
+  - serves the canonical directly for an English request (not a fallback),
+  - runs `verifyTokenPreservation` on the translation and, on failure, returns
+    the English canonical with `status:"fallback"`, `fallbackUsed:true`, and the
+    `missingTokens` list,
+  - on a provider error (timeout/API) returns English with `status:"failed"`,
+    `fallbackUsed:true` — the caller MUST NOT consume paid translation quota,
+  - returns full audit metadata (provider, model, glossaryVersion,
+    promptVersion, resolvedLocale, translatedAt, latencyMs).
+  The translate step is injected, so the fallback/validation/metadata logic is
+  unit-tested without a live key (`test/translation-provider.test.ts`).
+  Persistence columns exist via migration `0020_report_translation_metadata`
   (`source_locale, requested_locale, resolved_locale, provider, model,
-  glossary_version, prompt_version, status, fallback_used, translated_at,
-  latency_ms`) are an approved-but-not-yet-applied additive migration (see the
-  audit). This is the enforcement hook.
+  glossary_version, prompt_version, fallback_used, translated_at, latency_ms`).
+  **Remaining wiring:** a writer that runs this provider and persists the result
+  into `diagnostic_report_localizations` (the assistant path streams and does
+  not yet persist per-locale rows through this provider).
+
+### Caching
+
+`localizedReportCacheKey({canonicalReportId, reportVersion, targetLocale,
+glossaryVersion, promptVersion, provider, model})` is the deterministic cache
+key. Any change to the canonical report/version, glossary, prompt, provider, or
+model yields a new key (invalidation). Failed/fallback results must not be
+cached as successful.
 
 ## Fallback rules
 
