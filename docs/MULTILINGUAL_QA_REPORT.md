@@ -45,25 +45,34 @@ independent and live in all 12.
 - `/th` renders Thai hero/nav; `<html lang="th">`; button label ไทย.
 - Technical acronym **DTC preserved** in Thai nav ("ค้นหารหัส DTC").
 - Menu shows ไทย as native name with active check mark.
-- Not yet verified by a native speaker; PDF/report glyph rendering and mobile
-  overflow at 320–414px not yet visually audited (pending — see §14).
+- Mobile (375px) audited: no horizontal overflow on the Thai home page; the
+  language switcher is present and usable in the mobile menu.
+- Not yet verified by a native speaker; PDF/report glyph rendering not yet
+  audited (report output stays EN/ES for now).
 
 ## 7. SEO status by locale
 
-`en` is x-default and SEO-enabled. **All beta locales have `seo_enabled=false`**
-— `buildLocaleAlternates` emits hreflang only for enabled+seo_enabled locales,
-so beta translations are NOT indexed until human review. Flip per-locale
+Per-locale `<title>`, `<meta description>`, and Open Graph are wired via each
+content page's `generateMetadata` (reads the `meta` catalog namespace) and are
+LIVE — verified localized titles for fr/de/ja/zh-CN on production. `en` is
+x-default and SEO-enabled. **All beta locales have `seo_enabled=false`** —
+`buildLocaleAlternates` emits hreflang only for enabled+seo_enabled locales, so
+beta translations are NOT indexed until human review. Flip per-locale
 `seo_enabled=true` after review (start with es). Static generation preserved
 (`generateStaticParams` pre-renders `en`; others render dynamically).
 
 ## 8. Tests run
 
-`npx vitest run` → **209 passed** (28 files), including:
+`npx vitest run` → **221 passed** (30 files), including:
 - `test/catalog-parity.test.ts` — key parity across all 11 non-English catalogs.
 - `test/locale-codes.test.ts` — live/recognized gating, pt-BR ≠ pt, region-code
   case handling.
-Not yet added: first-visit-default, missing-key-fallback, and viewport tests
-(pending — §14).
+- `test/language-menu.test.ts` — English first-visit default, all 12 in order,
+  native names (Thai=ไทย, zh-CN=中文, pt-BR=Português (Brasil)…), no generic pt.
+- `test/localized-href.test.ts` — locale switch preserves the current page:
+  content routes prefixed, (app)-shell/external/default hrefs untouched, no
+  double-prefixing.
+Missing-key fallback relies on next-intl runtime behavior (not unit-tested).
 
 ## 9. Build status
 
@@ -104,7 +113,9 @@ commits.
 ## 14. Deployment status
 
 **Deployed and live** on dtcdecoder.com: 12-language UI (content tree + app
-shell + premium selector), locale gating, and beta DB flags applied. NOT done:
-report output in new locales, remaining legal-page translations, per-locale SEO
-title/description wiring + indexing, and the automated first-visit/fallback +
-320/375/768/1024/1440px viewport test matrix.
+shell + premium selector), locale gating, per-locale SEO titles/descriptions/OG,
+and beta DB flags applied. Mobile (375px) overflow checks passed (Thai, German).
+NOT done: report output in new locales (safety decision pending), remaining
+legal-page translations (legal-review-sensitive), flipping `seo_enabled` after
+review, and a broader 320/768/1024/1440px visual sweep + native linguistic
+review.
