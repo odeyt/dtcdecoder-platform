@@ -1,6 +1,7 @@
 import "server-only";
 import crypto from "node:crypto";
 import { env } from "@/lib/env";
+import { ADD_ON_PACKS } from "@/lib/pricing";
 import type { SubscriptionPlan } from "@/lib/types";
 import type { BillingInterval } from "@/lib/pricing";
 
@@ -75,6 +76,73 @@ export async function createSubscriptionCheckout(
   return { checkoutUrl: data.checkout_url, checkoutId: data.id };
 }
 
+interface CreateAddOnCheckoutInput {
+  packId: string;
+  email: string;
+  userId?: string;
+}
+
+function productIdForAddOnPack(packId: string): string | undefined {
+  if (packId === "addon-10") return env.creemAddon10ProductIdOptional();
+  if (packId === "addon-25") return env.creemAddon25ProductIdOptional();
+  if (packId === "addon-50") return env.creemAddon50ProductIdOptional();
+  return undefined;
+}
+
+// Whether checkout for a given add-on pack is actually possible right
+// now — false until a real Creem product id is configured for it. Used by
+// /api/checkout/addon to return an explicit "not available yet" response
+// instead of letting the request fail deep inside a failed API call.
+export function isAddOnCheckoutConfigured(packId: string): boolean {
+  return Boolean(productIdForAddOnPack(packId));
+}
+
+// One-time (non-recurring) checkout — distinct from createSubscriptionCheckout,
+// which always creates a recurring product. metadata.pack_id/reports carry
+// what the webhook needs to grant the right balance on completion; never
+// trust a client-supplied report count over ADD_ON_PACKS' own registry
+// value, which is why this function looks it up itself rather than taking
+// a report count as a parameter.
+export async function createAddOnCheckout(
+  input: CreateAddOnCheckoutInput,
+): Promise<{ checkoutUrl: string; checkoutId: string }> {
+  const pack = ADD_ON_PACKS.find((p) => p.id === input.packId);
+  if (!pack) throw new Error(`Unknown add-on pack id: ${input.packId}`);
+
+  const productId = productIdForAddOnPack(input.packId);
+  if (!productId) {
+    throw new Error(`Add-on pack "${input.packId}" has no configured Creem product id yet`);
+  }
+
+  const body = {
+    product_id: productId,
+    success_url: env.creemSuccessUrl(),
+    customer: { email: input.email },
+    metadata: {
+      pack_id: pack.id,
+      reports: String(pack.reports),
+      ...(input.userId ? { user_id: input.userId } : {}),
+    },
+  };
+
+  const res = await fetch(`${env.creemApiBaseUrl()}/checkouts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.creemApiKey(),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Creem checkout creation failed (${res.status}): ${errText}`);
+  }
+
+  const data = (await res.json()) as CreemCheckoutResponse;
+  return { checkoutUrl: data.checkout_url, checkoutId: data.id };
+}
+
 export function verifyWebhookSignature(
   rawBody: string,
   signatureHeader: string | null,
@@ -95,7 +163,11 @@ export function verifyWebhookSignature(
 
 export interface CreemSubscriptionObject {
   id: string;
-  customer: { id: string; email: string };
+  // Optional: a one-time checkout.completed event's object (add-on packs —
+  // see addonPackForProductId below) isn't guaranteed to carry the same
+  // nested customer shape as a subscription event; this app never reads
+  // `customer` for that event type, only `product_id`/`metadata`.
+  customer?: { id: string; email: string };
   product_id?: string;
   status?: string;
   current_period_end?: string;
@@ -126,6 +198,20 @@ export function planForProductId(productId: string | undefined): SubscriptionPla
   ) {
     return "workshop";
   }
+  return null;
+}
+
+// Reverse lookup for the webhook — returns the full registry entry (not
+// just the id) so the caller can grant reports/pack_id straight from
+// ADD_ON_PACKS rather than trusting a client-supplied metadata value for
+// either. Returns null for any product id that isn't a currently
+// configured add-on pack (including every pack until real product ids
+// exist — see isAddOnCheckoutConfigured).
+export function addonPackForProductId(productId: string | undefined) {
+  if (!productId) return null;
+  if (productId === env.creemAddon10ProductIdOptional()) return ADD_ON_PACKS.find((p) => p.id === "addon-10") ?? null;
+  if (productId === env.creemAddon25ProductIdOptional()) return ADD_ON_PACKS.find((p) => p.id === "addon-25") ?? null;
+  if (productId === env.creemAddon50ProductIdOptional()) return ADD_ON_PACKS.find((p) => p.id === "addon-50") ?? null;
   return null;
 }
 

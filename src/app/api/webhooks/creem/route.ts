@@ -4,8 +4,10 @@ import {
   parseWebhookPayload,
   planForProductId,
   intervalForProductId,
+  addonPackForProductId,
 } from "@/lib/payments/creem";
 import { upsertSubscriptionFromWebhook } from "@/lib/subscriptions";
+import { grantAddOnPack } from "@/lib/ai-diagnostics/addon-balances";
 
 export async function POST(request: NextRequest) {
   // Read the raw body — verification must happen against the exact bytes
@@ -24,10 +26,56 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Malformed payload" }, { status: 400 });
   }
 
+  // One-time add-on-report-pack purchase completion — a distinct event
+  // type from the subscription lifecycle below (checkout.completed vs
+  // subscription.*), handled first since it doesn't rely on `customer`
+  // being present the way a subscription event does. Event shape recovered
+  // from this app's pre-pivot one-time-checkout webhook (git history,
+  // commit a84d124^), which fetched it directly from Creem's docs — only
+  // "checkout.completed" was ever confirmed there; "checkout.expired"/
+  // "checkout.failed" were not, so there's no failure-path handling here
+  // (same caveat the original code carried, and moot anyway while add-on
+  // checkout stays disabled — see /api/checkout/addon).
+  if (event.eventType === "checkout.completed") {
+    const checkoutObject = event.object;
+    const pack = addonPackForProductId(checkoutObject.product_id);
+    const userId = checkoutObject.metadata?.user_id;
+
+    if (!pack || !userId) {
+      // Not an add-on-pack checkout we recognize (wrong/unset product id,
+      // or missing the user_id metadata this app always sets at checkout
+      // creation) — acknowledge so Creem doesn't retry indefinitely, but
+      // don't pretend anything was granted.
+      console.error("checkout.completed webhook unrecognized as an add-on-pack purchase", event.id);
+      return NextResponse.json({ received: true });
+    }
+
+    try {
+      await grantAddOnPack({
+        userId,
+        packId: pack.id,
+        reports: pack.reports,
+        creemOrderId: checkoutObject.id,
+      });
+    } catch (err) {
+      console.error("Failed to grant add-on pack", pack.id, userId, err);
+      return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+    }
+
+    return NextResponse.json({ received: true });
+  }
+
   const subscription = event.object;
   const plan = planForProductId(subscription.product_id) ?? "pro";
   const interval = intervalForProductId(subscription.product_id);
   const userId = subscription.metadata?.user_id ?? null;
+
+  // Every subscription lifecycle event (unlike checkout.completed, handled
+  // above) is confirmed to carry a customer — see the file-header comment.
+  if (!subscription.customer) {
+    console.error("Subscription webhook missing customer", event.eventType, event.id);
+    return NextResponse.json({ received: true });
+  }
 
   const base = {
     creemSubscriptionId: subscription.id,

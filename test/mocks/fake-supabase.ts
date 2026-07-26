@@ -1,9 +1,9 @@
 // Minimal in-memory fake of the subset of the Supabase JS query builder used
-// by src/lib/scan-diagnostics/*. Not a full reimplementation — only
-// supports the method chains this codebase actually calls (select/eq/in/
-// order/limit/maybeSingle/single/insert/upsert/update/delete, plus a
-// pluggable rpc() map). Good enough to unit-test persistence logic without
-// a real database.
+// by src/lib/scan-diagnostics/* and src/lib/ai-diagnostics/*. Not a full
+// reimplementation — only supports the method chains this codebase
+// actually calls (select/eq/gt/in/order/limit/maybeSingle/single/insert/
+// upsert/update/delete, plus a pluggable rpc() map). Good enough to unit-
+// test persistence logic without a real database.
 import crypto from "node:crypto";
 
 type Row = Record<string, unknown>;
@@ -21,6 +21,7 @@ export interface FakeSupabase {
 interface FakeQueryBuilder extends PromiseLike<{ data: unknown; error: unknown }> {
   select(cols?: string): FakeQueryBuilder;
   eq(col: string, val: unknown): FakeQueryBuilder;
+  gt(col: string, val: number): FakeQueryBuilder;
   in(col: string, vals: unknown[]): FakeQueryBuilder;
   order(col: string, opts?: { ascending?: boolean }): FakeQueryBuilder;
   limit(n: number): FakeQueryBuilder;
@@ -111,6 +112,10 @@ export function createFakeSupabase(): FakeSupabase {
       },
       eq(col, val) {
         filters.push((r) => r[col] === val);
+        return self;
+      },
+      gt(col, val) {
+        filters.push((r) => (r[col] as number) > val);
         return self;
       },
       in(col, vals) {

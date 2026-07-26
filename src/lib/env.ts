@@ -50,6 +50,16 @@ export const env = {
   creemProYearlyProductIdOptional: () => process.env.CREEM_PRO_YEARLY_PRODUCT_ID,
   creemWorkshopYearlyProductIdOptional: () => process.env.CREEM_WORKSHOP_YEARLY_PRODUCT_ID,
 
+  // Add-on report packs (src/lib/pricing.ts ADD_ON_PACKS) — no real Creem
+  // products exist for these yet, so every accessor is the non-throwing
+  // optional variant. Checkout for a pack whose product id isn't
+  // configured stays disabled (see /api/checkout/addon) rather than
+  // throwing at request time, per the task's own "do not enable checkout
+  // until valid Creem product IDs are configured" instruction.
+  creemAddon10ProductIdOptional: () => process.env.CREEM_ADDON_10_PRODUCT_ID,
+  creemAddon25ProductIdOptional: () => process.env.CREEM_ADDON_25_PRODUCT_ID,
+  creemAddon50ProductIdOptional: () => process.env.CREEM_ADDON_50_PRODUCT_ID,
+
   anthropicApiKey: () =>
     required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),
 

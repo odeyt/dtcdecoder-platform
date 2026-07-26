@@ -95,16 +95,22 @@ export async function recordAiDiagnosticUsage(params: {
   }
 
   if (data === "monthly_limit_exceeded") {
+    // Reached only when an add-on credit wasn't available either (the RPC
+    // tries one automatically before returning this — see migration 0024).
     throw new AiDiagnosticLimitExceededError(
       "MONTHLY_REPORT_LIMIT_REACHED",
-      `You've used this month's ${monthlyLimit}-report allowance for your plan. It resets at the start of next month.`,
+      `You've used this month's ${monthlyLimit}-report allowance and any add-on report credits on your account. It resets at the start of next month, or buy an add-on pack for more right away.`,
       nextUtcMonthStartIso(),
       plan !== "workshop",
     );
   }
 
-  // 'recorded' (new slot) or 'already_recorded' (idempotent retry) both
-  // mean this generation is granted at `accessLevel`.
+  // 'recorded' (new slot), 'already_recorded' (idempotent retry), and
+  // 'recorded_via_addon' (monthly allowance was exhausted but an add-on
+  // credit covered this one — see report_addon_balances, migration 0024)
+  // all mean this generation is granted at `accessLevel`. Add-on
+  // consumption isn't surfaced to the caller here; report_addon_balances
+  // itself is the source of truth for how much add-on credit remains.
   return accessLevel;
 }
 
