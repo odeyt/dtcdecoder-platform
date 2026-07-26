@@ -17,15 +17,23 @@ describe("locale gating helpers", () => {
   });
 
   it("marks every built locale as live", () => {
-    for (const code of ["en", "es", "fr", "th", "lo", "vi", "km"]) {
+    for (const code of ["en", "es", "fr", "th", "lo", "vi", "km", "zh-CN", "pt-BR", "de", "ja", "ko"]) {
       expect(isLiveLocale(code)).toBe(true);
     }
+  });
+
+  it("does not treat generic pt as Brazilian pt-BR", () => {
+    // pt-BR is the built, live locale; generic pt is recognized for routing
+    // but must NOT be live (spec: never treat pt-BR as generic Portuguese).
+    expect(isLiveLocale("pt-BR")).toBe(true);
+    expect(isLiveLocale("pt")).toBe(false);
+    expect(isRecognizedLocaleCode("pt")).toBe(true);
   });
 
   it("marks recognized-but-unbuilt locales as not live", () => {
     // Registered for routing but no catalog yet — must NOT be live, or they
     // would render English under a foreign <html lang>.
-    for (const code of ["de", "ar", "zh-CN", "pt", "pt-BR", "ja", "ko"]) {
+    for (const code of ["it", "nl", "pl", "ar", "ru", "hi"]) {
       expect(isRecognizedLocaleCode(code)).toBe(true);
       expect(isLiveLocale(code)).toBe(false);
     }

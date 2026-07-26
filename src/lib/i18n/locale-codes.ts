@@ -93,7 +93,20 @@ export const DEFAULT_LOCALE = "en";
 // request-config catalog loader, and the user-facing language switcher.
 // Add a locale here only once its messages/<code>.json exists and its
 // content is translated.
-export const LIVE_LOCALES = ["en", "es", "fr", "th", "lo", "vi", "km"] as const;
+export const LIVE_LOCALES = [
+  "en",
+  "es",
+  "fr",
+  "th",
+  "lo",
+  "vi",
+  "km",
+  "zh-CN",
+  "pt-BR",
+  "de",
+  "ja",
+  "ko",
+] as const;
 export type LiveLocale = (typeof LIVE_LOCALES)[number];
 
 // The nine production language options, in the exact display order the
@@ -120,7 +133,9 @@ export const LANGUAGE_MENU_ORDER = [
 ] as const;
 
 const LOCALE_CODE_SET = new Set(LOCALE_CODES.map((l) => l.code.toLowerCase()));
-const LIVE_LOCALE_SET = new Set<string>(LIVE_LOCALES);
+// Lowercased so isLiveLocale() (which lowercases its input) matches region
+// codes like "zh-CN" / "pt-BR" correctly.
+const LIVE_LOCALE_SET = new Set<string>(LIVE_LOCALES.map((c) => c.toLowerCase()));
 const LOCALE_INFO_BY_CODE = new Map(LOCALE_CODES.map((l) => [l.code.toLowerCase(), l]));
 
 export function isRecognizedLocaleCode(code: string): boolean {

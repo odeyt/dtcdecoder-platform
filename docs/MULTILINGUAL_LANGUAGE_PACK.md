@@ -16,9 +16,19 @@ Generated from `LANGUAGE_MENU_ORDER` + `getMenuLocales()` (filtered to
 | 5 | `vi` | Tiếng Việt | ✅ full | **beta — AI-translated, not human-reviewed** |
 | 6 | `km` | ខ្មែរ | ✅ full | **beta — AI-translated, low-resource, needs native review** |
 | 7 | `es` | Español | ✅ full | **beta — AI-translated, not human-reviewed** |
+| 8 | `zh-CN` | 中文 | ✅ full | **beta — AI-translated, not human-reviewed** |
+| 9 | `pt-BR` | Português (Brasil) | ✅ full | **beta — AI-translated, not human-reviewed** |
+| 10 | `de` | Deutsch | ✅ full | **beta — AI-translated, not human-reviewed** |
+| 11 | `ja` | 日本語 | ✅ full | **beta — AI-translated, not human-reviewed** |
+| 12 | `ko` | 한국어 | ✅ full | **beta — AI-translated, not human-reviewed** |
 
-Registry-ready but **not yet built** (no catalog, absent from the menu):
-`zh-CN` (中文), `pt-BR` (Português (Brasil)), `de`, `ja`, `ko`.
+All twelve spec languages now have full key-parity catalogs and appear in the
+selector. `pt-BR` is a distinct locale (never generic `pt`); `zh-CN` is
+Simplified (never Traditional). None is human-reviewed.
+
+App-shell activation: `es/fr/th/lo/vi/km` via migration `0018`; `zh-CN/pt-BR/
+de/ja/ko` via migration `0019` (pt-BR needs a new registry row). Run both in
+the Supabase SQL Editor.
 
 ## Coverage per locale
 
