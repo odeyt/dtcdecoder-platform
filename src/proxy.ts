@@ -55,9 +55,20 @@ function resolveLocaleRouting(request: NextRequest): LocaleRouting | null {
   return { kind: "rewrite", url };
 }
 
+// Server-issued, privacy-conscious anonymous identifier for basic-search
+// rate limiting (docs/PRICING_AND_AI_COST_AUDIT.md §"Free basic search").
+// httpOnly so client JS can never read or overwrite it — "changing browser
+// state must not reset server-side limits" holds for anything short of the
+// visitor clearing cookies entirely (a known, documented limitation, not a
+// hardened anti-bot mechanism). Never used for anything but this rate
+// limit — not an auth token, not linked to any account.
+export const ANON_SEARCH_ID_COOKIE = "dtc_anon_id";
+const ANON_SEARCH_ID_MAX_AGE_SECONDS = 60 * 60 * 24 * 365;
+
 // This refreshes the Supabase auth session cookie on every request so
-// Server Components always see an up-to-date session, and (new) resolves
-// the locale rewrite above.
+// Server Components always see an up-to-date session, mints the anonymous
+// search-rate-limit identifier on a visitor's first request, and (new)
+// resolves the locale rewrite above.
 export async function proxy(request: NextRequest) {
   const routing = resolveLocaleRouting(request);
 
@@ -66,6 +77,18 @@ export async function proxy(request: NextRequest) {
   // app tree, and need no auth cookie work.
   if (routing?.kind === "redirect") {
     return NextResponse.redirect(routing.url, 307);
+  }
+
+  // Minted onto `request.cookies` (not just the outgoing response) *before*
+  // `buildResponse()` runs, so a Server Component rendering THIS SAME
+  // request already sees it via `next/headers` cookies() — setting it only
+  // on the response would make it visible only starting on the visitor's
+  // *next* request, leaving their very first search unattributable to any
+  // identifier.
+  const isNewAnonVisitor = !request.cookies.get(ANON_SEARCH_ID_COOKIE);
+  const anonSearchId = isNewAnonVisitor ? crypto.randomUUID() : undefined;
+  if (anonSearchId) {
+    request.cookies.set(ANON_SEARCH_ID_COOKIE, anonSearchId);
   }
 
   const rewriteTarget = routing?.kind === "rewrite" ? routing.url : null;
@@ -84,6 +107,16 @@ export async function proxy(request: NextRequest) {
 
   let response = buildResponse();
 
+  if (anonSearchId) {
+    response.cookies.set(ANON_SEARCH_ID_COOKIE, anonSearchId, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: ANON_SEARCH_ID_MAX_AGE_SECONDS,
+    });
+  }
+
   const supabase = createServerClient(env.supabaseUrl(), env.supabaseAnonKey(), {
     cookies: {
       getAll() {
@@ -97,6 +130,15 @@ export async function proxy(request: NextRequest) {
         cookiesToSet.forEach(({ name, value, options }) =>
           response.cookies.set(name, value, options),
         );
+        if (anonSearchId) {
+          response.cookies.set(ANON_SEARCH_ID_COOKIE, anonSearchId, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax",
+            path: "/",
+            maxAge: ANON_SEARCH_ID_MAX_AGE_SECONDS,
+          });
+        }
       },
     },
   });
