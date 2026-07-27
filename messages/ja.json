@@ -220,7 +220,25 @@
     "success": "完了 — 無料の DTC チートシートは受信トレイをご確認ください。",
     "error": "問題が発生しました。もう一度お試しください。"
   },
-  "aiAssistant": {
+  "history": {
+    "title": "検索履歴",
+    "subtitle": "ログイン中に行ったすべての DTC 検索と AI 質問。",
+    "empty": "まだ何もありません — コードを解読するか AI アシスタントに質問すると、検索がここに表示されます。",
+    "decodeACode": "コードを解読",
+    "lookup": "検索",
+    "aiQuestion": "AI 質問"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — AI による自動車診断インテリジェンス",
+    "homeDescription": "故障コードを即座に解読し、症状を理解し、一般的な原因を見つけ、部品を交換する前にプロの診断手順に従いましょう。",
+    "dtcSearchTitle": "DTC 検索",
+    "dtcSearchDescription": "任意の診断故障コード、症状、または車両の問題を検索して、即座に説明を取得します。",
+    "pricingTitle": "料金",
+    "pricingDescription": "DTC Decoder の Free、Pro Technician、Workshop プラン。",
+    "blogTitle": "ブログ",
+    "blogDescription": "診断ガイド、DTC の解説、修理のケーススタディ。"
+  },
+  "dtcTechnician": {
     "title": "DTC AI アシスタント",
     "subtitle": "故障コードを即座に解読し、症状を理解し、一般的な原因を見つけ、部品を交換する前にプロの診断手順に従いましょう。",
     "signInPrompt": "DTC AI アシスタントを使うにはログインしてください。",
@@ -240,23 +258,5 @@
     "stageTranslating": "診断を{language}に翻訳中",
     "freeLockedBody": "AI診断アシスタントは無料プランには含まれていません。次のような完全なAI生成診断を利用するには、Pro TechnicianまたはWorkshopにアップグレードしてください：",
     "freeLockedCta": "プランを見る"
-  },
-  "history": {
-    "title": "検索履歴",
-    "subtitle": "ログイン中に行ったすべての DTC 検索と AI 質問。",
-    "empty": "まだ何もありません — コードを解読するか AI アシスタントに質問すると、検索がここに表示されます。",
-    "decodeACode": "コードを解読",
-    "lookup": "検索",
-    "aiQuestion": "AI 質問"
-  },
-  "meta": {
-    "homeTitle": "DTC Decoder — AI による自動車診断インテリジェンス",
-    "homeDescription": "故障コードを即座に解読し、症状を理解し、一般的な原因を見つけ、部品を交換する前にプロの診断手順に従いましょう。",
-    "dtcSearchTitle": "DTC 検索",
-    "dtcSearchDescription": "任意の診断故障コード、症状、または車両の問題を検索して、即座に説明を取得します。",
-    "pricingTitle": "料金",
-    "pricingDescription": "DTC Decoder の Free、Pro Technician、Workshop プラン。",
-    "blogTitle": "ブログ",
-    "blogDescription": "診断ガイド、DTC の解説、修理のケーススタディ。"
   }
 }

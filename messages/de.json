@@ -220,7 +220,25 @@
     "success": "Geschafft — prüfen Sie Ihren Posteingang für kostenlose DTC-Spickzettel.",
     "error": "Etwas ist schiefgelaufen. Bitte erneut versuchen."
   },
-  "aiAssistant": {
+  "history": {
+    "title": "Suchverlauf",
+    "subtitle": "Jede DTC-Suche und KI-Frage, die Sie im angemeldeten Zustand gestellt haben.",
+    "empty": "Hier ist noch nichts — Ihre Suchen erscheinen, sobald Sie einen Code entschlüsseln oder den KI-Assistenten fragen.",
+    "decodeACode": "Code entschlüsseln",
+    "lookup": "SUCHE",
+    "aiQuestion": "KI-FRAGE"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — KI-gestützte Fahrzeugdiagnose-Intelligenz",
+    "homeDescription": "Entschlüsseln Sie Fehlercodes sofort, verstehen Sie Symptome, finden Sie häufige Ursachen und folgen Sie professionellen Diagnoseschritten, bevor Sie Teile ersetzen.",
+    "dtcSearchTitle": "DTC-Suche",
+    "dtcSearchDescription": "Suchen Sie einen beliebigen Fehlercode, ein Symptom oder ein Fahrzeugproblem für eine sofortige Erklärung.",
+    "pricingTitle": "Preise",
+    "pricingDescription": "Tarife Kostenlos, Pro Technician und Workshop für DTC Decoder.",
+    "blogTitle": "Blog",
+    "blogDescription": "Diagnoseleitfäden, DTC-Analysen und Reparatur-Fallbeispiele."
+  },
+  "dtcTechnician": {
     "title": "DTC-KI-Assistent",
     "subtitle": "Entschlüsseln Sie Fehlercodes sofort, verstehen Sie Symptome, finden Sie häufige Ursachen und folgen Sie professionellen Diagnoseschritten, bevor Sie Teile ersetzen.",
     "signInPrompt": "Melden Sie sich an, um den DTC-KI-Assistenten zu nutzen.",
@@ -240,23 +258,5 @@
     "stageTranslating": "Diagnose wird ins {language} übersetzt",
     "freeLockedBody": "Der KI-Diagnoseassistent ist im kostenlosen Plan nicht enthalten. Upgraden Sie auf Pro Technician oder Workshop für vollständige KI-generierte Diagnosen wie diese:",
     "freeLockedCta": "Pläne ansehen"
-  },
-  "history": {
-    "title": "Suchverlauf",
-    "subtitle": "Jede DTC-Suche und KI-Frage, die Sie im angemeldeten Zustand gestellt haben.",
-    "empty": "Hier ist noch nichts — Ihre Suchen erscheinen, sobald Sie einen Code entschlüsseln oder den KI-Assistenten fragen.",
-    "decodeACode": "Code entschlüsseln",
-    "lookup": "SUCHE",
-    "aiQuestion": "KI-FRAGE"
-  },
-  "meta": {
-    "homeTitle": "DTC Decoder — KI-gestützte Fahrzeugdiagnose-Intelligenz",
-    "homeDescription": "Entschlüsseln Sie Fehlercodes sofort, verstehen Sie Symptome, finden Sie häufige Ursachen und folgen Sie professionellen Diagnoseschritten, bevor Sie Teile ersetzen.",
-    "dtcSearchTitle": "DTC-Suche",
-    "dtcSearchDescription": "Suchen Sie einen beliebigen Fehlercode, ein Symptom oder ein Fahrzeugproblem für eine sofortige Erklärung.",
-    "pricingTitle": "Preise",
-    "pricingDescription": "Tarife Kostenlos, Pro Technician und Workshop für DTC Decoder.",
-    "blogTitle": "Blog",
-    "blogDescription": "Diagnoseleitfäden, DTC-Analysen und Reparatur-Fallbeispiele."
   }
 }

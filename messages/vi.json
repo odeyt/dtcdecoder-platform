@@ -220,7 +220,25 @@
     "success": "Xong — hãy kiểm tra hộp thư để nhận bảng tra cứu DTC miễn phí.",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại."
   },
-  "aiAssistant": {
+  "history": {
+    "title": "Lịch sử tìm kiếm",
+    "subtitle": "Mọi lần tra cứu DTC và câu hỏi AI bạn đã thực hiện khi đăng nhập.",
+    "empty": "Chưa có gì ở đây — các tìm kiếm của bạn sẽ xuất hiện khi bạn giải mã một mã lỗi hoặc hỏi trợ lý AI.",
+    "decodeACode": "Giải mã lỗi",
+    "lookup": "TRA CỨU",
+    "aiQuestion": "CÂU HỎI AI"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — Trí tuệ chẩn đoán ô tô bằng AI",
+    "homeDescription": "Giải mã mã lỗi tức thì, hiểu triệu chứng, tìm nguyên nhân phổ biến và làm theo các bước chẩn đoán chuyên nghiệp trước khi thay phụ tùng.",
+    "dtcSearchTitle": "Tra cứu DTC",
+    "dtcSearchDescription": "Tìm bất kỳ mã lỗi chẩn đoán, triệu chứng hoặc sự cố xe nào để có giải thích tức thì.",
+    "pricingTitle": "Bảng giá",
+    "pricingDescription": "Các gói Miễn phí, Pro Technician và Workshop cho DTC Decoder.",
+    "blogTitle": "Blog",
+    "blogDescription": "Hướng dẫn chẩn đoán, phân tích mã DTC và tình huống sửa chữa thực tế."
+  },
+  "dtcTechnician": {
     "title": "Trợ lý AI cho DTC",
     "subtitle": "Giải mã mã lỗi tức thì, hiểu triệu chứng, tìm nguyên nhân phổ biến và làm theo các bước chẩn đoán chuyên nghiệp trước khi thay phụ tùng.",
     "signInPrompt": "Đăng nhập để sử dụng Trợ lý AI cho DTC.",
@@ -240,23 +258,5 @@
     "stageTranslating": "Đang dịch chẩn đoán sang {language}",
     "freeLockedBody": "Trợ lý chẩn đoán AI không được bao gồm trong gói Miễn phí. Nâng cấp lên Pro Technician hoặc Workshop để nhận chẩn đoán đầy đủ do AI tạo ra như thế này:",
     "freeLockedCta": "Xem các gói"
-  },
-  "history": {
-    "title": "Lịch sử tìm kiếm",
-    "subtitle": "Mọi lần tra cứu DTC và câu hỏi AI bạn đã thực hiện khi đăng nhập.",
-    "empty": "Chưa có gì ở đây — các tìm kiếm của bạn sẽ xuất hiện khi bạn giải mã một mã lỗi hoặc hỏi trợ lý AI.",
-    "decodeACode": "Giải mã lỗi",
-    "lookup": "TRA CỨU",
-    "aiQuestion": "CÂU HỎI AI"
-  },
-  "meta": {
-    "homeTitle": "DTC Decoder — Trí tuệ chẩn đoán ô tô bằng AI",
-    "homeDescription": "Giải mã mã lỗi tức thì, hiểu triệu chứng, tìm nguyên nhân phổ biến và làm theo các bước chẩn đoán chuyên nghiệp trước khi thay phụ tùng.",
-    "dtcSearchTitle": "Tra cứu DTC",
-    "dtcSearchDescription": "Tìm bất kỳ mã lỗi chẩn đoán, triệu chứng hoặc sự cố xe nào để có giải thích tức thì.",
-    "pricingTitle": "Bảng giá",
-    "pricingDescription": "Các gói Miễn phí, Pro Technician và Workshop cho DTC Decoder.",
-    "blogTitle": "Blog",
-    "blogDescription": "Hướng dẫn chẩn đoán, phân tích mã DTC và tình huống sửa chữa thực tế."
   }
 }

@@ -8,9 +8,9 @@ import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell
 import { AiAssistantChat } from "@/components/AiAssistantChat";
 
 export const metadata: Metadata = {
-  title: "DTC AI Assistant",
+  title: "DTC Technician™ — Professional Diagnostic Copilot",
   description:
-    "Describe a fault code, symptom, or vehicle issue and get a professional master-technician diagnosis.",
+    "Describe a fault code, symptom, or vehicle issue and start a Diagnostic Consultation with DTC Technician™.",
 };
 
 export default async function AiAssistantPage() {
@@ -33,7 +33,7 @@ export default async function AiAssistantPage() {
 
   const locale = await resolveAppShellLocale();
   const messages = await getAppShellMessages(locale);
-  const t = await getTranslations({ locale, namespace: "aiAssistant" });
+  const t = await getTranslations({ locale, namespace: "dtcTechnician" });
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>

@@ -35,7 +35,7 @@ export function AiAssistantChat({
   plan: SubscriptionPlan;
   outputLocaleOptions?: OutputLocaleOption[];
 }) {
-  const t = useTranslations("aiAssistant");
+  const t = useTranslations("dtcTechnician");
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");

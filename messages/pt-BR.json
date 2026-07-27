@@ -220,7 +220,25 @@
     "success": "Pronto — confira sua caixa de entrada para as folhas de consulta de DTC gratuitas.",
     "error": "Algo deu errado. Tente novamente."
   },
-  "aiAssistant": {
+  "history": {
+    "title": "Histórico de buscas",
+    "subtitle": "Cada consulta de DTC e pergunta de IA que você fez enquanto estava logado.",
+    "empty": "Nada aqui ainda — suas buscas aparecerão assim que você decodificar um código ou perguntar ao assistente de IA.",
+    "decodeACode": "Decodificar um código",
+    "lookup": "CONSULTA",
+    "aiQuestion": "PERGUNTA DE IA"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — Inteligência de diagnóstico automotivo com IA",
+    "homeDescription": "Decodifique códigos de falha instantaneamente, entenda os sintomas, encontre causas comuns e siga etapas de diagnóstico profissionais antes de trocar peças.",
+    "dtcSearchTitle": "Consulta de DTC",
+    "dtcSearchDescription": "Busque qualquer código de falha de diagnóstico, sintoma ou problema do veículo para uma explicação instantânea.",
+    "pricingTitle": "Preços",
+    "pricingDescription": "Planos Gratuito, Pro Technician e Workshop do DTC Decoder.",
+    "blogTitle": "Blog",
+    "blogDescription": "Guias de diagnóstico, análises de DTC e estudos de caso de reparo."
+  },
+  "dtcTechnician": {
     "title": "Assistente de IA para DTC",
     "subtitle": "Decodifique códigos de falha instantaneamente, entenda os sintomas, encontre causas comuns e siga etapas de diagnóstico profissionais antes de trocar peças.",
     "signInPrompt": "Entre para usar o Assistente de IA para DTC.",
@@ -240,23 +258,5 @@
     "stageTranslating": "Traduzindo o diagnóstico para {language}",
     "freeLockedBody": "O assistente de diagnóstico com IA não está incluído no plano gratuito. Faça upgrade para o Pro Technician ou Workshop para obter diagnósticos completos gerados por IA como estes:",
     "freeLockedCta": "Ver planos"
-  },
-  "history": {
-    "title": "Histórico de buscas",
-    "subtitle": "Cada consulta de DTC e pergunta de IA que você fez enquanto estava logado.",
-    "empty": "Nada aqui ainda — suas buscas aparecerão assim que você decodificar um código ou perguntar ao assistente de IA.",
-    "decodeACode": "Decodificar um código",
-    "lookup": "CONSULTA",
-    "aiQuestion": "PERGUNTA DE IA"
-  },
-  "meta": {
-    "homeTitle": "DTC Decoder — Inteligência de diagnóstico automotivo com IA",
-    "homeDescription": "Decodifique códigos de falha instantaneamente, entenda os sintomas, encontre causas comuns e siga etapas de diagnóstico profissionais antes de trocar peças.",
-    "dtcSearchTitle": "Consulta de DTC",
-    "dtcSearchDescription": "Busque qualquer código de falha de diagnóstico, sintoma ou problema do veículo para uma explicação instantânea.",
-    "pricingTitle": "Preços",
-    "pricingDescription": "Planos Gratuito, Pro Technician e Workshop do DTC Decoder.",
-    "blogTitle": "Blog",
-    "blogDescription": "Guias de diagnóstico, análises de DTC e estudos de caso de reparo."
   }
 }

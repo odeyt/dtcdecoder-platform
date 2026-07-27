@@ -220,7 +220,25 @@
     "success": "搞定——请查看您的收件箱以获取免费的 DTC 速查表。",
     "error": "出了点问题。请重试。"
   },
-  "aiAssistant": {
+  "history": {
+    "title": "搜索历史",
+    "subtitle": "您登录时进行的每一次 DTC 查询和 AI 提问。",
+    "empty": "这里还没有内容——当您解读代码或询问 AI 助手后，您的搜索将显示在这里。",
+    "decodeACode": "解读故障码",
+    "lookup": "查询",
+    "aiQuestion": "AI 提问"
+  },
+  "meta": {
+    "homeTitle": "DTC Decoder — AI 驱动的汽车诊断智能",
+    "homeDescription": "即时解读故障码，了解症状，找到常见原因，并在更换零件之前遵循专业诊断步骤。",
+    "dtcSearchTitle": "DTC 查询",
+    "dtcSearchDescription": "搜索任何诊断故障码、症状或车辆问题，立即获得解释。",
+    "pricingTitle": "价格",
+    "pricingDescription": "DTC Decoder 的 Free、Pro Technician 和 Workshop 套餐。",
+    "blogTitle": "博客",
+    "blogDescription": "诊断指南、DTC 解析和维修案例研究。"
+  },
+  "dtcTechnician": {
     "title": "DTC AI 助手",
     "subtitle": "即时解读故障码，了解症状，找到常见原因，并在更换零件之前遵循专业诊断步骤。",
     "signInPrompt": "登录即可使用 DTC AI 助手。",
@@ -240,23 +258,5 @@
     "stageTranslating": "正在将诊断翻译为{language}",
     "freeLockedBody": "AI 诊断助手不包含在免费套餐中。升级到 Pro Technician 或 Workshop 即可获得完整的 AI 生成诊断，例如：",
     "freeLockedCta": "查看套餐"
-  },
-  "history": {
-    "title": "搜索历史",
-    "subtitle": "您登录时进行的每一次 DTC 查询和 AI 提问。",
-    "empty": "这里还没有内容——当您解读代码或询问 AI 助手后，您的搜索将显示在这里。",
-    "decodeACode": "解读故障码",
-    "lookup": "查询",
-    "aiQuestion": "AI 提问"
-  },
-  "meta": {
-    "homeTitle": "DTC Decoder — AI 驱动的汽车诊断智能",
-    "homeDescription": "即时解读故障码，了解症状，找到常见原因，并在更换零件之前遵循专业诊断步骤。",
-    "dtcSearchTitle": "DTC 查询",
-    "dtcSearchDescription": "搜索任何诊断故障码、症状或车辆问题，立即获得解释。",
-    "pricingTitle": "价格",
-    "pricingDescription": "DTC Decoder 的 Free、Pro Technician 和 Workshop 套餐。",
-    "blogTitle": "博客",
-    "blogDescription": "诊断指南、DTC 解析和维修案例研究。"
   }
 }
