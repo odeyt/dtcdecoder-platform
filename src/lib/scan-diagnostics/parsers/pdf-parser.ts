@@ -63,9 +63,15 @@ export const pdfParser: ScanReportParser = {
       const report = buildParsedScanReportFromText("");
       report.imageOnlyPdf = true;
       report.warnings.push(IMAGE_ONLY_WARNING);
+      report.extractionQuality.pagesExpected = totalPages;
+      report.extractionQuality.pagesParsed = 0;
+      report.extractionQuality.confidence = "low";
       return report;
     }
 
-    return buildParsedScanReportFromText(text.join("\n"));
+    const report = buildParsedScanReportFromText(text);
+    report.extractionQuality.pagesExpected = totalPages;
+    report.extractionQuality.pagesParsed = text.length;
+    return report;
   },
 };

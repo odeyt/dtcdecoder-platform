@@ -17,6 +17,8 @@ const BASE_INPUT: CanonicalDiagnosticInput = {
   symptoms: [],
   modules: [],
   dtcs: [{ code: "P0234", module: "ECM", status: "current", descriptionRaw: INJECTION_TEXT }],
+  systems: [],
+  patterns: [],
   freezeFrame: [],
   liveData: [],
   imageOnlyPdf: false,

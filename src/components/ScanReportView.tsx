@@ -129,9 +129,9 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
           <p>
             Vehicle:{" "}
             <span className="text-[var(--text-primary)]">
-              {visibleResult.vehicleSummary.modelYear && visibleResult.vehicleSummary.make && visibleResult.vehicleSummary.model
-                ? `${visibleResult.vehicleSummary.modelYear} ${visibleResult.vehicleSummary.make} ${visibleResult.vehicleSummary.model}`
-                : "Not provided in report"}
+              {[visibleResult.vehicleSummary.modelYear, visibleResult.vehicleSummary.make, visibleResult.vehicleSummary.model]
+                .filter(Boolean)
+                .join(" ") || "Not provided in report"}
             </span>
           </p>
           <p>Engine: <span className="text-[var(--text-primary)]">{visibleResult.vehicleSummary.engine ?? "Not provided in report"}</span></p>
@@ -141,8 +141,159 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
               {visibleResult.vehicleSummary.odometerMiles ? visibleResult.vehicleSummary.odometerMiles.toLocaleString() : "Not provided in report"}
             </span>
           </p>
+          {(visibleResult.scannerMeta.scannerBrand ||
+            visibleResult.scannerMeta.vehicleSoftwareVersion ||
+            visibleResult.scannerMeta.diagnosticApplicationVersion ||
+            visibleResult.scannerMeta.testTime) && (
+            <>
+              <p>
+                Scanner:{" "}
+                <span className="text-[var(--text-primary)]">{visibleResult.scannerMeta.scannerBrand ?? "Not identified"}</span>
+              </p>
+              <p>
+                Vehicle software:{" "}
+                <span className="text-[var(--text-primary)]">{visibleResult.scannerMeta.vehicleSoftwareVersion ?? "Not provided"}</span>
+              </p>
+              <p>
+                Scan time:{" "}
+                <span className="text-[var(--text-primary)]">{visibleResult.scannerMeta.testTime ?? "Not provided"}</span>
+              </p>
+              <p>
+                Report type:{" "}
+                <span className="text-[var(--text-primary)]">{visibleResult.scannerMeta.reportType ?? "Not stated"}</span>
+              </p>
+            </>
+          )}
+        </div>
+        {visibleResult.extractionQuality.truncated && (
+          <p
+            role="alert"
+            className="mt-3 rounded-[var(--radius-md)] border p-3 text-xs text-[var(--text-secondary)]"
+            style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
+          >
+            Extraction may be incomplete — the source report declared more DTCs for at least one system than were
+            extracted. Do not treat the DTC list on this case as exhaustive.
+          </p>
+        )}
+      </ResultSection>
+
+      <ResultSection title="Vehicle health summary">
+        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
+          {[
+            { label: "Faulted systems", value: visibleResult.healthSummary.faultedSystemCount },
+            { label: "Systems OK", value: visibleResult.healthSummary.okSystemCount },
+            { label: "Total DTCs", value: visibleResult.healthSummary.totalDtcCount },
+            { label: "Current", value: visibleResult.healthSummary.currentCount },
+            { label: "History", value: visibleResult.healthSummary.historyCount },
+            { label: "Network faults", value: visibleResult.healthSummary.networkCount },
+            { label: "Battery/voltage", value: visibleResult.healthSummary.batteryVoltageCount },
+            { label: "Safety-critical", value: visibleResult.healthSummary.safetyCriticalCount },
+          ].map(({ label, value }) => (
+            <div key={label} className="glass-panel rounded-[var(--radius-lg)] p-4 text-center">
+              <p className="text-2xl font-bold text-[var(--text-primary)]">{value}</p>
+              <p className="mt-1 text-xs text-[var(--text-muted)]">{label}</p>
+            </div>
+          ))}
         </div>
       </ResultSection>
+
+      {visibleResult.moduleHealthTable.length > 0 && (
+        <ResultSection title="Module health">
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-sm text-[var(--text-secondary)]">
+              <thead>
+                <tr className="border-b border-[var(--border-subtle)] text-xs uppercase text-[var(--text-muted)]">
+                  <th className="py-2 pr-4">System / module</th>
+                  <th className="py-2 pr-4">Status</th>
+                  <th className="py-2 pr-4">DTCs</th>
+                  <th className="py-2 pr-4">Extraction</th>
+                  <th className="py-2">Highest priority</th>
+                </tr>
+              </thead>
+              <tbody>
+                {visibleResult.moduleHealthTable.map((row) => (
+                  <tr key={row.systemName} className="border-b border-[var(--border-subtle)] last:border-0">
+                    <td className="py-2 pr-4 text-[var(--text-primary)]">{row.systemName}</td>
+                    <td className="py-2 pr-4">
+                      <span
+                        className="rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                        style={{
+                          borderColor: row.status === "faulted" ? "var(--accent-red)" : "var(--border-subtle)",
+                          color: row.status === "faulted" ? "var(--accent-red)" : "var(--text-muted)",
+                        }}
+                      >
+                        {row.status}
+                      </span>
+                    </td>
+                    <td className="py-2 pr-4 font-mono text-xs">
+                      {row.dtcCountExtracted}
+                      {row.dtcCountReported != null ? ` / ${row.dtcCountReported}` : ""}
+                    </td>
+                    <td className="py-2 pr-4 text-xs">
+                      {row.extractionComplete ? (
+                        "Complete"
+                      ) : (
+                        <span style={{ color: "var(--accent-amber)" }}>Incomplete</span>
+                      )}
+                    </td>
+                    <td className="py-2 font-mono text-xs">{row.highestPriorityFault ?? "—"}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </ResultSection>
+      )}
+
+      {visibleResult.patterns.length > 0 && (
+        <ResultSection title="Key patterns (deterministic, not AI-generated)">
+          <div className="flex flex-col gap-2">
+            {visibleResult.patterns.map((pattern) => (
+              <div key={pattern.patternType} className="glass-panel rounded-[var(--radius-lg)] p-4">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span
+                    className="rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                    style={{
+                      borderColor: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
+                      color: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
+                    }}
+                  >
+                    {pattern.severity}
+                  </span>
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">{pattern.name}</p>
+                </div>
+                {pattern.affectedModules.length > 0 && (
+                  <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    Affected: {pattern.affectedModules.join(", ")}
+                  </p>
+                )}
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      )}
+
+      {isFull && visibleResult.priority && (
+        <ResultSection title="Diagnostic priority">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {[
+              { label: "Fix first", codes: visibleResult.priority.fixFirstCodes, color: "var(--accent-red)" },
+              { label: "Diagnose next", codes: visibleResult.priority.diagnoseNextCodes, color: "var(--accent-amber)" },
+              { label: "Monitor / recheck after repair", codes: visibleResult.priority.monitorRecheckCodes, color: "var(--text-secondary)" },
+              { label: "Historical / reference-only", codes: visibleResult.priority.historicalReferenceCodes, color: "var(--text-muted)" },
+            ].map(({ label, codes, color }) => (
+              <div key={label} className="glass-panel rounded-[var(--radius-lg)] p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide" style={{ color }}>
+                  {label}
+                </p>
+                <p className="mt-1 font-mono text-xs text-[var(--text-secondary)]">
+                  {codes.length > 0 ? codes.join(", ") : "None"}
+                </p>
+              </div>
+            ))}
+          </div>
+        </ResultSection>
+      )}
 
       <ResultSection title="Customer complaint">
         <p className="text-sm text-[var(--text-secondary)]">{scanCase.complaint ?? "Not provided"}</p>

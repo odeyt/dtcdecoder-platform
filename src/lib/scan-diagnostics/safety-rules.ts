@@ -37,6 +37,18 @@ const AIRBAG_SQUIB_PATTERN_REVERSE = /\b(ohmmeter|multimeter|resistance|probe|me
 
 const IMMOBILIZER_BYPASS_PATTERN = /\bbypass(?:ing)?\s+(?:the\s+)?(immobilizer|security system|anti-?theft)\b/i;
 
+// Communication/network-fault context — a module replacement recommended
+// in this context specifically needs power/ground/battery/network
+// confirmation first (a "lost communication" code is very often a wiring,
+// splice, termination, or power/ground issue upstream of the module the
+// code happens to be reported against, not the module itself). Distinct
+// from the generic HIGH_COST_MODULE_PATTERN rules above, which only check
+// that SOME test was recommended, not that the RIGHT KIND of test was.
+const COMM_FAULT_CONTEXT_PATTERN =
+  /\b(lost communication|no communication|not communicating|network fault|can\s*bus|bus[- ]off|frame lost|node (missing|lost)|message (lost|timeout)|u0\d{3})\b/i;
+const POWER_GROUND_NETWORK_TEST_PATTERN =
+  /\b(power supply|ground (integrity|test|circuit)|battery (voltage|test|condition)|network (topology|resistance|termination)|bias voltage|voltage drop|continuity|short(?:s|ed)?\b|open circuit|splice|terminating resistor|can (high|low)|reference voltage)\b/i;
+
 interface SafetyRule {
   id: string;
   severity: "block" | "warn";
@@ -86,6 +98,17 @@ const SAFETY_RULES: SafetyRule[] = [
     severity: "block",
     message: "Guidance appeared to involve bypassing an immobilizer or security system, which is out of scope here.",
     matches: (text) => IMMOBILIZER_BYPASS_PATTERN.test(text),
+  },
+  {
+    id: "comm-fault-module-replacement-without-power-ground-network-tests",
+    severity: "warn",
+    message:
+      "A module replacement was suggested in the context of a communication/network fault, but none of the recommended tests cover power, ground, battery, or network-specific checks (voltage, resistance, termination, continuity, splice points) — a communication DTC is frequently a wiring/power/ground issue upstream of the named module, not the module itself. Confirm those first.",
+    matches: (text, output) => {
+      if (!COMM_FAULT_CONTEXT_PATTERN.test(text) || !HIGH_COST_MODULE_PATTERN.test(text)) return false;
+      const testsText = output.recommendedTests.map((t) => `${t.step} ${t.purpose} ${t.expectedResult}`).join(" ");
+      return !POWER_GROUND_NETWORK_TEST_PATTERN.test(testsText);
+    },
   },
 ];
 

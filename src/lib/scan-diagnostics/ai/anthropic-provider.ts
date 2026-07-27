@@ -179,6 +179,54 @@ export function buildUserPrompt(
   if (input.batteryCondition) lines.push(`Battery condition: ${input.batteryCondition}`);
   if (input.technicianNotes) lines.push(`Technician notes: ${input.technicianNotes}`);
 
+  if (input.systems.length > 0) {
+    lines.push("\nSYSTEM/MODULE SUMMARY (from the source report's own declared counts)");
+    for (const system of input.systems) {
+      const completeness =
+        system.dtcCountReported != null
+          ? system.extractionComplete
+            ? `${system.dtcCountExtracted}/${system.dtcCountReported} extracted`
+            : `INCOMPLETE — declared ${system.dtcCountReported}, only ${system.dtcCountExtracted} extracted`
+          : `${system.dtcCountExtracted} extracted`;
+      lines.push(`- ${system.systemName}: ${system.status.toUpperCase()}, ${completeness}`);
+    }
+  }
+
+  if (input.patterns.length > 0) {
+    lines.push(
+      "\nDETECTED PATTERNS (deterministic, rule-based findings computed BEFORE your analysis — treat as evidence to consider, not a conclusion to repeat verbatim)",
+    );
+    for (const pattern of input.patterns) {
+      lines.push(
+        `- [${pattern.severity.toUpperCase()}] ${pattern.name} (affected: ${pattern.affectedModules.join(", ") || "n/a"})`,
+      );
+    }
+  }
+
+  if (input.priority) {
+    lines.push("\nDETERMINISTIC PRIORITY GROUPING (computed from status + safety relevance, not by you)");
+    lines.push(`Fix first (current + safety/bus-off): ${input.priority.fixFirstCodes.join(", ") || "none"}`);
+    lines.push(`Diagnose next (current, other): ${input.priority.diagnoseNextCodes.join(", ") || "none"}`);
+    lines.push(`Monitor/recheck (history): ${input.priority.monitorRecheckCodes.join(", ") || "none"}`);
+    lines.push(
+      `Historical/reference-only (never outranks a current fault): ${input.priority.historicalReferenceCodes.join(", ") || "none"}`,
+    );
+  }
+
+  if (input.scanExtractionQuality) {
+    const q = input.scanExtractionQuality;
+    lines.push("\nEXTRACTION QUALITY");
+    lines.push(
+      `Confidence: ${q.confidence}${q.truncated ? " — WARNING: extraction may be INCOMPLETE, some declared DTCs were not extracted. Do not assume the DTC list below is exhaustive." : ""}`,
+    );
+  }
+
+  if (input.omittedFromPrompt) {
+    lines.push(
+      `\nNOTE: ${input.omittedFromPrompt.count} additional low-priority DTC(s) were omitted from the listing below due to the report's size (never a current/safety/network/battery/bus-off code): ${input.omittedFromPrompt.codes.slice(0, 20).join(", ")}${input.omittedFromPrompt.codes.length > 20 ? ", ..." : ""}`,
+    );
+  }
+
   lines.push("\nMODULES");
   lines.push(
     input.modules.length

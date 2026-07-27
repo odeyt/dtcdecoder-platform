@@ -4,6 +4,11 @@ import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-c
 import type { CanonicalDiagnosticInput, DiagnosticAiOutput } from "@/lib/scan-diagnostics/schemas";
 import type { DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
 
+// Deliberately minimal — vin, complaint, and symptoms are the only "known"
+// fields; year/make/model/mileage/freeze-frame/live-data/systems/patterns
+// are all absent, so each of those NEW factors (see confidence.ts) applies
+// its real, documented penalty. Score: 70 (base) - 5 (no year/make/model)
+// - 3 (no mileage) - 5 (no freeze frame) - 5 (no live data) = 52.
 const BASE_INPUT: CanonicalDiagnosticInput = {
   caseId: "case-1",
   vehicle: { vin: "1FTFW1ET1EFA00001" },
@@ -11,11 +16,45 @@ const BASE_INPUT: CanonicalDiagnosticInput = {
   symptoms: ["rough idle"],
   modules: [],
   dtcs: [],
+  systems: [],
+  patterns: [],
   freezeFrame: [],
   liveData: [],
   imageOnlyPdf: false,
   extractionWarnings: [],
   dtcCategoryClassification: classifyDtcCategories([], []),
+};
+const BASE_SCORE = 52;
+
+// A genuinely complete, well-corroborated multi-system case — used only by
+// the two tests that need a score high enough to exercise the upper clamp/
+// "high" band, since BASE_INPUT's minimal data can never reach either.
+const RICH_INPUT: CanonicalDiagnosticInput = {
+  ...BASE_INPUT,
+  vehicle: { vin: "1FTFW1ET1EFA00001", year: 2020, make: "Ford", model: "F-150", mileage: 50000 },
+  freezeFrame: [{ rpm: 800 }],
+  liveData: [{ rpm: 800 }],
+  systems: [
+    { systemName: "Engine", status: "faulted", dtcCountExtracted: 2, extractionComplete: true },
+    { systemName: "Transmission", status: "faulted", dtcCountExtracted: 1, extractionComplete: true },
+    { systemName: "ABS", status: "faulted", dtcCountExtracted: 1, extractionComplete: true },
+    { systemName: "EPB", status: "ok", dtcCountExtracted: 0, extractionComplete: true },
+  ],
+  patterns: [
+    {
+      patternType: "bus_off_condition",
+      severity: "critical",
+      name: "CAN bus-off condition reported",
+      evidence: {},
+      affectedModules: ["Gateway"],
+    },
+  ],
+  priority: {
+    fixFirstCodes: ["P0001"],
+    diagnoseNextCodes: [],
+    monitorRecheckCodes: [],
+    historicalReferenceCodes: [],
+  },
 };
 
 function output(overrides: Partial<DiagnosticAiOutput> = {}): DiagnosticAiOutput {
@@ -49,9 +88,9 @@ function result(o: DiagnosticAiOutput): DiagnosticAIProviderResult {
 }
 
 describe("computeConfidence — internal deterministic score (never displayed directly)", () => {
-  it("returns the single-provider base of 70 when nothing is missing and safety passes", () => {
+  it("returns the single-provider base of 70, adjusted for the vehicle/freeze-frame/live-data gaps in BASE_INPUT", () => {
     const { internalScore, rationale } = computeConfidence([result(output())], BASE_INPUT, { verdict: "pass" });
-    expect(internalScore).toBe(70);
+    expect(internalScore).toBe(BASE_SCORE);
     expect(rationale[0]).toMatch(/Base confidence of 70/);
   });
 
@@ -61,7 +100,7 @@ describe("computeConfidence — internal deterministic score (never displayed di
       { ...BASE_INPUT, vehicle: {} },
       { verdict: "pass" },
     );
-    expect(internalScore).toBe(50);
+    expect(internalScore).toBe(BASE_SCORE - 20);
   });
 
   it("deducts 10 for no complaint or symptoms", () => {
@@ -70,7 +109,7 @@ describe("computeConfidence — internal deterministic score (never displayed di
       { ...BASE_INPUT, complaint: null, symptoms: [] },
       { verdict: "pass" },
     );
-    expect(internalScore).toBe(60);
+    expect(internalScore).toBe(BASE_SCORE - 10);
   });
 
   it("deducts 15 for an image-only PDF", () => {
@@ -79,7 +118,7 @@ describe("computeConfidence — internal deterministic score (never displayed di
       { ...BASE_INPUT, imageOnlyPdf: true },
       { verdict: "pass" },
     );
-    expect(internalScore).toBe(55);
+    expect(internalScore).toBe(BASE_SCORE - 15);
   });
 
   it("deducts 10 for unresolved extraction warnings", () => {
@@ -88,17 +127,27 @@ describe("computeConfidence — internal deterministic score (never displayed di
       { ...BASE_INPUT, extractionWarnings: ["No dedicated DTC column found"] },
       { verdict: "pass" },
     );
-    expect(internalScore).toBe(60);
+    expect(internalScore).toBe(BASE_SCORE - 10);
+  });
+
+  it("deducts 15 for extraction marked truncated (declared more DTCs than were extracted)", () => {
+    const { internalScore, rationale } = computeConfidence(
+      [result(output())],
+      { ...BASE_INPUT, scanExtractionQuality: { truncated: true, confidence: "low" } },
+      { verdict: "pass" },
+    );
+    expect(internalScore).toBe(BASE_SCORE - 15);
+    expect(rationale.some((r) => /INCOMPLETE/.test(r))).toBe(true);
   });
 
   it("deducts 25 for a blocked safety verdict", () => {
     const { internalScore } = computeConfidence([result(output())], BASE_INPUT, { verdict: "block" });
-    expect(internalScore).toBe(45);
+    expect(internalScore).toBe(BASE_SCORE - 25);
   });
 
   it("deducts 10 for a warn safety verdict", () => {
     const { internalScore } = computeConfidence([result(output())], BASE_INPUT, { verdict: "warn" });
-    expect(internalScore).toBe(60);
+    expect(internalScore).toBe(BASE_SCORE - 10);
   });
 
   it("deducts 5 per missing-information item, capped at 20", () => {
@@ -107,14 +156,14 @@ describe("computeConfidence — internal deterministic score (never displayed di
       BASE_INPUT,
       { verdict: "pass" },
     );
-    expect(twoItems.internalScore).toBe(60); // 70 - 10
+    expect(twoItems.internalScore).toBe(BASE_SCORE - 10);
 
     const sixItems = computeConfidence(
       [result(output({ missingInformation: Array(6).fill("missing item") }))],
       BASE_INPUT,
       { verdict: "pass" },
     );
-    expect(sixItems.internalScore).toBe(50); // 70 - 20 (capped, not -30)
+    expect(sixItems.internalScore).toBe(BASE_SCORE - 20); // capped, not -30
   });
 
   it("clamps to the minimum of 10 when many deductions stack", () => {
@@ -127,11 +176,11 @@ describe("computeConfidence — internal deterministic score (never displayed di
     expect(rationale.some((r) => /Clamped/.test(r))).toBe(true);
   });
 
-  it("clamps to the maximum of 95 and never reports full certainty", () => {
+  it("clamps to the maximum of 95 and never reports full certainty, even for a well-corroborated agreeing case", () => {
     const agreeingResults = [result(output()), result(output())];
-    const { internalScore } = computeConfidence(agreeingResults, BASE_INPUT, { verdict: "pass" });
-    expect(internalScore).toBeLessThanOrEqual(95);
-    expect(internalScore).toBe(85);
+    const { internalScore, rationale } = computeConfidence(agreeingResults, RICH_INPUT, { verdict: "pass" });
+    expect(internalScore).toBe(95);
+    expect(rationale.some((r) => /Clamped/.test(r))).toBe(true);
   });
 
   it("uses a lower base when multiple providers disagree on the top cause", () => {
@@ -153,18 +202,18 @@ describe("computeConfidence — internal deterministic score (never displayed di
       ),
     ];
     const { internalScore } = computeConfidence(disagreeing, BASE_INPUT, { verdict: "pass" });
-    expect(internalScore).toBe(55);
+    expect(internalScore).toBe(55 - 18);
   });
 });
 
 describe("computeConfidence — categorical confidenceLevel (what the UI/API actually surface)", () => {
-  it("bands a clean single-provider case (score 70) as medium, not high", () => {
+  it("bands a clean single-provider case as medium, not high", () => {
     const { confidenceLevel } = computeConfidence([result(output())], BASE_INPUT, { verdict: "pass" });
     expect(confidenceLevel).toBe("medium");
   });
 
-  it("bands independently-agreeing multi-provider consensus (score 85) as high", () => {
-    const { confidenceLevel } = computeConfidence([result(output()), result(output())], BASE_INPUT, {
+  it("bands independently-agreeing, well-corroborated multi-provider consensus as high", () => {
+    const { confidenceLevel } = computeConfidence([result(output()), result(output())], RICH_INPUT, {
       verdict: "pass",
     });
     expect(confidenceLevel).toBe("high");

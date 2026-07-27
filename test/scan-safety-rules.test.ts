@@ -9,6 +9,8 @@ const BASE_INPUT: CanonicalDiagnosticInput = {
   symptoms: [],
   modules: [],
   dtcs: [],
+  systems: [],
+  patterns: [],
   freezeFrame: [],
   liveData: [],
   imageOnlyPdf: false,
@@ -151,6 +153,58 @@ describe("runSafetyReview", () => {
     );
     expect(result.verdict).toBe("block");
     expect(result.findings.some((f) => f.ruleId === "airbag-squib-circuit-probing")).toBe(true);
+  });
+
+  it("warns when a module replacement is suggested for a communication-fault code without power/ground/network tests", () => {
+    const result = runSafetyReview(
+      output({
+        rankedCauses: [
+          {
+            cause: "Replace the BCM",
+            confidenceLevel: "medium",
+            rationale: "Multiple modules report lost communication, pointing to a failed BCM.",
+            supportingEvidence: [],
+            contradictingEvidence: [],
+            confirmationTestsRequired: [],
+          },
+        ],
+        recommendedTests: [
+          { step: "Scan for additional codes", purpose: "Confirm scope", expectedResult: "No new codes" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(
+      result.findings.some((f) => f.ruleId === "comm-fault-module-replacement-without-power-ground-network-tests"),
+    ).toBe(true);
+  });
+
+  it("does not fire the comm-fault rule when a power/ground/network test is actually recommended", () => {
+    const result = runSafetyReview(
+      output({
+        rankedCauses: [
+          {
+            cause: "Replace the BCM",
+            confidenceLevel: "medium",
+            rationale: "Multiple modules report lost communication with the BCM.",
+            supportingEvidence: [],
+            contradictingEvidence: [],
+            confirmationTestsRequired: [],
+          },
+        ],
+        recommendedTests: [
+          {
+            step: "Test BCM power and ground circuits, then check network topology and termination",
+            purpose: "Rule out a wiring/power cause before replacing the module",
+            expectedResult: "Power and ground within spec, termination resistance correct",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(
+      result.findings.some((f) => f.ruleId === "comm-fault-module-replacement-without-power-ground-network-tests"),
+    ).toBe(false);
   });
 
   it("always blocks immobilizer bypass guidance", () => {

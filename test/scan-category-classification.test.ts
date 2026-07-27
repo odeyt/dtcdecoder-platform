@@ -12,6 +12,13 @@ function dtc(overrides: Partial<ScanDtcRecord>): ScanDtcRecord {
     description_raw: null,
     source: "extracted",
     created_at: new Date(0).toISOString(),
+    system_name: null,
+    source_page: null,
+    source_text: null,
+    safety_relevance: false,
+    network_relevance: false,
+    battery_relevance: false,
+    bus_off_relevance: false,
     ...overrides,
   };
 }

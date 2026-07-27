@@ -11,12 +11,29 @@ import { getAiDiagnosticUsageSummary } from "@/lib/ai-diagnostics/usage";
 import { accessLevelForPlan } from "@/lib/ai-diagnostics/entitlements";
 import { filterScanReportForAccessLevel, type ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
 import { getOrCreateLocalizedReport } from "@/lib/scan-diagnostics/report-localization";
-import type { ScanCase, ScanExtraction, ScanDtcRecord, ScanReport } from "@/lib/types";
+import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
+import { computeDiagnosticPriority } from "@/lib/scan-diagnostics/priority";
+import type { DetectedPattern } from "@/lib/scan-diagnostics/patterns";
+import type {
+  ScanCase,
+  ScanExtraction,
+  ScanDtcRecord,
+  ScanPattern,
+  ScanReport,
+  ScanSystem,
+} from "@/lib/types";
 
 export async function resolveReportAccess(
   userId: string,
   email: string | null,
-  detail: { case: ScanCase; extraction: ScanExtraction | null; dtcRecords: ScanDtcRecord[]; report: ScanReport | null },
+  detail: {
+    case: ScanCase;
+    extraction: ScanExtraction | null;
+    dtcRecords: ScanDtcRecord[];
+    systems: ScanSystem[];
+    patterns: ScanPattern[];
+    report: ScanReport | null;
+  },
 ): Promise<ScanReportAccessResult | null> {
   if (!detail.report) return null;
 
@@ -33,12 +50,31 @@ export async function resolveReportAccess(
       ? await getOrCreateLocalizedReport(userId, plan, detail.report.id, requestedLocale)
       : null;
 
+  // Vehicle/system/pattern summary is deterministic, extraction-derived
+  // fact — shown regardless of access level, same as vehicleSummary/dtcs/
+  // safety in filterScanReportForAccessLevel's `base` fields. Only the
+  // priority grouping (which reorders the AI's OWN rankedCauses) is
+  // full-access-only, since it has nothing to group at preview level.
+  const canonicalScan = buildCanonicalVehicleScan(detail.case, detail.extraction, detail.dtcRecords, detail.systems);
+  const persistedPatterns: DetectedPattern[] = detail.patterns.map((p) => ({
+    patternType: p.pattern_type as DetectedPattern["patternType"],
+    severity: p.severity,
+    name: p.pattern_type,
+    evidence: p.evidence,
+    affectedModules: p.affected_modules,
+    ruleVersion: p.rule_version,
+  }));
+  const priority = computeDiagnosticPriority(canonicalScan, persistedPatterns);
+
   return filterScanReportForAccessLevel({
     report: detail.report,
     extraction: detail.extraction,
     dtcRecords: detail.dtcRecords,
     accessLevel,
     usage,
+    canonicalScan,
+    patterns: persistedPatterns,
+    priority: accessLevel === "full" ? priority : undefined,
     localization: localization
       ? {
           requestedLocale,

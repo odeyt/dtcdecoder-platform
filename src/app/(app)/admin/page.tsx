@@ -17,6 +17,11 @@ export default async function AdminDashboardPage() {
         <AdminNavCard href="/admin/glossary" title="Automotive Glossary" description="Approved terminology per language" />
         <AdminNavCard href="/admin/currencies" title="Currency Registry" description="Enable display currencies" />
         <AdminNavCard href="/admin/profitability" title="Profitability" description="Revenue, AI cost, and margin rollups" />
+        <AdminNavCard
+          href="/admin/scan-inspection"
+          title="Scan Inspection"
+          description="Debug one case's extraction, patterns, priority, and exact AI prompt"
+        />
       </div>
 
       <div className="mt-10">

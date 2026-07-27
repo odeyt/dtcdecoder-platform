@@ -298,6 +298,22 @@ export interface ScanExtraction {
   reviewed_fields: Record<string, unknown>;
   extracted_at: string;
   reviewed_at: string | null;
+  // Scanner/report metadata + extraction-quality tracking (migration 0028) —
+  // see docs/FULL_SCAN_DATA_LOSS_AUDIT.md and canonical-scan.ts.
+  scanner_brand: string | null;
+  diagnostic_application_version: string | null;
+  vehicle_software_version: string | null;
+  diagnostic_path: string | null;
+  test_time: string | null;
+  report_type: string | null;
+  pages_expected: number | null;
+  pages_parsed: number | null;
+  systems_expected: number | null;
+  systems_parsed: number | null;
+  dtcs_expected: number | null;
+  dtcs_parsed: number | null;
+  extraction_truncated: boolean;
+  extraction_confidence: "high" | "medium" | "low" | null;
 }
 
 export type ScanDtcStatus =
@@ -306,7 +322,9 @@ export type ScanDtcStatus =
   | "pending"
   | "permanent"
   | "intermittent"
-  | "stored";
+  | "stored"
+  | "reference_only"
+  | "unknown";
 
 export type ScanDtcSource = "extracted" | "user_added" | "user_edited";
 
@@ -318,6 +336,41 @@ export interface ScanDtcRecord {
   status: ScanDtcStatus | null;
   description_raw: string | null;
   source: ScanDtcSource;
+  created_at: string;
+  // Provenance + category relevance (migration 0028).
+  system_name: string | null;
+  source_page: number | null;
+  source_text: string | null;
+  safety_relevance: boolean;
+  network_relevance: boolean;
+  battery_relevance: boolean;
+  bus_off_relevance: boolean;
+}
+
+export type ScanSystemStatus = "faulted" | "ok" | "unknown";
+
+export interface ScanSystem {
+  id: string;
+  case_id: string;
+  system_name: string;
+  module_name: string | null;
+  status: ScanSystemStatus;
+  dtc_count_reported: number | null;
+  dtc_count_extracted: number;
+  extraction_complete: boolean;
+  created_at: string;
+}
+
+export type ScanPatternSeverity = "info" | "warn" | "critical";
+
+export interface ScanPattern {
+  id: string;
+  case_id: string;
+  pattern_type: string;
+  severity: ScanPatternSeverity;
+  evidence: Record<string, unknown>;
+  affected_modules: string[];
+  rule_version: string;
   created_at: string;
 }
 

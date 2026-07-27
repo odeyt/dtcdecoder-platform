@@ -1,9 +1,9 @@
 // Deterministic, documented confidence scoring — deliberately NOT a number
 // the AI model itself picks. Combines model agreement (inert today since
 // there's only one provider, but written to extend), evidence
-// completeness, and the safety-review outcome into an internal score,
-// while keeping every contributing factor visible in `rationale` so the
-// report can explain *why* the level is what it is.
+// completeness, extraction quality, and the safety-review outcome into an
+// internal score, while keeping every contributing factor visible in
+// `rationale` so the report can explain *why* the level is what it is.
 //
 // The internal numeric score (`internalScore`) is a validated deterministic
 // calculation with fully documented evidence inputs — it is NOT hidden, but
@@ -13,9 +13,15 @@
 // docs/DIAGNOSTIC_SCHEMA_V2.md and docs/DIAGNOSTIC_SAFETY_RULES.md for why
 // a bare percentage is never presented as a calibrated real-world
 // probability.
+//
+// FORMULA_VERSION below changes whenever a factor is added/removed/
+// reweighted — persisted alongside the score so a report generated under
+// an older formula is never silently reinterpreted under a newer one.
 import type { CanonicalDiagnosticInput, ConfidenceLevel } from "@/lib/scan-diagnostics/schemas";
 import type { DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
 import type { SafetyReviewResult } from "@/lib/scan-diagnostics/safety-rules";
+
+export const CONFIDENCE_FORMULA_VERSION = "2026-07-confidence-v2";
 
 const MIN_CONFIDENCE = 10;
 const MAX_CONFIDENCE = 95;
@@ -41,6 +47,7 @@ export interface ConfidenceResult {
   confidenceLevel: ConfidenceLevel;
   internalScore: number;
   rationale: string[];
+  formulaVersion: string;
 }
 
 // Single-provider baseline today. When a second/third provider is added,
@@ -72,27 +79,99 @@ export function computeConfidence(
   const rationale: string[] = [];
   let confidence = baseConfidence(results, rationale);
 
+  // --- Vehicle metadata completeness -------------------------------------
   if (!input.vehicle.vin) {
     confidence -= 20;
     rationale.push("-20: no VIN was provided or extracted.");
   }
+  const vehicleFieldsKnown = [input.vehicle.year, input.vehicle.make, input.vehicle.model].filter(Boolean).length;
+  if (vehicleFieldsKnown === 3) {
+    confidence += 5;
+    rationale.push("+5: year, make, and model were all identified.");
+  } else if (vehicleFieldsKnown === 0) {
+    confidence -= 5;
+    rationale.push("-5: no year/make/model were identified — some system-specific reasoning may not apply.");
+  }
+  if (!input.vehicle.mileage) {
+    confidence -= 3;
+    rationale.push("-3: no mileage was provided — age/wear-related likelihood can't be weighed.");
+  }
 
+  // --- Complaint/symptom/freeze-frame/live-data completeness -------------
   const hasComplaintOrSymptoms = Boolean(input.complaint?.trim()) || input.symptoms.length > 0;
   if (!hasComplaintOrSymptoms) {
     confidence -= 10;
     rationale.push("-10: no customer complaint or symptoms were provided.");
   }
+  if (input.freezeFrame.length === 0) {
+    confidence -= 5;
+    rationale.push("-5: no freeze-frame data was provided.");
+  } else {
+    confidence += 3;
+    rationale.push("+3: freeze-frame data was available.");
+  }
+  if (input.liveData.length === 0) {
+    confidence -= 5;
+    rationale.push("-5: no live data was provided.");
+  } else {
+    confidence += 3;
+    rationale.push("+3: live data was available.");
+  }
 
+  // --- Extraction quality / scan completeness -----------------------------
   if (input.imageOnlyPdf) {
     confidence -= 15;
     rationale.push("-15: the source file was an image-only PDF with no reliable text extraction.");
   }
-
   if (input.extractionWarnings.length > 0) {
     confidence -= 10;
     rationale.push(`-10: ${input.extractionWarnings.length} unresolved extraction warning(s) from the scan report.`);
   }
+  const quality = input.scanExtractionQuality;
+  if (quality?.truncated) {
+    confidence -= 15;
+    rationale.push(
+      "-15: extraction appears INCOMPLETE — the source report declared more DTCs than were extracted for at least one system. Do not treat the DTC list as exhaustive.",
+    );
+  } else if (quality && quality.dtcsExpected != null && quality.dtcsExpected > 0) {
+    confidence += 5;
+    rationale.push(
+      `+5: extraction is complete — all ${quality.dtcsExpected} declared DTC(s) across the source's own system counts were extracted.`,
+    );
+  }
 
+  // --- Corroborating modules / pattern evidence ---------------------------
+  const faultedSystems = input.systems.filter((s) => s.status === "faulted");
+  const okSystems = input.systems.filter((s) => s.status === "ok");
+  if (faultedSystems.length >= 3) {
+    confidence += 5;
+    rationale.push(`+5: findings are corroborated across ${faultedSystems.length} distinct faulted systems.`);
+  }
+  if (okSystems.length > 0) {
+    confidence += 2;
+    rationale.push(`+2: ${okSystems.length} system(s) were explicitly confirmed OK by the source report, narrowing scope.`);
+  }
+  const criticalPatterns = input.patterns.filter((p) => p.severity === "critical");
+  if (criticalPatterns.length > 0) {
+    confidence += 5;
+    rationale.push(`+5: ${criticalPatterns.length} deterministic critical pattern(s) were detected, adding independent structural evidence.`);
+  }
+
+  // --- Status clarity / reference-only ambiguity --------------------------
+  const referenceOnlyCount = input.priority?.historicalReferenceCodes.length ?? 0;
+  const totalDtcCount = input.dtcs.length + (input.omittedFromPrompt?.count ?? 0);
+  if (totalDtcCount > 0 && referenceOnlyCount / totalDtcCount > 0.5) {
+    confidence -= 8;
+    rationale.push(
+      "-8: more than half of the DTCs are reference-only/unrecognized-status, and the report doesn't have a manufacturer-specific definition for most of them.",
+    );
+  }
+  if (input.priority && input.priority.fixFirstCodes.length > 0) {
+    confidence += 3;
+    rationale.push("+3: at least one current, safety-relevant fault was clearly identified for priority.");
+  }
+
+  // --- Safety review outcome ----------------------------------------------
   if (safety.verdict === "block") {
     confidence -= 25;
     rationale.push("-25: the safety review blocked part of the AI's recommendation.");
@@ -116,7 +195,7 @@ export function computeConfidence(
   }
 
   const confidenceLevel = bandConfidence(clamped);
-  rationale.push(`Internal score ${clamped}/100 maps to confidence level "${confidenceLevel}".`);
+  rationale.push(`Internal score ${clamped}/100 (formula ${CONFIDENCE_FORMULA_VERSION}) maps to confidence level "${confidenceLevel}".`);
 
-  return { confidenceLevel, internalScore: clamped, rationale };
+  return { confidenceLevel, internalScore: clamped, rationale, formulaVersion: CONFIDENCE_FORMULA_VERSION };
 }

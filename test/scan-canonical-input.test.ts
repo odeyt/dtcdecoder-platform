@@ -34,6 +34,13 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
         description_raw: null,
         source: "extracted",
         created_at: new Date(0).toISOString(),
+        system_name: null,
+        source_page: null,
+        source_text: null,
+        safety_relevance: false,
+        network_relevance: false,
+        battery_relevance: false,
+        bus_off_relevance: false,
       },
     ];
 
@@ -63,6 +70,13 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
         description_raw: null,
         source: "extracted",
         created_at: new Date(0).toISOString(),
+        system_name: null,
+        source_page: null,
+        source_text: null,
+        safety_relevance: false,
+        network_relevance: false,
+        battery_relevance: false,
+        bus_off_relevance: false,
       },
     ];
     const input = buildCanonicalDiagnosticInput(baseCase(), null, dtcRecords);
@@ -91,6 +105,20 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
       reviewed_fields: { model: "F-150" },
       extracted_at: new Date(0).toISOString(),
       reviewed_at: new Date(0).toISOString(),
+      scanner_brand: null,
+      diagnostic_application_version: null,
+      vehicle_software_version: null,
+      diagnostic_path: null,
+      test_time: null,
+      report_type: null,
+      pages_expected: null,
+      pages_parsed: null,
+      systems_expected: null,
+      systems_parsed: null,
+      dtcs_expected: null,
+      dtcs_parsed: null,
+      extraction_truncated: false,
+      extraction_confidence: null,
     };
     const input = buildCanonicalDiagnosticInput(baseCase(), extraction, []);
     expect(input.vehicle.make).toBe("Ford");

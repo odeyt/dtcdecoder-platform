@@ -78,6 +78,52 @@ const CanonicalDtcSchema = z.object({
   knownSeverity: z.string().nullable().optional(),
 });
 
+// --- Full-scan structured context (system/pattern/priority summary) ------
+// Added alongside the existing flat `dtcs` list (kept unchanged/unlimited)
+// so the AI receives compact, pre-digested structure for a multi-system
+// report instead of only a bare code list — see
+// docs/SCAN_PATTERN_AND_PRIORITY_ENGINE.md. Deterministic facts only;
+// never populated from an AI response.
+
+export const ScanSystemSummarySchema = z.object({
+  systemName: z.string(),
+  moduleName: z.string().nullable().optional(),
+  status: z.enum(["faulted", "ok", "unknown"]),
+  dtcCountReported: z.number().nullable().optional(),
+  dtcCountExtracted: z.number(),
+  extractionComplete: z.boolean(),
+});
+export type ScanSystemSummary = z.infer<typeof ScanSystemSummarySchema>;
+
+export const DetectedPatternSchema = z.object({
+  patternType: z.string(),
+  severity: z.enum(["info", "warn", "critical"]),
+  name: z.string(),
+  evidence: z.record(z.string(), z.unknown()),
+  affectedModules: z.array(z.string()),
+});
+export type DetectedPatternSummary = z.infer<typeof DetectedPatternSchema>;
+
+export const DiagnosticPrioritySummarySchema = z.object({
+  fixFirstCodes: z.array(z.string()),
+  diagnoseNextCodes: z.array(z.string()),
+  monitorRecheckCodes: z.array(z.string()),
+  historicalReferenceCodes: z.array(z.string()),
+});
+export type DiagnosticPrioritySummary = z.infer<typeof DiagnosticPrioritySummarySchema>;
+
+export const ExtractionQualitySummarySchema = z.object({
+  pagesExpected: z.number().nullable().optional(),
+  pagesParsed: z.number().nullable().optional(),
+  systemsExpected: z.number().nullable().optional(),
+  systemsParsed: z.number().nullable().optional(),
+  dtcsExpected: z.number().nullable().optional(),
+  dtcsParsed: z.number().nullable().optional(),
+  truncated: z.boolean(),
+  confidence: z.enum(["high", "medium", "low"]),
+});
+export type ExtractionQualitySummary = z.infer<typeof ExtractionQualitySummarySchema>;
+
 export const CanonicalDiagnosticInputSchema = z.object({
   caseId: z.string(),
   vehicle: z.object({
@@ -95,6 +141,15 @@ export const CanonicalDiagnosticInputSchema = z.object({
   technicianNotes: z.string().nullable().optional(),
   modules: z.array(z.object({ name: z.string(), status: z.string().optional() })),
   dtcs: z.array(CanonicalDtcSchema),
+  // Present only when the total DTC count required trimming the per-code
+  // prompt listing (see buildUserPrompt's size safeguard) — the count and
+  // which codes were left out of the line-by-line listing (never a
+  // current/safety/network/battery/bus-off one; those are always kept).
+  omittedFromPrompt: z.object({ count: z.number(), codes: z.array(z.string()) }).nullable().optional(),
+  systems: z.array(ScanSystemSummarySchema).default([]),
+  patterns: z.array(DetectedPatternSchema).default([]),
+  priority: DiagnosticPrioritySummarySchema.nullable().optional(),
+  scanExtractionQuality: ExtractionQualitySummarySchema.nullable().optional(),
   freezeFrame: z.array(z.record(z.string(), z.unknown())),
   liveData: z.array(z.record(z.string(), z.unknown())),
   imageOnlyPdf: z.boolean(),

@@ -8,7 +8,9 @@ import type {
   ScanCaseStatus,
   ScanDtcRecord,
   ScanExtraction,
+  ScanPattern,
   ScanReport,
+  ScanSystem,
 } from "@/lib/types";
 
 export async function createCase(userId: string, info: CaseInfoInput): Promise<ScanCase> {
@@ -161,6 +163,8 @@ export interface ScanCaseDetail {
   files: ScanCaseFile[];
   extraction: ScanExtraction | null;
   dtcRecords: ScanDtcRecord[];
+  systems: ScanSystem[];
+  patterns: ScanPattern[];
   report: ScanReport | null;
 }
 
@@ -171,10 +175,19 @@ export async function getCaseDetail(userId: string, caseId: string): Promise<Sca
   const scanCase = await getCaseForOwner(userId, caseId);
 
   const admin = createAdminClient();
-  const [{ data: files }, { data: extraction }, { data: dtcRecords }, { data: report }] = await Promise.all([
+  const [
+    { data: files },
+    { data: extraction },
+    { data: dtcRecords },
+    { data: systems },
+    { data: patterns },
+    { data: report },
+  ] = await Promise.all([
     admin.from("scan_case_files").select("*").eq("case_id", caseId).order("uploaded_at", { ascending: false }),
     admin.from("scan_extractions").select("*").eq("case_id", caseId).maybeSingle(),
     admin.from("scan_dtc_records").select("*").eq("case_id", caseId).order("code"),
+    admin.from("scan_systems").select("*").eq("case_id", caseId),
+    admin.from("scan_patterns").select("*").eq("case_id", caseId),
     admin.from("scan_reports").select("*").eq("case_id", caseId).maybeSingle(),
   ]);
 
@@ -183,6 +196,8 @@ export async function getCaseDetail(userId: string, caseId: string): Promise<Sca
     files: files ?? [],
     extraction: extraction ?? null,
     dtcRecords: dtcRecords ?? [],
+    systems: systems ?? [],
+    patterns: patterns ?? [],
     report: report ?? null,
   };
 }

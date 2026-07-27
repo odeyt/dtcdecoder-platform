@@ -1,7 +1,25 @@
 import { describe, expect, it } from "vitest";
 import { filterScanReportForAccessLevel, LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
+import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
 import type { AiDiagnosticUsageSummary } from "@/lib/ai-diagnostics/usage";
-import type { ScanReport, ScanExtraction, ScanDtcRecord } from "@/lib/types";
+import type { ScanCase, ScanReport, ScanExtraction, ScanDtcRecord } from "@/lib/types";
+
+const SCAN_CASE: ScanCase = {
+  id: "case-1",
+  user_id: "user-1",
+  status: "completed",
+  status_updated_at: new Date(0).toISOString(),
+  error_message: null,
+  complaint: null,
+  symptoms: [],
+  mileage: null,
+  recent_repairs: null,
+  battery_condition: null,
+  technician_notes: null,
+  report_language: "en",
+  created_at: new Date(0).toISOString(),
+  updated_at: new Date(0).toISOString(),
+};
 
 const EXTRACTION: ScanExtraction = {
   id: "ext-1",
@@ -23,6 +41,20 @@ const EXTRACTION: ScanExtraction = {
   reviewed_fields: {},
   extracted_at: new Date(0).toISOString(),
   reviewed_at: null,
+  scanner_brand: null,
+  diagnostic_application_version: null,
+  vehicle_software_version: null,
+  diagnostic_path: null,
+  test_time: null,
+  report_type: null,
+  pages_expected: null,
+  pages_parsed: null,
+  systems_expected: null,
+  systems_parsed: null,
+  dtcs_expected: null,
+  dtcs_parsed: null,
+  extraction_truncated: false,
+  extraction_confidence: null,
 };
 
 const DTC_RECORDS: ScanDtcRecord[] = [
@@ -35,6 +67,13 @@ const DTC_RECORDS: ScanDtcRecord[] = [
     description_raw: null,
     source: "extracted",
     created_at: new Date(0).toISOString(),
+    system_name: null,
+    source_page: null,
+    source_text: null,
+    safety_relevance: false,
+    network_relevance: false,
+    battery_relevance: false,
+    bus_off_relevance: false,
   },
 ];
 
@@ -102,6 +141,8 @@ const FULL_USAGE: AiDiagnosticUsageSummary = {
   fullMonthlyLimit: 30,
 };
 
+const CANONICAL_SCAN = buildCanonicalVehicleScan(SCAN_CASE, EXTRACTION, DTC_RECORDS, []);
+
 describe("filterScanReportForAccessLevel — preview", () => {
   const result = filterScanReportForAccessLevel({
     report: REPORT,
@@ -109,6 +150,8 @@ describe("filterScanReportForAccessLevel — preview", () => {
     dtcRecords: DTC_RECORDS,
     accessLevel: "preview",
     usage: PREVIEW_USAGE,
+    canonicalScan: CANONICAL_SCAN,
+    patterns: [],
   });
 
   it("always shows vehicle summary, DTCs, and safety findings", () => {
@@ -159,6 +202,8 @@ describe("filterScanReportForAccessLevel — full", () => {
     dtcRecords: DTC_RECORDS,
     accessLevel: "full",
     usage: FULL_USAGE,
+    canonicalScan: CANONICAL_SCAN,
+    patterns: [],
   });
 
   it("includes the complete ranked causes and tests, unredacted", () => {
@@ -187,6 +232,8 @@ describe("filterScanReportForAccessLevel — full, with a localized report", () 
       dtcRecords: DTC_RECORDS,
       accessLevel: "full",
       usage: FULL_USAGE,
+      canonicalScan: CANONICAL_SCAN,
+      patterns: [],
       localization: {
         requestedLocale: "es",
         resolvedLocale: "es",
@@ -214,6 +261,8 @@ describe("filterScanReportForAccessLevel — full, with a localized report", () 
       dtcRecords: DTC_RECORDS,
       accessLevel: "full",
       usage: FULL_USAGE,
+      canonicalScan: CANONICAL_SCAN,
+      patterns: [],
       localization: {
         requestedLocale: "es",
         resolvedLocale: "en",

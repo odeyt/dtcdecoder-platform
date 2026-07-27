@@ -10,6 +10,8 @@ import { recordAiDiagnosticUsage, releaseAiDiagnosticUsage, recordAiDiagnosticRu
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
+import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
+import { detectPatterns } from "@/lib/scan-diagnostics/patterns";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
@@ -17,7 +19,7 @@ import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-d
 import { recordEvent } from "@/lib/analytics/events";
 import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
-import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, SubscriptionPlan } from "@/lib/types";
+import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, ScanSystem, SubscriptionPlan } from "@/lib/types";
 
 export interface ScanAnalysisResult {
   case: ScanCase;
@@ -43,21 +45,52 @@ export async function runScanAnalysis(
   await recordEvent("ai_diagnosis_started", { userId, metadata: { plan, accessLevel } });
 
   const admin = createAdminClient();
-  const [{ data: caseRow, error: caseError }, { data: extraction, error: extractionError }, { data: dtcRecords, error: dtcError }] =
-    await Promise.all([
-      admin.from("scan_cases").select("*").eq("id", caseId).single(),
-      admin.from("scan_extractions").select("*").eq("case_id", caseId).maybeSingle(),
-      admin.from("scan_dtc_records").select("*").eq("case_id", caseId),
-    ]);
+  const [
+    { data: caseRow, error: caseError },
+    { data: extraction, error: extractionError },
+    { data: dtcRecords, error: dtcError },
+    { data: systems, error: systemsError },
+  ] = await Promise.all([
+    admin.from("scan_cases").select("*").eq("id", caseId).single(),
+    admin.from("scan_extractions").select("*").eq("case_id", caseId).maybeSingle(),
+    admin.from("scan_dtc_records").select("*").eq("case_id", caseId),
+    admin.from("scan_systems").select("*").eq("case_id", caseId),
+  ]);
   if (caseError) throw caseError;
   if (extractionError) throw extractionError;
   if (dtcError) throw dtcError;
+  if (systemsError) throw systemsError;
 
   const input = buildCanonicalDiagnosticInput(
     caseRow as ScanCase,
     (extraction as ScanExtraction | null) ?? null,
     (dtcRecords as ScanDtcRecord[]) ?? [],
+    (systems as ScanSystem[]) ?? [],
   );
+
+  // Patterns are deterministic (never derived from the AI) and persisted
+  // BEFORE the AI is ever called — see docs/SCAN_PATTERN_AND_PRIORITY_ENGINE.md
+  // "canonical structured data must be stored before AI analysis."
+  const canonicalScanForPatterns = buildCanonicalVehicleScan(
+    caseRow as ScanCase,
+    (extraction as ScanExtraction | null) ?? null,
+    (dtcRecords as ScanDtcRecord[]) ?? [],
+    (systems as ScanSystem[]) ?? [],
+  );
+  const detectedPatterns = detectPatterns(canonicalScanForPatterns);
+  await admin.from("scan_patterns").delete().eq("case_id", caseId);
+  if (detectedPatterns.length > 0) {
+    await admin.from("scan_patterns").insert(
+      detectedPatterns.map((p) => ({
+        case_id: caseId,
+        pattern_type: p.patternType,
+        severity: p.severity,
+        evidence: p.evidence,
+        affected_modules: p.affectedModules,
+        rule_version: p.ruleVersion,
+      })),
+    );
+  }
 
   // Pre-flight cost estimate + hard-ceiling guard, run AFTER the
   // report-count slot is reserved above but BEFORE the case is even
