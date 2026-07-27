@@ -16,6 +16,7 @@ export default async function AdminDashboardPage() {
         <AdminNavCard href="/admin/languages" title="Language Registry" description="Enable languages, set support tiers" />
         <AdminNavCard href="/admin/glossary" title="Automotive Glossary" description="Approved terminology per language" />
         <AdminNavCard href="/admin/currencies" title="Currency Registry" description="Enable display currencies" />
+        <AdminNavCard href="/admin/profitability" title="Profitability" description="Revenue, AI cost, and margin rollups" />
       </div>
 
       <div className="mt-10">
