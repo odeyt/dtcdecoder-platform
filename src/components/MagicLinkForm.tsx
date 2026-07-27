@@ -33,8 +33,8 @@ export function MagicLinkForm({ initialEmail = "", next }: { initialEmail?: stri
 
   if (status === "sent") {
     return (
-      <p className="text-sm text-zinc-700 dark:text-zinc-300">
-        Check <strong>{email}</strong> for a login link.
+      <p className="text-sm text-[var(--text-secondary)]">
+        Check <strong className="text-[var(--text-primary)]">{email}</strong> for a login link.
       </p>
     );
   }
@@ -47,19 +47,18 @@ export function MagicLinkForm({ initialEmail = "", next }: { initialEmail?: stri
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="flex-1 rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 flex-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="rounded-md bg-zinc-900 px-5 py-2 font-semibold text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        style={{ boxShadow: "var(--shadow-accent)" }}
       >
         {status === "loading" ? "Sending…" : "Email me a login link"}
       </button>
       {status === "error" && (
-        <p className="text-sm text-red-600 dark:text-red-400">
-          Something went wrong. Try again.
-        </p>
+        <p className="text-sm text-[var(--accent-red)]">Something went wrong. Try again.</p>
       )}
     </form>
   );

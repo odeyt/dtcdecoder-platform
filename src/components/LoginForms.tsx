@@ -16,7 +16,7 @@ export function LoginForms({ next }: { next?: string }) {
         <button
           type="button"
           onClick={() => setMode("magicLink")}
-          className="text-sm text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+          className="text-sm text-[var(--text-secondary)] underline hover:text-[var(--text-primary)]"
         >
           Use a magic link instead
         </button>

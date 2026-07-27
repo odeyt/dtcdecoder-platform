@@ -47,7 +47,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <input
         type="password"
@@ -55,21 +55,22 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="Password"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="rounded-md bg-zinc-900 px-5 py-2 font-semibold text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        style={{ boxShadow: "var(--shadow-accent)" }}
       >
         {status === "loading" ? "Signing in…" : "Sign in"}
       </button>
       {status === "error" && errorMessage && (
-        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+        <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>
       )}
       <Link
         href="/account/forgot-password"
-        className="text-sm text-zinc-600 underline hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-zinc-100"
+        className="text-sm text-[var(--text-secondary)] underline hover:text-[var(--text-primary)]"
       >
         Forgot password?
       </Link>

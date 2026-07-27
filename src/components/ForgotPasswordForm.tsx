@@ -23,8 +23,9 @@ export function ForgotPasswordForm() {
 
   if (status === "sent") {
     return (
-      <p className="text-sm text-zinc-700 dark:text-zinc-300">
-        If an account exists for <strong>{email}</strong>, we&apos;ve sent a password reset link.
+      <p className="text-sm text-[var(--text-secondary)]">
+        If an account exists for <strong className="text-[var(--text-primary)]">{email}</strong>,
+        we&apos;ve sent a password reset link.
       </p>
     );
   }
@@ -37,18 +38,17 @@ export function ForgotPasswordForm() {
         value={email}
         onChange={(e) => setEmail(e.target.value)}
         placeholder="you@example.com"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="rounded-md bg-zinc-900 px-5 py-2 font-semibold text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        style={{ boxShadow: "var(--shadow-accent)" }}
       >
         {status === "loading" ? "Sending…" : "Send reset link"}
       </button>
-      {status === "error" && (
-        <p className="text-sm text-red-600 dark:text-red-400">Something went wrong. Try again.</p>
-      )}
+      {status === "error" && <p className="text-sm text-[var(--accent-red)]">Something went wrong. Try again.</p>}
     </form>
   );
 }

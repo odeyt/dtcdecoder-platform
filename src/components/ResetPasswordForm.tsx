@@ -67,9 +67,9 @@ export function ResetPasswordForm() {
 
   if (!ready) {
     return (
-      <p className="text-sm text-zinc-600 dark:text-zinc-400">
+      <p className="text-sm text-[var(--text-secondary)]">
         This reset link is invalid or has expired.{" "}
-        <Link href="/account/forgot-password" className="underline">
+        <Link href="/account/forgot-password" className="text-[var(--text-primary)] underline">
           Request a new one
         </Link>
         .
@@ -85,7 +85,7 @@ export function ResetPasswordForm() {
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="New password"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <input
         type="password"
@@ -93,17 +93,18 @@ export function ResetPasswordForm() {
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
         placeholder="Confirm new password"
-        className="rounded-md border border-zinc-300 px-3 py-2 text-base dark:border-zinc-700 dark:bg-zinc-900"
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
         type="submit"
         disabled={status === "loading"}
-        className="rounded-md bg-zinc-900 px-5 py-2 font-semibold text-white transition-colors hover:bg-zinc-700 disabled:opacity-60 dark:bg-white dark:text-zinc-900 dark:hover:bg-zinc-200"
+        className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+        style={{ boxShadow: "var(--shadow-accent)" }}
       >
         {status === "loading" ? "Saving…" : "Set new password"}
       </button>
       {status === "error" && errorMessage && (
-        <p className="text-sm text-red-600 dark:text-red-400">{errorMessage}</p>
+        <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>
       )}
     </form>
   );
