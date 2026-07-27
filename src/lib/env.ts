@@ -63,6 +63,29 @@ export const env = {
   anthropicApiKey: () =>
     required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),
 
+  // Multi-model diagnostic orchestrator (docs/MULTI_MODEL_ORCHESTRATOR.md) —
+  // every flag below defaults OFF/absent so an unconfigured environment
+  // behaves exactly like the pre-orchestrator single-Anthropic-provider
+  // pipeline. Non-throwing/optional variants throughout: a missing OpenAI or
+  // Gemini key must never break ordinary diagnostics when that provider is
+  // disabled (which is the default).
+  aiOrchestratorEnabled: () => process.env.AI_ORCHESTRATOR_ENABLED === "true",
+  openaiPrimaryEnabled: () => process.env.OPENAI_PRIMARY_ENABLED === "true",
+  // Reviewing is opt-OUT (default true) — unlike the primary/multimodal
+  // providers, an Anthropic review is the safety-net path this repo already
+  // ran exclusively before the orchestrator existed, so leaving it enabled
+  // by default (once the orchestrator itself is on) is the conservative
+  // choice. Still fully inert while aiOrchestratorEnabled() is false.
+  anthropicReviewEnabled: () => process.env.ANTHROPIC_REVIEW_ENABLED !== "false",
+  geminiProviderEnabled: () => process.env.GEMINI_PROVIDER_ENABLED === "true",
+
+  openaiApiKeyOptional: () => process.env.OPENAI_API_KEY,
+  openaiPrimaryModelOptional: () => process.env.OPENAI_PRIMARY_MODEL,
+  openaiFallbackModelOptional: () => process.env.OPENAI_FALLBACK_MODEL,
+
+  geminiApiKeyOptional: () => process.env.GEMINI_API_KEY,
+  geminiMultimodalModelOptional: () => process.env.GEMINI_MULTIMODAL_MODEL,
+
   adminAllowedEmails: () =>
     (process.env.ADMIN_ALLOWED_EMAILS ?? "")
       .split(",")

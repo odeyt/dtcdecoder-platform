@@ -18,7 +18,11 @@ import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
 import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
 import { recordEvent } from "@/lib/analytics/events";
 import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
-import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
+import { env } from "@/lib/env";
+import { runOrchestratedDiagnosis } from "@/lib/scan-diagnostics/ai/orchestrator";
+import { persistRoutingDecision } from "@/lib/scan-diagnostics/ai/routing-log";
+import { BudgetHardStopError } from "@/lib/ai-diagnostics/budget-guard";
+import type { DiagnosticAIProvider, DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, ScanSystem, SubscriptionPlan } from "@/lib/types";
 
 export interface ScanAnalysisResult {
@@ -135,9 +139,21 @@ export async function runScanAnalysis(
   await transitionCaseStatus(caseId, ["ready_for_analysis", "failed"], "analyzing");
 
   const requestStartedAt = Date.now();
-  let providerResult;
+  let providerResult: DiagnosticAIProviderResult;
+  // Orchestration is entirely opt-in (AI_ORCHESTRATOR_ENABLED, default
+  // false) — when off, this calls provider.runDiagnosis(input) directly,
+  // exactly as before this feature existed. The orchestrated branch below
+  // returns a result in the SAME shape, so every line after this try/catch
+  // (safety review, confidence, persistence) is completely unaware of which
+  // path ran. See docs/MULTI_MODEL_ORCHESTRATOR.md.
+  let orchestrationOutcome: Awaited<ReturnType<typeof runOrchestratedDiagnosis>> | null = null;
   try {
-    providerResult = await provider.runDiagnosis(input);
+    if (env.aiOrchestratorEnabled()) {
+      orchestrationOutcome = await runOrchestratedDiagnosis(caseId, userId, input);
+      providerResult = orchestrationOutcome.result;
+    } else {
+      providerResult = await provider.runDiagnosis(input);
+    }
   } catch (err) {
     console.error("[scan-diagnostics] AI provider call failed", err);
 
@@ -149,13 +165,23 @@ export async function runScanAnalysis(
     );
 
     const isValidationFailure = err instanceof AiResponseValidationError;
+    const isBudgetHardStop = err instanceof BudgetHardStopError;
+    // The orchestrator may have failed on a different provider than the
+    // `provider` argument (e.g. OpenAI-as-primary) before ever producing a
+    // result — "orchestrator" avoids misattributing that failure to
+    // whichever provider instance the route happened to pass in.
+    const failedProviderId = env.aiOrchestratorEnabled() ? "orchestrator" : provider.id;
 
     await admin.from("scan_ai_runs").insert({
       case_id: caseId,
-      provider_id: provider.id,
+      provider_id: failedProviderId,
       model_id: "unknown",
       status: "failed",
-      error_message: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
+      error_message: isValidationFailure
+        ? "AI response failed validation."
+        : isBudgetHardStop
+          ? "AI diagnostic budget limit reached."
+          : "AI provider call failed.",
       started_at: new Date().toISOString(),
       completed_at: new Date().toISOString(),
     });
@@ -164,21 +190,34 @@ export async function runScanAnalysis(
       requestId: caseId,
       feature: "scan_report",
       plan,
-      providerId: provider.id,
+      providerId: failedProviderId,
       modelId: SCAN_REPORT_MODEL_ID,
       status: "failed",
       accessLevelRequested: accessLevel,
-      errorMessage: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
+      errorMessage: isValidationFailure
+        ? "AI response failed validation."
+        : isBudgetHardStop
+          ? "AI diagnostic budget limit reached."
+          : "AI provider call failed.",
       diagnosticCaseId: caseId,
       latencyMs: Date.now() - requestStartedAt,
     });
     await recordEvent("ai_diagnosis_failed", {
       userId,
-      metadata: { plan, reason: isValidationFailure ? "validation_failure" : "provider_error" },
+      metadata: {
+        plan,
+        reason: isValidationFailure ? "validation_failure" : isBudgetHardStop ? "budget_hard_stop" : "provider_error",
+      },
     });
 
+    // Deterministic DTC lookup and existing case/extraction data remain
+    // available regardless of this failure — per Phase 8's "do not take the
+    // website offline" requirement, this only ever fails THIS case's AI
+    // generation, never the app itself.
     const failedCase = await transitionCaseStatus(caseId, "analyzing", "failed", {
-      error_message: "AI analysis failed. Please try again.",
+      error_message: isBudgetHardStop
+        ? "AI diagnostic generation is temporarily paused. Basic DTC lookup remains available."
+        : "AI analysis failed. Please try again.",
     });
 
     throw new ScanAnalysisFailedError(
@@ -189,6 +228,19 @@ export async function runScanAnalysis(
 
   const safety = runSafetyReview(providerResult.output, input);
   const confidence = computeConfidence([providerResult], input, safety);
+
+  if (orchestrationOutcome) {
+    await persistRoutingDecision({
+      caseId,
+      primaryProviderId: providerResult.providerId,
+      reviewerProviderId: orchestrationOutcome.reviewerProviderId,
+      routing: orchestrationOutcome.routing,
+      budgetState: orchestrationOutcome.budgetState,
+      budgetReasons: orchestrationOutcome.budgetReasons,
+      confidenceBefore: confidence.internalScore,
+      confidenceAfter: confidence.internalScore,
+    });
+  }
 
   const { data: aiRun, error: aiRunError } = await admin
     .from("scan_ai_runs")
