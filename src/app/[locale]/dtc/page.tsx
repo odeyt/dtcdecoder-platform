@@ -18,6 +18,18 @@ import { BASIC_SEARCH_LIMITS } from "@/lib/pricing";
 import { ANON_SEARCH_ID_COOKIE } from "@/lib/basic-search/constants";
 import { LockedResultPanel } from "@/components/LockedResultCard";
 import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
+import { isValidDtcCodeFormat } from "@/lib/dtc-category";
+import { UnknownDtcResult } from "@/components/UnknownDtcResult";
+import { InvalidDtcCodeResult } from "@/components/InvalidDtcCodeResult";
+import { getRelatedDtcCodes } from "@/lib/dtc";
+import { recordEvent } from "@/lib/analytics/events";
+
+// Distinguishes "someone typing a DTC code" from a symptom/text search —
+// only used to decide which of the three outcomes below applies, never to
+// gate the free-text search path itself.
+function looksLikeCodeAttempt(query: string): boolean {
+  return /^[pbcu]/i.test(query) && /\d/.test(query);
+}
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -76,8 +88,16 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
 
   let results: Awaited<ReturnType<typeof searchDtcCodes>> = [];
   let limitError: BasicSearchLimitExceededError | null = null;
+  let invalidFormat = false;
+  let unknownCode: string | null = null;
+  let relatedCodes: Awaited<ReturnType<typeof getRelatedDtcCodes>> = [];
 
-  if (query) {
+  if (query && looksLikeCodeAttempt(query) && !isValidDtcCodeFormat(query)) {
+    // A malformed code attempt (e.g. "P99", "X123") never reaches the
+    // allowance check, the search, or the ledger at all — there is
+    // nothing valid to look up, so nothing is reserved in the first place.
+    invalidFormat = true;
+  } else if (query) {
     const allowed = await hasBasicSearchAllowanceRemaining(identity, plan);
     if (!allowed) {
       // Reuse getBasicSearchUsageSummary's numbers via the same error type
@@ -94,9 +114,10 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
       );
     } else {
       results = await searchDtcCodes(query);
-      // Only a SUCCESSFUL search (at least one result) consumes the
-      // allowance — a typo or a query that matches nothing never counts
-      // against a free visitor's daily/monthly limit.
+      const isCodeAttempt = isValidDtcCodeFormat(query);
+
+      const analyticsUserId = identity.type === "user" ? identity.id : null;
+
       if (results.length > 0) {
         incrementDtcSearchCount(results[0].id).catch(() => {});
         await recordBasicSearchUsage(identity, plan).catch((err) => {
@@ -108,7 +129,25 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
           // search that already happened).
           console.error("[basic-search] failed to record usage", err);
         });
+        await recordEvent("basic_dtc_search", { userId: analyticsUserId, metadata: { resultCount: results.length } });
+      } else if (isCodeAttempt) {
+        // Valid-format code, no exact match in the database — the rich
+        // fallback (category, related codes, AI-report CTA) IS a useful
+        // result, so per spec this counts as a successful lookup, unlike
+        // a symptom/text search that matches nothing (below).
+        unknownCode = query.toUpperCase();
+        relatedCodes = await getRelatedDtcCodes(unknownCode);
+        await recordBasicSearchUsage(identity, plan).catch((err) => {
+          console.error("[basic-search] failed to record usage", err);
+        });
+        await recordEvent("unknown_dtc_search", { userId: analyticsUserId, metadata: { source: "search_page" } });
+        await recordEvent("ai_diagnosis_cta_viewed", {
+          userId: analyticsUserId,
+          metadata: { source: "unknown_dtc_search_page" },
+        });
       }
+      // else: a free-text/symptom search that matched nothing — never
+      // counts, unchanged from before this page grew a code-fallback state.
     }
   }
 
@@ -135,6 +174,14 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
               </Link>
             </div>
             <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+          </div>
+        ) : invalidFormat ? (
+          <div className="mt-8">
+            <InvalidDtcCodeResult code={query} />
+          </div>
+        ) : unknownCode ? (
+          <div className="mt-8">
+            <UnknownDtcResult code={unknownCode} relatedCodes={relatedCodes} />
           </div>
         ) : (
           <>

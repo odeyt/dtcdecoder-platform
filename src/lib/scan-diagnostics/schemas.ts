@@ -26,6 +26,28 @@ const DtcCodeEditSchema = DtcCodeInputSchema.partial().extend({
   id: z.string().uuid(),
 });
 
+// "Run Full AI Diagnosis" entry point reachable from DTC search results —
+// a paid user requests an AI report from a DTC code + typed details, with
+// no scan-report file uploaded at all. See createQuickDiagnosticCase
+// (cases.ts) and migration 0025 (scan_extractions.file_id made nullable
+// to support this case type).
+export const QuickDiagnosticCaseInputSchema = z.object({
+  dtcCode: z.string().trim().min(1).max(20),
+  vin: z.string().trim().max(17).optional(),
+  make: z.string().trim().max(100).optional(),
+  model: z.string().trim().max(100).optional(),
+  modelYear: z.number().int().min(1950).max(2100).optional(),
+  engine: z.string().trim().max(200).optional(),
+  module: z.string().trim().max(100).optional(),
+  symptoms: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
+  freezeFrameNotes: z.string().trim().max(2000).optional(),
+  repairHistory: z.string().trim().max(4000).optional(),
+  scanToolNotes: z.string().trim().max(4000).optional(),
+  reportLanguage: z.string().trim().max(10).optional(),
+});
+
+export type QuickDiagnosticCaseInput = z.infer<typeof QuickDiagnosticCaseInputSchema>;
+
 export const ExtractionReviewInputSchema = z.object({
   vin: z.string().trim().max(17).optional(),
   make: z.string().trim().max(100).optional(),

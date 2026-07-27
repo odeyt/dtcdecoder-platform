@@ -184,6 +184,13 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
 
       {isFull ? (
         <>
+          {visibleResult.requestedLocale && visibleResult.requestedLocale !== "en" && (
+            <p className="text-xs text-[var(--text-muted)]">
+              {visibleResult.fallbackUsed
+                ? `Requested in ${visibleResult.requestedLocale}, but the translation was unavailable — showing the English report below.`
+                : `Translated from the English canonical report into ${visibleResult.resolvedLocale}.`}
+            </p>
+          )}
           <ResultSection title="Components or systems requiring testing (AI-generated, not confirmed)">
             <div className="flex flex-col gap-4">
               {(visibleResult.rankedCauses as unknown as RankedCause[])!.map((cause, i) => (

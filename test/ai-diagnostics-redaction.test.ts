@@ -178,3 +178,55 @@ describe("filterScanReportForAccessLevel — full", () => {
     expect(result.upgradeRequired).toBe(false);
   });
 });
+
+describe("filterScanReportForAccessLevel — full, with a localized report", () => {
+  it("serves the translated content and surfaces the resolved locale, not the English canonical", () => {
+    const result = filterScanReportForAccessLevel({
+      report: REPORT,
+      extraction: EXTRACTION,
+      dtcRecords: DTC_RECORDS,
+      accessLevel: "full",
+      usage: FULL_USAGE,
+      localization: {
+        requestedLocale: "es",
+        resolvedLocale: "es",
+        fallbackUsed: false,
+        rankedCauses: [{ ...REPORT.ranked_causes[0], cause: "Fuga de vacío" } as never],
+        recommendedTests: [{ ...REPORT.recommended_tests[0], step: "Prueba de humo" } as never],
+        missingInformation: ["No se proporcionaron datos de ajuste de combustible en vivo"],
+      },
+    });
+
+    expect(result.visibleResult.rankedCauses?.[0]).toMatchObject({ cause: "Fuga de vacío" });
+    expect(result.visibleResult.recommendedTests?.[0]).toMatchObject({ step: "Prueba de humo" });
+    expect(result.visibleResult.missingInformation).toEqual([
+      "No se proporcionaron datos de ajuste de combustible en vivo",
+    ]);
+    expect(result.visibleResult.requestedLocale).toBe("es");
+    expect(result.visibleResult.resolvedLocale).toBe("es");
+    expect(result.visibleResult.fallbackUsed).toBe(false);
+  });
+
+  it("marks fallbackUsed and resolvedLocale 'en' when translation fell back, without touching English content", () => {
+    const result = filterScanReportForAccessLevel({
+      report: REPORT,
+      extraction: EXTRACTION,
+      dtcRecords: DTC_RECORDS,
+      accessLevel: "full",
+      usage: FULL_USAGE,
+      localization: {
+        requestedLocale: "es",
+        resolvedLocale: "en",
+        fallbackUsed: true,
+        rankedCauses: REPORT.ranked_causes as never,
+        recommendedTests: REPORT.recommended_tests as never,
+        missingInformation: REPORT.missing_information,
+      },
+    });
+
+    expect(result.visibleResult.requestedLocale).toBe("es");
+    expect(result.visibleResult.resolvedLocale).toBe("en");
+    expect(result.visibleResult.fallbackUsed).toBe(true);
+    expect(result.visibleResult.rankedCauses).toHaveLength(3);
+  });
+});

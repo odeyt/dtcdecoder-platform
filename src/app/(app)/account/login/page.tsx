@@ -1,6 +1,12 @@
 import { MagicLinkForm } from "@/components/MagicLinkForm";
 
-export default function LoginPage() {
+type Props = {
+  searchParams: Promise<{ next?: string }>;
+};
+
+export default async function LoginPage({ searchParams }: Props) {
+  const { next } = await searchParams;
+
   return (
     <div className="mx-auto max-w-lg px-6 py-16 text-center">
       <h1 className="text-xl font-semibold">Sign in to your account</h1>
@@ -8,7 +14,7 @@ export default function LoginPage() {
         No password needed — we&apos;ll email you a login link.
       </p>
       <div className="mt-6">
-        <MagicLinkForm />
+        <MagicLinkForm next={next} />
       </div>
     </div>
   );

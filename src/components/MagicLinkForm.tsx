@@ -3,7 +3,13 @@
 import { useState } from "react";
 import { createClient } from "@/lib/supabase/client";
 
-export function MagicLinkForm({ initialEmail = "" }: { initialEmail?: string }) {
+// `next` (a same-origin relative path, e.g. "/diagnostics/quick?code=P0420")
+// round-trips through the magic-link email and back — see
+// /account/auth/callback, which is what actually redirects there after
+// verifying the sign-in. Lets a visitor sign in from the "Run Full AI
+// Diagnosis" flow and land back exactly where they started, DTC code and
+// all, instead of always landing on the generic /account page.
+export function MagicLinkForm({ initialEmail = "", next }: { initialEmail?: string; next?: string }) {
   const [email, setEmail] = useState(initialEmail);
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
@@ -12,10 +18,13 @@ export function MagicLinkForm({ initialEmail = "" }: { initialEmail?: string }) 
     setStatus("loading");
 
     const supabase = createClient();
+    const callbackUrl = new URL("/account/auth/callback", window.location.origin);
+    if (next) callbackUrl.searchParams.set("next", next);
+
     const { error } = await supabase.auth.signInWithOtp({
       email,
       options: {
-        emailRedirectTo: `${window.location.origin}/account/auth/callback`,
+        emailRedirectTo: callbackUrl.toString(),
       },
     });
 

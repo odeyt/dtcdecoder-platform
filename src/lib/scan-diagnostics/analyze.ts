@@ -14,6 +14,7 @@ import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
 import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
+import { recordEvent } from "@/lib/analytics/events";
 import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanReport, SubscriptionPlan } from "@/lib/types";
@@ -39,6 +40,7 @@ export async function runScanAnalysis(
   // Assistant chat feature's daily preview/monthly+daily full-report
   // allowance — see src/lib/ai-diagnostics/usage.ts.
   const accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
+  await recordEvent("ai_diagnosis_started", { userId, metadata: { plan, accessLevel } });
 
   const admin = createAdminClient();
   const [{ data: caseRow, error: caseError }, { data: extraction, error: extractionError }, { data: dtcRecords, error: dtcError }] =
@@ -92,6 +94,7 @@ export async function runScanAnalysis(
         diagnosticCaseId: caseId,
         estimatedTotalCostMicros: costEstimate.totalCostMicros,
       });
+      await recordEvent("ai_diagnosis_failed", { userId, metadata: { plan, reason: "cost_ceiling_exceeded" } });
     }
     throw err;
   }
@@ -135,6 +138,10 @@ export async function runScanAnalysis(
       errorMessage: isValidationFailure ? "AI response failed validation." : "AI provider call failed.",
       diagnosticCaseId: caseId,
       latencyMs: Date.now() - requestStartedAt,
+    });
+    await recordEvent("ai_diagnosis_failed", {
+      userId,
+      metadata: { plan, reason: isValidationFailure ? "validation_failure" : "provider_error" },
     });
 
     const failedCase = await transitionCaseStatus(caseId, "analyzing", "failed", {
@@ -201,6 +208,7 @@ export async function runScanAnalysis(
     estimatedTotalCostMicros: actualCost.totalCostMicros,
     latencyMs: Date.now() - requestStartedAt,
   });
+  await recordEvent("ai_diagnosis_completed", { userId, metadata: { plan, accessLevel } });
 
   return { case: completedCase, report };
 }

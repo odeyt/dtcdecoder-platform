@@ -16,11 +16,14 @@ import type { AiDiagnosticAccessLevel, AiDiagnosticUsageSummary } from "@/lib/ai
 // derived from hidden data.
 export const LOCKED_SECTION_CATALOG = [
   { key: "rootCauseRanking", title: "Complete Root-Cause Ranking" },
-  { key: "diagnosticPlan", title: "Step-by-Step Diagnostic Plan" },
-  { key: "expectedReadings", title: "Expected Test Readings" },
+  { key: "diagnosticPlan", title: "Vehicle-Specific Diagnostic Workflow" },
+  { key: "expectedReadings", title: "Expected Voltage, Resistance, and Live-Data Values" },
+  { key: "independentSafetyReview", title: "Independent Safety Review" },
   { key: "programmingRequirements", title: "Programming and Calibration" },
   { key: "laborGuidance", title: "Detailed Labor Guidance" },
-  { key: "downloadableReport", title: "Downloadable Diagnostic Report" },
+  { key: "multilingualReport", title: "Multilingual Professional Report" },
+  { key: "savedDiagnosticCase", title: "Saved Diagnostic Case" },
+  { key: "downloadableReport", title: "PDF Export" },
 ] as const;
 
 export type LockedSectionKey = (typeof LOCKED_SECTION_CATALOG)[number]["key"];
@@ -60,6 +63,14 @@ export interface ScanReportVisibleResult {
   confidenceLevel?: ScanConfidenceLevel | null;
   confidenceRationale?: string[];
   missingInformation?: string[];
+  // Present only when a non-English report language was requested (full
+  // access level only) — see report-localization.ts. resolvedLocale is "en"
+  // and fallbackUsed is true when translation failed/wasn't entitled; the
+  // rankedCauses/recommendedTests/missingInformation above are English in
+  // that case, never a partial or broken translation.
+  requestedLocale?: string;
+  resolvedLocale?: string;
+  fallbackUsed?: boolean;
 }
 
 export interface PreviewUsage {
@@ -110,8 +121,17 @@ export function filterScanReportForAccessLevel(params: {
   dtcRecords: ScanDtcRecord[];
   accessLevel: AiDiagnosticAccessLevel;
   usage: AiDiagnosticUsageSummary;
+  /** Resolved report-language result (full access level only) — see report-localization.ts. */
+  localization?: {
+    requestedLocale: string;
+    resolvedLocale: string;
+    fallbackUsed: boolean;
+    rankedCauses: RankedCause[];
+    recommendedTests: RecommendedTest[];
+    missingInformation: string[];
+  };
 }): ScanReportAccessResult {
-  const { report, extraction, dtcRecords, accessLevel, usage } = params;
+  const { report, extraction, dtcRecords, accessLevel, usage, localization } = params;
 
   const base: Pick<ScanReportVisibleResult, "vehicleSummary" | "dtcs" | "safety" | "schemaVersion"> = {
     vehicleSummary: vehicleSummaryFrom(extraction),
@@ -131,11 +151,19 @@ export function filterScanReportForAccessLevel(params: {
       },
       visibleResult: {
         ...base,
-        rankedCauses: report.ranked_causes as unknown as RankedCause[],
-        recommendedTests: report.recommended_tests as unknown as RecommendedTest[],
+        rankedCauses: localization?.rankedCauses ?? (report.ranked_causes as unknown as RankedCause[]),
+        recommendedTests:
+          localization?.recommendedTests ?? (report.recommended_tests as unknown as RecommendedTest[]),
         confidenceLevel: report.confidence_level,
         confidenceRationale: report.confidence_rationale,
-        missingInformation: report.missing_information,
+        missingInformation: localization?.missingInformation ?? report.missing_information,
+        ...(localization
+          ? {
+              requestedLocale: localization.requestedLocale,
+              resolvedLocale: localization.resolvedLocale,
+              fallbackUsed: localization.fallbackUsed,
+            }
+          : {}),
       },
       lockedSections: [],
       upgradeRequired: false,

@@ -33,6 +33,29 @@ export async function getMakeDtcCode(
   return data;
 }
 
+// Same-family generic codes (shared first 3 characters, e.g. "P04" for
+// P0420) — used as the "related or adjacent codes" suggestion when the
+// exact code searched for isn't in the database yet. Deterministic
+// database read, no AI involved, same as every other function here.
+export async function getRelatedDtcCodes(code: string, limitCount = 5): Promise<DtcCode[]> {
+  const prefix = code.trim().slice(0, 3);
+  if (prefix.length < 3) return [];
+
+  const supabase = await createClient();
+  const { data, error } = await supabase
+    .from("dtc_codes")
+    .select("*")
+    .is("make", null)
+    .eq("is_published", true)
+    .ilike("code", `${prefix}%`)
+    .neq("code", code.trim().toUpperCase())
+    .order("code", { ascending: true })
+    .limit(limitCount);
+
+  if (error) throw error;
+  return data ?? [];
+}
+
 export async function listPublishedDtcCodes(): Promise<DtcCode[]> {
   const supabase = await createClient();
   const { data, error } = await supabase

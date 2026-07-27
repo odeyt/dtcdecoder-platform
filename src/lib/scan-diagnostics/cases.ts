@@ -1,7 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ScanCaseNotFoundError, InvalidCaseStatusError } from "@/lib/scan-diagnostics/api-errors";
-import type { CaseInfoInput } from "@/lib/scan-diagnostics/schemas";
+import type { CaseInfoInput, QuickDiagnosticCaseInput } from "@/lib/scan-diagnostics/schemas";
 import type {
   ScanCase,
   ScanCaseFile,
@@ -30,6 +30,72 @@ export async function createCase(userId: string, info: CaseInfoInput): Promise<S
 
   if (error) throw error;
   return data;
+}
+
+// "Run Full AI Diagnosis" entry point from DTC search results — no file
+// upload at all. Lands directly in "ready_for_analysis" (skipping
+// uploaded/extracting/extraction_review, which only make sense for the
+// file-based flow) with a manually-authored scan_extractions row (vehicle
+// info the user typed in) and a scan_dtc_records row for the searched
+// code. runScanAnalysis itself is completely unchanged — it only ever
+// reads whatever's already persisted for a case, regardless of how it got
+// there, so nothing about entitlement/quota/cost-guard enforcement is
+// touched by this new entry point.
+export async function createQuickDiagnosticCase(
+  userId: string,
+  input: QuickDiagnosticCaseInput,
+): Promise<ScanCase> {
+  const supabase = createAdminClient();
+
+  const { data: scanCase, error: caseError } = await supabase
+    .from("scan_cases")
+    .insert({
+      user_id: userId,
+      status: "ready_for_analysis",
+      complaint: input.scanToolNotes ?? null,
+      symptoms: input.symptoms ?? [],
+      mileage: null,
+      recent_repairs: input.repairHistory ?? null,
+      battery_condition: null,
+      technician_notes: input.freezeFrameNotes ?? null,
+      report_language: input.reportLanguage ?? "en",
+    })
+    .select("*")
+    .single();
+  if (caseError) throw caseError;
+
+  const { error: extractionError } = await supabase.from("scan_extractions").insert({
+    case_id: scanCase.id,
+    file_id: null,
+    parser_id: "manual-entry",
+    parser_version: "1",
+    vin: input.vin ?? null,
+    make: input.make ?? null,
+    model: input.model ?? null,
+    model_year: input.modelYear ?? null,
+    engine: input.engine ?? null,
+    odometer_miles: null,
+    modules: [],
+    freeze_frame: [],
+    live_data: [],
+    image_only_pdf: false,
+    warnings: [],
+    reviewed_fields: {},
+    reviewed_at: new Date().toISOString(),
+  });
+  if (extractionError) throw extractionError;
+
+  const { error: dtcError } = await supabase.from("scan_dtc_records").insert({
+    case_id: scanCase.id,
+    module: input.module ?? null,
+    code: input.dtcCode.trim().toUpperCase(),
+    status: null,
+    description_raw: null,
+    source: "user_added",
+  });
+  if (dtcError) throw dtcError;
+
+  return scanCase;
 }
 
 export async function listCasesForOwner(userId: string): Promise<ScanCase[]> {

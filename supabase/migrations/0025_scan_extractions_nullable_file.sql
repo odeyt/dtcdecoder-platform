@@ -1,0 +1,13 @@
+-- "Quick diagnostic" cases (src/lib/scan-diagnostics/cases.ts
+-- createQuickDiagnosticCase) let a paid user request an AI report from
+-- just a DTC code + typed vehicle/symptom details — the "Run Full AI
+-- Diagnosis" entry point reachable from DTC search results — with no scan
+-- report file uploaded at all. scan_extractions.file_id was NOT NULL
+-- (migration 0012), which assumed every extraction traces back to a real
+-- uploaded file; that assumption no longer holds for this case type.
+--
+-- Loosening a NOT NULL constraint is additive/non-destructive — no
+-- existing row is affected (every current scan_extractions row already
+-- has a real file_id), and the column stays a foreign key, just an
+-- optional one.
+alter table scan_extractions alter column file_id drop not null;

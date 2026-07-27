@@ -1,16 +1,21 @@
 import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
+import { AiDiagnosisCtaLink } from "@/components/AiDiagnosisCtaLink";
 import type { DtcCode } from "@/lib/types";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 import { SeverityBadge } from "@/components/SeverityBadge";
 import { SafetyAlert } from "@/components/SafetyAlert";
 import { ResultSection } from "@/components/ResultSection";
 import { CauseCard } from "@/components/CauseCard";
+import { LockedResultPanel } from "@/components/LockedResultCard";
+import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
 import { detectSafetyWarnings } from "@/lib/safety-warnings";
+import { deriveDtcCodeStructure } from "@/lib/dtc-category";
 
 export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
   const t = useTranslations("dtcResult");
   const locale = useLocale();
+  const structure = deriveDtcCodeStructure(dtc.code);
 
   const DIFFICULTY_LABEL: Record<DtcCode["difficulty"], string> = {
     easy: t("difficultyEasy"),
@@ -53,6 +58,29 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
           <p className="mt-1 text-xs text-[var(--text-muted)]">{t("contentNotLocalizedNote")}</p>
         )}
       </header>
+
+      {/* Category/system — derived from the code's own structure (a public
+          standard), not a verified database field, so labeled as such. */}
+      {structure.isDerivable && (
+        <ResultSection title="Category (inferred from code structure)">
+          <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
+            <div>
+              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Category</dt>
+              <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.category}</dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Type</dt>
+              <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.type}</dd>
+            </div>
+            {structure.system && (
+              <div>
+                <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Likely system</dt>
+                <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.system}</dd>
+              </div>
+            )}
+          </dl>
+        </ResultSection>
+      )}
 
       {/* Immediate safety guidance */}
       <SafetyAlert warnings={safetyWarnings} />
@@ -183,15 +211,31 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
         {t("disclaimer")}
       </p>
 
+      <ResultSection title="Unlock Full AI Diagnosis">
+        <p className="mb-4 text-sm text-[var(--text-secondary)]">
+          Add your vehicle details and symptoms to receive a professional diagnostic workflow.
+        </p>
+        <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+      </ResultSection>
+
       <section className="glass-panel rounded-[var(--radius-xl)] p-6 text-center">
         <p className="text-sm text-[var(--text-secondary)]">{t("upgradeCta")}</p>
-        <Link
-          href="/pricing"
-          className="mt-3 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
-          style={{ boxShadow: "var(--shadow-accent)" }}
-        >
-          {t("upgradeButton")}
-        </Link>
+        <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+          <AiDiagnosisCtaLink
+            href={`/diagnostics/quick?code=${encodeURIComponent(dtc.code)}${dtc.make ? `&make=${encodeURIComponent(dtc.make)}` : ""}${dtc.model ? `&model=${encodeURIComponent(dtc.model)}` : ""}&returnTo=${encodeURIComponent(`/dtc/${dtc.slug}`)}`}
+            source="known_dtc_page"
+            className="inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
+            style={{ boxShadow: "var(--shadow-accent)" }}
+          >
+            Run Full AI Diagnosis
+          </AiDiagnosisCtaLink>
+          <Link
+            href="/pricing"
+            className="inline-block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
+          >
+            {t("upgradeButton")}
+          </Link>
+        </div>
       </section>
 
       <EmailSignupForm />

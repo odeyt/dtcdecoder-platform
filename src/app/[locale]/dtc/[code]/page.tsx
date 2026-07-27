@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
-import { notFound } from "next/navigation";
-import { getGenericDtcCode } from "@/lib/dtc";
+import { getGenericDtcCode, getRelatedDtcCodes } from "@/lib/dtc";
+import { isValidDtcCodeFormat } from "@/lib/dtc-category";
 import { DtcCodeResult } from "@/components/DtcCodeResult";
+import { UnknownDtcResult } from "@/components/UnknownDtcResult";
+import { InvalidDtcCodeResult } from "@/components/InvalidDtcCodeResult";
 import { createClient } from "@/lib/supabase/server";
 import { recordSearchHistory } from "@/lib/search-history";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
+import { recordEvent } from "@/lib/analytics/events";
 
 export const revalidate = 3600;
 
@@ -28,19 +31,48 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   };
 }
 
+// Three distinct outcomes, never a bare 404 for anything that merely looks
+// like a real code attempt — a 404 gives a searching technician nothing to
+// act on. Only a genuinely malformed input (not shaped like any DTC code)
+// gets the lightweight invalid-format view; a well-formed code we simply
+// haven't published yet gets the rich fallback (category, related codes,
+// AI-report CTA) instead of an empty page. Static page views never touch
+// basic-search quota either way — unchanged from before this page grew a
+// fallback state.
 export default async function GenericDtcCodePage({ params }: Props) {
   const { code } = await params;
-  const dtc = await getGenericDtcCode(code.toLowerCase());
+  const normalizedCode = code.toUpperCase();
 
-  if (!dtc || !dtc.is_published) notFound();
-
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (user) {
-    recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
+  if (!isValidDtcCodeFormat(normalizedCode)) {
+    return (
+      <div className="container-app px-6 py-16">
+        <div className="mx-auto max-w-2xl">
+          <InvalidDtcCodeResult code={code} />
+        </div>
+      </div>
+    );
   }
 
-  return <DtcCodeResult dtc={dtc} />;
+  const dtc = await getGenericDtcCode(code.toLowerCase());
+
+  if (dtc && dtc.is_published) {
+    const supabase = await createClient();
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (user) {
+      recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
+    }
+    await recordEvent("ai_diagnosis_cta_viewed", { userId: user?.id ?? null, metadata: { source: "known_dtc_page" } });
+
+    return <DtcCodeResult dtc={dtc} />;
+  }
+
+  const relatedCodes = await getRelatedDtcCodes(normalizedCode);
+  await recordEvent("ai_diagnosis_cta_viewed", { userId: null, metadata: { source: "unknown_dtc_page" } });
+  return (
+    <div className="container-app px-6 py-12">
+      <UnknownDtcResult code={normalizedCode} relatedCodes={relatedCodes} />
+    </div>
+  );
 }
