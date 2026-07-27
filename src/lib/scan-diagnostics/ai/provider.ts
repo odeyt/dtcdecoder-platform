@@ -18,6 +18,14 @@ export interface DiagnosticAIProviderResult {
 export interface DiagnosticAIProvider {
   readonly id: string;
   runDiagnosis(input: CanonicalDiagnosticInput): Promise<DiagnosticAIProviderResult>;
+  // Optional — the Phase 2 Diagnostic Engine's own turn call
+  // (src/lib/diagnostic-engine/orchestrator.ts), given a single fully
+  // rendered prompt string (see diagnostic-engine/prompt-builder.ts)
+  // instead of a CanonicalDiagnosticInput. Optional so this interface
+  // change is purely additive — a provider that doesn't support the
+  // Diagnostic Engine yet (OpenAI/Gemini scaffolds) is not forced to
+  // implement it, and nothing about Phase 1's scan-report flow changes.
+  runDiagnosticEngineTurn?(prompt: string): Promise<DiagnosticAIProviderResult>;
 }
 
 // A distinct, additive interface (not a method added to DiagnosticAIProvider

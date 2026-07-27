@@ -230,6 +230,71 @@ const SUBMIT_REVIEW_TOOL: Anthropic.Tool = {
   },
 };
 
+// Phase 2 Diagnostic Engine addendum — appended to the same
+// DEFAULT_SYSTEM_PROMPT + SAFETY_SUFFIX every scan-report call already
+// uses (the non-negotiable safety rules apply identically here; nothing
+// about the Diagnostic Engine relaxes them). Only the reasoning framing
+// changes: a Diagnostic Engine turn is one step in an ongoing case, not a
+// one-shot report, so it should refine the existing hypothesis set rather
+// than restart from nothing each time.
+const DIAGNOSTIC_ENGINE_SYSTEM_ADDENDUM = `
+
+You are reasoning about ONE step in an ongoing diagnostic case, not writing a one-time report. You will be given this case's structured evidence, its evolving diagnostic graph, its current ranked hypotheses (if any exist yet), and one specific question the case's Question Engine selected as the next highest-value question to resolve. Update and re-rank the hypotheses in light of everything given — do not discard prior reasoning and start over unless the new evidence genuinely contradicts it.`;
+
+// Shared by runDiagnosis and runDiagnosticEngineTurn — both send a system
+// prompt plus one user-content string, force the same submit_diagnosis
+// tool call, and parse the result against the same DiagnosticAiOutputSchema.
+// Only the system prompt and user content differ between the two callers.
+async function callSubmitDiagnosisTool(
+  systemPrompt: string,
+  userContent: string,
+  options?: { cacheSystemPrompt?: boolean },
+): Promise<DiagnosticAIProviderResult & { providerId: string }> {
+  const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+
+  // Cache the system prompt only for the Diagnostic Engine turn call
+  // (docs/PHASE_2_ARCHITECTURE.md#cost-optimization, "support future
+  // response caching"): it is byte-identical on every turn for every
+  // case, unlike runDiagnosis's per-case system prompt (which can be
+  // overridden per-admin-setting), so caching it here has no correctness
+  // risk and repeat turns within a case (or across cases) reuse the cached
+  // prefix instead of paying full input-token price for it every time.
+  const system = options?.cacheSystemPrompt
+    ? [{ type: "text" as const, text: systemPrompt, cache_control: { type: "ephemeral" as const } }]
+    : systemPrompt;
+
+  const message = await client.messages.create({
+    model: SCAN_REPORT_MODEL_ID,
+    max_tokens: SCAN_REPORT_MAX_TOKENS,
+    system,
+    thinking: { type: "adaptive" },
+    output_config: { effort: "medium" },
+    tools: [SUBMIT_DIAGNOSIS_TOOL],
+    tool_choice: { type: "tool", name: "submit_diagnosis" },
+    messages: [{ role: "user", content: userContent }],
+  });
+
+  const toolUseBlock = message.content.find((block) => block.type === "tool_use");
+  if (!toolUseBlock || toolUseBlock.type !== "tool_use") {
+    throw new AiResponseValidationError("Anthropic diagnostic provider did not return a structured tool call.");
+  }
+
+  const parsed = DiagnosticAiOutputSchema.safeParse(toolUseBlock.input);
+  if (!parsed.success) {
+    throw new AiResponseValidationError(
+      `Anthropic diagnostic provider returned an invalid structured output: ${parsed.error.message}`,
+    );
+  }
+
+  return {
+    providerId: "anthropic-claude-sonnet-5",
+    modelId: message.model,
+    promptVersion: DTCDECODER_DIAGNOSTIC_PROMPT_VERSION,
+    output: parsed.data,
+    tokens: { input: message.usage.input_tokens, output: message.usage.output_tokens },
+  };
+}
+
 export class AnthropicDiagnosticProvider implements DiagnosticAIProvider, DiagnosticReviewer {
   readonly id = "anthropic-claude-sonnet-5";
 
@@ -269,41 +334,15 @@ export class AnthropicDiagnosticProvider implements DiagnosticAIProvider, Diagno
   }
 
   async runDiagnosis(input: CanonicalDiagnosticInput): Promise<DiagnosticAIProviderResult> {
-    const client = new Anthropic({ apiKey: env.anthropicApiKey() });
     const [systemPrompt, knownDtcContext] = await Promise.all([
       getScanSystemPrompt(),
       findKnownDtcContext(input.dtcs.map((d) => d.code)),
     ]);
+    return callSubmitDiagnosisTool(systemPrompt, buildUserPrompt(input, knownDtcContext));
+  }
 
-    const message = await client.messages.create({
-      model: SCAN_REPORT_MODEL_ID,
-      max_tokens: SCAN_REPORT_MAX_TOKENS,
-      system: systemPrompt,
-      thinking: { type: "adaptive" },
-      output_config: { effort: "medium" },
-      tools: [SUBMIT_DIAGNOSIS_TOOL],
-      tool_choice: { type: "tool", name: "submit_diagnosis" },
-      messages: [{ role: "user", content: buildUserPrompt(input, knownDtcContext) }],
-    });
-
-    const toolUseBlock = message.content.find((block) => block.type === "tool_use");
-    if (!toolUseBlock || toolUseBlock.type !== "tool_use") {
-      throw new AiResponseValidationError("Anthropic diagnostic provider did not return a structured tool call.");
-    }
-
-    const parsed = DiagnosticAiOutputSchema.safeParse(toolUseBlock.input);
-    if (!parsed.success) {
-      throw new AiResponseValidationError(
-        `Anthropic diagnostic provider returned an invalid structured output: ${parsed.error.message}`,
-      );
-    }
-
-    return {
-      providerId: this.id,
-      modelId: message.model,
-      promptVersion: DTCDECODER_DIAGNOSTIC_PROMPT_VERSION,
-      output: parsed.data,
-      tokens: { input: message.usage.input_tokens, output: message.usage.output_tokens },
-    };
+  async runDiagnosticEngineTurn(prompt: string): Promise<DiagnosticAIProviderResult> {
+    const systemPrompt = `${DEFAULT_SYSTEM_PROMPT}${DIAGNOSTIC_ENGINE_SYSTEM_ADDENDUM}${SAFETY_SUFFIX}`;
+    return callSubmitDiagnosisTool(systemPrompt, prompt, { cacheSystemPrompt: true });
   }
 }
