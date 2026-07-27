@@ -1,8 +1,13 @@
 # AI Usage Limits — Enforcement Design
 
+> Numbers updated for the pricing/AI-cost-control overhaul — see
+> `docs/PRICING_AND_AI_COST_AUDIT.md` and `docs/PRICING_AND_ENTITLEMENTS.md`
+> for the current canonical figures. The mechanics described below
+> (reserve-then-release, atomicity, UTC boundaries) are unchanged.
+
 ## One shared ledger across both AI features
 
-`ai_diagnostic_usage` (migration `0016_ai_diagnostic_entitlements.sql`) is the single enforcement source for both the "DTC Assistant" chat feature and "Scan Report Analysis" — one row per successfully-granted generation, unique on `(user_id, request_id)`. A free-tier chat question and a free-tier scan-report upload draw from the **same** 2-per-day preview counter; a Pro user's chat questions and scan analyses draw from the same 30/month + 5/day full-report counter. This replaces two previously-separate, previously-incompatible systems:
+`ai_diagnostic_usage` (migration `0016_ai_diagnostic_entitlements.sql`) is the single enforcement source for both the "DTC Assistant" chat feature and "Scan Report Analysis" — one row per successfully-granted generation, unique on `(user_id, request_id)`. Free's preview allowance is now **0** — `aiDiagnosticPreviewDailyLimit: 0` means `record_ai_diagnostic_usage` rejects every Free-plan request before any AI provider is ever called, for both features (there is no "preview" generation mode left in the code). Pro's full-report allowance is 20/month + 3/day; Workshop's is 75/month + 8/day. This replaces two previously-separate, previously-incompatible systems:
 
 | Old | Feature | Granularity | Superseded by |
 |---|---|---|---|
@@ -34,8 +39,8 @@ Only a **successful** generation increments the ledger. Never counted: validatio
 
 ## Cost/observability logging
 
-`ai_diagnostic_runs` logs every AI provider attempt (success or failure) with tokens/provider/model/cost for internal monitoring — **never read by any enforcement path, never exposed to a customer.** Populated by the chat route (`recordAiDiagnosticRun`, both success and failure paths). The scan-diagnostics feature already had an equivalent per-attempt log (`scan_ai_runs`, predating this work) and continues to use it rather than writing to both tables redundantly.
+`ai_diagnostic_runs` logs every AI provider attempt (success or failure) with tokens/provider/model/cost for internal monitoring — **never read by any enforcement path, never exposed to a customer.** Populated by both the chat route and the scan-diagnostics analyze orchestrator (`recordAiDiagnosticRun`, `src/lib/ai-diagnostics/usage.ts`, both success and failure paths). `scan_ai_runs` still exists and is still written for scan reports specifically — it stores the AI's structured diagnostic *content* (output, safety review, confidence), a distinct job from `ai_diagnostic_runs`' cost/usage accounting; the two are not redundant with each other. See `docs/PRICING_AND_AI_COST_AUDIT.md` §6.4 for the cost-ledger/guard pipeline built on top of this table (migration `0023`).
 
 ## Per-request cost tracked
 
-`input_tokens`, `output_tokens`, `cached_tokens` (nullable, not populated by every provider), `estimated_cost_usd` (nullable, not currently computed — no per-model cost table exists yet), `provider_id`, `model_id`, `plan`, `status`, `request_id`, `user_id`, `created_at`. No separate "workspace_id" concept exists in this single-user-only app; `user_id` is the unit of accounting.
+`input_tokens`, `output_tokens`, `cached_tokens` (nullable, not populated by every provider), `provider_id`, `model_id`, `plan`, `status`, `request_id`, `user_id`, `created_at`, plus (migration `0023`) `diagnostic_case_id`, `report_id`, `operation_type`, `credits_consumed`, `estimated_input_cost_micros`/`estimated_output_cost_micros`/`estimated_total_cost_micros` (integer USD micro-units, genuinely computed by `src/lib/ai-diagnostics/cost.ts` — no longer a placeholder), `currency`, `latency_ms`, `tool_calls`. The older `estimated_cost_usd` numeric column still exists but is unused going forward. No separate "workspace_id" concept exists in this single-user-only app; `user_id` is the unit of accounting.

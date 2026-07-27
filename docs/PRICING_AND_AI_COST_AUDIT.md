@@ -103,3 +103,24 @@ No files, migrations, or deployments have been touched. Awaiting direction on th
 ## Addendum: mid-Slice-1 file-collision incident
 
 While implementing Slice 1, a second, concurrently-running Claude Code session in this same working directory committed a snapshot (`8adb099`) that accidentally bundled in this file plus the in-progress `pricing.ts`/`PricingPlans.tsx`/`messages/*.json` edits, then (correctly) reverted just those files in a follow-up commit (`e67e4aa`) once the collision was noticed, restoring a clean baseline. The user paused/terminated the other session and this work was reapplied from scratch on top of the clean baseline. No data was permanently lost, but this is the reason Slice 1's commit history looks like a redo rather than a single linear pass.
+
+## Addendum: implementation status (Slices 1–7 complete)
+
+Every slice in §8's rollout plan has been implemented, tested, and committed locally. §9's open questions were resolved along the way rather than staying open:
+
+1. **No grandfathering** — confirmed; no real subscriptions existed when this work started.
+2. **Admin config editability** — resolved as read-only for this pass, by explicit user direction. `/admin/profitability` displays current `pricing.ts`/`model-routing.ts` values; changing one still requires a code edit and redeploy. No `plan_config`-style DB table was built.
+3. **Model routing tier** — Claude Haiku 4.5 introduced as the economical tier (`src/lib/ai-diagnostics/model-routing.ts`). Chat translation routes to it; main generation (chat + scan) stays on Sonnet 5.
+4. **Launch pricing mechanics** — resolved as display-only, gated behind `LAUNCH_PRICING_ACTIVE` (still `false`). An explicit operational note in `src/lib/pricing.ts` documents that the linked Creem product's real price must be updated before the flag is ever flipped, since this app never sends a per-checkout price override.
+
+What shipped, by slice:
+
+- **Slice 1**: canonical registry rewrite (new prices/quotas — Pro $39/mo·390/yr·20mo·3day, Workshop $99/mo·990/yr·75mo·8day), basic-search rate limiting (migration `0022`, applied to production), free-tier AI generation removed entirely (no code path can reach an AI provider on Free).
+- **Slice 2**: AI cost ledger (migration `0023`, extends `ai_diagnostic_runs` — not applied), `src/lib/ai-diagnostics/cost.ts` (estimate/actual cost computation, hard-ceiling guard), wired into both AI features' pre-flight and post-generation paths.
+- **Slice 3**: model routing (`model-routing.ts`), Haiku 4.5 introduced, chat translation routed to it, cost-ledger rows now record the routed model per operation.
+- **Slice 4**: add-on report packs (migration `0024` — not applied; schema + `record_ai_diagnostic_usage()` extension + checkout route + webhook branch), inert until real Creem product IDs exist.
+- **Slice 5**: read-only admin profitability dashboard (`/admin/profitability`), no new migration.
+- **Slice 6**: launch-pricing display logic (inert, flag off) and add-on-pack UI (account page + pricing bullets), also inert pending Slice 4's product IDs.
+- **Slice 7**: the mega-prompt's 18-item required-test list, all proven (`test/required-proofs.test.ts` plus references to where each item was already covered), and this documentation pass.
+
+Migrations `0016` and `0022` are applied to the shared Preview/Production Supabase project. Migrations `0023` and `0024` are written, reviewed, and committed but **not applied**. No code from Slices 2–7 has been pushed or deployed as of this addendum — see the final delivery report (chat transcript) for the exact commit hashes and push status at time of writing. **Margins shown anywhere (the admin dashboard, this doc) remain unverified operational estimates** — there is still no real production usage data, per this task's own standing instruction.

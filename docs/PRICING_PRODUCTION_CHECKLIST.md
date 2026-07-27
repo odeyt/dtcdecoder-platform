@@ -2,6 +2,18 @@
 
 Do not promote to production until every item below is checked. This mirrors the deployment-safety sequence already used for the Diagnostic Safety v2 rollout (`docs/PRODUCTION_VERIFICATION.md`) — nothing here skips a step that worked before.
 
+> This checklist was written for the original entitlement-overhaul rollout
+> (migration `0016`) and its numbers below are from that point in time —
+> treat them as historical, not current. Migrations `0016` and `0022`
+> (`basic_search_usage`) have since been applied to the shared Preview/
+> Production Supabase project; `0023` (`ai_diagnostic_runs` cost-ledger
+> columns) and `0024` (`report_addon_balances`) have not. The pricing/AI-
+> cost-control overhaul as a whole (`docs/PRICING_AND_AI_COST_AUDIT.md`)
+> has not been pushed or deployed. Before that eventually happens, this
+> checklist's steps should be re-run against the CURRENT numbers in
+> `docs/PRICING_AND_ENTITLEMENTS.md`, and a similar pass is still needed
+> for migrations 0023/0024 specifically before they're applied.
+
 ## Before opening a PR / merge
 
 - [ ] `npx tsc --noEmit` — clean

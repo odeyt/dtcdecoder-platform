@@ -39,3 +39,42 @@ This is destructive to any usage/cost data recorded under the new system specifi
 - A single failed AI generation — already handled by the reserve/release pattern (`recordAiDiagnosticUsage`/`releaseAiDiagnosticUsage`); the slot is freed automatically, no manual intervention needed.
 - A free user hitting their daily preview limit, or a paid user hitting their monthly/daily report limit — this is the intended, correct behavior, not a bug.
 - Missing Creem checkout env vars (`docs/PAYMENT_PLAN_MAPPING.md`) — a pre-existing, separately-tracked blocker unrelated to this rollback plan.
+
+## Addendum: migrations `0022`–`0024` (pricing/AI-cost-control overhaul)
+
+This plan above covers migration `0016` specifically, from the original entitlement overhaul. Three more additive migrations exist as of `docs/PRICING_AND_AI_COST_AUDIT.md`: `0022` (`basic_search_usage`, applied to production), `0023` (adds cost-ledger columns to the existing `ai_diagnostic_runs` table), `0024` (`report_addon_balances`, extends `record_ai_diagnostic_usage()` to consume add-on credits — **not yet applied**).
+
+Rolling back the application code for this later work is the same git-revert pattern as above and requires no database rollback — the reverted code simply stops reading the new columns/table/functions. If a full database rollback of `0022`–`0024` is ever needed:
+
+```sql
+-- 0024 (only if applied)
+drop function if exists grant_addon_pack(uuid, text, integer, text);
+drop table if exists report_addon_balances;
+-- Also revert record_ai_diagnostic_usage() to its pre-0024 definition
+-- (migration 0016's version) — 0024 CREATE OR REPLACEd this function in
+-- place rather than adding a new one, so rolling back the table alone
+-- without also restoring the function leaves it referencing a table that
+-- no longer exists.
+
+-- 0023 (only if applied)
+alter table ai_diagnostic_runs
+  drop column if exists diagnostic_case_id,
+  drop column if exists report_id,
+  drop column if exists operation_type,
+  drop column if exists credits_consumed,
+  drop column if exists estimated_input_cost_micros,
+  drop column if exists estimated_output_cost_micros,
+  drop column if exists estimated_tool_cost_micros,
+  drop column if exists estimated_total_cost_micros,
+  drop column if exists currency,
+  drop column if exists latency_ms,
+  drop column if exists tool_calls;
+
+-- 0022 (already applied to production — do not run without separately
+-- confirming this specific rollback is actually wanted)
+drop function if exists record_basic_search_usage(text, text, integer, integer);
+drop function if exists get_basic_search_usage_summary(text, text);
+drop table if exists basic_search_usage;
+```
+
+Same standing rule as above: **do not run any of this without explicit approval**, confirm nothing else depends on these objects first, and roll back in reverse dependency order (`0024` before `0023` before `0022`) since `0024`'s function change depends on `0023`'s columns existing on `ai_diagnostic_runs` remaining consistent with what `record_ai_diagnostic_usage()` inserts.
