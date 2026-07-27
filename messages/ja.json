@@ -258,5 +258,30 @@
     "stageTranslating": "診断を{language}に翻訳中",
     "freeLockedBody": "AI診断アシスタントは無料プランには含まれていません。次のような完全なAI生成診断を利用するには、Pro TechnicianまたはWorkshopにアップグレードしてください：",
     "freeLockedCta": "プランを見る"
+  },
+  "landingIntake": {
+    "composerLabel": "Describe the vehicle problem, enter a DTC, or ask what you should test next",
+    "composerPlaceholder": "Describe the vehicle problem, enter a DTC, or ask what you should test next…",
+    "consultCta": "Consult DTC Technician™",
+    "importScanCta": "Import Vehicle Scan",
+    "guidedDiagnosisCta": "Start Guided Diagnosis",
+    "guidedDiagnosisComingSoon": "Guided Diagnosis is coming soon.",
+    "restart": "Start over",
+    "quickLookupLabel": "Or look up a code directly:",
+    "signInRequiredTitle": "Sign in to continue",
+    "signInRequiredBody": "Sign in to save this diagnostic case and continue with DTC Technician™. Your answers so far will be preserved.",
+    "signInCta": "Sign In",
+    "upgradeCta": "Unlock DTC Technician™",
+    "upgradeBody": "Continue with vehicle-specific guided diagnosis, saved evidence, and professional diagnostic reporting.",
+    "errorGeneric": "Something went wrong. Try again.",
+    "loadingLabel": "DTC Technician is reviewing your diagnostic case…",
+    "freeSearchLimitTitle": "Free search limit reached",
+    "freeSearchLimitBody": "You have reached the free Quick Code Lookup limit. Upgrade to continue with DTC Technician and Guided Diagnosis.",
+    "basicResultCategory": "Category",
+    "basicResultSymptoms": "Generic symptoms",
+    "basicResultCauses": "Generic causes",
+    "basicResultChecks": "Basic checks",
+    "basicResultSafety": "Safety warning",
+    "manufacturerUncertainty": "This code's manufacturer-specific meaning may differ — confirm against your vehicle's own service data."
   }
 }

@@ -15,6 +15,20 @@ export const ANALYTICS_EVENT_TYPES = [
   "ai_diagnosis_completed",
   "ai_diagnosis_failed",
   "upgrade_prompt_viewed",
+  // Phase 1 DTC Technician funnel (docs/PHASE_1_DTC_TECHNICIAN_ARCHITECTURE.md,
+  // migration 0030) — landing/public-intake/consultation-shell events.
+  "landing_consultation_started",
+  "landing_prompt_selected",
+  "public_intake_question_submitted",
+  "public_intake_basic_result_viewed",
+  "import_vehicle_scan_clicked",
+  "signin_from_intake_clicked",
+  "diagnostic_case_created_from_intake",
+  "dtc_technician_opened",
+  "dtc_technician_closed",
+  "guided_diagnosis_clicked",
+  "locked_feature_viewed",
+  "upgrade_from_consultation_clicked",
 ] as const;
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];

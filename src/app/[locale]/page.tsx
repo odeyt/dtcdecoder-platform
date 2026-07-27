@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
-import { HeroSearch } from "@/components/HeroSearch";
+import { LandingDtcTechnician } from "@/components/LandingDtcTechnician";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 
 type Props = {
@@ -74,7 +74,7 @@ export default async function HomePage({ params }: Props) {
         </p>
 
         <div className="fade-in-up mt-10" style={{ animationDelay: "140ms" }}>
-          <HeroSearch />
+          <LandingDtcTechnician locale={locale} />
         </div>
       </section>
 
