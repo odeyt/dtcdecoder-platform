@@ -5,6 +5,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
 import {
   isRecognizedLocaleCode,
   isLiveLocale,
@@ -99,6 +100,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <SiteNav />
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
+          <DtcTechnicianShell />
         </NextIntlClientProvider>
       </body>
     </html>

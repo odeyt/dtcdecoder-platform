@@ -4,6 +4,7 @@ import { setRequestLocale } from "next-intl/server";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
+import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { directionForLocale } from "@/lib/i18n/locale-codes";
 import "../globals.css";
@@ -64,6 +65,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <SiteNav />
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
+          <DtcTechnicianShell />
         </NextIntlClientProvider>
       </body>
     </html>
