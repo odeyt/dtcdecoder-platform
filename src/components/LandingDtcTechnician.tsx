@@ -134,7 +134,7 @@ export function LandingDtcTechnician({ locale }: { locale: string }) {
 
   function handleSignInClick() {
     recordClientEvent("signin_from_intake_clicked");
-    router.push("/account/login?next=%2Fdiagnostics%2Fquick");
+    router.push("/account/login?next=%2Fdiagnostics%2Ffrom-intake");
   }
 
   function handleUpgradeClick() {

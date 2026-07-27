@@ -5,6 +5,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { ANON_SEARCH_ID_COOKIE } from "@/lib/basic-search/constants";
 import { processPublicIntake } from "@/lib/landing-intake/engine";
+import { IntakeSchema } from "@/lib/landing-intake/schema";
 import type { BasicSearchIdentity } from "@/lib/basic-search/usage";
 
 // The ONLY unauthenticated diagnostic endpoint in this app. Deterministic
@@ -12,21 +13,6 @@ import type { BasicSearchIdentity } from "@/lib/basic-search/usage";
 // module's own header). Deliberately kept separate from every protected
 // scan-diagnostics/ai route so a public-endpoint bug can never reach paid
 // provider logic. See docs/LANDING_DIAGNOSTIC_INTAKE.md.
-
-const IntakeSchema = z.object({
-  year: z.string().trim().max(4).optional(),
-  make: z.string().trim().max(60).optional(),
-  model: z.string().trim().max(60).optional(),
-  engine: z.string().trim().max(60).optional(),
-  vin: z.string().trim().max(17).optional(),
-  dtcCodes: z.array(z.string().trim().max(10)).max(10).default([]),
-  symptoms: z.string().trim().max(2000).optional(),
-  complaint: z.string().trim().max(2000).optional(),
-  currentCodeStatus: z.enum(["current", "history", "pending", "permanent", "unknown"]).optional(),
-  scanUploadRequested: z.boolean().optional(),
-  locale: z.string().trim().max(10).default("en"),
-  currentStep: z.string().trim().max(30).default("issue"),
-});
 
 const RequestSchema = z.object({
   message: z.string().trim().min(1).max(1000),
