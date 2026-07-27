@@ -14,7 +14,7 @@
 
 1. **Next.js 16 breaking changes**: this project was scaffolded with Next.js 16.2.10, which is newer than most training data. `middleware.ts` is renamed to `proxy.ts` (exported function `proxy`, not `middleware`). Route/page `params` are always a `Promise` — must `await`. Check `node_modules/next/dist/docs/` before using an API you're not certain about.
 2. **No secrets in source.** No API keys, tokens, or credentials in committed code. All secrets via env vars, `.env.local` (gitignored).
-3. **Guest checkout, no password accounts.** Buyers check out with email only; account access is via Supabase magic-link (OTP), never a password. Do not add a password flow without explicit instruction.
+3. **Guest checkout stays email-only; account password login now exists.** Buyers still check out with email only — no password is ever required to purchase. Account *sign-in* originally supported magic-link (OTP) only; password sign-in plus a forgot/reset-password flow were added by explicit owner instruction (2026-07-27) and now coexist with magic-link as an alternative, not a replacement. See `docs/deployment/supabase-auth-setup.md`.
 4. **Private files stay private.** Purchased files live in the private `product-files` Supabase Storage bucket. Never add a public-read policy to that bucket. Downloads are only ever served via short-lived `createSignedUrl()` calls from a server route, after verifying the requesting user purchased that item.
 5. **Payment provider is Creem.io, one-time checkout mode** — not subscriptions. Do not port subscription/entitlement logic from Redlined1's Creem integration; only the signature-verification pattern is shared.
 6. **Feature flags default off** for anything not fully wired up.

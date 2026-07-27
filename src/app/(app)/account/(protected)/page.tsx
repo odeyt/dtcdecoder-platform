@@ -9,6 +9,7 @@ import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell
 import { UsageMeter } from "@/components/UsageMeter";
 import { UpgradeCard } from "@/components/UpgradeCard";
 import { AddOnPackButton } from "@/components/AddOnPackButton";
+import { ChangePasswordForm } from "@/components/ChangePasswordForm";
 import { ADD_ON_PACKS } from "@/lib/pricing";
 
 export default async function AccountPage() {
@@ -87,6 +88,16 @@ export default async function AccountPage() {
           <Link href="/account/preferences" className="text-[var(--accent-red)] underline">
             {t("languagePreferences")}
           </Link>
+        </div>
+
+        <div className="glass-panel rounded-[var(--radius-xl)] p-6">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">Password</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Set a password so you can sign in without waiting for a magic-link email.
+          </p>
+          <div className="mt-4">
+            <ChangePasswordForm />
+          </div>
         </div>
       </div>
     </NextIntlClientProvider>
