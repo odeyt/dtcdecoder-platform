@@ -40,7 +40,12 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
       const res = await fetch(`/api/scan-diagnostics/cases/${caseId}/${stage}`, { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        // A 429 quota-exceeded response (AiDiagnosticLimitExceededError, see
+        // toSafeErrorResponse) shapes `error` as an object, not a string —
+        // every other error shape here is a plain string. Extract .message
+        // so this never renders a raw object as a React child.
+        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? "Something went wrong. Please try again.");
+        setError(message);
         setRunning(null);
         return;
       }
