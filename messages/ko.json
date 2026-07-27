@@ -103,18 +103,21 @@
     "proBullet5": "프로그래밍 및 재학습 안내",
     "proBullet6": "PDF 리포트 액세스",
     "proBullet7": "저장된 정비사 사례",
+    "proBullet8": "추가 리포트 팩 이용 가능",
     "workshopBullet1": "월 120건의 완전한 AI 진단 리포트",
     "workshopBullet2": "하루 최대 15건 리포트",
     "workshopBullet3": "최대 3개의 정비사 계정",
     "workshopBullet4": "공유 고객 사례",
     "workshopBullet5": "공유 수리 메모",
     "workshopBullet6": "정비소 진단 기록",
+    "workshopBullet7": "추가 리포트 팩 이용 가능",
     "upgradeToPro": "Pro로 업그레이드",
     "workshopAccess": "Workshop 액세스",
     "fairUseNote": "AI 진단 사용량은 매일(무료 미리보기) 또는 매월(유료 완전 리포트) 초기화되며, 모두에게 서비스를 안정적으로 유지하기 위한 공정 사용 한도입니다 — 대부분의 정비사는 이 한도에 근접하지 않습니다.",
     "yearlySubline": "월 약 ${amount} — 월간 대비 ${discount} 절약",
     "redirecting": "리디렉션 중…",
-    "emailForCheckout": "이메일 주소"
+    "emailForCheckout": "이메일 주소",
+    "introPricing": "출시 기념가"
   },
   "account": {
     "title": "내 계정",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "AI 진단 어시스턴트로 이동",
     "viewHistory": "검색 기록 보기",
     "languagePreferences": "언어 및 지역 설정",
-    "nearLimitReason": "오늘 무료 요금제의 AI 한도에 근접했습니다. Pro는 훨씬 큰 월간 사용량을 제공합니다."
+    "nearLimitReason": "오늘 무료 요금제의 AI 한도에 근접했습니다. Pro는 훨씬 큰 월간 사용량을 제공합니다.",
+    "addOnTitle": "추가 리포트 팩",
+    "addOnDescription": "이번 달 요금제에 포함된 것보다 더 많은 리포트가 필요하신가요? 팩을 구매하세요 — 크레딧은 만료되지 않으며 월 한도가 소진되면 자동으로 사용됩니다.",
+    "addOnBalance": "추가 리포트 {count}개 남음",
+    "addOnBuy": "구매",
+    "addOnUnavailable": "추가 팩은 아직 구매할 수 없습니다."
   },
   "preferences": {
     "title": "언어 및 지역 설정",

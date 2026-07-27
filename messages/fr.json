@@ -103,18 +103,21 @@
     "proBullet5": "Guides de programmation et de réapprentissage",
     "proBullet6": "Accès aux rapports PDF",
     "proBullet7": "Dossiers techniciens enregistrés",
+    "proBullet8": "Packs de rapports supplémentaires disponibles",
     "workshopBullet1": "120 rapports de diagnostic IA complets/mois",
     "workshopBullet2": "Maximum 15 rapports/jour",
     "workshopBullet3": "Jusqu'à 3 comptes techniciens",
     "workshopBullet4": "Dossiers clients partagés",
     "workshopBullet5": "Notes de réparation partagées",
     "workshopBullet6": "Historique de diagnostic de l'atelier",
+    "workshopBullet7": "Packs de rapports supplémentaires disponibles",
     "upgradeToPro": "Passer à Pro",
     "workshopAccess": "Accès Atelier",
     "fairUseNote": "Les allocations de diagnostic IA se réinitialisent chaque jour (aperçus gratuits) ou chaque mois (rapports complets payants) ; il s'agit d'une limite d'usage équitable pour garder le service fiable pour tous — la plupart des techniciens ne s'en approchent jamais.",
     "yearlySubline": "~{amount} $/mois — économisez {discount} $ par rapport au mensuel",
     "redirecting": "Redirection…",
-    "emailForCheckout": "Adresse e-mail"
+    "emailForCheckout": "Adresse e-mail",
+    "introPricing": "Tarif de lancement"
   },
   "account": {
     "title": "Mon compte",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Aller à l'assistant de diagnostic IA",
     "viewHistory": "Voir l'historique de recherche",
     "languagePreferences": "Préférences de langue et de région",
-    "nearLimitReason": "Vous approchez de la limite d'IA du forfait Gratuit d'aujourd'hui. Pro vous offre une allocation mensuelle bien plus importante."
+    "nearLimitReason": "Vous approchez de la limite d'IA du forfait Gratuit d'aujourd'hui. Pro vous offre une allocation mensuelle bien plus importante.",
+    "addOnTitle": "Packs de rapports supplémentaires",
+    "addOnDescription": "Besoin de plus de rapports que ce que votre forfait inclut ce mois-ci ? Achetez un pack — les crédits n'expirent jamais et sont utilisés automatiquement une fois votre quota mensuel épuisé.",
+    "addOnBalance": "{count} rapports supplémentaires restants",
+    "addOnBuy": "Acheter",
+    "addOnUnavailable": "Les packs supplémentaires ne sont pas encore disponibles à l'achat."
   },
   "preferences": {
     "title": "Préférences de langue et de région",

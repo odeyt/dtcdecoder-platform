@@ -103,18 +103,21 @@
     "proBullet5": "Programming and relearn guidance",
     "proBullet6": "PDF report access",
     "proBullet7": "Saved technician cases",
+    "proBullet8": "Add-on report packs available",
     "workshopBullet1": "75 full AI diagnostic reports/month",
     "workshopBullet2": "Maximum 8 reports/day",
     "workshopBullet3": "Up to 3 technician accounts",
     "workshopBullet4": "Shared customer cases",
     "workshopBullet5": "Shared repair notes",
     "workshopBullet6": "Workshop diagnostic history",
+    "workshopBullet7": "Add-on report packs available",
     "upgradeToPro": "Upgrade to Pro",
     "workshopAccess": "Workshop Access",
     "fairUseNote": "AI usage is subject to fair-use, input-size, and diagnostic-credit limits.",
     "yearlySubline": "~${amount}/mo — save ${discount} vs. monthly",
     "redirecting": "Redirecting…",
-    "emailForCheckout": "Email address"
+    "emailForCheckout": "Email address",
+    "introPricing": "Introductory pricing"
   },
   "account": {
     "title": "My Account",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Go to the AI Diagnostic Assistant",
     "viewHistory": "View search history",
     "languagePreferences": "Language & region preferences",
-    "nearLimitReason": "You're close to today's Free plan AI limit. Pro gives you a much larger monthly allowance."
+    "nearLimitReason": "You're close to today's Free plan AI limit. Pro gives you a much larger monthly allowance.",
+    "addOnTitle": "Add-on report packs",
+    "addOnDescription": "Need more reports than your plan includes this month? Buy a pack — credits never expire and are used automatically once your monthly allowance runs out.",
+    "addOnBalance": "{count} add-on reports remaining",
+    "addOnBuy": "Buy",
+    "addOnUnavailable": "Add-on packs aren't available for purchase yet."
   },
   "preferences": {
     "title": "Language & Region Preferences",

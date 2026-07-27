@@ -103,18 +103,21 @@
     "proBullet5": "Orientação de programação e reaprendizagem",
     "proBullet6": "Acesso a relatórios em PDF",
     "proBullet7": "Casos de técnico salvos",
+    "proBullet8": "Pacotes adicionais de relatórios disponíveis",
     "workshopBullet1": "120 relatórios completos de diagnóstico com IA/mês",
     "workshopBullet2": "Máximo de 15 relatórios/dia",
     "workshopBullet3": "Até 3 contas de técnico",
     "workshopBullet4": "Casos de clientes compartilhados",
     "workshopBullet5": "Notas de reparo compartilhadas",
     "workshopBullet6": "Histórico de diagnóstico da oficina",
+    "workshopBullet7": "Pacotes adicionais de relatórios disponíveis",
     "upgradeToPro": "Fazer upgrade para o Pro",
     "workshopAccess": "Acesso Workshop",
     "fairUseNote": "As cotas de diagnóstico com IA são redefinidas diariamente (prévias gratuitas) ou mensalmente (relatórios completos pagos) e são um limite de uso justo para manter o serviço confiável para todos — a maioria dos técnicos nunca chega perto delas.",
     "yearlySubline": "~US$ {amount}/mês — economize US$ {discount} em relação ao mensal",
     "redirecting": "Redirecionando…",
-    "emailForCheckout": "Endereço de e-mail"
+    "emailForCheckout": "Endereço de e-mail",
+    "introPricing": "Preço de lançamento"
   },
   "account": {
     "title": "Minha conta",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Ir para o Assistente de Diagnóstico com IA",
     "viewHistory": "Ver histórico de buscas",
     "languagePreferences": "Preferências de idioma e região",
-    "nearLimitReason": "Você está perto do limite de IA do plano Gratuito de hoje. O Pro oferece uma cota mensal muito maior."
+    "nearLimitReason": "Você está perto do limite de IA do plano Gratuito de hoje. O Pro oferece uma cota mensal muito maior.",
+    "addOnTitle": "Pacotes adicionais de relatórios",
+    "addOnDescription": "Precisa de mais relatórios do que seu plano inclui neste mês? Compre um pacote — os créditos nunca expiram e são usados automaticamente quando sua cota mensal se esgota.",
+    "addOnBalance": "{count} relatórios adicionais restantes",
+    "addOnBuy": "Comprar",
+    "addOnUnavailable": "Os pacotes adicionais ainda não estão disponíveis para compra."
   },
   "preferences": {
     "title": "Preferências de idioma e região",

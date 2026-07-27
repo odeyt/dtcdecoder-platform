@@ -103,18 +103,21 @@
     "proBullet5": "プログラミングと再学習の案内",
     "proBullet6": "PDF レポートへのアクセス",
     "proBullet7": "保存した技術者ケース",
+    "proBullet8": "追加レポートパックが利用可能",
     "workshopBullet1": "月 120 件の完全な AI 診断レポート",
     "workshopBullet2": "1 日最大 15 件のレポート",
     "workshopBullet3": "最大 3 つの技術者アカウント",
     "workshopBullet4": "共有される顧客ケース",
     "workshopBullet5": "共有される修理メモ",
     "workshopBullet6": "工場の診断履歴",
+    "workshopBullet7": "追加レポートパックが利用可能",
     "upgradeToPro": "Pro にアップグレード",
     "workshopAccess": "Workshop アクセス",
     "fairUseNote": "AI 診断枠は毎日（無料プレビュー）または毎月（有料の完全レポート）リセットされ、すべての人にとってサービスを安定させるための公正利用の上限です — ほとんどの技術者がこの上限に達することはありません。",
     "yearlySubline": "約 ${amount}/月 — 月間より ${discount} 節約",
     "redirecting": "リダイレクト中…",
-    "emailForCheckout": "メールアドレス"
+    "emailForCheckout": "メールアドレス",
+    "introPricing": "先行価格"
   },
   "account": {
     "title": "マイアカウント",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "AI 診断アシスタントへ",
     "viewHistory": "検索履歴を見る",
     "languagePreferences": "言語と地域の設定",
-    "nearLimitReason": "本日の無料プランの AI 上限に近づいています。Pro ではるかに大きな月間枠を利用できます。"
+    "nearLimitReason": "本日の無料プランの AI 上限に近づいています。Pro ではるかに大きな月間枠を利用できます。",
+    "addOnTitle": "追加レポートパック",
+    "addOnDescription": "今月、プランに含まれる以上のレポートが必要ですか？パックを購入してください — クレジットは失効せず、月間の割り当てを使い切ると自動的に使用されます。",
+    "addOnBalance": "追加レポート残り{count}件",
+    "addOnBuy": "購入",
+    "addOnUnavailable": "追加パックはまだ購入できません。"
   },
   "preferences": {
     "title": "言語と地域の設定",

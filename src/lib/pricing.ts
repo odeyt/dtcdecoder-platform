@@ -49,6 +49,14 @@ export function effectiveMonthlyPriceUsd(plan: PaidPlan, interval: BillingInterv
 // Creem product/price actually exists, this stays display-only and
 // unwired from checkout, not "fake" (never advertise a price the site
 // can't actually charge).
+//
+// BEFORE setting this to true: update the Pro/Workshop Creem product's
+// actual configured monthly price to LAUNCH_PRICING's value first (in the
+// Creem dashboard, not here — this app never sends a per-checkout price
+// override, see createSubscriptionCheckout in src/lib/payments/creem.ts).
+// Flipping this flag alone changes only what the pricing page DISPLAYS;
+// checkout still charges whatever the linked Creem product is actually
+// configured to charge.
 export const LAUNCH_PRICING_ACTIVE = false;
 
 export const LAUNCH_PRICING = {

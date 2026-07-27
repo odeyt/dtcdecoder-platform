@@ -103,18 +103,21 @@
     "proBullet5": "编程与重新学习指导",
     "proBullet6": "PDF 报告访问权限",
     "proBullet7": "已保存的技师案例",
+    "proBullet8": "可购买附加报告包",
     "workshopBullet1": "每月 120 份完整 AI 诊断报告",
     "workshopBullet2": "每天最多 15 份报告",
     "workshopBullet3": "最多 3 个技师账户",
     "workshopBullet4": "共享客户案例",
     "workshopBullet5": "共享维修记录",
     "workshopBullet6": "车间诊断历史",
+    "workshopBullet7": "可购买附加报告包",
     "upgradeToPro": "升级到 Pro",
     "workshopAccess": "Workshop 访问权限",
     "fairUseNote": "AI 诊断额度每天（免费预览）或每月（付费完整报告）重置，是为了让服务对所有人保持稳定的合理使用限制——大多数技师从不会接近该上限。",
     "yearlySubline": "约 ${amount}/月——比月付省 ${discount}",
     "redirecting": "正在跳转…",
-    "emailForCheckout": "电子邮件地址"
+    "emailForCheckout": "电子邮件地址",
+    "introPricing": "上线优惠价"
   },
   "account": {
     "title": "我的账户",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "前往 AI 诊断助手",
     "viewHistory": "查看搜索历史",
     "languagePreferences": "语言与地区偏好",
-    "nearLimitReason": "您已接近今天免费套餐的 AI 上限。Pro 为您提供大得多的每月额度。"
+    "nearLimitReason": "您已接近今天免费套餐的 AI 上限。Pro 为您提供大得多的每月额度。",
+    "addOnTitle": "附加报告包",
+    "addOnDescription": "本月需要比套餐包含更多的报告吗？购买一个附加包 — 额度永不过期，并在您的每月额度用完后自动使用。",
+    "addOnBalance": "剩余 {count} 份附加报告",
+    "addOnBuy": "购买",
+    "addOnUnavailable": "附加包暂时无法购买。"
   },
   "preferences": {
     "title": "语言与地区偏好",

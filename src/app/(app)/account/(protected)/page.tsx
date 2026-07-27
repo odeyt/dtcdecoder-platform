@@ -4,9 +4,12 @@ import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { getAiDiagnosticUsageSummary, toLegacyUsageSummary } from "@/lib/ai-diagnostics/usage";
+import { getAddOnBalanceSummary } from "@/lib/ai-diagnostics/addon-balances";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { UsageMeter } from "@/components/UsageMeter";
 import { UpgradeCard } from "@/components/UpgradeCard";
+import { AddOnPackButton } from "@/components/AddOnPackButton";
+import { ADD_ON_PACKS } from "@/lib/pricing";
 
 export default async function AccountPage() {
   const supabase = await createClient();
@@ -19,6 +22,9 @@ export default async function AccountPage() {
   const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
   const usage = user ? toLegacyUsageSummary(await getAiDiagnosticUsageSummary(user.id, plan)) : null;
   const nearLimit = usage ? usage.used / usage.limit >= 0.8 : false;
+  // Free never gets any AI diagnostic report generation at all, so add-on
+  // credits would be unusable — only shown to paid plans.
+  const addOnBalance = user && plan !== "free" ? await getAddOnBalanceSummary(user.id) : null;
 
   const locale = await resolveAppShellLocale();
   const messages = await getAppShellMessages(locale);
@@ -51,6 +57,25 @@ export default async function AccountPage() {
         {usage && <UsageMeter summary={usage} planLabel={planLabel} />}
 
         {nearLimit && plan === "free" && <UpgradeCard reason={t("nearLimitReason")} />}
+
+        {addOnBalance && (
+          <div className="glass-panel rounded-[var(--radius-xl)] p-6">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("addOnTitle")}</p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("addOnDescription")}</p>
+            <p className="mt-3 text-lg font-bold text-[var(--text-primary)]">
+              {t("addOnBalance", { count: addOnBalance.totalReportsRemaining })}
+            </p>
+            <div className="mt-4 grid gap-3 sm:grid-cols-3">
+              {ADD_ON_PACKS.map((pack) => (
+                <AddOnPackButton
+                  key={pack.id}
+                  packId={pack.id}
+                  label={`${t("addOnBuy")} — ${pack.reports} / $${pack.priceUsd}`}
+                />
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="flex flex-wrap gap-6 text-sm">
           <Link href="/ai-assistant" className="text-[var(--accent-red)] underline">

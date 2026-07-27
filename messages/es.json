@@ -103,18 +103,21 @@
     "proBullet5": "Guía de programación y reaprendizaje",
     "proBullet6": "Acceso a reportes en PDF",
     "proBullet7": "Casos de técnicos guardados",
+    "proBullet8": "Paquetes adicionales de reportes disponibles",
     "workshopBullet1": "75 reportes completos de diagnóstico con IA al mes",
     "workshopBullet2": "Máximo 8 reportes por día",
     "workshopBullet3": "Hasta 3 cuentas de técnicos",
     "workshopBullet4": "Casos de clientes compartidos",
     "workshopBullet5": "Notas de reparación compartidas",
     "workshopBullet6": "Historial de diagnóstico del taller",
+    "workshopBullet7": "Paquetes adicionales de reportes disponibles",
     "upgradeToPro": "Actualizar a Pro",
     "workshopAccess": "Acceso Taller",
     "fairUseNote": "El uso de IA está sujeto a límites de uso justo, tamaño de entrada y créditos de diagnóstico.",
     "yearlySubline": "~${amount}/mes — ahorra ${discount} frente al plan mensual",
     "redirecting": "Redirigiendo…",
-    "emailForCheckout": "Correo electrónico"
+    "emailForCheckout": "Correo electrónico",
+    "introPricing": "Precio de lanzamiento"
   },
   "account": {
     "title": "Mi Cuenta",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Ir al Asistente de Diagnóstico IA",
     "viewHistory": "Ver historial de búsquedas",
     "languagePreferences": "Preferencias de idioma y región",
-    "nearLimitReason": "Estás cerca del límite diario de IA del plan Gratis. Pro te da una asignación mensual mucho mayor."
+    "nearLimitReason": "Estás cerca del límite diario de IA del plan Gratis. Pro te da una asignación mensual mucho mayor.",
+    "addOnTitle": "Paquetes adicionales de reportes",
+    "addOnDescription": "¿Necesitas más reportes de los que incluye tu plan este mes? Compra un paquete — los créditos no caducan y se usan automáticamente cuando se agota tu límite mensual.",
+    "addOnBalance": "{count} reportes adicionales restantes",
+    "addOnBuy": "Comprar",
+    "addOnUnavailable": "Los paquetes adicionales aún no están disponibles para comprar."
   },
   "preferences": {
     "title": "Preferencias de Idioma y Región",

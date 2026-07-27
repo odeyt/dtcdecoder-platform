@@ -6,6 +6,8 @@ import { useTranslations } from "next-intl";
 import { SubscribeButton } from "@/components/SubscribeButton";
 import {
   PAID_PLANS,
+  LAUNCH_PRICING_ACTIVE,
+  LAUNCH_PRICING,
   yearlyPriceUsd,
   yearlySavingsUsd,
   effectiveMonthlyPriceUsd,
@@ -92,6 +94,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
             t("proBullet5"),
             t("proBullet6"),
             t("proBullet7"),
+            t("proBullet8"),
           ]}
           buttonLabel={t("upgradeToPro")}
           signedIn={signedIn}
@@ -108,6 +111,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
             t("workshopBullet4"),
             t("workshopBullet5"),
             t("workshopBullet6"),
+            t("workshopBullet7"),
           ]}
           buttonLabel={t("workshopAccess")}
           signedIn={signedIn}
@@ -138,8 +142,18 @@ function PaidPlanCard({
 }) {
   const t = useTranslations("pricing");
   const monthly = PAID_PLANS[planKey].monthlyPriceUsd;
-  const displayPrice =
-    interval === "yearly" ? yearlyPriceUsd(planKey) : monthly;
+  // Launch pricing only ever applies to the monthly price — LAUNCH_PRICING
+  // has no yearly figure, so the yearly view is never discounted. Flipping
+  // LAUNCH_PRICING_ACTIVE without also updating the plan's real Creem
+  // product price would advertise a price checkout can't actually charge
+  // — see the operational note on LAUNCH_PRICING_ACTIVE in
+  // src/lib/pricing.ts before ever turning this on.
+  const isLaunchPricing = LAUNCH_PRICING_ACTIVE && interval === "monthly";
+  const displayPrice = interval === "yearly"
+    ? yearlyPriceUsd(planKey)
+    : isLaunchPricing
+      ? LAUNCH_PRICING[planKey].monthlyPriceUsd
+      : monthly;
   const priceSuffix = interval === "yearly" ? "/yr" : "/mo";
   const effectiveMonthly = effectiveMonthlyPriceUsd(planKey, interval);
 
@@ -148,6 +162,8 @@ function PaidPlanCard({
       title={title}
       price={`$${displayPrice}`}
       priceSuffix={priceSuffix}
+      listPrice={isLaunchPricing ? `$${monthly}` : undefined}
+      launchLabel={isLaunchPricing ? t("introPricing") : undefined}
       highlighted={highlighted}
       subline={
         interval === "yearly"
@@ -174,6 +190,8 @@ function PlanCard({
   title,
   price,
   priceSuffix,
+  listPrice,
+  launchLabel,
   subline,
   highlighted,
   children,
@@ -181,6 +199,13 @@ function PlanCard({
   title: string;
   price: string;
   priceSuffix: string;
+  // Present only when launch pricing is active for this card (see
+  // PaidPlanCard) — the struck-through list price shown alongside the
+  // discounted price, never on its own. No countdown timer, no "X hours
+  // left" urgency copy — just an honest "here's the list price, here's the
+  // introductory price" comparison.
+  listPrice?: string;
+  launchLabel?: string;
   subline?: string;
   highlighted?: boolean;
   children: React.ReactNode;
@@ -196,6 +221,16 @@ function PlanCard({
       }}
     >
       <h2 className="text-xl font-bold text-[var(--text-primary)]">{title}</h2>
+      {listPrice && (
+        <p className="mt-1 flex items-center gap-2">
+          <span className="text-sm text-[var(--text-muted)] line-through">{listPrice}</span>
+          {launchLabel && (
+            <span className="rounded-full border border-[var(--border-red)] px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-[var(--accent-red)]">
+              {launchLabel}
+            </span>
+          )}
+        </p>
+      )}
       <p className="mt-1 text-2xl font-bold text-[var(--accent-red)]">
         {price}
         <span className="text-sm text-[var(--text-muted)]">{priceSuffix}</span>

@@ -103,18 +103,21 @@
     "proBullet5": "Programmier- und Anlernhinweise",
     "proBullet6": "Zugriff auf PDF-Berichte",
     "proBullet7": "Gespeicherte Technikerfälle",
+    "proBullet8": "Zusätzliche Berichtspakete verfügbar",
     "workshopBullet1": "120 vollständige KI-Diagnoseberichte/Monat",
     "workshopBullet2": "Maximal 15 Berichte/Tag",
     "workshopBullet3": "Bis zu 3 Technikerkonten",
     "workshopBullet4": "Geteilte Kundenfälle",
     "workshopBullet5": "Geteilte Reparaturnotizen",
     "workshopBullet6": "Werkstatt-Diagnoseverlauf",
+    "workshopBullet7": "Zusätzliche Berichtspakete verfügbar",
     "upgradeToPro": "Auf Pro upgraden",
     "workshopAccess": "Workshop-Zugang",
     "fairUseNote": "KI-Diagnosekontingente werden täglich (kostenlose Vorschauen) oder monatlich (kostenpflichtige vollständige Berichte) zurückgesetzt und sind eine Fair-Use-Grenze, um den Dienst für alle zuverlässig zu halten — die meisten Fachkräfte kommen ihr nie nahe.",
     "yearlySubline": "~{amount} $/Monat — {discount} $ gegenüber monatlich sparen",
     "redirecting": "Weiterleitung…",
-    "emailForCheckout": "E-Mail-Adresse"
+    "emailForCheckout": "E-Mail-Adresse",
+    "introPricing": "Einführungspreis"
   },
   "account": {
     "title": "Mein Konto",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Zum KI-Diagnoseassistenten",
     "viewHistory": "Suchverlauf ansehen",
     "languagePreferences": "Sprach- & Regionseinstellungen",
-    "nearLimitReason": "Sie nähern sich dem heutigen KI-Limit des kostenlosen Tarifs. Pro bietet Ihnen ein deutlich größeres Monatskontingent."
+    "nearLimitReason": "Sie nähern sich dem heutigen KI-Limit des kostenlosen Tarifs. Pro bietet Ihnen ein deutlich größeres Monatskontingent.",
+    "addOnTitle": "Zusätzliche Berichtspakete",
+    "addOnDescription": "Benötigen Sie diesen Monat mehr Berichte, als Ihr Tarif enthält? Kaufen Sie ein Paket — Guthaben verfällt nie und wird automatisch verwendet, sobald Ihr monatliches Kontingent aufgebraucht ist.",
+    "addOnBalance": "{count} zusätzliche Berichte verbleibend",
+    "addOnBuy": "Kaufen",
+    "addOnUnavailable": "Zusätzliche Pakete können noch nicht gekauft werden."
   },
   "preferences": {
     "title": "Sprach- & Regionseinstellungen",

@@ -103,18 +103,21 @@
     "proBullet5": "Hướng dẫn lập trình và học lại",
     "proBullet6": "Truy cập báo cáo PDF",
     "proBullet7": "Lưu hồ sơ kỹ thuật viên",
+    "proBullet8": "Có gói báo cáo bổ sung",
     "workshopBullet1": "120 báo cáo chẩn đoán AI đầy đủ/tháng",
     "workshopBullet2": "Tối đa 15 báo cáo/ngày",
     "workshopBullet3": "Tối đa 3 tài khoản kỹ thuật viên",
     "workshopBullet4": "Hồ sơ khách hàng dùng chung",
     "workshopBullet5": "Ghi chú sửa chữa dùng chung",
     "workshopBullet6": "Lịch sử chẩn đoán của xưởng",
+    "workshopBullet7": "Có gói báo cáo bổ sung",
     "upgradeToPro": "Nâng cấp lên Pro",
     "workshopAccess": "Truy cập Workshop",
     "fairUseNote": "Hạn mức chẩn đoán AI đặt lại hàng ngày (bản xem trước miễn phí) hoặc hàng tháng (báo cáo đầy đủ trả phí) và là giới hạn sử dụng hợp lý để giữ dịch vụ ổn định cho mọi người — hầu hết kỹ thuật viên không bao giờ dùng gần đến mức đó.",
     "yearlySubline": "~${amount}/tháng — tiết kiệm ${discount} so với theo tháng",
     "redirecting": "Đang chuyển hướng…",
-    "emailForCheckout": "Địa chỉ email"
+    "emailForCheckout": "Địa chỉ email",
+    "introPricing": "Giá ưu đãi ra mắt"
   },
   "account": {
     "title": "Tài khoản của tôi",
@@ -123,7 +126,12 @@
     "goToAiAssistant": "Đến Trợ lý chẩn đoán AI",
     "viewHistory": "Xem lịch sử tìm kiếm",
     "languagePreferences": "Tùy chọn ngôn ngữ và khu vực",
-    "nearLimitReason": "Bạn sắp đạt giới hạn AI của gói Miễn phí hôm nay. Pro mang lại hạn mức hàng tháng lớn hơn nhiều."
+    "nearLimitReason": "Bạn sắp đạt giới hạn AI của gói Miễn phí hôm nay. Pro mang lại hạn mức hàng tháng lớn hơn nhiều.",
+    "addOnTitle": "Gói báo cáo bổ sung",
+    "addOnDescription": "Cần nhiều báo cáo hơn mức gói của bạn bao gồm trong tháng này? Hãy mua một gói — tín dụng không bao giờ hết hạn và được sử dụng tự động khi hạn mức hàng tháng của bạn hết.",
+    "addOnBalance": "Còn lại {count} báo cáo bổ sung",
+    "addOnBuy": "Mua",
+    "addOnUnavailable": "Các gói bổ sung chưa thể mua được."
   },
   "preferences": {
     "title": "Tùy chọn ngôn ngữ và khu vực",
