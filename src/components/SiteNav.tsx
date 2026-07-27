@@ -7,6 +7,7 @@ import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { env } from "@/lib/env";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
+import { SignOutButton } from "@/components/SignOutButton";
 import { localizeContentHref } from "@/lib/i18n/localized-href";
 
 // Auth state is fetched client-side (not passed from the root layout) so
@@ -95,12 +96,18 @@ export function SiteNav() {
         <div className="hidden items-center gap-3 md:flex">
           <LanguageSwitcher />
           {userEmail ? (
-            <Link
-              href="/account"
-              className="rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
-            >
-              {userEmail}
-            </Link>
+            <div className="flex items-center gap-2">
+              <Link
+                href="/account"
+                className="rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+              >
+                {userEmail}
+              </Link>
+              <SignOutButton
+                label={t("signOut")}
+                className="text-sm font-medium text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+              />
+            </div>
           ) : (
             <Link
               href="/account/login"
@@ -172,6 +179,12 @@ export function SiteNav() {
             >
               {userEmail ? userEmail : t("signIn")}
             </Link>
+            {userEmail && (
+              <SignOutButton
+                label={t("signOut")}
+                className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-3 text-center text-sm text-[var(--text-secondary)]"
+              />
+            )}
             <Link
               href={href("/dtc")}
               onClick={() => setMenuOpen(false)}
