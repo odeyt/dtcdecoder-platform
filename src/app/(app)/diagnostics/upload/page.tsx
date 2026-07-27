@@ -5,8 +5,8 @@ import { env } from "@/lib/env";
 import { ScanCaseUploadForm } from "@/components/ScanCaseUploadForm";
 
 export const metadata: Metadata = {
-  title: "Upload a Scan Report",
-  description: "Upload a diagnostic scan report to get a structured AI-assisted analysis.",
+  title: "Import Vehicle Scan",
+  description: "Import a diagnostic scan report to get a structured Professional Scan Analysis.",
 };
 
 export default async function DiagnosticsUploadPage() {

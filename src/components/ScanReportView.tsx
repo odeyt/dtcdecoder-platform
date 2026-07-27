@@ -6,6 +6,7 @@ import { CONFIDENCE_LABEL, isLegacyReport, resolveConfidenceLabel } from "@/lib/
 import type { DtcCategory } from "@/lib/scan-diagnostics/schemas";
 import type { ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
 import type { ScanCase, ScanDtcRecord, ScanExtraction } from "@/lib/types";
+import { BRAND_DISCLOSURE } from "@/lib/branding/terminology";
 
 // Confidence/rank fields are all OPTIONAL here on purpose: a schema_version
 // "1.0" report row (written before Diagnostic Safety v2) has neither
@@ -86,10 +87,10 @@ function CategoryBadge({ label, category }: { label: string; category: DtcCatego
   );
 }
 
-// AI-generated content is always visually distinguished from extracted/
-// user-entered data (the section headers below make this explicit) and is
-// never presented as OEM service information — see docs/SCAN_REPORT_ANALYSIS.md
-// and docs/DIAGNOSTIC_SAFETY_RULES.md.
+// Content prepared by DTC Technician is always visually distinguished from
+// extracted/user-entered data (the section headers below make this
+// explicit) and is never presented as OEM service information — see
+// docs/SCAN_REPORT_ANALYSIS.md and docs/DIAGNOSTIC_SAFETY_RULES.md.
 export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess }: ScanReportViewProps) {
   const { visibleResult, accessLevel, lockedSections } = reportAccess;
   const isFull = accessLevel === "full";
@@ -102,10 +103,10 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
   return (
     <div className="flex flex-col gap-10 print:gap-6">
       <header className="print:hidden">
-        <p className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">Diagnostic report</p>
+        <p className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">Professional Diagnostic Report</p>
         <div className="mt-2 flex flex-wrap items-center gap-3">
           <span className="rounded-full border border-[var(--border-subtle)] px-3 py-1 text-xs font-semibold text-[var(--text-secondary)]">
-            AI-generated — not OEM service information
+            Prepared by DTC Technician™ — not OEM service information
           </span>
           {!isFull && (
             <span className="rounded-full border border-[var(--border-red)] px-3 py-1 text-xs font-semibold text-[var(--accent-red)]">
@@ -113,10 +114,7 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
             </span>
           )}
         </div>
-        <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">
-          These findings are AI-assisted evidence review, not a confirmed diagnosis. They do not replace OEM service
-          information or a qualified technician&apos;s in-person verification.
-        </p>
+        <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">{BRAND_DISCLOSURE}</p>
       </header>
 
       {!isFull && (
@@ -246,7 +244,7 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
       )}
 
       {visibleResult.patterns.length > 0 && (
-        <ResultSection title="Key patterns (deterministic, not AI-generated)">
+        <ResultSection title="Key patterns (deterministic, not prepared by DTC Technician)">
           <div className="flex flex-col gap-2">
             {visibleResult.patterns.map((pattern) => (
               <div key={pattern.patternType} className="glass-panel rounded-[var(--radius-lg)] p-4">
@@ -342,7 +340,7 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
                 : `Translated from the English canonical report into ${visibleResult.resolvedLocale}.`}
             </p>
           )}
-          <ResultSection title="Components or systems requiring testing (AI-generated, not confirmed)">
+          <ResultSection title="Diagnostic Findings (prepared by DTC Technician™, not confirmed)">
             <div className="flex flex-col gap-4">
               {(visibleResult.rankedCauses as unknown as RankedCause[])!.map((cause, i) => (
                 <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
@@ -383,7 +381,7 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
             </div>
           </ResultSection>
 
-          <ResultSection title="Recommended confirmation test sequence (AI-generated)">
+          <ResultSection title="Recommended Next Tests (prepared by DTC Technician™)">
             <ol className="flex flex-col gap-3">
               {(visibleResult.recommendedTests as unknown as RecommendedTest[])!.map((test, i) => (
                 <li key={i} className="glass-panel rounded-[var(--radius-lg)] p-4">
@@ -401,12 +399,12 @@ export function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess 
           </ResultSection>
         </>
       ) : (
-        <ResultSection title="AI diagnostic report locked">
+        <ResultSection title="Professional Diagnostic Report locked">
           <div className="glass-panel rounded-[var(--radius-lg)] p-5">
             <p className="text-sm text-[var(--text-secondary)]">
-              AI-generated root-cause findings and test steps for this case are available on Pro Technician or
-              Workshop. The Free plan doesn&apos;t include AI diagnostic report generation or access to previously
-              generated reports.
+              DTC Technician&apos;s root-cause findings and test steps for this case are available on Pro Technician or
+              Workshop. The Free plan doesn&apos;t include Professional Diagnostic Report generation or access to
+              previously generated reports.
             </p>
           </div>
         </ResultSection>

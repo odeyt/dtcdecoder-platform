@@ -21,11 +21,11 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "DTC Decoder — AI-Powered Automotive Diagnostic Intelligence",
+    default: "DTC Decoder — Professional Automotive Diagnostic Platform",
     template: "%s | DTC Decoder",
   },
   description:
-    "Instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
+    "Consult DTC Technician, import vehicle scans, look up diagnostic codes, and follow guided evidence-based vehicle diagnosis.",
 };
 
 // Root layout for the account/admin/billing app shell — a route group

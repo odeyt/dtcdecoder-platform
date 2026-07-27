@@ -53,6 +53,45 @@ describe("Phase 1 branding — dtcTechnician namespace (Slice 1)", () => {
   });
 });
 
+describe("Phase 1 branding — global terminology rollout (Slice 6)", () => {
+  const SWEPT_NAMESPACES = ["nav", "footer", "home", "pricing", "account", "preferences", "dtcResult", "dtcSearch", "history", "meta"] as const;
+
+  it.each(SWEPT_NAMESPACES)("en.%s has no prohibited customer-facing terms", (ns) => {
+    assertNoProhibitedTerms((en as Record<string, unknown>)[ns] as Record<string, unknown>, `en.${ns}`);
+  });
+
+  it.each(SWEPT_NAMESPACES)("es.%s has no prohibited customer-facing terms", (ns) => {
+    assertNoProhibitedTerms((es as Record<string, unknown>)[ns] as Record<string, unknown>, `es.${ns}`);
+  });
+
+  it("nav uses the approved terminology (Quick Code Lookup, DTC Technician™, Professional Scan Analysis)", () => {
+    expect(en).toHaveProperty("nav.dtcLookup", "Quick Code Lookup");
+    expect(en).toHaveProperty("nav.aiDiagnostic", "DTC Technician™");
+    expect(en).toHaveProperty("nav.scanDiagnostics", "Professional Scan Analysis");
+  });
+
+  it("history is relabeled Consultation History", () => {
+    expect(en).toHaveProperty("history.title", "Consultation History");
+    expect(es).toHaveProperty("history.title", "Historial de Consultas");
+  });
+
+  it("pricing bullets reference Professional Diagnostic Reports, not AI diagnostic reports", () => {
+    const enPricing = collectStrings((en as Record<string, unknown>).pricing).join(" ");
+    expect(enPricing).toMatch(/Professional Diagnostic Report/);
+    expect(enPricing).not.toMatch(/AI diagnostic report/i);
+  });
+});
+
+describe("Phase 1 branding — report labels (ScanReportView.tsx)", () => {
+  it("no longer labels report sections as raw 'AI-generated' content", async () => {
+    const fs = await import("node:fs/promises");
+    const source = await fs.readFile(new URL("../src/components/ScanReportView.tsx", import.meta.url), "utf-8");
+    expect(source).not.toMatch(/AI-generated/);
+    expect(source).not.toMatch(/AI-assisted evidence review/);
+    expect(source).toContain("Prepared by DTC Technician");
+  });
+});
+
 describe("Phase 1 branding registry", () => {
   it("defines the canonical brand name with the trademark symbol", () => {
     expect(BRAND_NAME).toBe("DTC Technician™");

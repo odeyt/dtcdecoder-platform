@@ -154,7 +154,7 @@ export function QuickDiagnosticForm({
         className="mt-2 min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        Run Full AI Diagnosis
+        Run Full Professional Diagnosis
       </button>
     </form>
   );

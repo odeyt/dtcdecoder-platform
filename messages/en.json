@@ -1,8 +1,8 @@
 {
   "nav": {
-    "dtcLookup": "DTC Lookup",
-    "aiDiagnostic": "DTC Assistant",
-    "scanDiagnostics": "Scan Report Analysis",
+    "dtcLookup": "Quick Code Lookup",
+    "aiDiagnostic": "DTC Technician™",
+    "scanDiagnostics": "Professional Scan Analysis",
     "repairLibrary": "Repair Library",
     "history": "History",
     "pricing": "Pricing",
@@ -16,7 +16,7 @@
     "language": "Language"
   },
   "footer": {
-    "tagline": "AI-assisted automotive diagnostic intelligence — not a substitute for a qualified technician's in-person diagnosis.",
+    "tagline": "Evidence-based automotive diagnostic intelligence — not a substitute for a qualified technician's in-person diagnosis.",
     "product": "Product",
     "blog": "Blog",
     "videos": "Videos",
@@ -80,7 +80,7 @@
     "valueProp1Title": "Instant results",
     "valueProp1Body": "Get a structured diagnostic breakdown in seconds — no waiting on hold or digging through forums.",
     "valueProp2Title": "Grounded in verified data",
-    "valueProp2Body": "Every lookup is checked against a curated reference database before AI reasoning is layered on top.",
+    "valueProp2Body": "Every lookup is checked against a curated reference database before further diagnostic reasoning is layered on top.",
     "valueProp3Title": "Safety-first guidance",
     "valueProp3Body": "Recommendations flag the tests you need before replacing a part — never the other way around.",
     "pdfHeading": "Need the complete professional repair workflow?",
@@ -90,7 +90,7 @@
     "videoBody": "Full teardown-to-repair videos on every major fault code.",
     "watchOnYoutube": "Watch on YouTube",
     "pricingHeading": "Free to start. A lot more when you need it.",
-    "pricingBody": "Pro Technician and Workshop plans unlock full AI diagnostic reports — save with the yearly plan.",
+    "pricingBody": "Pro Technician and Workshop plans unlock full Professional Diagnostic Reports — save with the yearly plan.",
     "seePricing": "See Pricing"
   },
   "common": {
@@ -107,7 +107,7 @@
   },
   "pricing": {
     "title": "Pricing",
-    "subtitle": "Start free with unlimited DTC lookup. Upgrade for full AI diagnostic reports.",
+    "subtitle": "Start free with unlimited Quick Code Lookup. Upgrade for full Professional Diagnostic Reports.",
     "yourPlan": "You're on the {plan} plan",
     "planFree": "Free",
     "planPro": "Pro Technician",
@@ -120,17 +120,17 @@
     "freeBullet3": "10 basic searches per month",
     "freeBullet4": "Basic code definitions and common causes",
     "freeBullet5": "Essential reviewed safety warnings",
-    "freeBullet6": "AI diagnostics available on paid plans",
+    "freeBullet6": "DTC Technician available on paid plans",
     "startFree": "Start Free",
-    "proBullet1": "20 full AI diagnostic reports/month",
+    "proBullet1": "20 full Professional Diagnostic Reports/month",
     "proBullet2": "Maximum 3 reports/day",
     "proBullet3": "Advanced diagnostic workflows",
     "proBullet4": "Complete test procedures",
     "proBullet5": "Programming and relearn guidance",
     "proBullet6": "PDF report access",
-    "proBullet7": "Saved technician cases",
+    "proBullet7": "Saved Diagnostic Cases",
     "proBullet8": "Add-on report packs available",
-    "workshopBullet1": "75 full AI diagnostic reports/month",
+    "workshopBullet1": "75 full Professional Diagnostic Reports/month",
     "workshopBullet2": "Maximum 8 reports/day",
     "workshopBullet3": "Up to 3 technician accounts",
     "workshopBullet4": "Shared customer cases",
@@ -149,10 +149,10 @@
     "title": "My Account",
     "currentPlan": "Current plan",
     "upgradeToPro": "Upgrade to Pro",
-    "goToAiAssistant": "Go to the AI Diagnostic Assistant",
-    "viewHistory": "View search history",
+    "goToAiAssistant": "Go to DTC Technician™",
+    "viewHistory": "View Consultation History",
     "languagePreferences": "Language & region preferences",
-    "nearLimitReason": "You're close to today's Free plan AI limit. Pro gives you a much larger monthly allowance.",
+    "nearLimitReason": "You're close to today's Free plan limit for DTC Technician. Pro gives you a much larger monthly allowance.",
     "addOnTitle": "Add-on report packs",
     "addOnDescription": "Need more reports than your plan includes this month? Buy a pack — credits never expire and are used automatically once your monthly allowance runs out.",
     "addOnBalance": "{count} add-on reports remaining",
@@ -164,7 +164,7 @@
     "subtitle": "Choose your interface language, AI report language, and display currency.",
     "languageSection": "Language preferences",
     "interfaceLanguage": "Default interface language",
-    "aiReportLanguage": "AI report language",
+    "aiReportLanguage": "Diagnostic report language",
     "englishDefault": "English (default)",
     "secondaryLanguage": "Secondary report language",
     "none": "None",
@@ -194,11 +194,11 @@
     "save": "Save preferences",
     "saving": "Saving…",
     "saved": "Preferences saved.",
-    "upgradeReason": "Language, AI report, and currency preferences are saved for Pro and Workshop plans. Free accounts can still switch the interface language temporarily on any page."
+    "upgradeReason": "Language, diagnostic report, and currency preferences are saved for Pro and Workshop plans. Free accounts can still switch the interface language temporarily on any page."
   },
   "dtcResult": {
     "generic": "Generic",
-    "sourcedFrom": "Sourced from our reviewed reference database — not AI-generated.",
+    "sourcedFrom": "Sourced from our reviewed reference database — not generated by DTC Technician.",
     "driveRecommendation": "Drive recommendation",
     "mostLikelyCauses": "Most likely causes",
     "reportedSymptoms": "Reported symptoms",
@@ -213,7 +213,7 @@
     "model": "Model",
     "engine": "Engine",
     "disclaimer": "This information is for diagnostic guidance only and is not a substitute for a qualified technician's in-person inspection. Always confirm a cause with the recommended tests before replacing parts.",
-    "upgradeCta": "Want a much larger monthly AI diagnostic allowance?",
+    "upgradeCta": "Want a much larger monthly diagnostic allowance?",
     "upgradeButton": "Upgrade to Pro",
     "difficultyEasy": "Easy — most DIYers can verify this",
     "difficultyModerate": "Moderate — some diagnostic tools helpful",
@@ -222,13 +222,13 @@
     "contentNotLocalizedNote": "This code's reference content (meaning, causes, steps) is shown in its original English — only the surrounding labels are localized."
   },
   "dtcSearch": {
-    "title": "DTC Lookup",
+    "title": "Quick Code Lookup",
     "subtitle": "Enter a fault code, symptom, or vehicle issue.",
     "searchLabel": "Enter a DTC code, symptom, or vehicle issue",
     "placeholder": "Enter DTC code, symptom, or vehicle issue...",
     "decode": "Decode",
-    "noResults": "No published results for “{query}” yet. Try a specific code like P0420, or ask the",
-    "askAiAssistant": "AI assistant"
+    "noResults": "No published results for “{query}” yet. Try a specific code like P0420, or ask",
+    "askAiAssistant": "DTC Technician"
   },
   "dtcError": {
     "eyebrow": "Diagnostic lookup failed",
@@ -290,17 +290,17 @@
     "freeLockedCta": "View plans"
   },
   "history": {
-    "title": "Search History",
-    "subtitle": "Every DTC lookup and AI question you've made while signed in.",
-    "empty": "Nothing here yet — your searches will appear once you decode a code or ask the AI assistant.",
+    "title": "Consultation History",
+    "subtitle": "Every DTC lookup and DTC Technician question you've made while signed in.",
+    "empty": "Nothing here yet — your searches will appear once you decode a code or ask DTC Technician.",
     "decodeACode": "Decode a code",
     "lookup": "LOOKUP",
-    "aiQuestion": "AI QUESTION"
+    "aiQuestion": "DTC TECHNICIAN"
   },
   "meta": {
-    "homeTitle": "DTC Decoder — AI-Powered Automotive Diagnostic Intelligence",
-    "homeDescription": "Instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
-    "dtcSearchTitle": "DTC Lookup",
+    "homeTitle": "DTC Decoder — Professional Automotive Diagnostic Platform",
+    "homeDescription": "Consult DTC Technician, import vehicle scans, look up diagnostic codes, and follow guided evidence-based vehicle diagnosis.",
+    "dtcSearchTitle": "Quick Code Lookup",
     "dtcSearchDescription": "Search any diagnostic trouble code, symptom, or vehicle issue for an instant explanation.",
     "pricingTitle": "Pricing",
     "pricingDescription": "Free, Pro Technician, and Workshop plans for DTC Decoder.",

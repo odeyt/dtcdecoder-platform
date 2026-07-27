@@ -9,7 +9,7 @@ import { notFound } from "next/navigation";
 import { QuickDiagnosticForm } from "@/components/QuickDiagnosticForm";
 import { recordEvent } from "@/lib/analytics/events";
 
-export const metadata: Metadata = { title: "Run Full AI Diagnosis" };
+export const metadata: Metadata = { title: "Run Full Professional Diagnosis" };
 
 type Props = {
   searchParams: Promise<{
@@ -22,7 +22,7 @@ type Props = {
   }>;
 };
 
-// The "Run Full AI Diagnosis" entry point linked from DTC search results
+// The "Run Full Professional Diagnosis" entry point linked from DTC search results
 // (known-code page, unknown-code fallback, and the main search page).
 // Three states, matching the spec exactly: unauthenticated -> sign-in
 // (preserving this exact URL, DTC code included, via the next= param —
@@ -46,9 +46,9 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
     return (
       <div className="container-app px-6 py-16">
         <div className="mx-auto max-w-lg text-center">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full AI Diagnosis</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full Professional Diagnosis</h1>
           <p className="mt-3 text-[var(--text-secondary)]">
-            Sign in to run a full, vehicle-specific AI diagnostic report{params.code ? ` for ${params.code}` : ""}.
+            Sign in to run a full, vehicle-specific Professional Diagnostic Report{params.code ? ` for ${params.code}` : ""}.
             Your entered details are saved — you won&apos;t need to start over.
           </p>
           <Link
@@ -70,9 +70,9 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
     return (
       <div className="container-app px-6 py-16">
         <div className="mx-auto max-w-lg text-center">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full AI Diagnosis</h1>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full Professional Diagnosis</h1>
           <p className="mt-3 text-[var(--text-secondary)]">
-            Full AI diagnosis is available on Pro Technician and Workshop plans. Your entered details
+            Full Professional Diagnosis is available on Pro Technician and Workshop plans. Your entered details
             {params.code ? ` for ${params.code}` : ""} are still here — come back to this page after upgrading.
           </p>
           <Link
@@ -93,9 +93,9 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
   return (
     <div className="container-app px-6 py-16">
       <div className="mx-auto max-w-2xl">
-        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full AI Diagnosis</h1>
+        <h1 className="text-2xl font-bold text-[var(--text-primary)]">Run Full Professional Diagnosis</h1>
         <p className="mt-2 text-[var(--text-secondary)]">
-          Add what you know — every field except the DTC code is optional. This counts as one AI diagnostic report
+          Add what you know — every field except the DTC code is optional. This counts as one Professional Diagnostic Report
           against your plan&apos;s monthly allowance.
         </p>
         <div className="mt-8">

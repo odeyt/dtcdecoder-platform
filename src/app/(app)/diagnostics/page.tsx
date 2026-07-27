@@ -6,8 +6,8 @@ import { env } from "@/lib/env";
 import { listCasesForOwner } from "@/lib/scan-diagnostics/cases";
 
 export const metadata: Metadata = {
-  title: "Diagnostic Scan Cases",
-  description: "Upload a scan tool report and get an AI-assisted diagnostic analysis.",
+  title: "Diagnostic Cases",
+  description: "Import a vehicle scan report and get a Professional Scan Analysis.",
 };
 
 const STATUS_LABELS: Record<string, string> = {
@@ -38,9 +38,9 @@ export default async function DiagnosticsPage() {
       <div className="mx-auto max-w-2xl">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Diagnostic Scan Cases</h1>
+            <h1 className="text-3xl font-bold text-[var(--text-primary)]">Diagnostic Cases</h1>
             <p className="mt-2 text-[var(--text-secondary)]">
-              Upload a scan tool report and get a structured, AI-assisted diagnostic analysis.
+              Import a vehicle scan report and get a structured Professional Scan Analysis.
             </p>
           </div>
         </div>
@@ -49,7 +49,7 @@ export default async function DiagnosticsPage() {
           href="/diagnostics/upload"
           className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
         >
-          Upload a scan report
+          Import Vehicle Scan
         </Link>
 
         {cases.length === 0 ? (

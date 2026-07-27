@@ -1,8 +1,8 @@
 {
   "nav": {
-    "dtcLookup": "Buscar Código DTC",
-    "aiDiagnostic": "Asistente DTC",
-    "scanDiagnostics": "Análisis de Reporte de Escaneo",
+    "dtcLookup": "Búsqueda Rápida de Código",
+    "aiDiagnostic": "DTC Technician™",
+    "scanDiagnostics": "Análisis Profesional de Escaneo",
     "repairLibrary": "Biblioteca de Reparación",
     "history": "Historial",
     "pricing": "Precios",
@@ -16,7 +16,7 @@
     "language": "Idioma"
   },
   "footer": {
-    "tagline": "Inteligencia de diagnóstico automotriz asistida por IA — no sustituye el diagnóstico presencial de un técnico calificado.",
+    "tagline": "Inteligencia de diagnóstico automotriz basada en evidencia — no sustituye el diagnóstico presencial de un técnico calificado.",
     "product": "Producto",
     "blog": "Blog",
     "videos": "Videos",
@@ -80,7 +80,7 @@
     "valueProp1Title": "Resultados instantáneos",
     "valueProp1Body": "Obtén un desglose diagnóstico estructurado en segundos — sin esperar en espera ni buscar en foros.",
     "valueProp2Title": "Basado en datos verificados",
-    "valueProp2Body": "Cada búsqueda se verifica contra una base de datos de referencia curada antes de aplicar el razonamiento de IA.",
+    "valueProp2Body": "Cada búsqueda se verifica contra una base de datos de referencia curada antes de aplicar un razonamiento diagnóstico adicional.",
     "valueProp3Title": "Seguridad ante todo",
     "valueProp3Body": "Las recomendaciones indican las pruebas necesarias antes de reemplazar una pieza — nunca al revés.",
     "pdfHeading": "¿Necesitas el flujo de trabajo de reparación profesional completo?",
@@ -90,7 +90,7 @@
     "videoBody": "Videos completos de desarme a reparación para cada código de falla principal.",
     "watchOnYoutube": "Ver en YouTube",
     "pricingHeading": "Gratis para empezar. Mucho más cuando lo necesites.",
-    "pricingBody": "Los planes Pro Técnico y Taller desbloquean reportes completos de diagnóstico con IA — ahorra con el plan anual.",
+    "pricingBody": "Los planes Pro Técnico y Taller desbloquean Reportes de Diagnóstico Profesional completos — ahorra con el plan anual.",
     "seePricing": "Ver Precios"
   },
   "common": {
@@ -107,7 +107,7 @@
   },
   "pricing": {
     "title": "Precios",
-    "subtitle": "Empieza gratis con búsqueda ilimitada de DTC. Actualiza para obtener reportes completos de diagnóstico con IA.",
+    "subtitle": "Empieza gratis con Búsqueda Rápida de Código ilimitada. Actualiza para obtener Reportes de Diagnóstico Profesional completos.",
     "yourPlan": "Estás en el plan {plan}",
     "planFree": "Gratis",
     "planPro": "Pro Técnico",
@@ -120,17 +120,17 @@
     "freeBullet3": "10 búsquedas básicas por mes",
     "freeBullet4": "Definiciones básicas de códigos y causas comunes",
     "freeBullet5": "Advertencias de seguridad esenciales revisadas",
-    "freeBullet6": "Diagnóstico con IA disponible en planes de pago",
+    "freeBullet6": "DTC Technician disponible en planes de pago",
     "startFree": "Empezar gratis",
-    "proBullet1": "20 reportes completos de diagnóstico con IA al mes",
+    "proBullet1": "20 Reportes de Diagnóstico Profesional completos al mes",
     "proBullet2": "Máximo 3 reportes por día",
     "proBullet3": "Flujos de diagnóstico avanzados",
     "proBullet4": "Procedimientos de prueba completos",
     "proBullet5": "Guía de programación y reaprendizaje",
     "proBullet6": "Acceso a reportes en PDF",
-    "proBullet7": "Casos de técnicos guardados",
+    "proBullet7": "Casos de Diagnóstico Guardados",
     "proBullet8": "Paquetes adicionales de reportes disponibles",
-    "workshopBullet1": "75 reportes completos de diagnóstico con IA al mes",
+    "workshopBullet1": "75 Reportes de Diagnóstico Profesional completos al mes",
     "workshopBullet2": "Máximo 8 reportes por día",
     "workshopBullet3": "Hasta 3 cuentas de técnicos",
     "workshopBullet4": "Casos de clientes compartidos",
@@ -149,10 +149,10 @@
     "title": "Mi Cuenta",
     "currentPlan": "Plan actual",
     "upgradeToPro": "Actualizar a Pro",
-    "goToAiAssistant": "Ir al Asistente de Diagnóstico IA",
-    "viewHistory": "Ver historial de búsquedas",
+    "goToAiAssistant": "Ir a DTC Technician™",
+    "viewHistory": "Ver Historial de Consultas",
     "languagePreferences": "Preferencias de idioma y región",
-    "nearLimitReason": "Estás cerca del límite diario de IA del plan Gratis. Pro te da una asignación mensual mucho mayor.",
+    "nearLimitReason": "Estás cerca del límite diario de DTC Technician del plan Gratis. Pro te da una asignación mensual mucho mayor.",
     "addOnTitle": "Paquetes adicionales de reportes",
     "addOnDescription": "¿Necesitas más reportes de los que incluye tu plan este mes? Compra un paquete — los créditos no caducan y se usan automáticamente cuando se agota tu límite mensual.",
     "addOnBalance": "{count} reportes adicionales restantes",
@@ -164,7 +164,7 @@
     "subtitle": "Elige tu idioma de interfaz, idioma del informe de IA y moneda de visualización.",
     "languageSection": "Preferencias de idioma",
     "interfaceLanguage": "Idioma predeterminado de la interfaz",
-    "aiReportLanguage": "Idioma del informe de IA",
+    "aiReportLanguage": "Idioma del informe de diagnóstico",
     "englishDefault": "Inglés (predeterminado)",
     "secondaryLanguage": "Idioma secundario del informe",
     "none": "Ninguno",
@@ -194,11 +194,11 @@
     "save": "Guardar preferencias",
     "saving": "Guardando…",
     "saved": "Preferencias guardadas.",
-    "upgradeReason": "Las preferencias de idioma, informe de IA y moneda se guardan para los planes Pro y Taller. Las cuentas gratuitas aún pueden cambiar el idioma de la interfaz temporalmente en cualquier página."
+    "upgradeReason": "Las preferencias de idioma, informe de diagnóstico y moneda se guardan para los planes Pro y Taller. Las cuentas gratuitas aún pueden cambiar el idioma de la interfaz temporalmente en cualquier página."
   },
   "dtcResult": {
     "generic": "Genérico",
-    "sourcedFrom": "Obtenido de nuestra base de datos de referencia revisada — no generado por IA.",
+    "sourcedFrom": "Obtenido de nuestra base de datos de referencia revisada — no generado por DTC Technician.",
     "driveRecommendation": "Recomendación de conducción",
     "mostLikelyCauses": "Causas más probables",
     "reportedSymptoms": "Síntomas reportados",
@@ -213,7 +213,7 @@
     "model": "Modelo",
     "engine": "Motor",
     "disclaimer": "Esta información es solo orientación de diagnóstico y no sustituye la inspección presencial de un técnico calificado. Siempre confirma una causa con las pruebas recomendadas antes de reemplazar piezas.",
-    "upgradeCta": "¿Quieres una asignación mensual de diagnóstico IA mucho mayor?",
+    "upgradeCta": "¿Quieres una asignación mensual de diagnóstico mucho mayor?",
     "upgradeButton": "Actualizar a Pro",
     "difficultyEasy": "Fácil — la mayoría de aficionados pueden verificarlo",
     "difficultyModerate": "Moderado — algunas herramientas de diagnóstico son útiles",
@@ -222,13 +222,13 @@
     "contentNotLocalizedNote": "El contenido de referencia de este código (significado, causas, pasos) se muestra en su inglés original — solo las etiquetas circundantes están localizadas."
   },
   "dtcSearch": {
-    "title": "Buscar código DTC",
+    "title": "Búsqueda Rápida de Código",
     "subtitle": "Ingresa un código de falla, síntoma o problema del vehículo.",
     "searchLabel": "Ingresa un código DTC, síntoma o problema del vehículo",
     "placeholder": "Ingresa código DTC, síntoma o problema del vehículo...",
     "decode": "Decodificar",
-    "noResults": "Aún no hay resultados publicados para “{query}”. Prueba con un código específico como P0420, o pregúntale al",
-    "askAiAssistant": "asistente de IA"
+    "noResults": "Aún no hay resultados publicados para “{query}”. Prueba con un código específico como P0420, o pregúntale a",
+    "askAiAssistant": "DTC Technician"
   },
   "dtcError": {
     "eyebrow": "Error en la búsqueda de diagnóstico",
@@ -290,17 +290,17 @@
     "freeLockedCta": "Ver planes"
   },
   "history": {
-    "title": "Historial de Búsquedas",
-    "subtitle": "Cada búsqueda de DTC y pregunta de IA que has hecho mientras tenías sesión iniciada.",
-    "empty": "Aún no hay nada aquí — tus búsquedas aparecerán cuando decodifiques un código o le preguntes al asistente de IA.",
+    "title": "Historial de Consultas",
+    "subtitle": "Cada búsqueda de DTC y pregunta a DTC Technician que has hecho mientras tenías sesión iniciada.",
+    "empty": "Aún no hay nada aquí — tus búsquedas aparecerán cuando decodifiques un código o le preguntes a DTC Technician.",
     "decodeACode": "Decodificar un código",
     "lookup": "BÚSQUEDA",
-    "aiQuestion": "PREGUNTA IA"
+    "aiQuestion": "DTC TECHNICIAN"
   },
   "meta": {
-    "homeTitle": "DTC Decoder — Inteligencia de Diagnóstico Automotriz con IA",
-    "homeDescription": "Decodifica códigos de falla al instante, entiende síntomas, encuentra causas comunes y sigue pasos de diagnóstico profesionales antes de reemplazar piezas.",
-    "dtcSearchTitle": "Buscar código DTC",
+    "homeTitle": "DTC Decoder — Plataforma Profesional de Diagnóstico Automotriz",
+    "homeDescription": "Consulta a DTC Technician, importa escaneos del vehículo, busca códigos de diagnóstico y sigue un diagnóstico guiado basado en evidencia.",
+    "dtcSearchTitle": "Búsqueda Rápida de Código",
     "dtcSearchDescription": "Busca cualquier código de falla, síntoma o problema del vehículo para obtener una explicación instantánea.",
     "pricingTitle": "Precios",
     "pricingDescription": "Planes Gratis, Pro Técnico y Taller para DTC Decoder.",
