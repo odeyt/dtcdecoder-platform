@@ -281,7 +281,11 @@ export function GuidedDiagnosisPanel({ initialCaseId, onCaseCreated }: GuidedDia
               <p className="text-xs text-[var(--text-muted)]">{turnResult.safety.reasoning}</p>
 
               {turnResult.safety.hvHazard && (
-                <div className="mt-2 space-y-1 rounded-[var(--radius-md)] border border-[var(--border-red)] bg-[var(--accent-red)]/10 p-3 text-xs">
+                <div
+                  role="alert"
+                  aria-live="assertive"
+                  className="mt-2 space-y-1 rounded-[var(--radius-md)] border border-[var(--border-red)] bg-[var(--accent-red)]/10 p-3 text-xs"
+                >
                   <p className="font-semibold text-[var(--accent-red)]">{t("guidedDiagnosisHazardLabel")}</p>
                   <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.hazardCategory.replace(/_/g, " ")}</p>
                   <p className="font-semibold text-[var(--text-primary)]">{t("guidedDiagnosisImmediateActionLabel")}</p>

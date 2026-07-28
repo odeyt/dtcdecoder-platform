@@ -135,6 +135,47 @@ describe("releaseDiagnosticEngineUsage", () => {
   });
 });
 
+describe("recordDiagnosticEngineUsage — concurrent reservation (Phase 2.2 Step 14)", () => {
+  it("never over-admits past the daily limit when many distinct requests are dispatched concurrently", async () => {
+    // Free plan's daily turn limit is 3 (entitlements.ts). Fire 6
+    // concurrent distinct-requestId reservation attempts; exactly 3 must
+    // succeed and 3 must be rejected, never more than 3 ever recorded.
+    const attempts = await Promise.allSettled(
+      Array.from({ length: 6 }, (_, i) =>
+        recordDiagnosticEngineUsage({
+          userId: "user-1",
+          email: "free@example.com",
+          requestId: `concurrent-${i}`,
+          feature: "diagnostic_engine_turn",
+          plan: "free",
+        }),
+      ),
+    );
+
+    const succeeded = attempts.filter((a) => a.status === "fulfilled").length;
+    const rejected = attempts.filter((a) => a.status === "rejected").length;
+    expect(succeeded).toBe(3);
+    expect(rejected).toBe(3);
+    expect(fake().dump("diagnostic_engine_usage")).toHaveLength(3);
+  });
+
+  it("concurrent retries of the SAME requestId never record more than one slot", async () => {
+    const results = await Promise.allSettled(
+      Array.from({ length: 5 }, () =>
+        recordDiagnosticEngineUsage({
+          userId: "user-1",
+          email: "free@example.com",
+          requestId: "same-request",
+          feature: "diagnostic_engine_turn",
+          plan: "free",
+        }),
+      ),
+    );
+    expect(results.every((r) => r.status === "fulfilled")).toBe(true);
+    expect(fake().dump("diagnostic_engine_usage").filter((r) => r.request_id === "same-request")).toHaveLength(1);
+  });
+});
+
 describe("getDiagnosticEngineUsageSummary", () => {
   it("reflects real recorded usage plus the plan's own limits", async () => {
     await recordDiagnosticEngineUsage({
