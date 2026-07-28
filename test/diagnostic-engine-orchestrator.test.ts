@@ -195,14 +195,19 @@ afterEach(() => {
 });
 
 describe("runDiagnosticEngineTurn — feature flags default off", () => {
-  it("with every flag off, only collects evidence and returns a null response/graph", async () => {
+  it("with every flag off, only collects evidence and returns a null response/graph, but a real (non-null) safety classification", async () => {
     seedCase("case-1", "user-1");
     const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
 
     expect(result.response).toBeNull();
     expect(result.graph).toBeNull();
     expect(result.testPlan).toEqual([]);
-    expect(result.safety).toBeNull();
+    // Deterministic safety is independent of the AI/probability module flag
+    // (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md) — this fixture's DTC
+    // (P0562, generic voltage code) has no safety-relevant evidence, so the
+    // real, non-null classification is "safe_to_drive", not null.
+    expect(result.safety).not.toBeNull();
+    expect(result.safety.status).toBe("safe_to_drive");
     expect(result.evidenceCount).toBeGreaterThan(0);
     expect(fake().dump("diagnostic_probabilities")).toHaveLength(0);
   });
@@ -392,6 +397,136 @@ describe("runDiagnosticEngineTurn — test planner and safety", () => {
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
     const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(result.safety).not.toBeNull();
+  });
+});
+
+// docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md — regression coverage for the
+// real production finding: safety must never be null, and must be
+// recomputed from current evidence regardless of whether the AI call
+// actually ran this turn.
+function seedHazardCase(caseId: string, userId: string, dtcStatus: "current" | "history") {
+  fake().seed("scan_cases", [
+    { id: caseId, user_id: userId, status: "completed", complaint: "HV warning light", symptoms: ["Won't enter Ready mode"], mileage: 12000, recent_repairs: null, battery_condition: null, technician_notes: null },
+  ]);
+  fake().seed("scan_dtc_records", [
+    { id: `${caseId}-dtc`, case_id: caseId, module: "HVBMS", code: "P0AA6", status: dtcStatus, description_raw: "Hybrid/EV Battery Isolation Fault" },
+  ]);
+}
+
+describe("runDiagnosticEngineTurn — Core regression: safety is never null (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md)", () => {
+  it("active HV hazard, AI call runs: immediate_stop, drivingAllowed=false, chargingAllowed=false", async () => {
+    seedHazardCase("case-1", "user-1", "current");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    const { deriveOperationalGuidance } = await import("@/lib/diagnostic-engine/safety");
+    expect(result.safety.status).toBe("immediate_stop");
+    expect(result.costOptimization.aiCallSkipped).toBe(false);
+    expect(deriveOperationalGuidance(result.safety.status)).toMatchObject({ drivingAllowed: false, chargingAllowed: false });
+  });
+
+  it("active HV hazard, AI call skipped (unchanged evidence): safety is NOT null and still immediate_stop", async () => {
+    seedHazardCase("case-1", "user-1", "current");
+    setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
+
+    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    expect(first.safety.status).toBe("immediate_stop");
+    expect(first.costOptimization.aiCallSkipped).toBe(false);
+
+    // Second turn against IDENTICAL evidence — this is the exact real
+    // production scenario that returned `safety: null` before the fix.
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    const { deriveOperationalGuidance } = await import("@/lib/diagnostic-engine/safety");
+    expect(second.costOptimization.aiCallSkipped).toBe(true);
+    expect(second.safety).not.toBeNull();
+    expect(second.safety.status).toBe("immediate_stop");
+    expect(deriveOperationalGuidance(second.safety.status)).toMatchObject({ drivingAllowed: false, chargingAllowed: false });
+  });
+
+  it("historical/inactive HV-worded code, AI call runs: does not reach immediate_stop", async () => {
+    seedHazardCase("case-1", "user-1", "history");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    expect(result.costOptimization.aiCallSkipped).toBe(false);
+    expect(result.safety.status).not.toBe("immediate_stop");
+  });
+
+  it("historical/inactive HV-worded code, AI call skipped: safety is NOT null and still does not over-trigger", async () => {
+    seedHazardCase("case-1", "user-1", "history");
+    setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
+
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    expect(second.costOptimization.aiCallSkipped).toBe(true);
+    expect(second.safety).not.toBeNull();
+    expect(second.safety.status).not.toBe("immediate_stop");
+  });
+
+  it("adding new hazard evidence after a prior safe turn forces a fresh AI call (does not skip) and reclassifies to immediate_stop", async () => {
+    seedCase("case-1", "user-1"); // generic, no hazard
+    setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
+    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    expect(first.safety.status).not.toBe("immediate_stop");
+
+    const { insertEvidence } = await import("@/lib/diagnostic-engine/evidence");
+    await insertEvidence("case-1", [
+      { type: "hv_safety_hazard", value: { code: "P0AA6", hazardCategory: "hv_isolation_fault" }, source: "derived", confidence: "high" },
+    ]);
+
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    // Evidence changed (new hazard item) since the graph was last saved —
+    // this must NOT be treated as a redundant/unchanged-evidence skip.
+    expect(second.costOptimization.aiCallSkipped).toBe(false);
+    expect(second.safety.status).toBe("immediate_stop");
+  });
+
+  it("hazard evidence removed/changed from current to historical between turns reclassifies down from immediate_stop", async () => {
+    seedHazardCase("case-1", "user-1", "current");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    expect(first.safety.status).toBe("immediate_stop");
+
+    // Simulate the DTC being reclassified historical (e.g. code cleared and
+    // not recurring) — a fresh case with the same DTC but "history" status.
+    seedHazardCase("case-2", "user-1", "history");
+    const second = await runDiagnosticEngineTurn("user-1", "case-2", fakeProvider(), defaultBilling());
+    expect(second.safety.status).not.toBe("immediate_stop");
+  });
+
+  it("empty evidence classifies safe_to_drive, never null", async () => {
+    fake().seed("scan_cases", [{ id: "case-1", user_id: "user-1", status: "draft", complaint: null, symptoms: [], mileage: null, recent_repairs: null, battery_condition: null, technician_notes: null }]);
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    expect(result.safety).not.toBeNull();
+    expect(result.safety.status).toBe("safe_to_drive");
+  });
+
+  it("unauthorized cross-user access is denied before any safety computation occurs", async () => {
+    seedHazardCase("case-1", "user-1", "current");
+    await expect(runDiagnosticEngineTurn("user-2", "case-1", fakeProvider(), defaultBilling())).rejects.toBeInstanceOf(ScanCaseNotFoundError);
+  });
+
+  it("a malformed/failing AI provider call never fabricates a completed response, but still throws rather than silently returning safety:null in a 200-shaped result", async () => {
+    seedHazardCase("case-1", "user-1", "current");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const failingProvider: DiagnosticAIProvider = {
+      id: "failing-provider",
+      async runDiagnosis() {
+        throw new Error("not used");
+      },
+      async runDiagnosticEngineTurn() {
+        throw new Error("simulated provider failure");
+      },
+    };
+    await expect(runDiagnosticEngineTurn("user-1", "case-1", failingProvider, defaultBilling())).rejects.toThrow(
+      "simulated provider failure",
+    );
+    // Confirms the failure path never returns a DiagnosticEngineTurnResult
+    // object at all (see audit doc's scope-boundary decision) — the API
+    // route's toSafeErrorResponse converts this to a safe error response
+    // instead, which is a distinct code path from the safety:null bug.
   });
 });
 

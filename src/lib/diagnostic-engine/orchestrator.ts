@@ -70,7 +70,10 @@ export interface DiagnosticEngineTurnResult {
   // costOptimization.aiCallSkipped) or had the probability engine off.
   hypotheses: RankedHypothesis[];
   testPlan: PlannedTest[];
-  safety: DriveSafetyClassification | null;
+  // Never null (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md) — computed
+  // unconditionally from persisted evidence on every turn, independent of
+  // whether the AI call ran, was skipped, or the module flag is off.
+  safety: DriveSafetyClassification;
   evidenceCount: number;
   costOptimization: { aiCallSkipped: boolean };
 }
@@ -308,7 +311,16 @@ export async function runDiagnosticEngineTurn(
   const testPlan =
     DIAGNOSTIC_ENGINE_FLAGS.testPlannerEnabled() && aiOutput ? buildTestPlan(aiOutput, hypotheses) : [];
 
-  const safety = aiOutput ? classifyDriveSafety(evidence, aiOutput.safetyWarnings) : null;
+  // Deterministic safety must never depend on whether the AI happened to
+  // run THIS turn (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md) — evidence
+  // is the only required input, and classifyDriveSafety already treats an
+  // empty safetyWarnings list correctly (the AI-text signal simply can't
+  // raise anything above the evidence floor). Computing this unconditionally
+  // means a real hazard already reflected in persisted evidence is never
+  // silently dropped just because this specific turn skipped the provider
+  // call, ran with the module flag off, or reused an existing hypothesis
+  // snapshot.
+  const safety = classifyDriveSafety(evidence, aiOutput?.safetyWarnings ?? []);
 
   const response = aiOutput
     ? formatDiagnosticEngineResponse({ output: aiOutput, evidence, hypotheses, confidence, nextQuestion: persistedQuestion })
