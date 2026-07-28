@@ -180,6 +180,30 @@ export async function recordQuestion(caseId: string, candidate: CandidateQuestio
   return fromRow(data as QuestionRow);
 }
 
+// Phase 2.1 failure handling (docs/PHASE_2_1_RELEASE_PLAN.md §"duplicate
+// answer submission") — thrown instead of letting a second answer attempt
+// hit diagnostic_answers' unique-on-question_id constraint as a raw,
+// unclassified database error. A duplicate submission (e.g. a client
+// double-click, or a retried request after a slow response the client
+// gave up on) is an expected, safe-to-reject case, not a failure.
+export class DuplicateAnswerError extends Error {
+  constructor() {
+    super("This question has already been answered.");
+    this.name = "DuplicateAnswerError";
+  }
+}
+
+// Phase 2.1 security fix (docs/PHASE_2_1_RLS_SECURITY.md §"recordAnswer cross-case write"):
+// the caller (the /answers route) has already verified the CASE belongs to
+// the requesting user via getCaseForOwner, but that says nothing about
+// whether the QUESTION id in the request body actually belongs to that
+// case — a client could otherwise submit a foreign questionId belonging to
+// someone else's case and both attribute an answer to it under their own
+// case AND flip that other case's question to answered. Reusing
+// ScanCaseNotFoundError here (rather than a new error type) because the
+// caller-facing behavior is identical: whatever was asked for isn't there
+// for this case, full stop — no signal is given about whether the question
+// id is invalid vs. simply belongs to someone else.
 export async function recordAnswer(
   questionId: string,
   caseId: string,
@@ -187,6 +211,21 @@ export async function recordAnswer(
   answerValue?: unknown,
 ): Promise<DiagnosticAnswer> {
   const supabase = createAdminClient();
+
+  const { data: questionRow, error: questionError } = await supabase
+    .from("diagnostic_questions")
+    .select("id, answered")
+    .eq("id", questionId)
+    .eq("case_id", caseId)
+    .maybeSingle();
+  if (questionError) throw questionError;
+  if (!questionRow) {
+    const { ScanCaseNotFoundError } = await import("@/lib/scan-diagnostics/api-errors");
+    throw new ScanCaseNotFoundError();
+  }
+  if (questionRow.answered) {
+    throw new DuplicateAnswerError();
+  }
 
   const { data, error } = await supabase
     .from("diagnostic_answers")
@@ -198,7 +237,8 @@ export async function recordAnswer(
   const { error: updateError } = await supabase
     .from("diagnostic_questions")
     .update({ answered: true })
-    .eq("id", questionId);
+    .eq("id", questionId)
+    .eq("case_id", caseId);
   if (updateError) throw updateError;
 
   return {
