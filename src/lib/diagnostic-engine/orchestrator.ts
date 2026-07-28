@@ -123,6 +123,18 @@ export async function runDiagnosticEngineTurn(
 
   const evidence = await ensureInitialEvidence(caseId);
 
+  // Computed once, early, from evidence alone — the correct value for
+  // every branch that never reaches a successful AI call (module
+  // disabled, cost-optimization skip, budget/kill-switch block, provider
+  // failure). Reassigned below only after a successful AI call, so its
+  // AI-text signal can raise (never lower) this same value. Threaded into
+  // every recordDiagnosticEngineRun call so
+  // diagnostic_engine_runs.safety_classification is never left null
+  // (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md's observability
+  // follow-up), and reused directly for the final return instead of
+  // being recomputed a second time.
+  let safety = classifyDriveSafety(evidence, []);
+
   let nextQuestion = null as ReturnType<typeof selectNextQuestion>;
   let persistedQuestion: Awaited<ReturnType<typeof recordQuestion>> | null = null;
   if (DIAGNOSTIC_ENGINE_FLAGS.questionEngineEnabled()) {
@@ -161,6 +173,7 @@ export async function runDiagnosticEngineTurn(
         skipReason: "evidence_unchanged_since_graph",
         evidenceCount: evidence.length,
         hypothesisCount: hypotheses.length,
+        safetyClassification: safety.status,
         schemaValidationResult: "not_applicable",
         status: "skipped",
       });
@@ -206,6 +219,7 @@ export async function runDiagnosticEngineTurn(
           providerCalled: false,
           evidenceCount: evidence.length,
           hypothesisCount: hypotheses.length,
+          safetyClassification: safety.status,
           estimatedCostUsdPreflight: microsToUsd(estimate.totalCostMicros),
           schemaValidationResult: "not_applicable",
           status: "failed",
@@ -235,6 +249,10 @@ export async function runDiagnosticEngineTurn(
         const latencyMs = Date.now() - startedAt;
         aiOutput = result.output;
         hypotheses = await saveHypotheses(caseId, buildRankedHypotheses(aiOutput, evidence));
+        // Recompute now that aiOutput exists — the AI-text signal can only
+        // raise this above the evidence-only floor already assigned above,
+        // never lower it (severity precedence, safety.ts).
+        safety = classifyDriveSafety(evidence, aiOutput.safetyWarnings);
 
         const actualCost = computeActualCostMicros({
           modelId: SCAN_REPORT_MODEL_ID,
@@ -261,6 +279,7 @@ export async function runDiagnosticEngineTurn(
           evidenceCount: evidence.length,
           hypothesisCount: hypotheses.length,
           confidenceBand: hypotheses[0]?.confidenceLevel ?? null,
+          safetyClassification: safety.status,
           schemaValidationResult: "valid",
           status: "completed",
         });
@@ -282,6 +301,7 @@ export async function runDiagnosticEngineTurn(
           estimatedCostUsdPreflight: microsToUsd(estimate.totalCostMicros),
           evidenceCount: evidence.length,
           hypothesisCount: hypotheses.length,
+          safetyClassification: safety.status,
           schemaValidationResult: failureCategory === "invalid_structured_response" ? "invalid" : "not_applicable",
           status: "failed",
           failureCategory,
@@ -311,16 +331,10 @@ export async function runDiagnosticEngineTurn(
   const testPlan =
     DIAGNOSTIC_ENGINE_FLAGS.testPlannerEnabled() && aiOutput ? buildTestPlan(aiOutput, hypotheses) : [];
 
-  // Deterministic safety must never depend on whether the AI happened to
-  // run THIS turn (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md) — evidence
-  // is the only required input, and classifyDriveSafety already treats an
-  // empty safetyWarnings list correctly (the AI-text signal simply can't
-  // raise anything above the evidence floor). Computing this unconditionally
-  // means a real hazard already reflected in persisted evidence is never
-  // silently dropped just because this specific turn skipped the provider
-  // call, ran with the module flag off, or reused an existing hypothesis
-  // snapshot.
-  const safety = classifyDriveSafety(evidence, aiOutput?.safetyWarnings ?? []);
+  // `safety` was already computed above (evidence-only floor assigned near
+  // the top, reassigned with the AI-text signal after a successful call) —
+  // reused here rather than recomputed, and the same value already flowed
+  // into every recordDiagnosticEngineRun call this turn touched.
 
   const response = aiOutput
     ? formatDiagnosticEngineResponse({ output: aiOutput, evidence, hypotheses, confidence, nextQuestion: persistedQuestion })
