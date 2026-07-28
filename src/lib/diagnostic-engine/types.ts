@@ -28,6 +28,16 @@ export type EvidenceType =
   | "safety_issue"
   | "environmental_condition"
   | "question_answer"
+  // Phase 2.2 (docs/PHASE_2_2_EV_SAFETY_AUDIT.md) — a DETECTED high-voltage/
+  // EV hazard (isolation fault, battery thermal event, contactor fault,
+  // interlock fault, cable/enclosure damage, water intrusion, charging
+  // overheating, etc. — see safety.ts's HV_HAZARD_KEYWORDS). Deliberately a
+  // single evidence type covering the whole hazard list rather than one
+  // type per category, matching the phase brief's own framing that every
+  // category in that list maps to the same immediate_stop outcome — the
+  // specific category is preserved in this item's `value.hazardCategory`
+  // for structured output, not as a separate type.
+  | "hv_safety_hazard"
   | "other";
 
 export type EvidenceSource =
@@ -132,9 +142,27 @@ export interface RepairVerification {
 
 export type DriveSafetyStatus = "safe_to_drive" | "drive_with_caution" | "tow_recommended" | "immediate_stop";
 
+// Phase 2.2 Step 4 (docs/PHASE_2_2_EV_SAFETY_AUDIT.md) — structured
+// high-voltage safety detail, populated only when an hv_safety_hazard
+// evidence item drove the classification. Deliberately generic,
+// non-technical guidance (switch off, do not touch, tow via manufacturer
+// procedure) — never step-by-step high-voltage disassembly instructions
+// for an unverified user.
+export interface HvHazardDetail {
+  hazardCategory: string;
+  immediateAction: string;
+  prohibitedActions: string[];
+  requiredQualification: string;
+  isolationRecommended: boolean;
+  towingRecommended: boolean;
+  ppeWarning: string;
+  manufacturerProcedureWarning: string;
+}
+
 export interface DriveSafetyClassification {
   status: DriveSafetyStatus;
   reasoning: string;
+  hvHazard?: HvHazardDetail;
 }
 
 export type TestRisk = "low" | "moderate" | "high";

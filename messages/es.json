@@ -289,7 +289,11 @@
     "guidedDiagnosisRepairChecklistLabel": "Lista de Verificación de Reparación",
     "guidedDiagnosisGenerateChecklist": "Generar Lista de Verificación de Reparación",
     "guidedDiagnosisNoMissingEvidence": "Ninguna — todas las categorías de la lista tienen al menos alguna evidencia.",
-    "guidedDiagnosisSignInRequired": "Inicia sesión para comenzar el Diagnóstico Guiado."
+    "guidedDiagnosisSignInRequired": "Inicia sesión para comenzar el Diagnóstico Guiado.",
+    "guidedDiagnosisHazardLabel": "Peligro",
+    "guidedDiagnosisImmediateActionLabel": "Acción Inmediata",
+    "guidedDiagnosisProhibitedLabel": "No Hacer",
+    "guidedDiagnosisRequiredQualificationLabel": "Requerido"
   },
   "dtcTechnician": {
     "title": "DTC Technician™",

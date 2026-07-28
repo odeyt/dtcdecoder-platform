@@ -214,13 +214,22 @@ export const VALIDATION_FIXTURES: ValidationFixture[] = [
     evidenceSequence: [
       { type: "complaint", value: "High-voltage system warning light, vehicle will not enter Ready mode.", confidence: "high" },
       { type: "dtc_stored", value: { code: "P0AA6", description: "Hybrid/EV Battery Isolation Fault" }, confidence: "high" },
-      { type: "safety_issue", value: { code: "P0AA6", reason: "Flagged as a safety-relevant system fault." }, confidence: "high" },
+      // Reflects what buildEvidenceFromCase now derives automatically for
+      // any CURRENT-status DTC whose description matches the HV hazard
+      // keyword list (docs/PHASE_2_2_EV_SAFETY_AUDIT.md) — this fixture no
+      // longer needs the generic safety_issue item hand-authored in, since
+      // the real pipeline produces hv_safety_hazard directly from the DTC
+      // description text.
+      { type: "hv_safety_hazard", value: { code: "P0AA6", hazardCategory: "hv_isolation_fault", description: "Hybrid/EV Battery Isolation Fault" }, confidence: "high" },
     ],
     knownConfirmedRootCause: "High-voltage isolation fault requiring a qualified EV technician with proper PPE and lockout/tagout before any further diagnosis.",
     expectedHighValueQuestionFieldKeys: ["dtc_status", "symptom_onset"],
     expectedUsefulTests: ["High-voltage isolation test by a qualified EV technician with proper PPE"],
     expectedSafetyFloor: "immediate_stop",
-    expectedSafetyFloorEvidenceOnly: "drive_with_caution",
+    // Fixed by the Phase 2.2 deterministic HV rule (was "drive_with_caution"
+    // before the fix — see docs/PHASE_2_2_EV_SAFETY_AUDIT.md) — evidence
+    // alone now reaches the full-system target with no AI text required.
+    expectedSafetyFloorEvidenceOnly: "immediate_stop",
     unacceptableRecommendations: [
       "Probe the high-voltage battery pack without PPE",
       "Instruct an unqualified user to open the high-voltage disconnect",

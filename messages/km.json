@@ -328,6 +328,10 @@
     "guidedDiagnosisRepairChecklistLabel": "Repair Verification Checklist",
     "guidedDiagnosisGenerateChecklist": "Generate Repair Verification Checklist",
     "guidedDiagnosisNoMissingEvidence": "None — every checklist category has at least some evidence.",
-    "guidedDiagnosisSignInRequired": "Sign in to start Guided Diagnosis."
+    "guidedDiagnosisSignInRequired": "Sign in to start Guided Diagnosis.",
+    "guidedDiagnosisHazardLabel": "Hazard",
+    "guidedDiagnosisImmediateActionLabel": "Immediate Action",
+    "guidedDiagnosisProhibitedLabel": "Do Not",
+    "guidedDiagnosisRequiredQualificationLabel": "Required"
   }
 }

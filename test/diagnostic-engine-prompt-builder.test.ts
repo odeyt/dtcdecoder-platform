@@ -11,6 +11,18 @@ const evidence: EvidenceItem[] = [
   { id: "e5", caseId: "case-1", type: "symptom", value: "Rough idle at start", source: "user_reported", confidence: "medium", recordedAt: "now" },
 ];
 
+describe("buildDiagnosticPromptSections — high-voltage hazard evidence (Phase 2.2)", () => {
+  it("labels hv_safety_hazard evidence distinctly, marking it as a non-overridable deterministic classification", () => {
+    const hvEvidence: EvidenceItem[] = [
+      ...evidence,
+      { id: "e6", caseId: "case-1", type: "hv_safety_hazard", value: { code: "P0AA6", hazardCategory: "hv_isolation_fault", description: "Hybrid/EV Battery Isolation Fault" }, source: "derived", confidence: "high", recordedAt: "now" },
+    ];
+    const sections = buildDiagnosticPromptSections({ evidence: hvEvidence, graph: null, hypotheses: [], nextQuestion: null });
+    expect(sections.safety).toContain("HIGH-VOLTAGE HAZARD");
+    expect(sections.safety).toContain("cannot be overridden");
+  });
+});
+
 describe("buildDiagnosticPromptSections", () => {
   it("builds every required spec section from evidence alone when there is no graph/hypotheses/question yet", () => {
     const sections = buildDiagnosticPromptSections({ evidence, graph: null, hypotheses: [], nextQuestion: null });

@@ -105,10 +105,25 @@ function buildProbabilityTableSection(hypotheses: RankedHypothesis[]): string {
     .join("\n");
 }
 
+// Phase 2.2 (docs/PHASE_2_2_EV_SAFETY_AUDIT.md) — also surfaces
+// hv_safety_hazard evidence, labeled distinctly from a generic
+// safety_issue, so the AI sees the SAME deterministic hazard the Safety
+// Engine has already independently classified — never a hidden
+// disagreement between what the model is told and what the deterministic
+// rule (safety.ts) will enforce regardless of what the model says.
 function buildSafetySection(evidence: EvidenceItem[]): string {
   const safetyItems = evidence.filter((i) => i.type === "safety_issue");
-  if (safetyItems.length === 0) return "No safety-relevant evidence flagged so far.";
-  return safetyItems.map((i) => `- ${evidenceValueText(i)}`).join("\n");
+  const hvHazardItems = evidence.filter((i) => i.type === "hv_safety_hazard");
+  if (safetyItems.length === 0 && hvHazardItems.length === 0) return "No safety-relevant evidence flagged so far.";
+
+  const lines: string[] = [];
+  for (const item of hvHazardItems) {
+    lines.push(`- [HIGH-VOLTAGE HAZARD — deterministically classified immediate_stop, cannot be overridden] ${evidenceValueText(item)}`);
+  }
+  for (const item of safetyItems) {
+    lines.push(`- ${evidenceValueText(item)}`);
+  }
+  return lines.join("\n");
 }
 
 function buildQuestionToAnswerSection(nextQuestion: CandidateQuestion | null): string {

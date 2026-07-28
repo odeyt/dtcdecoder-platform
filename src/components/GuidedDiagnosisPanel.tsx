@@ -279,6 +279,25 @@ export function GuidedDiagnosisPanel({ initialCaseId, onCaseCreated }: GuidedDia
               <h3 className="font-semibold text-[var(--text-primary)]">{t("guidedDiagnosisSafetyLabel")}</h3>
               <p className={SAFETY_BADGE_CLASS[turnResult.safety.status] ?? ""}>{turnResult.safety.status}</p>
               <p className="text-xs text-[var(--text-muted)]">{turnResult.safety.reasoning}</p>
+
+              {turnResult.safety.hvHazard && (
+                <div className="mt-2 space-y-1 rounded-[var(--radius-md)] border border-[var(--border-red)] bg-[var(--accent-red)]/10 p-3 text-xs">
+                  <p className="font-semibold text-[var(--accent-red)]">{t("guidedDiagnosisHazardLabel")}</p>
+                  <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.hazardCategory.replace(/_/g, " ")}</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{t("guidedDiagnosisImmediateActionLabel")}</p>
+                  <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.immediateAction}</p>
+                  <p className="font-semibold text-[var(--text-primary)]">{t("guidedDiagnosisProhibitedLabel")}</p>
+                  <ul className="list-disc pl-4 text-[var(--text-secondary)]">
+                    {turnResult.safety.hvHazard.prohibitedActions.map((action) => (
+                      <li key={action}>{action}</li>
+                    ))}
+                  </ul>
+                  <p className="font-semibold text-[var(--text-primary)]">{t("guidedDiagnosisRequiredQualificationLabel")}</p>
+                  <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.requiredQualification}</p>
+                  <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.ppeWarning}</p>
+                  <p className="text-[var(--text-secondary)]">{turnResult.safety.hvHazard.manufacturerProcedureWarning}</p>
+                </div>
+              )}
             </section>
           )}
 

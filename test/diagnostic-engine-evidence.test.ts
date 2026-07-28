@@ -117,6 +117,63 @@ describe("buildEvidenceFromCase", () => {
   });
 });
 
+describe("buildEvidenceFromCase — high-voltage hazard derivation (Phase 2.2)", () => {
+  const baseCase = {
+    id: "case-hv",
+    user_id: "user-1",
+    status: "completed",
+    complaint: "HV warning light, will not enter Ready mode",
+    symptoms: [],
+    mileage: null,
+    recent_repairs: null,
+    battery_condition: null,
+    technician_notes: null,
+    error_message: null,
+    status_updated_at: "2026-01-01T00:00:00Z",
+    created_at: "2026-01-01T00:00:00Z",
+    updated_at: "2026-01-01T00:00:00Z",
+  } as unknown as ScanCase;
+
+  it("derives hv_safety_hazard evidence for a CURRENT-status DTC whose description matches an HV hazard keyword", () => {
+    const canonicalScan: CanonicalVehicleScan = {
+      vehicle: { vin: null, year: 2021, make: "Chevrolet", model: "Bolt EV" },
+      allDtcs: [
+        { normalizedCode: "P0AA6", description: "Hybrid/EV Battery Isolation Fault", systemName: "HV Battery", status: "current", safetyRelevance: false },
+      ],
+    } as unknown as CanonicalVehicleScan;
+
+    const items = buildEvidenceFromCase(baseCase, null, canonicalScan);
+    const hvHazard = items.find((i) => i.type === "hv_safety_hazard");
+    expect(hvHazard).toBeDefined();
+    expect((hvHazard?.value as { hazardCategory?: string })?.hazardCategory).toBe("hv_isolation_fault");
+    expect(hvHazard?.confidence).toBe("high");
+  });
+
+  it("never derives hv_safety_hazard for a historical/inactive-status DTC, even with matching HV text", () => {
+    const canonicalScan: CanonicalVehicleScan = {
+      vehicle: { vin: null, year: 2021, make: "Chevrolet", model: "Bolt EV" },
+      allDtcs: [
+        { normalizedCode: "P0AA6", description: "Hybrid/EV Battery Isolation Fault", systemName: "HV Battery", status: "history", safetyRelevance: false },
+      ],
+    } as unknown as CanonicalVehicleScan;
+
+    const items = buildEvidenceFromCase(baseCase, null, canonicalScan);
+    expect(items.some((i) => i.type === "hv_safety_hazard")).toBe(false);
+  });
+
+  it("never derives hv_safety_hazard for a CURRENT DTC whose description has no HV hazard language", () => {
+    const canonicalScan: CanonicalVehicleScan = {
+      vehicle: { vin: null, year: 2018, make: "Toyota", model: "Camry" },
+      allDtcs: [
+        { normalizedCode: "P0301", description: "Cylinder 1 Misfire Detected", systemName: "Ignition", status: "current", safetyRelevance: false },
+      ],
+    } as unknown as CanonicalVehicleScan;
+
+    const items = buildEvidenceFromCase(baseCase, null, canonicalScan);
+    expect(items.some((i) => i.type === "hv_safety_hazard")).toBe(false);
+  });
+});
+
 describe("evidenceFromAnswer", () => {
   it("wraps a question-engine answer as high-confidence question_answer evidence", () => {
     const item = evidenceFromAnswer("crank_status", "Yes, it cranks", "yes");
