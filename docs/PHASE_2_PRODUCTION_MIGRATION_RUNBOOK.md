@@ -30,6 +30,10 @@ content):
 - Row counts for `scan_cases`, `ai_diagnostic_usage`, `analytics_events`, `ai_routing_decisions` —
   record these numbers now; they must be unchanged (never decrease) after every step below.
 
+**Baseline actually recorded (owner ran this in the production SQL Editor)**: `scan_cases = 4`,
+`ai_diagnostic_usage = 5`, `analytics_events = 40`, `ai_routing_decisions = 0`. These four numbers
+must be identical after Step 2's migrations are applied — Step 3 checks this explicitly.
+
 A separate read-only REST probe (using the app's own service-role key, run from this session) was
 already performed against this same project and found: `analytics_events`, `ai_diagnostic_usage`,
 and `ai_routing_decisions` exist (migrations 0001–0029 baseline); `diagnostic_evidence`,
