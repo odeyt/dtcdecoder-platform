@@ -9,6 +9,7 @@ import { CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { DiagnosticEngineLimitExceededError } from "@/lib/diagnostic-engine/usage";
 import { DuplicateAnswerError } from "@/lib/diagnostic-engine/question";
 import { StaleGraphVersionError } from "@/lib/diagnostic-engine/graph";
+import { DiagnosticEngineBudgetExceededError, DiagnosticEngineKillSwitchError } from "@/lib/diagnostic-engine/budget-guard";
 import type { ScanCase } from "@/lib/types";
 
 export class ScanCaseNotFoundError extends Error {
@@ -114,6 +115,13 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
   }
   if (err instanceof StaleGraphVersionError) {
     return NextResponse.json({ error: err.message, retryable: true }, { status: 409 });
+  }
+  if (err instanceof DiagnosticEngineBudgetExceededError || err instanceof DiagnosticEngineKillSwitchError) {
+    // err.message is already the safe, generic BUDGET_EXHAUSTED_USER_MESSAGE
+    // — never the underlying $ figures or which dimension blocked the call
+    // (those are in err.reasons/err.blockedScope, logged server-side above,
+    // never serialized into this response).
+    return NextResponse.json({ error: err.message, retryable: true }, { status: 503 });
   }
   if (err instanceof DiagnosticEngineLimitExceededError) {
     return NextResponse.json(

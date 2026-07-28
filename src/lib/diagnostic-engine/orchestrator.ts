@@ -35,6 +35,13 @@ import { classifyDriveSafety } from "@/lib/diagnostic-engine/safety";
 import { shouldSkipRedundantAiCall } from "@/lib/diagnostic-engine/cost-optimization";
 import { recordDiagnosticEngineUsage, releaseDiagnosticEngineUsage } from "@/lib/diagnostic-engine/usage";
 import { recordDiagnosticEngineRun, classifyFailure } from "@/lib/diagnostic-engine/observability";
+import { resolveDiagnosticEngineAccess } from "@/lib/diagnostic-engine/entitlements";
+import {
+  isDiagnosticEngineKillSwitchActive,
+  computeDiagnosticEngineBudgetState,
+  assertDiagnosticEngineBudgetAllows,
+  DiagnosticEngineKillSwitchError,
+} from "@/lib/diagnostic-engine/budget-guard";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
 import type { DiagnosticGraph, PlannedTest, DriveSafetyClassification, RankedHypothesis } from "@/lib/diagnostic-engine/types";
 import type { ScanCase, ScanExtraction, ScanDtcRecord, ScanSystem, SubscriptionPlan } from "@/lib/types";
@@ -155,6 +162,8 @@ export async function runDiagnosticEngineTurn(
         status: "skipped",
       });
     } else {
+      const access = resolveDiagnosticEngineAccess(billing.email, billing.plan);
+
       const sections = buildDiagnosticPromptSections({ evidence, graph: graphForPrompt, hypotheses, nextQuestion });
       const prompt = renderDiagnosticPrompt(sections);
 
@@ -168,6 +177,40 @@ export async function runDiagnosticEngineTurn(
       // to safely run at all shouldn't cost the caller a turn from their
       // allowance for being rejected.
       guardCostCeiling(estimate);
+
+      // Phase 2.2 Steps 6-7 (docs/PHASE_2_2_COST_GUARDRAILS.md): aggregate
+      // global/user/internal budget check, on top of the existing
+      // single-request cost ceiling above. Checked BEFORE the turn-count
+      // usage slot is reserved — a request blocked here never consumes a
+      // slot from the caller's own allowance. The kill switch is checked
+      // first since it should stop every call immediately regardless of
+      // remaining budget on any dimension.
+      try {
+        if (isDiagnosticEngineKillSwitchActive()) {
+          throw new DiagnosticEngineKillSwitchError();
+        }
+        const budgetStatus = await computeDiagnosticEngineBudgetState(userId, access.isInternal);
+        assertDiagnosticEngineBudgetAllows(budgetStatus);
+      } catch (err) {
+        const failureCategory = classifyFailure(err);
+        await recordDiagnosticEngineRun({
+          userId,
+          caseId,
+          requestId: billing.requestId,
+          plan: billing.plan,
+          rolloutTier: billing.rolloutTier,
+          isInternal: access.isInternal,
+          providerCalled: false,
+          evidenceCount: evidence.length,
+          hypothesisCount: hypotheses.length,
+          estimatedCostUsdPreflight: microsToUsd(estimate.totalCostMicros),
+          schemaValidationResult: "not_applicable",
+          status: "failed",
+          failureCategory,
+          blockedBudgetScope: err instanceof Error && "blockedScope" in err ? ((err as { blockedScope?: string | null }).blockedScope ?? null) : null,
+        });
+        throw err;
+      }
 
       // Entitlement enforcement (docs/PHASE_2_1_INTEGRATION_AUDIT.md §4) —
       // reserved BEFORE the provider call, released on failure below, same
@@ -202,15 +245,19 @@ export async function runDiagnosticEngineTurn(
           requestId: billing.requestId,
           plan: billing.plan,
           rolloutTier: billing.rolloutTier,
+          isInternal: access.isInternal,
           providerId: result.providerId,
+          modelId: result.modelId,
           providerCalled: true,
           promptCacheStatus: "unknown", // provider result doesn't carry cache token counts yet — see docs/PHASE_2_1_OBSERVABILITY.md
           inputTokens: result.tokens.input,
           outputTokens: result.tokens.output,
+          estimatedCostUsdPreflight: microsToUsd(estimate.totalCostMicros),
           estimatedCostUsd: microsToUsd(actualCost.totalCostMicros),
           latencyMs,
           evidenceCount: evidence.length,
           hypothesisCount: hypotheses.length,
+          confidenceBand: hypotheses[0]?.confidenceLevel ?? null,
           schemaValidationResult: "valid",
           status: "completed",
         });
@@ -227,7 +274,9 @@ export async function runDiagnosticEngineTurn(
           requestId: billing.requestId,
           plan: billing.plan,
           rolloutTier: billing.rolloutTier,
+          isInternal: access.isInternal,
           providerCalled: true,
+          estimatedCostUsdPreflight: microsToUsd(estimate.totalCostMicros),
           evidenceCount: evidence.length,
           hypothesisCount: hypotheses.length,
           schemaValidationResult: failureCategory === "invalid_structured_response" ? "invalid" : "not_applicable",

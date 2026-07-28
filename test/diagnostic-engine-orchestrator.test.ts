@@ -177,8 +177,21 @@ beforeEach(() => {
   });
 });
 
+const BUDGET_ENV_VARS = [
+  "DIAGNOSTIC_ENGINE_DAILY_BUDGET_USD",
+  "DIAGNOSTIC_ENGINE_MONTHLY_BUDGET_USD",
+  "DIAGNOSTIC_ENGINE_USER_DAILY_BUDGET_USD",
+  "DIAGNOSTIC_ENGINE_USER_MONTHLY_BUDGET_USD",
+  "DIAGNOSTIC_ENGINE_INTERNAL_DAILY_BUDGET_USD",
+  "DIAGNOSTIC_ENGINE_PROVIDER_KILL_SWITCH",
+];
+function resetBudgetEnv() {
+  for (const name of BUDGET_ENV_VARS) delete process.env[name];
+}
+
 afterEach(() => {
   setFlags([]);
+  resetBudgetEnv();
 });
 
 describe("runDiagnosticEngineTurn — feature flags default off", () => {
@@ -379,5 +392,86 @@ describe("runDiagnosticEngineTurn — test planner and safety", () => {
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
     const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(result.safety).not.toBeNull();
+  });
+});
+
+describe("runDiagnosticEngineTurn — Phase 2.2 kill switch and budget guardrails", () => {
+  it("the kill switch blocks the provider call entirely and never consumes a usage slot", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    process.env.DIAGNOSTIC_ENGINE_PROVIDER_KILL_SWITCH = "true";
+
+    const billing = defaultBilling();
+    await expect(runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), billing)).rejects.toThrow(
+      /temporarily unavailable/,
+    );
+
+    expect(fake().dump("diagnostic_engine_usage").filter((r) => r.request_id === billing.requestId)).toHaveLength(0);
+    expect(fake().dump("diagnostic_probabilities")).toHaveLength(0);
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs).toHaveLength(1);
+    expect(runs[0].status).toBe("failed");
+    expect(runs[0].failure_category).toBe("kill_switch_active");
+    expect(runs[0].provider_called).toBe(false);
+  });
+
+  it("a global daily budget hard stop blocks the call and records which scope blocked it", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    process.env.DIAGNOSTIC_ENGINE_DAILY_BUDGET_USD = "1";
+    fake().seed("diagnostic_engine_runs", [
+      {
+        user_id: "someone-else",
+        case_id: "case-other",
+        request_id: "prior-req",
+        plan: "free",
+        rollout_tier: "all_paid_users",
+        is_internal: false,
+        provider_called: true,
+        estimated_cost_usd: 5,
+        status: "completed",
+        schema_validation_result: "valid",
+        evidence_count: 1,
+        hypothesis_count: 1,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    const billing = defaultBilling();
+    await expect(runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), billing)).rejects.toThrow(
+      /temporarily unavailable/,
+    );
+
+    const runs = fake().dump("diagnostic_engine_runs").filter((r) => r.user_id === "user-1");
+    expect(runs).toHaveLength(1);
+    expect(runs[0].failure_category).toBe("budget_exceeded");
+    expect(runs[0].blocked_budget_scope).toBe("global_daily");
+    // Never consumed a turn-count slot for a request blocked before reservation.
+    expect(fake().dump("diagnostic_engine_usage").filter((r) => r.request_id === billing.requestId)).toHaveLength(0);
+  });
+
+  it("without any budget env vars configured, generation proceeds normally regardless of recorded spend", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    fake().seed("diagnostic_engine_runs", [
+      {
+        user_id: "user-1",
+        case_id: "case-1",
+        request_id: "prior-req",
+        plan: "workshop",
+        rollout_tier: "all_paid_users",
+        is_internal: false,
+        provider_called: true,
+        estimated_cost_usd: 999,
+        status: "completed",
+        schema_validation_result: "valid",
+        evidence_count: 1,
+        hypothesis_count: 1,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    expect(result.response).not.toBeNull();
   });
 });
