@@ -335,6 +335,35 @@ describe("runDiagnosticEngineTurn — observability", () => {
     expect(skipped).toBeDefined();
     expect(skipped?.skip_reason).toBe("evidence_unchanged_since_graph");
   });
+
+  // Regression: diagnostic_engine_runs.safety_classification was never
+  // populated at any call site (the write happened before safety was
+  // computed in the function) — found while validating the safety-null
+  // fix in real production. Now threaded through every branch.
+  it("records a non-null safety_classification on a completed run", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs).toHaveLength(1);
+    expect(runs[0].status).toBe("completed");
+    expect(runs[0].safety_classification).not.toBeNull();
+    expect(["safe_to_drive", "drive_with_caution", "tow_recommended", "immediate_stop"]).toContain(
+      runs[0].safety_classification,
+    );
+  });
+
+  it("records a non-null safety_classification on a skipped run too", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    const skipped = runs.find((r) => r.status === "skipped");
+    expect(skipped?.safety_classification).not.toBeNull();
+  });
 });
 
 describe("runDiagnosticEngineTurn — cost optimization", () => {
