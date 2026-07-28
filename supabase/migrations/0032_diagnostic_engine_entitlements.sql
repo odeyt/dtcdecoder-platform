@@ -14,7 +14,12 @@
 -- feature explicitly, so the two ledgers can never cross-contaminate each
 -- other's counts. Purely additive — does not touch ai_diagnostic_usage,
 -- ai_diagnostic_runs, or any existing table/column/row.
-create table diagnostic_engine_usage (
+--
+-- Idempotent (Phase 2 direct-production release, docs/PHASE_2_PRODUCTION_MIGRATION_RUNBOOK.md):
+-- table/index creation uses IF NOT EXISTS; both functions already use
+-- CREATE OR REPLACE (safe to rerun); the policy is preceded by DROP POLICY
+-- IF EXISTS since Postgres has no CREATE POLICY IF NOT EXISTS.
+create table if not exists diagnostic_engine_usage (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   request_id text not null,
@@ -30,9 +35,9 @@ create table diagnostic_engine_usage (
   created_at timestamptz not null default now()
 );
 
-create unique index diagnostic_engine_usage_user_request_idx
+create unique index if not exists diagnostic_engine_usage_user_request_idx
   on diagnostic_engine_usage (user_id, request_id);
-create index diagnostic_engine_usage_user_feature_created_idx
+create index if not exists diagnostic_engine_usage_user_feature_created_idx
   on diagnostic_engine_usage (user_id, feature, created_at);
 
 -- Same shape as record_ai_diagnostic_usage (0016): per-user advisory lock,
@@ -119,5 +124,6 @@ $$ language sql stable security definer;
 
 alter table diagnostic_engine_usage enable row level security;
 
+drop policy if exists diagnostic_engine_usage_owner_read on diagnostic_engine_usage;
 create policy diagnostic_engine_usage_owner_read on diagnostic_engine_usage
   for select using (auth.uid() = user_id);

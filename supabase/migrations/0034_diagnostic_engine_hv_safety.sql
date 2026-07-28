@@ -9,7 +9,12 @@
 -- list maps to the same immediate_stop outcome; the specific category is
 -- preserved in the row's own `value` jsonb, not as a separate type. Purely
 -- additive — no existing row, column, or other constraint is touched.
-alter table diagnostic_evidence drop constraint diagnostic_evidence_evidence_type_check;
+--
+-- Idempotent (Phase 2 direct-production release, docs/PHASE_2_PRODUCTION_MIGRATION_RUNBOOK.md):
+-- "drop if exists" then unconditional "add" — same safe-rerun pattern as
+-- migration 0030. Depends on migration 0031 having created
+-- diagnostic_evidence first; run in numerical order.
+alter table diagnostic_evidence drop constraint if exists diagnostic_evidence_evidence_type_check;
 alter table diagnostic_evidence add constraint diagnostic_evidence_evidence_type_check
   check (evidence_type in (
     'vin', 'vehicle', 'engine', 'transmission', 'mileage',

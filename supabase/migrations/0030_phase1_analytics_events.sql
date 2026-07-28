@@ -2,8 +2,14 @@
 -- adds new funnel events to the existing analytics_events ledger (migration
 -- 0027). Purely additive — widens the event_type check constraint only;
 -- no existing row's event_type value is affected.
+--
+-- Idempotent (Phase 2 direct-production release, docs/PHASE_2_PRODUCTION_MIGRATION_RUNBOOK.md):
+-- "drop if exists" then unconditional "add" means rerunning this file is
+-- always safe — the second run drops the constraint this run just added,
+-- then recreates the identical constraint. The add can never fail on
+-- existing rows because the new list is a strict superset of the old one.
 
-alter table analytics_events drop constraint analytics_events_event_type_check;
+alter table analytics_events drop constraint if exists analytics_events_event_type_check;
 alter table analytics_events add constraint analytics_events_event_type_check
   check (event_type in (
     'basic_dtc_search',

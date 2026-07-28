@@ -6,6 +6,12 @@
 -- check), not re-derived from `plan` (an internal tester's plan is still
 -- their real free/pro/workshop plan — "internal" is a separate axis, not
 -- a fourth plan value). Purely additive.
+--
+-- Already idempotent as originally written (Phase 2 direct-production
+-- release review, docs/PHASE_2_PRODUCTION_MIGRATION_RUNBOOK.md): every
+-- ADD COLUMN and CREATE INDEX below already uses IF NOT EXISTS. Depends on
+-- migration 0033 having created diagnostic_engine_runs first; run in
+-- numerical order.
 alter table diagnostic_engine_runs
   add column if not exists is_internal boolean not null default false;
 

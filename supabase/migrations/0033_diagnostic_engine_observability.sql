@@ -13,7 +13,11 @@
 -- only counts, enum-like categories, and short controlled strings
 -- (skip_reason/failure_category are fixed vocabularies, enforced by check
 -- constraints below, never raw error messages).
-create table diagnostic_engine_runs (
+--
+-- Idempotent (Phase 2 direct-production release, docs/PHASE_2_PRODUCTION_MIGRATION_RUNBOOK.md):
+-- table/index creation uses IF NOT EXISTS; the policy is preceded by
+-- DROP POLICY IF EXISTS since Postgres has no CREATE POLICY IF NOT EXISTS.
+create table if not exists diagnostic_engine_runs (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users (id) on delete cascade,
   case_id uuid not null references scan_cases (id) on delete cascade,
@@ -46,10 +50,11 @@ create table diagnostic_engine_runs (
   created_at timestamptz not null default now()
 );
 
-create index diagnostic_engine_runs_user_created_idx on diagnostic_engine_runs (user_id, created_at desc);
-create index diagnostic_engine_runs_case_idx on diagnostic_engine_runs (case_id);
+create index if not exists diagnostic_engine_runs_user_created_idx on diagnostic_engine_runs (user_id, created_at desc);
+create index if not exists diagnostic_engine_runs_case_idx on diagnostic_engine_runs (case_id);
 
 alter table diagnostic_engine_runs enable row level security;
 
+drop policy if exists diagnostic_engine_runs_owner_read on diagnostic_engine_runs;
 create policy diagnostic_engine_runs_owner_read on diagnostic_engine_runs
   for select using (auth.uid() = user_id);
