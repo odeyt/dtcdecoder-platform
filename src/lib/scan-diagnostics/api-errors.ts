@@ -6,6 +6,9 @@ import "server-only";
 import { NextResponse } from "next/server";
 import { AiDiagnosticLimitExceededError } from "@/lib/ai-diagnostics/usage";
 import { CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
+import { DiagnosticEngineLimitExceededError } from "@/lib/diagnostic-engine/usage";
+import { DuplicateAnswerError } from "@/lib/diagnostic-engine/question";
+import { StaleGraphVersionError } from "@/lib/diagnostic-engine/graph";
 import type { ScanCase } from "@/lib/types";
 
 export class ScanCaseNotFoundError extends Error {
@@ -103,6 +106,18 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
           resetAt: err.resetAt,
         },
       },
+      { status: 429 },
+    );
+  }
+  if (err instanceof DuplicateAnswerError) {
+    return NextResponse.json({ error: err.message }, { status: 409 });
+  }
+  if (err instanceof StaleGraphVersionError) {
+    return NextResponse.json({ error: err.message, retryable: true }, { status: 409 });
+  }
+  if (err instanceof DiagnosticEngineLimitExceededError) {
+    return NextResponse.json(
+      { success: false, error: { code: err.code, message: err.message, resetAt: err.resetAt, upgradeRequired: err.upgradeRequired } },
       { status: 429 },
     );
   }

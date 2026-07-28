@@ -5,27 +5,24 @@
 // confidence/question/prompt-builder/response-formatter/test-planner/
 // safety) is pure or narrowly persistence-focused; this is the seam that
 // sequences them for a real case, gated behind the Phase 2 feature flags
-// (all default OFF — see feature-flags.ts) so Phase 1's existing scan-report
-// flow is completely unaffected until this is explicitly turned on.
+// (all default OFF — see feature-flags.ts) so Phase 0/1's existing flows
+// are completely unaffected until this is explicitly turned on.
 //
-// NOT included here: the report-count usage ledger / entitlement limits
-// used by the Phase 1 "full AI diagnostic report" feature
-// (src/lib/ai-diagnostics/usage.ts). A Diagnostic Engine "turn" is a much
-// smaller, more frequent unit of work than a full report (one per
-// question answered, not one per case) — mapping it onto the existing
-// per-report quota would either exhaust a technician's monthly allowance
-// after a few questions or require a new pricing decision this phase's
-// spec doesn't make. That mapping is left to Slice I ("cost optimization")
-// or a deliberate product decision, not guessed at here. A raw per-call
-// cost-ceiling safety net (guardCostCeiling) IS applied below, since that's
-// a pure runaway-spend safety check, not a pricing decision.
+// Phase 2.1 additions (docs/PHASE_2_1_INTEGRATION_AUDIT.md §4,
+// docs/PHASE_2_1_OBSERVABILITY.md): entitlement enforcement via a
+// dedicated turn-shaped usage ledger (diagnostic-engine/usage.ts, NOT the
+// report-shaped ai-diagnostics/usage.ts — seeing why is in the audit doc),
+// and structured, privacy-safe observability for every turn attempt
+// (diagnostic-engine/observability.ts) — recorded for skipped and failed
+// turns too, never only successful ones, so cost/usage is never silently
+// unobserved.
 import "server-only";
 import { getCaseForOwner } from "@/lib/scan-diagnostics/cases";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
 import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
-import { estimateCostMicros, guardCostCeiling } from "@/lib/ai-diagnostics/cost";
-import { DIAGNOSTIC_ENGINE_FLAGS } from "@/lib/diagnostic-engine/feature-flags";
+import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, microsToUsd } from "@/lib/ai-diagnostics/cost";
+import { DIAGNOSTIC_ENGINE_FLAGS, type DiagnosticEngineRolloutTier } from "@/lib/diagnostic-engine/feature-flags";
 import { getEvidenceForCase, insertEvidence, dedupeAgainstExisting, buildEvidenceFromCase } from "@/lib/diagnostic-engine/evidence";
 import { getGraphForCase, saveGraph, buildEvidenceNodes, buildHypothesisNodesAndEdges, buildQuestionNode, mergeGraph } from "@/lib/diagnostic-engine/graph";
 import { getQuestionsForCase, recordQuestion, selectNextQuestion } from "@/lib/diagnostic-engine/question";
@@ -36,15 +33,25 @@ import { formatDiagnosticEngineResponse, type DiagnosticEngineResponse } from "@
 import { buildTestPlan } from "@/lib/diagnostic-engine/test-planner";
 import { classifyDriveSafety } from "@/lib/diagnostic-engine/safety";
 import { shouldSkipRedundantAiCall } from "@/lib/diagnostic-engine/cost-optimization";
+import { recordDiagnosticEngineUsage, releaseDiagnosticEngineUsage } from "@/lib/diagnostic-engine/usage";
+import { recordDiagnosticEngineRun, classifyFailure } from "@/lib/diagnostic-engine/observability";
 import type { DiagnosticAIProvider } from "@/lib/scan-diagnostics/ai/provider";
 import type { DiagnosticGraph, PlannedTest, DriveSafetyClassification, RankedHypothesis } from "@/lib/diagnostic-engine/types";
-import type { ScanCase, ScanExtraction, ScanDtcRecord, ScanSystem } from "@/lib/types";
+import type { ScanCase, ScanExtraction, ScanDtcRecord, ScanSystem, SubscriptionPlan } from "@/lib/types";
 
 export class DiagnosticEngineProviderUnsupportedError extends Error {
   constructor(providerId: string) {
     super(`Provider "${providerId}" does not support Diagnostic Engine turns.`);
     this.name = "DiagnosticEngineProviderUnsupportedError";
   }
+}
+
+export interface DiagnosticEngineTurnBilling {
+  plan: SubscriptionPlan;
+  email: string | null;
+  rolloutTier: DiagnosticEngineRolloutTier;
+  /** Client-generated per-attempt id — retrying the SAME turn with the same requestId never double-charges or double-calls the provider's usage ledger. */
+  requestId: string;
 }
 
 export interface DiagnosticEngineTurnResult {
@@ -100,6 +107,7 @@ export async function runDiagnosticEngineTurn(
   userId: string,
   caseId: string,
   provider: DiagnosticAIProvider,
+  billing: DiagnosticEngineTurnBilling,
 ): Promise<DiagnosticEngineTurnResult> {
   await getCaseForOwner(userId, caseId);
 
@@ -125,28 +133,109 @@ export async function runDiagnosticEngineTurn(
 
     const graphForPrompt = DIAGNOSTIC_ENGINE_FLAGS.diagnosticGraphEnabled() ? await getGraphForCase(caseId) : null;
 
-    // Cost optimization (docs/PHASE_2_ARCHITECTURE.md#cost-optimization):
-    // don't pay for a redundant generation when nothing has changed since
-    // the graph last reflected this case's evidence — reuse the existing
-    // hypotheses instead. Only possible when the graph is enabled, since
-    // that's the only place "what evidence did the last AI call already
-    // see" is recorded.
+    // Cost optimization (docs/PROBABILITY_ENGINE.md#cost-optimization):
+    // don't pay for a redundant generation — or consume the caller's
+    // entitlement — when nothing has changed since the graph last
+    // reflected this case's evidence. Only possible when the graph is
+    // enabled, since that's the only place "what evidence did the last AI
+    // call already see" is recorded.
     if (shouldSkipRedundantAiCall({ evidence, graph: graphForPrompt, hasExistingHypotheses: hypotheses.length > 0 })) {
       aiCallSkipped = true;
+      await recordDiagnosticEngineRun({
+        userId,
+        caseId,
+        requestId: billing.requestId,
+        plan: billing.plan,
+        rolloutTier: billing.rolloutTier,
+        providerCalled: false,
+        skipReason: "evidence_unchanged_since_graph",
+        evidenceCount: evidence.length,
+        hypothesisCount: hypotheses.length,
+        schemaValidationResult: "not_applicable",
+        status: "skipped",
+      });
     } else {
       const sections = buildDiagnosticPromptSections({ evidence, graph: graphForPrompt, hypotheses, nextQuestion });
       const prompt = renderDiagnosticPrompt(sections);
 
+      const estimatedInputTokens = Math.ceil(prompt.length / 4);
       const estimate = estimateCostMicros({
         modelId: SCAN_REPORT_MODEL_ID,
-        estimatedInputTokens: Math.ceil(prompt.length / 4),
+        estimatedInputTokens,
         estimatedOutputTokens: SCAN_REPORT_MAX_TOKENS,
       });
+      // Runs before the entitlement slot is reserved — a request too large
+      // to safely run at all shouldn't cost the caller a turn from their
+      // allowance for being rejected.
       guardCostCeiling(estimate);
 
-      const result = await provider.runDiagnosticEngineTurn(prompt);
-      aiOutput = result.output;
-      hypotheses = await saveHypotheses(caseId, buildRankedHypotheses(aiOutput, evidence));
+      // Entitlement enforcement (docs/PHASE_2_1_INTEGRATION_AUDIT.md §4) —
+      // reserved BEFORE the provider call, released on failure below, same
+      // reserve/release shape as every other AI-calling feature in this
+      // app. Never bypassed for internal testers (they still consume a
+      // recorded — just uncapped — slot, so usage is never silently
+      // unobserved for them either).
+      await recordDiagnosticEngineUsage({
+        userId,
+        email: billing.email,
+        requestId: billing.requestId,
+        feature: "diagnostic_engine_turn",
+        plan: billing.plan,
+      });
+
+      const startedAt = Date.now();
+      try {
+        const result = await provider.runDiagnosticEngineTurn(prompt);
+        const latencyMs = Date.now() - startedAt;
+        aiOutput = result.output;
+        hypotheses = await saveHypotheses(caseId, buildRankedHypotheses(aiOutput, evidence));
+
+        const actualCost = computeActualCostMicros({
+          modelId: SCAN_REPORT_MODEL_ID,
+          inputTokens: result.tokens.input,
+          outputTokens: result.tokens.output,
+        });
+
+        await recordDiagnosticEngineRun({
+          userId,
+          caseId,
+          requestId: billing.requestId,
+          plan: billing.plan,
+          rolloutTier: billing.rolloutTier,
+          providerId: result.providerId,
+          providerCalled: true,
+          promptCacheStatus: "unknown", // provider result doesn't carry cache token counts yet — see docs/PHASE_2_1_OBSERVABILITY.md
+          inputTokens: result.tokens.input,
+          outputTokens: result.tokens.output,
+          estimatedCostUsd: microsToUsd(actualCost.totalCostMicros),
+          latencyMs,
+          evidenceCount: evidence.length,
+          hypothesisCount: hypotheses.length,
+          schemaValidationResult: "valid",
+          status: "completed",
+        });
+      } catch (err) {
+        // Never invent a completed diagnosis after a failed provider call
+        // (docs/PHASE_2_1_INTEGRATION_AUDIT.md Step 9) — aiOutput/hypotheses
+        // stay at whatever they were before this call, so the response
+        // built below reflects only real, previously-persisted state.
+        await releaseDiagnosticEngineUsage(userId, billing.requestId);
+        const failureCategory = classifyFailure(err);
+        await recordDiagnosticEngineRun({
+          userId,
+          caseId,
+          requestId: billing.requestId,
+          plan: billing.plan,
+          rolloutTier: billing.rolloutTier,
+          providerCalled: true,
+          evidenceCount: evidence.length,
+          hypothesisCount: hypotheses.length,
+          schemaValidationResult: failureCategory === "invalid_structured_response" ? "invalid" : "not_applicable",
+          status: "failed",
+          failureCategory,
+        });
+        throw err;
+      }
     }
   }
 
@@ -160,7 +249,7 @@ export async function runDiagnosticEngineTurn(
       nodes: [...evidenceNodes, ...hypothesisNodes, ...questionNodes],
       edges: hypothesisEdges,
     });
-    graph = await saveGraph(caseId, merged.nodes, merged.edges);
+    graph = await saveGraph(caseId, merged.nodes, merged.edges, existingGraph?.version ?? null);
   }
 
   const confidence = DIAGNOSTIC_ENGINE_FLAGS.confidenceEngineEnabled()
@@ -173,7 +262,7 @@ export async function runDiagnosticEngineTurn(
   const safety = aiOutput ? classifyDriveSafety(evidence, aiOutput.safetyWarnings) : null;
 
   const response = aiOutput
-    ? formatDiagnosticEngineResponse({ output: aiOutput, evidence, hypotheses, confidence, nextQuestion })
+    ? formatDiagnosticEngineResponse({ output: aiOutput, evidence, hypotheses, confidence, nextQuestion: persistedQuestion })
     : null;
 
   return {

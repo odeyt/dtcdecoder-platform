@@ -36,21 +36,62 @@ export async function getGraphForCase(caseId: string): Promise<DiagnosticGraph |
   return data ? fromRow(data as GraphRow) : null;
 }
 
-export async function saveGraph(caseId: string, nodes: GraphNode[], edges: GraphEdge[]): Promise<DiagnosticGraph> {
+// Phase 2.1 failure handling (docs/PHASE_2_1_RELEASE_PLAN.md §"stale graph
+// version") — thrown when `expectedVersion` no longer matches the row in
+// the database, meaning another request already updated this case's graph
+// since the caller last read it (a real possibility once more than one
+// browser tab/device can run turns for the same case). The caller should
+// reload the current graph and retry rather than blindly overwrite.
+export class StaleGraphVersionError extends Error {
+  constructor() {
+    super("The diagnostic graph was updated by another request. Reload and try again.");
+    this.name = "StaleGraphVersionError";
+  }
+}
+
+// `expectedVersion` must be the version the caller most recently read via
+// getGraphForCase (null if no graph exists yet for this case). Passing a
+// stale value — because another request updated the graph in between —
+// causes this to throw StaleGraphVersionError instead of silently
+// overwriting the newer state.
+export async function saveGraph(
+  caseId: string,
+  nodes: GraphNode[],
+  edges: GraphEdge[],
+  expectedVersion: number | null,
+): Promise<DiagnosticGraph> {
   const supabase = createAdminClient();
-  const existing = await getGraphForCase(caseId);
-  const nextVersion = (existing?.version ?? 0) + 1;
+
+  if (expectedVersion === null) {
+    // First save for this case — no prior version to conflict against. A
+    // genuinely simultaneous first save from two concurrent turns for the
+    // same brand-new case is a narrow, currently-unhandled race (the
+    // unique index on case_id would surface as a raw database constraint
+    // error rather than StaleGraphVersionError) — an accepted, documented
+    // edge case, not silently ignored.
+    const { data, error } = await supabase
+      .from("diagnostic_graph")
+      .upsert(
+        { case_id: caseId, nodes, edges, version: 1, updated_at: new Date().toISOString() },
+        { onConflict: "case_id" },
+      )
+      .select("*")
+      .single();
+    if (error) throw error;
+    return fromRow(data as GraphRow);
+  }
 
   const { data, error } = await supabase
     .from("diagnostic_graph")
-    .upsert(
-      { case_id: caseId, nodes, edges, version: nextVersion, updated_at: new Date().toISOString() },
-      { onConflict: "case_id" },
-    )
-    .select("*")
-    .single();
+    .update({ nodes, edges, version: expectedVersion + 1, updated_at: new Date().toISOString() })
+    .eq("case_id", caseId)
+    .eq("version", expectedVersion)
+    .select("*");
   if (error) throw error;
-  return fromRow(data as GraphRow);
+  if (!data || data.length === 0) {
+    throw new StaleGraphVersionError();
+  }
+  return fromRow(data[0] as GraphRow);
 }
 
 function evidenceNodeId(evidenceId: string): string {

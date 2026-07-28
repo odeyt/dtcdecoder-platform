@@ -16,6 +16,7 @@ const {
   buildTestNodesAndEdges,
   buildQuestionNode,
   mergeGraph,
+  StaleGraphVersionError,
 } = await import("@/lib/diagnostic-engine/graph");
 import type { EvidenceItem, RankedHypothesis, PlannedTest, DiagnosticQuestion } from "@/lib/diagnostic-engine/types";
 
@@ -33,14 +34,25 @@ describe("getGraphForCase / saveGraph", () => {
   });
 
   it("saves a graph at version 1, then increments the version on each subsequent save", async () => {
-    const first = await saveGraph("case-1", [], []);
+    const first = await saveGraph("case-1", [], [], null);
     expect(first.version).toBe(1);
 
-    const second = await saveGraph("case-1", [{ id: "n1", kind: "evidence", label: "x" }], []);
+    const second = await saveGraph("case-1", [{ id: "n1", kind: "evidence", label: "x" }], [], first.version);
     expect(second.version).toBe(2);
     expect(second.nodes).toHaveLength(1);
 
     expect(fake().dump("diagnostic_graph")).toHaveLength(1);
+  });
+
+  it("rejects a save whose expectedVersion no longer matches the stored row (stale write)", async () => {
+    const first = await saveGraph("case-1", [], [], null);
+    // Someone else updates the graph in between...
+    await saveGraph("case-1", [{ id: "n1", kind: "evidence", label: "x" }], [], first.version);
+
+    // ...and this caller, still holding the OLD version, tries to save.
+    await expect(saveGraph("case-1", [{ id: "n2", kind: "evidence", label: "y" }], [], first.version)).rejects.toBeInstanceOf(
+      StaleGraphVersionError,
+    );
   });
 });
 

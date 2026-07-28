@@ -17,6 +17,18 @@ function fake(): FakeSupabase {
   return (globalThis as Record<string, unknown>).__fakeSupabase as FakeSupabase;
 }
 
+let requestCounter = 0;
+function defaultBilling(overrides: Partial<{ plan: "free" | "pro" | "workshop"; email: string | null; rolloutTier: "disabled" | "internal_only" | "allowlist_only" | "all_paid_users"; requestId: string }> = {}) {
+  requestCounter += 1;
+  return {
+    plan: "workshop" as const,
+    email: "tester@example.com",
+    rolloutTier: "all_paid_users" as const,
+    requestId: `req-${requestCounter}`,
+    ...overrides,
+  };
+}
+
 const FLAG_NAMES = [
   "DIAGNOSTIC_GRAPH_ENABLED",
   "QUESTION_ENGINE_ENABLED",
@@ -77,6 +89,18 @@ function providerWithoutEngineTurn(): DiagnosticAIProvider {
   };
 }
 
+function failingProvider(err: Error): DiagnosticAIProvider {
+  return {
+    id: "fake-provider-failing",
+    async runDiagnosis() {
+      throw new Error("not used in these tests");
+    },
+    async runDiagnosticEngineTurn(): Promise<DiagnosticAIProviderResult> {
+      throw err;
+    },
+  };
+}
+
 function seedCase(caseId: string, userId: string) {
   fake().seed("scan_cases", [
     {
@@ -114,9 +138,43 @@ function seedCase(caseId: string, userId: string) {
   ]);
 }
 
+let usageIdCounter = 0;
+
 beforeEach(() => {
   fake().reset();
   setFlags([]);
+  usageIdCounter = 0;
+  // Fakes migration 0032's record_diagnostic_engine_usage RPC closely
+  // enough for these orchestration tests (dedicated unit tests of the
+  // usage module itself live in test/diagnostic-engine-usage.test.ts).
+  fake().setRpcHandler("record_diagnostic_engine_usage", (args) => {
+    const userId = args.p_user_id as string;
+    const requestId = args.p_request_id as string;
+    const feature = args.p_feature as string;
+    const dailyLimit = args.p_daily_limit as number | null;
+    const monthlyLimit = args.p_monthly_limit as number | null;
+
+    const rows = fake().dump("diagnostic_engine_usage");
+    if (rows.some((r) => r.user_id === userId && r.request_id === requestId)) return "already_recorded";
+
+    const matching = rows.filter((r) => r.user_id === userId && r.feature === feature);
+    if (dailyLimit !== null && matching.length >= dailyLimit) return "daily_limit_exceeded";
+    if (monthlyLimit !== null && matching.length >= monthlyLimit) return "monthly_limit_exceeded";
+
+    usageIdCounter += 1;
+    fake().seed("diagnostic_engine_usage", [
+      {
+        id: `usage-${usageIdCounter}`,
+        user_id: userId,
+        request_id: requestId,
+        feature,
+        plan: args.p_plan,
+        access_level: args.p_access_level,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+    return "recorded";
+  });
 });
 
 afterEach(() => {
@@ -126,7 +184,7 @@ afterEach(() => {
 describe("runDiagnosticEngineTurn — feature flags default off", () => {
   it("with every flag off, only collects evidence and returns a null response/graph", async () => {
     seedCase("case-1", "user-1");
-    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
 
     expect(result.response).toBeNull();
     expect(result.graph).toBeNull();
@@ -138,15 +196,15 @@ describe("runDiagnosticEngineTurn — feature flags default off", () => {
 
   it("throws ScanCaseNotFoundError for a case the user doesn't own, before touching any engine module", async () => {
     seedCase("case-1", "user-1");
-    await expect(runDiagnosticEngineTurn("user-2", "case-1", fakeProvider())).rejects.toBeInstanceOf(ScanCaseNotFoundError);
+    await expect(runDiagnosticEngineTurn("user-2", "case-1", fakeProvider(), defaultBilling())).rejects.toBeInstanceOf(ScanCaseNotFoundError);
   });
 });
 
 describe("runDiagnosticEngineTurn — evidence collection", () => {
   it("derives evidence from the case on the first turn, and does not duplicate it on a second turn", async () => {
     seedCase("case-1", "user-1");
-    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
-    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(second.evidenceCount).toBe(first.evidenceCount);
   });
 });
@@ -154,19 +212,19 @@ describe("runDiagnosticEngineTurn — evidence collection", () => {
 describe("runDiagnosticEngineTurn — question engine", () => {
   it("selects and persists a next question only when QUESTION_ENGINE_ENABLED", async () => {
     seedCase("case-1", "user-1");
-    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(fake().dump("diagnostic_questions")).toHaveLength(0);
 
     setFlags(["QUESTION_ENGINE_ENABLED"]);
-    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(fake().dump("diagnostic_questions")).toHaveLength(1);
   });
 
   it("never asks the same fieldKey twice across turns", async () => {
     seedCase("case-1", "user-1");
     setFlags(["QUESTION_ENGINE_ENABLED"]);
-    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
-    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     const questions = fake().dump("diagnostic_questions");
     expect(new Set(questions.map((q) => q.field_key)).size).toBe(questions.length);
   });
@@ -176,7 +234,7 @@ describe("runDiagnosticEngineTurn — probability engine", () => {
   it("calls the AI provider and persists ranked hypotheses only when PROBABILITY_ENGINE_ENABLED", async () => {
     seedCase("case-1", "user-1");
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
-    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
 
     expect(result.response).not.toBeNull();
     expect(result.response?.probabilityRanking[0].hypothesis).toBe("Open ground at G103");
@@ -186,9 +244,78 @@ describe("runDiagnosticEngineTurn — probability engine", () => {
   it("throws DiagnosticEngineProviderUnsupportedError when the provider has no runDiagnosticEngineTurn method", async () => {
     seedCase("case-1", "user-1");
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
-    await expect(runDiagnosticEngineTurn("user-1", "case-1", providerWithoutEngineTurn())).rejects.toBeInstanceOf(
+    await expect(runDiagnosticEngineTurn("user-1", "case-1", providerWithoutEngineTurn(), defaultBilling())).rejects.toBeInstanceOf(
       DiagnosticEngineProviderUnsupportedError,
     );
+  });
+});
+
+describe("runDiagnosticEngineTurn — provider failure handling", () => {
+  it("propagates a provider failure without fabricating a response, and releases the reserved usage slot", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const billing = defaultBilling();
+
+    await expect(
+      runDiagnosticEngineTurn("user-1", "case-1", failingProvider(new Error("simulated provider outage")), billing),
+    ).rejects.toThrow("simulated provider outage");
+
+    // The usage slot reserved before the call must be released on failure —
+    // never silently left consumed for a request that produced nothing.
+    expect(fake().dump("diagnostic_engine_usage").filter((r) => r.request_id === billing.requestId)).toHaveLength(0);
+    // No hypotheses were fabricated from the failed call.
+    expect(fake().dump("diagnostic_probabilities")).toHaveLength(0);
+  });
+
+  it("records a failed observability run with a classified failure category, not the raw error", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+
+    const { AiResponseValidationError } = await import("@/lib/scan-diagnostics/api-errors");
+    await expect(
+      runDiagnosticEngineTurn(
+        "user-1",
+        "case-1",
+        failingProvider(new AiResponseValidationError("model did not return a structured tool call")),
+        defaultBilling(),
+      ),
+    ).rejects.toBeInstanceOf(AiResponseValidationError);
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs).toHaveLength(1);
+    expect(runs[0].status).toBe("failed");
+    expect(runs[0].failure_category).toBe("invalid_structured_response");
+    expect(runs[0].schema_validation_result).toBe("invalid");
+  });
+});
+
+describe("runDiagnosticEngineTurn — observability", () => {
+  it("records a completed observability run with structured, non-text fields only", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED", "CONFIDENCE_ENGINE_ENABLED"]);
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs).toHaveLength(1);
+    expect(runs[0].status).toBe("completed");
+    expect(runs[0].provider_called).toBe(true);
+    expect(runs[0].hypothesis_count).toBe(1);
+    expect(typeof runs[0].evidence_count).toBe("number");
+    // No free-text case content ever appears among the recorded fields.
+    const values = Object.values(runs[0]).map((v) => JSON.stringify(v));
+    expect(values.join(" ")).not.toContain("Won't start");
+  });
+
+  it("records a skipped observability run with a skip reason when the AI call is avoided", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    const skipped = runs.find((r) => r.status === "skipped");
+    expect(skipped).toBeDefined();
+    expect(skipped?.skip_reason).toBe("evidence_unchanged_since_graph");
   });
 });
 
@@ -197,11 +324,11 @@ describe("runDiagnosticEngineTurn — cost optimization", () => {
     seedCase("case-1", "user-1");
     setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
 
-    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const first = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(first.costOptimization.aiCallSkipped).toBe(false);
     expect(first.hypotheses).toHaveLength(1);
 
-    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(second.costOptimization.aiCallSkipped).toBe(true);
     expect(second.response).toBeNull();
     // Case memory survives even on a skipped turn — the existing snapshot
@@ -213,12 +340,12 @@ describe("runDiagnosticEngineTurn — cost optimization", () => {
   it("does not skip when new evidence exists since the last graph save", async () => {
     seedCase("case-1", "user-1");
     setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED", "QUESTION_ENGINE_ENABLED"]);
-    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
 
     const { insertEvidence, evidenceFromAnswer } = await import("@/lib/diagnostic-engine/evidence");
     await insertEvidence("case-1", [evidenceFromAnswer("crank_status", "Yes", "yes")]);
 
-    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const second = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(second.costOptimization.aiCallSkipped).toBe(false);
   });
 });
@@ -227,7 +354,7 @@ describe("runDiagnosticEngineTurn — diagnostic graph", () => {
   it("builds and persists a graph only when DIAGNOSTIC_GRAPH_ENABLED, including hypothesis nodes when probability is also on", async () => {
     seedCase("case-1", "user-1");
     setFlags(["DIAGNOSTIC_GRAPH_ENABLED", "PROBABILITY_ENGINE_ENABLED"]);
-    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
 
     expect(result.graph).not.toBeNull();
     expect(result.graph?.nodes.some((n) => n.kind === "evidence")).toBe(true);
@@ -239,18 +366,18 @@ describe("runDiagnosticEngineTurn — test planner and safety", () => {
   it("only builds a test plan when TEST_PLANNER_ENABLED and the AI actually ran", async () => {
     seedCase("case-1", "user-1");
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
-    const withoutPlanner = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const withoutPlanner = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(withoutPlanner.testPlan).toEqual([]);
 
     setFlags(["PROBABILITY_ENGINE_ENABLED", "TEST_PLANNER_ENABLED"]);
-    const withPlanner = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const withPlanner = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(withPlanner.testPlan.length).toBeGreaterThan(0);
   });
 
   it("classifies drive safety whenever the AI ran, regardless of other flags", async () => {
     seedCase("case-1", "user-1");
     setFlags(["PROBABILITY_ENGINE_ENABLED"]);
-    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider());
+    const result = await runDiagnosticEngineTurn("user-1", "case-1", fakeProvider(), defaultBilling());
     expect(result.safety).not.toBeNull();
   });
 });
