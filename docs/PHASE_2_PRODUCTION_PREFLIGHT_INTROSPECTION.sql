@@ -32,17 +32,20 @@ order by ordinal_position;
 
 -- 3. Current analytics_events.event_type check-constraint definition
 --    (confirms whether 0027's original list or 0030's widened list is live).
+--    Uses to_regclass (returns NULL, not an error, if the table is absent)
+--    rather than a bare ::regclass cast, so this stays safe to run even
+--    before any of 0030-0035 have been applied.
 select conname, pg_get_constraintdef(oid) as definition
 from pg_constraint
-where conrelid = 'public.analytics_events'::regclass
+where conrelid = to_regclass('public.analytics_events')
   and contype = 'c';
 
 -- 4. Current diagnostic_evidence.evidence_type check-constraint definition
 --    (confirms whether 0031's original list or 0034's hv_safety_hazard-widened
---    list is live). Will return zero rows before 0031 is applied.
+--    list is live). Returns zero rows, not an error, before 0031 is applied.
 select conname, pg_get_constraintdef(oid) as definition
 from pg_constraint
-where conrelid = 'public.diagnostic_evidence'::regclass
+where conrelid = to_regclass('public.diagnostic_evidence')
   and contype = 'c'
   and conname = 'diagnostic_evidence_evidence_type_check';
 
