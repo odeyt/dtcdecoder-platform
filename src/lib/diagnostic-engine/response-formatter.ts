@@ -15,9 +15,8 @@
 // with its own richer output; this formatter's shape does not need to
 // change to accommodate that.
 import type { DiagnosticAiOutput } from "@/lib/scan-diagnostics/schemas";
-import type { EvidenceItem, RankedHypothesis } from "@/lib/diagnostic-engine/types";
+import type { EvidenceItem, RankedHypothesis, DiagnosticQuestion } from "@/lib/diagnostic-engine/types";
 import type { DiagnosticEngineConfidence } from "@/lib/diagnostic-engine/confidence";
-import type { CandidateQuestion } from "@/lib/diagnostic-engine/question";
 
 export interface EvidenceUsedSummary {
   id: string;
@@ -31,7 +30,11 @@ export interface DiagnosticEngineResponse {
   probabilityRanking: RankedHypothesis[];
   recommendedTests: string[];
   safety: string[];
-  nextQuestion: CandidateQuestion | null;
+  // The PERSISTED question (has a real id an answer can reference), not
+  // the raw CandidateQuestion the Question Engine selected from — a
+  // client needs the id to call POST /answers. See orchestrator.ts, which
+  // passes its `persistedQuestion` here, not the bare candidate.
+  nextQuestion: DiagnosticQuestion | null;
   confidence: DiagnosticEngineConfidence;
 }
 
@@ -61,7 +64,7 @@ export interface FormatDiagnosticEngineResponseParams {
   evidence: EvidenceItem[];
   hypotheses: RankedHypothesis[];
   confidence: DiagnosticEngineConfidence;
-  nextQuestion: CandidateQuestion | null;
+  nextQuestion: DiagnosticQuestion | null;
 }
 
 export function formatDiagnosticEngineResponse(params: FormatDiagnosticEngineResponseParams): DiagnosticEngineResponse {

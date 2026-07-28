@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { recordClientEvent } from "@/lib/analytics/client";
+import { GuidedDiagnosisPanel } from "@/components/GuidedDiagnosisPanel";
 import type { DtcTechnicianContext } from "@/lib/dtc-technician/context";
 
 // Persistent, page-agnostic consultation launcher — a floating trigger that
@@ -51,6 +52,8 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [guidedMode, setGuidedMode] = useState(false);
+  const [activeCaseId, setActiveCaseId] = useState<string | null>(context?.caseId ?? null);
 
   const panelRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLButtonElement>(null);
@@ -261,10 +264,16 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
               </button>
               <button
                 type="button"
-                disabled
-                title={t("guidedDiagnosisComingSoon")}
-                aria-disabled="true"
-                className="min-h-11 cursor-not-allowed rounded-full border border-[var(--border-subtle)] px-3 py-1.5 text-xs text-[var(--text-muted)] opacity-60"
+                onClick={() => {
+                  recordClientEvent("guided_diagnosis_clicked", { path: pathname });
+                  setGuidedMode((prev) => !prev);
+                }}
+                aria-pressed={guidedMode}
+                className={`min-h-11 rounded-full border px-3 py-1.5 text-xs transition ${
+                  guidedMode
+                    ? "border-[var(--border-red)] text-[var(--accent-red)]"
+                    : "border-[var(--border-subtle)] text-[var(--text-secondary)] hover:border-[var(--border-red)] hover:text-[var(--text-primary)]"
+                }`}
               >
                 {t("guidedDiagnosis")}
               </button>
@@ -303,6 +312,11 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
                   {t("signInCta")}
                 </Link>
               </div>
+            ) : guidedMode ? (
+              <GuidedDiagnosisPanel
+                initialCaseId={activeCaseId}
+                onCaseCreated={(newCaseId) => setActiveCaseId(newCaseId)}
+              />
             ) : (
               <>
                 <div className="mt-4 flex-1 space-y-3 overflow-y-auto" aria-live="polite">

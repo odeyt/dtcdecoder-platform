@@ -1,9 +1,8 @@
 import { describe, expect, it } from "vitest";
 import { formatDiagnosticEngineResponse } from "@/lib/diagnostic-engine/response-formatter";
 import type { DiagnosticAiOutput } from "@/lib/scan-diagnostics/schemas";
-import type { EvidenceItem, RankedHypothesis } from "@/lib/diagnostic-engine/types";
+import type { EvidenceItem, RankedHypothesis, DiagnosticQuestion } from "@/lib/diagnostic-engine/types";
 import type { DiagnosticEngineConfidence } from "@/lib/diagnostic-engine/confidence";
-import type { CandidateQuestion } from "@/lib/diagnostic-engine/question";
 
 const evidence: EvidenceItem[] = [
   { id: "e1", caseId: "case-1", type: "dtc_stored", value: { code: "P0562" }, source: "extraction", confidence: "high", recordedAt: "now" },
@@ -22,7 +21,18 @@ const confidence: DiagnosticEngineConfidence = {
   requiredTests: ["Ohm test"],
 };
 
-const nextQuestion: CandidateQuestion = { fieldKey: "crank_status", questionText: "Does the engine crank?", responseType: "yes_no", priorityTier: 3 };
+const nextQuestion: DiagnosticQuestion = {
+  id: "q1",
+  caseId: "case-1",
+  sequence: 1,
+  fieldKey: "crank_status",
+  questionText: "Does the engine crank?",
+  responseType: "yes_no",
+  choices: [],
+  priorityScore: 80,
+  askedAt: "now",
+  answered: false,
+};
 
 function aiOutput(overrides: Partial<DiagnosticAiOutput> = {}): DiagnosticAiOutput {
   return {
