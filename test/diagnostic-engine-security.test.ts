@@ -25,6 +25,35 @@ vi.mock("@/lib/supabase/admin", async () => {
   return { createAdminClient: () => fake };
 });
 
+// Real-route-level regression coverage for docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md
+// — a fake provider standing in for AnthropicDiagnosticProvider, since the
+// route instantiates it directly rather than accepting it as a parameter.
+vi.mock("@/lib/scan-diagnostics/ai/anthropic-provider", () => ({
+  AnthropicDiagnosticProvider: class {
+    id = "fake-anthropic";
+    async runDiagnosis(): Promise<never> {
+      throw new Error("not used in these tests");
+    }
+    async runDiagnosticEngineTurn() {
+      return {
+        providerId: "fake-anthropic",
+        modelId: "fake-model",
+        promptVersion: "test-v1",
+        output: {
+          summary: "test summary",
+          rankedCauses: [],
+          recommendedTests: [],
+          safetyWarnings: [],
+          missingInformation: [],
+        },
+        tokens: { input: 100, output: 100 },
+      };
+    }
+  },
+  SCAN_REPORT_MODEL_ID: "fake-model",
+  SCAN_REPORT_MAX_TOKENS: 4096,
+}));
+
 const { POST: turnPOST } = await import("@/app/api/diagnostic-engine/v1/cases/[caseId]/turn/route");
 const { POST: answersPOST } = await import("@/app/api/diagnostic-engine/v1/cases/[caseId]/answers/route");
 const {
@@ -68,11 +97,29 @@ function seedCase(caseId: string, ownerId: string) {
   fake().seed("scan_cases", [{ id: caseId, user_id: ownerId, status: "completed", complaint: "x", symptoms: [] }]);
 }
 
+let usageIdCounter = 0;
+
 beforeEach(() => {
   fake().reset();
   currentUser = { id: "user-1", email: "tech@example.com" };
   setFlags([]);
   setRolloutTier(null);
+  usageIdCounter = 0;
+  fake().setRpcHandler("record_diagnostic_engine_usage", (args) => {
+    usageIdCounter += 1;
+    fake().seed("diagnostic_engine_usage", [
+      {
+        id: `usage-${usageIdCounter}`,
+        user_id: args.p_user_id,
+        request_id: args.p_request_id,
+        feature: args.p_feature,
+        plan: args.p_plan,
+        access_level: args.p_access_level,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+    return "recorded";
+  });
 });
 
 afterEach(() => {
@@ -126,6 +173,20 @@ describe("POST /turn — authentication and ownership", () => {
 
     const res = await turnPOST(makeRequest({ requestId: "req-1" }), paramsFor("case-1"));
     expect(res.status).toBe(404);
+  });
+
+  // docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md — proves the fix through the
+  // REAL HTTP route handler, not just the orchestrator function directly.
+  it("a successful turn through the real route never returns safety: null in its JSON body", async () => {
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    setRolloutTier("all_paid_users");
+    seedCase("case-1", "user-1");
+
+    const res = await turnPOST(makeRequest({ requestId: "req-1" }), paramsFor("case-1"));
+    expect(res.status).toBe(200);
+    const body = await res.json();
+    expect(body.safety).not.toBeNull();
+    expect(typeof body.safety.status).toBe("string");
   });
 });
 

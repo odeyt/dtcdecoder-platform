@@ -77,6 +77,17 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       rolloutTier: diagnosticEngineRolloutTier(),
       requestId: parsed.data.requestId,
     });
+
+    // Alertable canary (docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md): the
+    // type system now guarantees `result.safety` is never null, but this
+    // guards against a future regression reintroducing the exact bug this
+    // fix closed. Expected count in production: always zero. Logs only
+    // case/request identifiers — never evidence content, prompts, or
+    // customer data.
+    if (!result.safety) {
+      console.error("ALERT diagnostic_engine_safety_missing", { caseId, requestId: parsed.data.requestId });
+    }
+
     return NextResponse.json(result);
   } catch (err) {
     return toSafeErrorResponse(err, "diagnostic engine turn");
