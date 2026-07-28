@@ -15,23 +15,52 @@
 | Internal tester allowlist | `DIAGNOSTIC_ENGINE_ALLOWED_EMAILS` |
 | Diagnostic budget values | `DIAGNOSTIC_ENGINE_DAILY_BUDGET_USD`, `DIAGNOSTIC_ENGINE_MONTHLY_BUDGET_USD`, `DIAGNOSTIC_ENGINE_USER_DAILY_BUDGET_USD`, `DIAGNOSTIC_ENGINE_USER_MONTHLY_BUDGET_USD`, `DIAGNOSTIC_ENGINE_INTERNAL_DAILY_BUDGET_USD`, `DIAGNOSTIC_ENGINE_PROVIDER_KILL_SWITCH` |
 
-## Finding: Preview and Production currently share the same Supabase project
+## Correction (Phase 2, direct-production session) — the hash-match claim below was wrong
 
-Checked via `vercel env ls` (Vercel project `redlined1-s-projects/dtcdecoder`) and confirmed by
-pulling both environments' variables to a scratchpad location outside the repo, hashing
-`SUPABASE_SERVICE_ROLE_KEY` from each (never printing the raw value), comparing, then deleting the
-temp files immediately:
+**The original version of this section claimed a confirmed SHA-256 hash match between the
+Preview- and Production-pulled `SUPABASE_SERVICE_ROLE_KEY` values. That claim was incorrect and is
+retracted.** Re-investigation found that `vercel env pull` returns an **empty string** for every
+project-defined environment variable in this Vercel project (Supabase keys, Anthropic key,
+`ADMIN_ALLOWED_EMAILS`, Creem vars — all of them, across Production, Preview, and Development
+alike; only Vercel's own system-injected variables like `VERCEL_OIDC_TOKEN` come through non-empty).
+The original "identical hash" was two empty strings hashing the same way — a false positive, not a
+real credential comparison. Root cause is most likely that these variables are marked **Sensitive**
+in the Vercel dashboard (a real Vercel feature: sensitive variables are write-only and can never be
+read back via CLI/API/dashboard after creation, only injected into the running app), or a
+permission restriction on the CLI-authenticated account — either way, **I have no way to read any
+actual Vercel environment variable value from this environment**, in any scope.
 
-- `SUPABASE_SERVICE_ROLE_KEY` is registered as a single Vercel entry scoped to **"Preview,
-  Production"** together (not two separate per-environment values the way
-  `NEXT_PUBLIC_SUPABASE_URL` is). The SHA-256 hash of the Preview-pulled value and the
-  Production-pulled value are **identical** — this is the same live database credential in both
-  environments.
-- `ANTHROPIC_API_KEY` is configured for **Production only**. Preview and Development have no
-  provider key at all.
-- No `DIAGNOSTIC_ENGINE_*` variable exists in Vercel for any environment yet (Production included)
-  — the engine is fully off everywhere by default, which is safe, but nothing is staged for
-  internal testing either.
+This also means the earlier "`.env.local` is a DIFFERENT Supabase project than Production" finding
+from the same investigation is equally unfounded (same empty-string comparison artifact) and is
+also retracted. **I do not currently know whether `.env.local`'s Supabase project
+(`sysbwmiguyxwzufwxwpq`) matches Vercel Production's real configured project or not.**
+
+## What is still reliable
+
+`vercel env ls` lists variable *names* and which environment(s) they're scoped to — that is
+metadata, not a decrypted value, and did not depend on the broken value-pull. From that listing
+only:
+
+- `SUPABASE_SERVICE_ROLE_KEY` appears as a **single entry** scoped to "Preview, Production"
+  together, whereas `NEXT_PUBLIC_SUPABASE_URL` appears as **three separate entries**, one each for
+  Development/Preview/Production. In Vercel's UI, a variable gets separate per-environment rows
+  only when different values were entered per environment; a single combined row is how Vercel
+  represents one value reused across the listed environments. This is a real, structural signal
+  (not a value read) that Preview and Production were configured with the *same* service-role
+  credential — but it is suggestive, not cryptographically confirmed, since the actual value cannot
+  be read to verify.
+- `ANTHROPIC_API_KEY` is listed for **Production only** — no entry exists for Preview or
+  Development.
+- No `DIAGNOSTIC_ENGINE_*` variable exists in Vercel for any environment yet.
+
+## Consequence for identifying "the real production Supabase project"
+
+I cannot positively identify, from this environment, which Supabase project Vercel Production
+actually uses at runtime. `.env.local` points to `sysbwmiguyxwzufwxwpq`, and it may or may not be
+the same project Vercel Production is configured with — I have no reliable way to check. This
+directly blocks the "Confirm production Supabase project identity matches the known DTC Decoder
+production project" requirement of any production release step. See the follow-up production-phase
+preflight doc for how this was resolved.
 
 ## Why this blocks Steps 4 onward
 
