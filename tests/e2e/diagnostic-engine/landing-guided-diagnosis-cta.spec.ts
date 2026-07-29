@@ -1,48 +1,52 @@
-// Landing-page "Start Guided Diagnosis" CTA (Phase 17). Previously a
-// hardcoded `disabled` placeholder regardless of rollout tier or the
-// signed-in user's eligibility — fixed this session
-// (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md) to reflect real,
-// server-computed access via HomePage's resolveGuidedDiagnosisAccess(),
-// the same isDiagnosticEngineRolloutAllowed(email, isAdmin) check the real
-// /turn API route uses. This file asserts the three resulting states.
-// Server-side authorization remains authoritative in every case — the
-// button's state never grants API access on its own (see
-// tests/e2e/security/diagnostic-engine-auth.spec.ts and
-// tests/e2e/auth/ordinary-user.spec.ts for the actual API-level proof).
+// Landing-page CTA safety properties. Originally (Phase 17) asserted the
+// old LandingDtcTechnician hero's "Start Guided Diagnosis" button reflected
+// real server-computed eligibility instead of a hardcoded disabled
+// placeholder. That whole component and its
+// resolveGuidedDiagnosisAccess()-driven button state were retired when the
+// landing hero was replaced by the "Diagnostic Intake Console"
+// (ServiceBayHero) — every visitor, signed in or not, now sees the same
+// entry cards, so there is no more eligibility-gated CTA on the landing
+// page to test. The internal-owner "eligible" scenario this file used to
+// cover has no landing-page equivalent anymore; the real authenticated
+// Guided Diagnosis flow (DtcTechnicianShell, mounted globally in the app
+// shell, unrelated to the landing hero) is already covered end-to-end by
+// tests/e2e/internal-owner/guided-diagnosis.spec.ts — no coverage is lost.
+//
+// What remains landing-page-specific and still worth asserting: the intake
+// console never calls the paid diagnostic-engine provider from the landing
+// page itself, and a flow that needs an account (viewing diagnostic
+// history) correctly redirects an anonymous visitor to sign-in rather than
+// silently proceeding.
 import { test, expect } from "@playwright/test";
-import fs from "fs";
-import { requireProductionInternal } from "../helpers/provider-gate";
 import { attachNetworkMonitor } from "../helpers/network-monitor";
-import { INTERNAL_OWNER_STORAGE_STATE } from "../setup/auth.setup";
 
-test.describe("Landing Guided Diagnosis CTA — anonymous", () => {
-  test("shows a sign-in CTA, not a disabled placeholder, and never calls the provider", async ({ page }) => {
+test.describe("Landing Diagnostic Intake Console — anonymous", () => {
+  test("renders an ungated entry point and never calls the paid provider on load", async ({ page }) => {
     const network = attachNetworkMonitor(page);
     await page.goto("/");
-    const cta = page.getByRole("link", { name: "Start Guided Diagnosis" });
+
+    const cta = page.getByRole("link", { name: "Start Diagnosis" });
     await expect(cta).toBeVisible();
-    await expect(cta).toHaveAttribute("href", "/account/login");
+    await expect(cta).toHaveAttribute("href", "#diagnostic-intake-console");
+
     await page.waitForLoadState("networkidle");
     expect(network.diagnosticEngineTurnCalls).toHaveLength(0);
   });
-});
 
-test.describe("Landing Guided Diagnosis CTA — internal owner (eligible)", () => {
-  requireProductionInternal();
-  test.skip(!fs.existsSync(INTERNAL_OWNER_STORAGE_STATE), "Run tests/e2e/setup/auth.setup.ts first to bootstrap owner storage state.");
-  test.use({ storageState: INTERNAL_OWNER_STORAGE_STATE });
-
-  test("shows an enabled CTA that opens the real Guided Diagnosis panel, without itself calling the provider", async ({ page }) => {
+  test("Continue a previous diagnosis redirects to sign-in instead of proceeding, and never calls the paid provider", async ({ page }) => {
     const network = attachNetworkMonitor(page);
     await page.goto("/");
-    const cta = page.getByRole("button", { name: "Start Guided Diagnosis" });
-    await expect(cta).toBeEnabled();
 
-    await cta.click();
-    // Opens the real DtcTechnicianShell dialog in guided mode — not a
-    // provider call by itself (GuidedDiagnosisPanel's own runTurn() only
-    // fires on the panel's own explicit action, verified separately).
-    await expect(page.getByRole("dialog")).toBeVisible();
+    await page.getByRole("button", { name: "Continue a previous diagnosis" }).click();
+
+    // Scoped to the console panel — SiteNav also has its own "Sign In" link
+    // for an anonymous visitor, so an unscoped query is ambiguous.
+    const signInLink = page.locator("#diagnostic-intake-console").getByRole("link", { name: "Sign In" });
+    await expect(signInLink).toBeVisible();
+    const href = await signInLink.getAttribute("href");
+    expect(href).toMatch(/^\/account\/login/);
+
+    await page.waitForLoadState("networkidle");
     expect(network.diagnosticEngineTurnCalls).toHaveLength(0);
   });
 });
