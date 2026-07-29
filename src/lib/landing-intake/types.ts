@@ -1,5 +1,5 @@
 // Shared shape between the landing hero's client component
-// (LandingDtcTechnician) and the public diagnostic intake API
+// (ServiceBayHero) and the public diagnostic intake API
 // (POST /api/public/diagnostic-intake, Slice 3). Deliberately a plain
 // serializable object — this is the ONLY state carried between an
 // unauthenticated visitor's browser and the deterministic intake endpoint,

@@ -9,7 +9,7 @@ import { recordEvent } from "@/lib/analytics/events";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 
 // Authenticated handoff from the anonymous landing intake
-// (LandingDtcTechnician) into a real diagnostic case. Deliberately calls
+// (ServiceBayHero) into a real diagnostic case. Deliberately calls
 // createQuickDiagnosticCase directly — NOT the existing
 // /api/scan-diagnostics/cases/quick route, which also immediately runs
 // runScanAnalysis and hard-blocks the Free plan. A visitor who filled out

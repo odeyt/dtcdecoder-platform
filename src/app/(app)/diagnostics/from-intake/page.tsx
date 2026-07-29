@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
-import { LANDING_INTAKE_STORAGE_KEY } from "@/components/LandingDtcTechnician";
+import { LANDING_INTAKE_STORAGE_KEY } from "@/lib/landing-intake/handoff";
 
 const STAGES = ["Reading your diagnostic case", "Saving vehicle and code details"];
 
 // The sign-in redirect target for a visitor who was mid-intake on the
-// landing page (see LandingDtcTechnician's handleSignInClick and
-// saveIntakeForHandoff — /account/login?next=%2Fdiagnostics%2Ffrom-intake).
+// landing page (see lib/landing-intake/handoff.ts's saveIntakeForHandoff —
+// /account/login?next=%2Fdiagnostics%2Ffrom-intake).
 // Client-only by necessity: the preserved intake lives in sessionStorage,
 // never the URL (see spec's "do not place long diagnostic content directly
 // in URLs"), so this page must run in the browser to read it at all.
