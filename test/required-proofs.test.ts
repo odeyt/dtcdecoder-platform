@@ -116,12 +116,10 @@ describe("proof #1 — basic search never touches an AI provider", () => {
   });
 });
 
-// Required proof #2: "Free user receives 3 daily basic searches."
-describe("proof #2 — free plan gets exactly 3 basic searches per UTC day", () => {
-  it("grants the first 3 searches today, blocks the 4th with a daily-limit error", async () => {
+// Required proof #2: "Free user receives 1 daily basic search."
+describe("proof #2 — free plan gets exactly 1 basic search per UTC day", () => {
+  it("grants the first search today, blocks the 2nd with a daily-limit error", async () => {
     const identity = { type: "anon" as const, id: "anon-1" };
-    await recordBasicSearchUsage(identity, "free");
-    await recordBasicSearchUsage(identity, "free");
     await recordBasicSearchUsage(identity, "free");
 
     await expect(recordBasicSearchUsage(identity, "free")).rejects.toThrow(BasicSearchLimitExceededError);
@@ -130,23 +128,21 @@ describe("proof #2 — free plan gets exactly 3 basic searches per UTC day", () 
   it("hasBasicSearchAllowanceRemaining agrees before the reservation call is even made", async () => {
     const identity = { type: "anon" as const, id: "anon-2" };
     await recordBasicSearchUsage(identity, "free");
-    await recordBasicSearchUsage(identity, "free");
-    await recordBasicSearchUsage(identity, "free");
 
     await expect(hasBasicSearchAllowanceRemaining(identity, "free")).resolves.toBe(false);
   });
 });
 
-// Required proof #3: "Free user receives 10 monthly basic searches."
-describe("proof #3 — free plan gets exactly 10 basic searches per calendar month", () => {
-  it("blocks the 11th search this month even though the daily count is far under 3", async () => {
+// Required proof #3: "Free user receives 5 monthly basic searches."
+describe("proof #3 — free plan gets exactly 5 basic searches per calendar month", () => {
+  it("blocks the 6th search this month even though the daily count is 0", async () => {
     const identifier = "anon-3";
-    // Seed 10 prior searches spread across past days this month (never
+    // Seed 5 prior searches spread across past days this month (never
     // today, so today's daily count stays at 0 — isolates the monthly
     // cap from the daily one, same pattern as the AI-diagnostic tests).
     fake().seed(
       "basic_search_usage",
-      Array.from({ length: 10 }, (_, i) => ({
+      Array.from({ length: 5 }, (_, i) => ({
         identifier_type: "anon",
         identifier,
         created_at: pastDayInCurrentMonthIso(i),
