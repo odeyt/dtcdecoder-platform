@@ -65,6 +65,23 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
     supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
   }, []);
 
+  // Cross-component open trigger (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md)
+  // — the landing page's "Start Guided Diagnosis" CTA lives in a separate
+  // component tree (LandingDtcTechnician) from this persistent, once-mounted
+  // shell, so it asks to open in guided mode via a plain DOM CustomEvent
+  // rather than lifting shell state into a new global store. This only
+  // opens the UI — it never calls the Diagnostic Engine API itself, which
+  // GuidedDiagnosisPanel below still gates through the real, unchanged
+  // server-side rollout/entitlement check on every turn.
+  useEffect(() => {
+    function handleOpenGuided() {
+      setOpen(true);
+      setGuidedMode(true);
+    }
+    window.addEventListener("dtc-technician:open-guided", handleOpenGuided);
+    return () => window.removeEventListener("dtc-technician:open-guided", handleOpenGuided);
+  }, []);
+
   // Focus trap + Escape-to-close + focus restoration.
   useEffect(() => {
     if (!open) return;

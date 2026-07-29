@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
@@ -37,7 +38,15 @@ function saveIntakeForHandoff(intake: LandingDiagnosticIntake) {
   }
 }
 
-export function LandingDtcTechnician({ locale }: { locale: string }) {
+// Server-computed only (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md) — the
+// page-level Server Component resolves this via the same
+// isDiagnosticEngineRolloutAllowed(email, isAdmin) check the real API route
+// uses, never a client-side guess. This value only decides which CTA
+// renders; it grants no API access on its own — every /turn call still
+// goes through that identical server-side check independently.
+export type GuidedDiagnosisAccess = "anonymous" | "locked" | "eligible";
+
+export function LandingDtcTechnician({ locale, guidedDiagnosisAccess }: { locale: string; guidedDiagnosisAccess: GuidedDiagnosisAccess }) {
   const t = useTranslations("landingIntake");
   const router = useRouter();
   const [phase, setPhase] = useState<Phase>("idle");
@@ -219,15 +228,36 @@ export function LandingDtcTechnician({ locale }: { locale: string }) {
               >
                 {t("importScanCta")}
               </button>
-              <button
-                type="button"
-                disabled
-                title={t("guidedDiagnosisComingSoon")}
-                aria-disabled="true"
-                className="min-h-11 cursor-not-allowed rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] opacity-60"
-              >
-                {t("guidedDiagnosisCta")}
-              </button>
+              {guidedDiagnosisAccess === "eligible" ? (
+                <button
+                  type="button"
+                  onClick={() => {
+                    recordClientEvent("guided_diagnosis_clicked", { path: "landing" });
+                    window.dispatchEvent(new CustomEvent("dtc-technician:open-guided"));
+                  }}
+                  className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-red)] px-4 py-2.5 text-sm font-medium text-[var(--accent-red)] transition hover:brightness-110"
+                >
+                  {t("guidedDiagnosisCta")}
+                </button>
+              ) : guidedDiagnosisAccess === "anonymous" ? (
+                <Link
+                  href="/account/login"
+                  title={t("signInRequiredTitle")}
+                  className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-red)]"
+                >
+                  {t("guidedDiagnosisCta")}
+                </Link>
+              ) : (
+                <button
+                  type="button"
+                  disabled
+                  title={t("guidedDiagnosisComingSoon")}
+                  aria-disabled="true"
+                  className="min-h-11 cursor-not-allowed rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm font-medium text-[var(--text-muted)] opacity-60"
+                >
+                  {t("guidedDiagnosisCta")}
+                </button>
+              )}
               {phase !== "idle" && (
                 <button
                   type="button"

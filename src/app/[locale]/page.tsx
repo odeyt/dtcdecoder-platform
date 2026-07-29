@@ -2,8 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
-import { LandingDtcTechnician } from "@/components/LandingDtcTechnician";
+import { LandingDtcTechnician, type GuidedDiagnosisAccess } from "@/components/LandingDtcTechnician";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
+import { createClient } from "@/lib/supabase/server";
+import { isAllowedAdminEmail } from "@/lib/admin-auth";
+import { isDiagnosticEngineRolloutAllowed } from "@/lib/diagnostic-engine/feature-flags";
+
+// Server-side only (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md) — the
+// exact same check the real /turn API route performs, computed once here
+// so the landing CTA's visual state matches what the API will actually
+// allow. This is UI state only; it grants no access on its own.
+async function resolveGuidedDiagnosisAccess(): Promise<GuidedDiagnosisAccess> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return "anonymous";
+  const isAdmin = isAllowedAdminEmail(user.email);
+  return isDiagnosticEngineRolloutAllowed(user.email, isAdmin) ? "eligible" : "locked";
+}
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -49,6 +66,7 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "hero" });
   const th = await getTranslations({ locale, namespace: "home" });
+  const guidedDiagnosisAccess = await resolveGuidedDiagnosisAccess();
 
   const valueProps = [
     { title: th("valueProp1Title"), body: th("valueProp1Body") },
@@ -74,7 +92,7 @@ export default async function HomePage({ params }: Props) {
         </p>
 
         <div className="fade-in-up mt-10" style={{ animationDelay: "140ms" }}>
-          <LandingDtcTechnician locale={locale} />
+          <LandingDtcTechnician locale={locale} guidedDiagnosisAccess={guidedDiagnosisAccess} />
         </div>
       </section>
 
