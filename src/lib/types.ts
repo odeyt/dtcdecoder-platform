@@ -254,6 +254,7 @@ export interface ScanCase {
   recent_repairs: string | null;
   battery_condition: string | null;
   technician_notes: string | null;
+  title: string | null;
   report_language: string;
   created_at: string;
   updated_at: string;
