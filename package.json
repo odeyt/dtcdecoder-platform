@@ -7,7 +7,21 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:chromium": "playwright test --project=chromium",
+    "test:e2e:mobile": "playwright test --project=mobile-chrome --project=mobile-safari --project=tablet",
+    "test:e2e:smoke": "playwright test tests/e2e/smoke",
+    "test:e2e:security": "playwright test tests/e2e/security",
+    "test:e2e:diagnostic": "playwright test tests/e2e/diagnostic-engine",
+    "test:e2e:a11y": "playwright test tests/e2e/accessibility",
+    "test:e2e:provider": "playwright test tests/e2e/provider-reliability",
+    "test:e2e:smoke:prod": "cross-env PLAYWRIGHT_TARGET=production-smoke playwright test tests/e2e/smoke",
+    "test:e2e:internal:prod": "cross-env PLAYWRIGHT_TARGET=production-internal RUN_PRODUCTION_INTERNAL_E2E=true playwright test tests/e2e/internal-owner",
+    "test:e2e:report": "playwright show-report"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.5",
@@ -26,11 +40,14 @@
     "zod": "^4.4.3"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.12.1",
+    "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",
     "@types/react-dom": "^19",
+    "cross-env": "^10.1.0",
     "eslint": "^9",
     "eslint-config-next": "16.2.10",
     "tailwindcss": "^4",

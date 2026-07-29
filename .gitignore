@@ -52,3 +52,10 @@ next-env.d.ts
 
 .vercel
 .env*
+
+# Playwright
+/playwright-report/
+/blob-report/
+/test-results/
+/tests/e2e/.auth/
+*.storage-state.json
