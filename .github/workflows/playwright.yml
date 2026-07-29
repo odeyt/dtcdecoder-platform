@@ -1,0 +1,126 @@
+name: Playwright E2E
+
+on:
+  pull_request:
+    branches: [main]
+  push:
+    branches: [main]
+  workflow_dispatch:
+    inputs:
+      run_production_smoke:
+        description: "Run public production smoke suite against dtcdecoder.com"
+        type: boolean
+        default: false
+      run_production_internal:
+        description: "Run internal-owner + real-provider suites (requires secrets, spends real budget)"
+        type: boolean
+        default: false
+
+jobs:
+  # Required check for every PR/push — deterministic + mocked-provider
+  # suites only. No real Anthropic call, no production target, no owner
+  # credentials required. This is the only job that should ever be a
+  # required merge check (see docs/PLAYWRIGHT_IMPLEMENTATION.md).
+  deterministic:
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx tsc --noEmit
+      - run: npm run lint
+      - run: npx vitest run
+      - run: npm run build
+        env:
+          # Build-time placeholders only — never real secrets. Vercel's own
+          # production build already validates real env vars at deploy
+          # time; this build step only needs to succeed structurally.
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+      - run: npx playwright install --with-deps chromium firefox webkit
+      - name: Deterministic + mocked-provider Playwright suites
+        run: npx playwright test tests/e2e/smoke tests/e2e/security tests/e2e/auth tests/e2e/diagnostic-engine tests/e2e/mobile tests/e2e/accessibility --project=chromium
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Upload Playwright report
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: |
+            playwright-report/
+            test-results/
+          retention-days: 14
+          # Never contains storage state, cookies, passwords, API keys,
+          # full prompts, or customer data — tests/e2e/helpers never write
+          # those into traces/screenshots, and .auth/ is gitignored and
+          # never produced by this job (it never runs auth.setup.ts).
+
+  # Post-deploy light smoke against the real production domain. Manual
+  # dispatch only in this workflow (a Vercel deploy-hook-triggered run is
+  # the intended real trigger — wire that separately once desired; not
+  # auto-wired here to avoid silently hitting production on every push).
+  production-smoke:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.run_production_smoke
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - run: npm run test:e2e:smoke:prod -- --project=chromium
+
+  # Owner-triggered only — real Anthropic calls, real owner session, real
+  # production budget. Never runs on a PR or push, only explicit dispatch.
+  production-internal:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'workflow_dispatch' && inputs.run_production_internal
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      - name: Bootstrap internal owner auth
+        run: npx playwright test tests/e2e/setup/auth.setup.ts --project=chromium
+        env:
+          PLAYWRIGHT_TARGET: production-internal
+          E2E_BASE_URL: https://dtcdecoder.com
+          E2E_INTERNAL_USER_EMAIL: ${{ secrets.E2E_INTERNAL_USER_EMAIL }}
+          E2E_INTERNAL_USER_PASSWORD: ${{ secrets.E2E_INTERNAL_USER_PASSWORD }}
+      - name: Internal-owner + provider-reliability suites
+        run: npx playwright test tests/e2e/internal-owner tests/e2e/provider-reliability --project=chromium
+        env:
+          PLAYWRIGHT_TARGET: production-internal
+          RUN_PRODUCTION_INTERNAL_E2E: "true"
+          E2E_BASE_URL: https://dtcdecoder.com
+          E2E_INTERNAL_USER_EMAIL: ${{ secrets.E2E_INTERNAL_USER_EMAIL }}
+          E2E_INTERNAL_USER_PASSWORD: ${{ secrets.E2E_INTERNAL_USER_PASSWORD }}
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Cleanup synthetic records
+        if: always()
+        run: npx playwright test tests/e2e/setup/cleanup.setup.ts --project=chromium
+        env:
+          NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+      - name: Upload provider reliability report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: provider-reliability-report
+          path: test-results/provider-reliability.json
+          retention-days: 30
