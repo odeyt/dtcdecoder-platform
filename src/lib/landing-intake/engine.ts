@@ -6,8 +6,8 @@
 // uses, so a visitor can't get a second, uncounted allowance by going
 // through this endpoint instead.
 import "server-only";
-import { searchDtcCodes } from "@/lib/dtc";
 import { isValidDtcCodeFormat, deriveDtcCodeStructure } from "@/lib/dtc-category";
+import { resolveDtcLookup } from "@/lib/dtc-lookup";
 import {
   hasBasicSearchAllowanceRemaining,
   recordBasicSearchUsage,
@@ -71,8 +71,12 @@ async function buildBasicResult(
     };
   }
 
-  const matches = await searchDtcCodes(code);
-  const exact = matches.find((m) => m.code.toUpperCase() === code.toUpperCase()) ?? matches[0] ?? null;
+  // Database-first, deterministic — never fabricates a definition. This is
+  // what distinguishes a manufacturer-specific code with no matching row
+  // (e.g. U1003) from a generic code that's genuinely missing from the
+  // reference database; the old code collapsed both into one message.
+  const lookup = await resolveDtcLookup(code);
+  const exact = lookup.definition;
 
   const basicResult = exact
     ? {
@@ -88,21 +92,35 @@ async function buildBasicResult(
         manufacturerSpecificUncertainty: exact.make
           ? undefined
           : "This is the generic (non-manufacturer-specific) definition — your vehicle's actual meaning may differ. Confirm against your vehicle's own service data.",
+        resolutionType: lookup.resolutionType,
+        availableManufacturers: lookup.availableManufacturers,
+        relatedCodes: lookup.relatedCodes.map((r) => r.code),
       }
-    : {
-        dtcCode: code,
-        definition: "This code isn't in our reference database yet.",
-        category,
-        genericSymptoms: [],
-        genericCauses: [],
-        basicChecks: [
-          "Verify the code with a scan tool to confirm current vs. history status.",
-          "Check for related codes stored alongside this one.",
-        ],
-        safetyWarnings: [],
-        manufacturerSpecificUncertainty:
-          "We don't have a specific definition for this code yet — its meaning may be manufacturer-specific.",
-      };
+    : lookup.resolutionType === "vehicle_context_required"
+      ? {
+          dtcCode: code,
+          definition: "",
+          category,
+          genericSymptoms: [],
+          genericCauses: [],
+          basicChecks: [],
+          safetyWarnings: [],
+          resolutionType: "vehicle_context_required" as const,
+          availableManufacturers: lookup.availableManufacturers,
+          relatedCodes: [],
+        }
+      : {
+          dtcCode: code,
+          definition: "",
+          category,
+          genericSymptoms: [],
+          genericCauses: [],
+          basicChecks: [],
+          safetyWarnings: [],
+          resolutionType: "unknown" as const,
+          availableManufacturers: [],
+          relatedCodes: lookup.relatedCodes.map((r) => r.code),
+        };
 
   return {
     recordedSearch: true,
@@ -178,6 +196,9 @@ export async function processPublicIntake(params: {
           ],
           safetyWarnings: [],
           manufacturerSpecificUncertainty: "A specific code will let us give you a real definition instead of general guidance.",
+          resolutionType: "unknown",
+          availableManufacturers: [],
+          relatedCodes: [],
         },
         preservedIntake: intake,
         actions: [{ key: "import_scan", label: "Import Vehicle Scan" }],
@@ -238,6 +259,9 @@ export async function processPublicIntake(params: {
         genericCauses: [],
         basicChecks: ["Retrieve the exact DTC with a scan tool to get a specific definition."],
         safetyWarnings: [],
+        resolutionType: "unknown",
+        availableManufacturers: [],
+        relatedCodes: [],
       },
       preservedIntake: intake,
       actions: [{ key: "import_scan", label: "Import Vehicle Scan" }],

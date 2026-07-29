@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "Đã phát hiện mã dành riêng cho nhà sản xuất",
+    "manufacturerSpecificBody": "Mã này có thể có các định nghĩa khác nhau tùy thuộc vào nhà sản xuất, mẫu xe, năm sản xuất, động cơ và mô-đun điều khiển.",
+    "manufacturerSpecificAddVehicle": "Thêm chi tiết xe",
+    "manufacturerSpecificKnownFor": "Chúng tôi có định nghĩa riêng cho các nhà sản xuất sau:",
+    "unknownTitle": "Chúng tôi không thể xác minh định nghĩa đã công bố cho mã này.",
+    "unknownStep1": "Xác nhận chính xác mã như được hiển thị bởi công cụ quét.",
+    "unknownStep2": "Xác định mô-đun điều khiển báo cáo mã này.",
+    "unknownStep3": "Thêm số VIN của xe hoặc năm/hãng/mẫu xe.",
+    "unknownStep4": "Kiểm tra các mã liên quan khác.",
+    "unknownStep5": "Xác nhận trạng thái là hiện tại, đang chờ, lịch sử hay vĩnh viễn.",
+    "reservedTitle": "Mã dự trữ",
+    "reservedBody": "Mã này được đánh dấu là dự trữ theo tiêu chuẩn chẩn đoán và chưa có định nghĩa được gán.",
+    "relatedCodesLabel": "Các mã liên quan trong nhóm này"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

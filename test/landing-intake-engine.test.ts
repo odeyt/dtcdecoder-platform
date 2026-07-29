@@ -1,12 +1,13 @@
 import { describe, expect, it, vi, beforeEach } from "vitest";
 import { emptyIntake } from "@/lib/landing-intake/types";
+import type { DtcLookupResult } from "@/lib/dtc-lookup";
 import type { DtcCode } from "@/lib/types";
 
-const searchDtcCodesMock = vi.fn();
+const resolveDtcLookupMock = vi.fn();
 const hasAllowanceMock = vi.fn();
 const recordUsageMock = vi.fn();
 
-vi.mock("@/lib/dtc", () => ({ searchDtcCodes: (...args: unknown[]) => searchDtcCodesMock(...args) }));
+vi.mock("@/lib/dtc-lookup", () => ({ resolveDtcLookup: (...args: unknown[]) => resolveDtcLookupMock(...args) }));
 vi.mock("@/lib/basic-search/usage", () => ({
   hasBasicSearchAllowanceRemaining: (...args: unknown[]) => hasAllowanceMock(...args),
   recordBasicSearchUsage: (...args: unknown[]) => recordUsageMock(...args),
@@ -40,12 +41,52 @@ const SAMPLE_DTC: DtcCode = {
   youtube_url: null,
   search_count: 0,
   is_published: true,
+  normalized_code: "P0303",
+  family: "P",
+  code_type: "generic",
+  generic_definition: true,
+  manufacturer_specific: false,
+  reserved_code: false,
+  source_type: "original",
+  source_name: null,
+  source_url: null,
+  source_license: null,
+  source_version: null,
+  source_hash: null,
+  review_status: "approved",
+  reviewed_by: null,
+  reviewed_at: null,
+  active: true,
   created_at: "",
   updated_at: "",
 };
 
+function lookupResult(overrides: Partial<DtcLookupResult>): DtcLookupResult {
+  return {
+    rawInput: "P0303",
+    normalized: {
+      rawInput: "P0303",
+      normalizedCode: "P0303",
+      family: "P",
+      numericSection: "0303",
+      isValid: true,
+      isGeneric: true,
+      isManufacturerSpecific: false,
+      isReserved: false,
+      category: "Powertrain",
+      system: "Ignition system or misfire",
+      validationError: null,
+    },
+    resolutionType: "generic",
+    definition: null,
+    availableManufacturers: [],
+    relatedCodes: [],
+    ...overrides,
+  };
+}
+
 beforeEach(() => {
-  searchDtcCodesMock.mockReset();
+  resolveDtcLookupMock.mockReset();
   hasAllowanceMock.mockReset().mockResolvedValue(true);
   recordUsageMock.mockReset().mockResolvedValue(undefined);
 });
@@ -73,7 +114,7 @@ describe("processPublicIntake — one focused question at a time", () => {
   });
 
   it("walks vehicle -> status -> complaint -> basic_result in order, one question per message", async () => {
-    searchDtcCodesMock.mockResolvedValue([SAMPLE_DTC]);
+    resolveDtcLookupMock.mockResolvedValue(lookupResult({ resolutionType: "generic", definition: SAMPLE_DTC }));
 
     let intake = emptyIntake("en");
     let r = await processPublicIntake({ message: "P0303", intake, identity: ANON_IDENTITY, plan: "free" });
@@ -106,12 +147,13 @@ describe("processPublicIntake — one focused question at a time", () => {
     r = await processPublicIntake({ message: "still no code, just won't start", intake, identity: ANON_IDENTITY, plan: "free" });
     expect(r.status).toBe("basic_result");
     expect(r.basicResult?.dtcCode).toBe("UNKNOWN");
+    expect(resolveDtcLookupMock).not.toHaveBeenCalled();
   });
 });
 
-describe("processPublicIntake — basic result uses local data only", () => {
-  it("returns a basic_result sourced from searchDtcCodes, with symptoms/causes/checks capped and populated", async () => {
-    searchDtcCodesMock.mockResolvedValue([SAMPLE_DTC]);
+describe("processPublicIntake — basic result uses local database data only, never AI", () => {
+  it("returns a basic_result sourced from resolveDtcLookup, with symptoms/causes/checks capped and populated", async () => {
+    resolveDtcLookupMock.mockResolvedValue(lookupResult({ resolutionType: "generic", definition: SAMPLE_DTC }));
     const intake = { ...emptyIntake("en"), dtcCodes: ["P0303"], currentStep: "complaint" };
     const response = await processPublicIntake({ message: "rough idle", intake, identity: ANON_IDENTITY, plan: "free" });
 
@@ -120,34 +162,70 @@ describe("processPublicIntake — basic result uses local data only", () => {
       dtcCode: "P0303",
       definition: SAMPLE_DTC.meaning,
       category: "Powertrain",
+      resolutionType: "generic",
     });
     expect(response.basicResult?.genericCauses).toEqual(SAMPLE_DTC.causes.slice(0, 5));
-    expect(searchDtcCodesMock).toHaveBeenCalledWith("P0303");
+    expect(resolveDtcLookupMock).toHaveBeenCalledWith("P0303");
   });
 
-  it("falls back to a generic 'not in database yet' result for a valid-format but unknown code", async () => {
-    searchDtcCodesMock.mockResolvedValue([]);
+  it("returns an 'unknown' resolution (never the fabricated definition text) for a valid-format generic code with no database row", async () => {
+    resolveDtcLookupMock.mockResolvedValue(
+      lookupResult({ resolutionType: "unknown", definition: null, relatedCodes: [] }),
+    );
     const intake = { ...emptyIntake("en"), dtcCodes: ["P9999"], currentStep: "complaint" };
     const response = await processPublicIntake({ message: "x", intake, identity: ANON_IDENTITY, plan: "free" });
 
     expect(response.status).toBe("basic_result");
-    expect(response.basicResult?.definition).toMatch(/isn't in our reference database/i);
+    expect(response.basicResult?.resolutionType).toBe("unknown");
+    // No fabricated/guessed definition text — the UI renders a dedicated
+    // "unknown" state from resolutionType, not from a hardcoded string here.
+    expect(response.basicResult?.definition).toBe("");
+  });
+
+  it("returns 'vehicle_context_required' — not 'unknown' — for a manufacturer-specific code with no matching row (the U1003 case)", async () => {
+    resolveDtcLookupMock.mockResolvedValue(
+      lookupResult({
+        resolutionType: "vehicle_context_required",
+        definition: null,
+        availableManufacturers: ["Toyota", "Ford"],
+        normalized: {
+          rawInput: "U1003",
+          normalizedCode: "U1003",
+          family: "U",
+          numericSection: "1003",
+          isValid: true,
+          isGeneric: false,
+          isManufacturerSpecific: true,
+          isReserved: false,
+          category: "Network/Communication",
+          system: null,
+          validationError: null,
+        },
+      }),
+    );
+    const intake = { ...emptyIntake("en"), dtcCodes: ["U1003"], currentStep: "complaint" };
+    const response = await processPublicIntake({ message: "x", intake, identity: ANON_IDENTITY, plan: "free" });
+
+    expect(response.status).toBe("basic_result");
+    expect(response.basicResult?.resolutionType).toBe("vehicle_context_required");
+    expect(response.basicResult?.availableManufacturers).toEqual(["Toyota", "Ford"]);
+    expect(response.basicResult?.definition).toBe("");
   });
 });
 
 describe("processPublicIntake — free-tier rate limiting", () => {
-  it("returns upgrade_required (never calls searchDtcCodes) once the free allowance is exhausted", async () => {
+  it("returns upgrade_required (never calls resolveDtcLookup) once the free allowance is exhausted", async () => {
     hasAllowanceMock.mockResolvedValue(false);
     const intake = { ...emptyIntake("en"), dtcCodes: ["P0303"], currentStep: "complaint" };
     const response = await processPublicIntake({ message: "rough idle", intake, identity: ANON_IDENTITY, plan: "free" });
 
     expect(response.status).toBe("upgrade_required");
-    expect(searchDtcCodesMock).not.toHaveBeenCalled();
+    expect(resolveDtcLookupMock).not.toHaveBeenCalled();
     expect(recordUsageMock).not.toHaveBeenCalled();
   });
 
   it("records basic-search usage exactly once per successful lookup", async () => {
-    searchDtcCodesMock.mockResolvedValue([SAMPLE_DTC]);
+    resolveDtcLookupMock.mockResolvedValue(lookupResult({ resolutionType: "generic", definition: SAMPLE_DTC }));
     const intake = { ...emptyIntake("en"), dtcCodes: ["P0303"], currentStep: "complaint" };
     await processPublicIntake({ message: "rough idle", intake, identity: ANON_IDENTITY, plan: "free" });
     expect(recordUsageMock).toHaveBeenCalledTimes(1);

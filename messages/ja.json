@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "メーカー固有のコードを検出しました",
+    "manufacturerSpecificBody": "このコードは、車両メーカー、モデル、年式、エンジン、制御モジュールによって定義が異なる場合があります。",
+    "manufacturerSpecificAddVehicle": "車両情報を追加",
+    "manufacturerSpecificKnownFor": "以下のメーカー向けにメーカー固有の定義があります:",
+    "unknownTitle": "このコードの公開された定義を確認できませんでした。",
+    "unknownStep1": "スキャンツールに表示されたコードを正確に確認してください。",
+    "unknownStep2": "コードを報告している制御モジュールを特定してください。",
+    "unknownStep3": "車両のVINまたは年式/メーカー/モデルを追加してください。",
+    "unknownStep4": "関連コードがないか確認してください。",
+    "unknownStep5": "ステータスが現在、保留、履歴、または恒久的かを確認してください。",
+    "reservedTitle": "予約済みコード",
+    "reservedBody": "このコードは診断規格により予約済みとされており、割り当てられた定義はありません。",
+    "relatedCodesLabel": "このファミリーの関連コード"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

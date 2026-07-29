@@ -261,7 +261,20 @@
     "basicResultSymptoms": "อาการทั่วไป",
     "basicResultCauses": "สาเหตุทั่วไป",
     "basicResultChecks": "การตรวจสอบเบื้องต้น",
-    "basicResultSafety": "คำเตือนด้านความปลอดภัย"
+    "basicResultSafety": "คำเตือนด้านความปลอดภัย",
+    "manufacturerSpecificTitle": "ตรวจพบรหัสเฉพาะของผู้ผลิต",
+    "manufacturerSpecificBody": "รหัสนี้อาจมีความหมายแตกต่างกันขึ้นอยู่กับผู้ผลิตรถยนต์ รุ่น ปี เครื่องยนต์ และโมดูลควบคุม",
+    "manufacturerSpecificAddVehicle": "เพิ่มรายละเอียดรถยนต์",
+    "manufacturerSpecificKnownFor": "เรามีคำจำกัดความเฉพาะของผู้ผลิตสำหรับ:",
+    "unknownTitle": "เราไม่สามารถยืนยันคำจำกัดความที่เผยแพร่สำหรับรหัสนี้ได้",
+    "unknownStep1": "ยืนยันรหัสให้ตรงตามที่เครื่องมือสแกนแสดง",
+    "unknownStep2": "ระบุโมดูลควบคุมที่รายงานรหัสนี้",
+    "unknownStep3": "เพิ่ม VIN ของรถยนต์หรือปี/ยี่ห้อ/รุ่น",
+    "unknownStep4": "ตรวจสอบรหัสที่เกี่ยวข้องอื่นๆ",
+    "unknownStep5": "ยืนยันว่าสถานะเป็นปัจจุบัน รอดำเนินการ ประวัติ หรือถาวร",
+    "reservedTitle": "รหัสที่สงวนไว้",
+    "reservedBody": "รหัสนี้ถูกทำเครื่องหมายว่าสงวนไว้ตามมาตรฐานการวินิจฉัยและไม่มีคำจำกัดความที่กำหนด",
+    "relatedCodesLabel": "รหัสที่เกี่ยวข้องในกลุ่มนี้"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

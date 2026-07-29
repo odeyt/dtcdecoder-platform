@@ -26,6 +26,9 @@ interface FakeQueryBuilder extends PromiseLike<{ data: unknown; error: unknown }
   gte(col: string, val: unknown): FakeQueryBuilder;
   not(col: string, operator: string, val: unknown): FakeQueryBuilder;
   in(col: string, vals: unknown[]): FakeQueryBuilder;
+  is(col: string, val: null | boolean): FakeQueryBuilder;
+  ilike(col: string, pattern: string): FakeQueryBuilder;
+  neq(col: string, val: unknown): FakeQueryBuilder;
   order(col: string, opts?: { ascending?: boolean }): FakeQueryBuilder;
   limit(n: number): FakeQueryBuilder;
   insert(payload: Row | Row[]): FakeQueryBuilder;
@@ -136,6 +139,25 @@ export function createFakeSupabase(): FakeSupabase {
       },
       in(col, vals) {
         filters.push((r) => vals.includes(r[col]));
+        return self;
+      },
+      // Only "is null"/"is not null"-style equality is implemented (the
+      // shapes this codebase actually calls: .is(col, null), .is(col, true))
+      // — not a general IS DISTINCT FROM implementation.
+      is(col, val) {
+        filters.push((r) => (r[col] ?? null) === val);
+        return self;
+      },
+      // Only a leading/trailing "%" prefix-or-suffix wildcard is supported
+      // (what this codebase's actual .ilike() calls use, e.g. "P030%") —
+      // not full SQL LIKE pattern syntax.
+      ilike(col, pattern) {
+        const prefix = pattern.endsWith("%") ? pattern.slice(0, -1) : pattern;
+        filters.push((r) => String(r[col] ?? "").toLowerCase().startsWith(prefix.toLowerCase()));
+        return self;
+      },
+      neq(col, val) {
+        filters.push((r) => r[col] !== val);
         return self;
       },
       order(col, opts) {

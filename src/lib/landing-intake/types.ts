@@ -25,6 +25,14 @@ export function emptyIntake(locale: string): LandingDiagnosticIntake {
 
 export type PublicIntakeStatus = "needs_more_information" | "basic_result" | "sign_in_required" | "upgrade_required";
 
+export type DtcBasicResolutionType =
+  | "generic"
+  | "manufacturer_exact"
+  | "vehicle_context_required"
+  | "reserved"
+  | "unknown"
+  | "invalid";
+
 export interface PublicIntakeBasicResult {
   dtcCode: string;
   definition: string;
@@ -34,6 +42,13 @@ export interface PublicIntakeBasicResult {
   basicChecks: string[];
   safetyWarnings: string[];
   manufacturerSpecificUncertainty?: string;
+  // Which of the 5 lookup states this result actually represents — the
+  // renderer branches on this, not on inferring intent from empty arrays.
+  // See src/lib/dtc-lookup.ts for how this is derived (database-first,
+  // never guessed/fabricated by AI).
+  resolutionType: DtcBasicResolutionType;
+  availableManufacturers: string[];
+  relatedCodes: string[];
 }
 
 export interface PublicIntakeNextQuestion {
