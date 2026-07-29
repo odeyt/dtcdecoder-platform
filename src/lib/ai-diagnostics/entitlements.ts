@@ -21,7 +21,7 @@ export function previewDailyLimit(plan: SubscriptionPlan): number | null {
   return AI_DIAGNOSTIC_ENTITLEMENTS[plan].aiDiagnosticPreviewDailyLimit;
 }
 
-export function fullDailyLimit(plan: SubscriptionPlan): number {
+export function fullDailyLimit(plan: SubscriptionPlan): number | null {
   return AI_DIAGNOSTIC_ENTITLEMENTS[plan].fullDiagnosticDailyLimit;
 }
 

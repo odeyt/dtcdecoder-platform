@@ -89,7 +89,6 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
           highlighted
           bullets={[
             t("proBullet1"),
-            t("proBullet2"),
             t("proBullet3"),
             t("proBullet4"),
             t("proBullet5"),
@@ -107,7 +106,6 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
           interval={interval}
           bullets={[
             t("workshopBullet1"),
-            t("workshopBullet2"),
             t("workshopBullet3"),
             t("workshopBullet4"),
             t("workshopBullet5"),

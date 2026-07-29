@@ -43,12 +43,15 @@ describe("AI_DIAGNOSTIC_ENTITLEMENTS — free receives no runtime AI diagnostic 
     expect(free.fullDiagnosticDailyLimit).toBe(0);
   });
 
-  it("pro and workshop match the new target quotas", () => {
+  it("pro and workshop match the new target monthly quotas", () => {
     expect(AI_DIAGNOSTIC_ENTITLEMENTS.pro.fullDiagnosticMonthlyLimit).toBe(20);
-    expect(AI_DIAGNOSTIC_ENTITLEMENTS.pro.fullDiagnosticDailyLimit).toBe(3);
     expect(AI_DIAGNOSTIC_ENTITLEMENTS.workshop.fullDiagnosticMonthlyLimit).toBe(75);
-    expect(AI_DIAGNOSTIC_ENTITLEMENTS.workshop.fullDiagnosticDailyLimit).toBe(8);
     expect(AI_DIAGNOSTIC_ENTITLEMENTS.workshop.technicianSeatLimit).toBe(3);
+  });
+
+  it("no paid plan has a daily report cap — only the monthly allowance gates usage", () => {
+    expect(AI_DIAGNOSTIC_ENTITLEMENTS.pro.fullDiagnosticDailyLimit).toBeNull();
+    expect(AI_DIAGNOSTIC_ENTITLEMENTS.workshop.fullDiagnosticDailyLimit).toBeNull();
   });
 });
 

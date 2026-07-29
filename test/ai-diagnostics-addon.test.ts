@@ -175,21 +175,20 @@ describe("recordAiDiagnosticUsage — add-on credit consumption", () => {
     expect(summary.totalReportsRemaining).toBe(9);
   });
 
-  it("daily limit still blocks even with add-on credits available — add-ons only cover the monthly cap, never the daily ceiling", async () => {
+  it("same-day usage is never throttled by a fixed daily ceiling — only the monthly cap (then add-on credits) gates it", async () => {
     await grantAddOnPack({ userId: "user-pro-2", packId: "addon-50", reports: 50, creemOrderId: "order-pro-2" });
 
-    // Pro's daily limit is 3 — exhaust it first.
-    await recordAiDiagnosticUsage({ userId: "user-pro-2", requestId: "req-1", feature: "scan_report", plan: "pro" });
-    await recordAiDiagnosticUsage({ userId: "user-pro-2", requestId: "req-2", feature: "scan_report", plan: "pro" });
-    await recordAiDiagnosticUsage({ userId: "user-pro-2", requestId: "req-3", feature: "scan_report", plan: "pro" });
+    // Run well past what used to be pro's fixed daily limit (3), all in one
+    // day — every one of these must succeed since there's no daily cap
+    // anymore, and the monthly allowance (20) hasn't been touched yet.
+    for (let i = 0; i < 10; i++) {
+      await expect(
+        recordAiDiagnosticUsage({ userId: "user-pro-2", requestId: `req-${i}`, feature: "scan_report", plan: "pro" }),
+      ).resolves.toBe("full");
+    }
 
-    await expect(
-      recordAiDiagnosticUsage({ userId: "user-pro-2", requestId: "req-4", feature: "scan_report", plan: "pro" }),
-    ).rejects.toThrow(/daily.*limit/i);
-
-    // The add-on balance is untouched — it was never even consulted,
-    // since the daily check rejects before the RPC's monthly/add-on logic
-    // ever runs.
+    // The add-on balance is untouched — nothing here ever needed it, since
+    // the monthly allowance alone covered all 10 same-day requests.
     const summary = await getAddOnBalanceSummary("user-pro-2");
     expect(summary.totalReportsRemaining).toBe(50);
   });
