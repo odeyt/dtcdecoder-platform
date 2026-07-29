@@ -143,6 +143,58 @@ export async function createAddOnCheckout(
   return { checkoutUrl: data.checkout_url, checkoutId: data.id };
 }
 
+interface CreateSingleReportCheckoutInput {
+  email: string;
+  userId?: string;
+}
+
+// Whether checkout for the standalone $9.99 single-report purchase is
+// actually possible right now — false until a real Creem product id is
+// configured, same "not available yet" rule as the add-on packs.
+export function isSingleReportCheckoutConfigured(): boolean {
+  return Boolean(env.creemSingleReportProductIdOptional());
+}
+
+// One-time checkout for SINGLE_REPORT_PURCHASE (src/lib/pricing.ts) — a
+// standalone product, not one of ADD_ON_PACKS. metadata carries a fixed
+// marker the webhook uses to recognize this event type; no report count
+// is needed since it's always exactly one.
+export async function createSingleReportCheckout(
+  input: CreateSingleReportCheckoutInput,
+): Promise<{ checkoutUrl: string; checkoutId: string }> {
+  const productId = env.creemSingleReportProductIdOptional();
+  if (!productId) {
+    throw new Error("Single-report purchase has no configured Creem product id yet");
+  }
+
+  const body = {
+    product_id: productId,
+    success_url: env.creemSuccessUrl(),
+    customer: { email: input.email },
+    metadata: {
+      single_report_purchase: "true",
+      ...(input.userId ? { user_id: input.userId } : {}),
+    },
+  };
+
+  const res = await fetch(`${env.creemApiBaseUrl()}/checkouts`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.creemApiKey(),
+    },
+    body: JSON.stringify(body),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Creem checkout creation failed (${res.status}): ${errText}`);
+  }
+
+  const data = (await res.json()) as CreemCheckoutResponse;
+  return { checkoutUrl: data.checkout_url, checkoutId: data.id };
+}
+
 export function verifyWebhookSignature(
   rawBody: string,
   signatureHeader: string | null,
@@ -213,6 +265,14 @@ export function addonPackForProductId(productId: string | undefined) {
   if (productId === env.creemAddon25ProductIdOptional()) return ADD_ON_PACKS.find((p) => p.id === "addon-25") ?? null;
   if (productId === env.creemAddon50ProductIdOptional()) return ADD_ON_PACKS.find((p) => p.id === "addon-50") ?? null;
   return null;
+}
+
+// Reverse lookup for the webhook, parallel to addonPackForProductId above
+// — a standalone product, not a member of ADD_ON_PACKS, so it gets its
+// own boolean check rather than a registry-entry lookup.
+export function isSingleReportProductId(productId: string | undefined): boolean {
+  if (!productId) return false;
+  return productId === env.creemSingleReportProductIdOptional();
 }
 
 export function intervalForProductId(productId: string | undefined): BillingInterval {

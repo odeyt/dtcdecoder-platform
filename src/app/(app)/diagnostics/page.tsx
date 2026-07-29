@@ -4,6 +4,9 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { listCasesForOwner } from "@/lib/scan-diagnostics/cases";
+import { getEffectivePlan } from "@/lib/subscriptions";
+import { getActiveSingleReportUnlocksForCases } from "@/lib/ai-diagnostics/single-report-purchases";
+import { computeExpiryLabel } from "@/lib/scan-diagnostics/retention";
 
 export const metadata: Metadata = {
   title: "Diagnostic Cases",
@@ -32,6 +35,13 @@ export default async function DiagnosticsPage() {
   if (!user) redirect("/account/login");
 
   const cases = await listCasesForOwner(user.id);
+  const plan = await getEffectivePlan(user.id, user.email ?? null);
+  const completedCaseIds = cases.filter((c) => c.status === "completed").map((c) => c.id);
+  const singleReportUnlocks = await getActiveSingleReportUnlocksForCases(completedCaseIds);
+
+  function expiryLabel(caseId: string, createdAt: string): string | null {
+    return computeExpiryLabel({ plan, createdAt, singleReportUnlockExpiresAt: singleReportUnlocks.get(caseId) });
+  }
 
   return (
     <div className="container-app px-6 py-16">
@@ -72,6 +82,9 @@ export default async function DiagnosticsPage() {
                       <p className="mt-1 font-medium text-[var(--text-primary)]">
                         {c.complaint || "Untitled case"}
                       </p>
+                      {c.status === "completed" && expiryLabel(c.id, c.created_at) && (
+                        <p className="mt-1 text-xs text-[var(--text-muted)]">{expiryLabel(c.id, c.created_at)}</p>
+                      )}
                     </div>
                     <time
                       dateTime={c.created_at}

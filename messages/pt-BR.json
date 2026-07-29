@@ -108,7 +108,10 @@
     "yearlySubline": "~US$ {amount}/mês — economize US$ {discount} em relação ao mensal",
     "redirecting": "Redirecionando…",
     "emailForCheckout": "Endereço de e-mail",
-    "introPricing": "Preço de lançamento"
+    "introPricing": "Preço de lançamento",
+    "singleReportHeading": "Prefere pagar por relatório?",
+    "singleReportBody": "Compre um Relatório de Diagnóstico Profissional completo — sem necessidade de assinatura. Disponível para visualização por 30 dias.",
+    "singleReportCta": "Comprar 1 relatório — US$ 9,99"
   },
   "account": {
     "title": "Minha conta",

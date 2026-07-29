@@ -108,7 +108,10 @@
     "yearlySubline": "~${amount}/เดือน — ประหยัด ${discount} เทียบกับรายเดือน",
     "redirecting": "กำลังเปลี่ยนเส้นทาง…",
     "emailForCheckout": "ที่อยู่อีเมล",
-    "introPricing": "ราคาเปิดตัว"
+    "introPricing": "ราคาเปิดตัว",
+    "singleReportHeading": "ต้องการจ่ายเป็นรายรายงานหรือไม่?",
+    "singleReportBody": "ซื้อรายงานการวินิจฉัยระดับมืออาชีพฉบับเต็มหนึ่งฉบับ ไม่ต้องสมัครสมาชิก ดูได้นาน 30 วัน",
+    "singleReportCta": "ซื้อ 1 รายงาน — $9.99"
   },
   "account": {
     "title": "บัญชีของฉัน",

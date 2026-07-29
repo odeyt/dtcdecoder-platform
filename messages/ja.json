@@ -108,7 +108,10 @@
     "yearlySubline": "約 ${amount}/月 — 月間より ${discount} 節約",
     "redirecting": "リダイレクト中…",
     "emailForCheckout": "メールアドレス",
-    "introPricing": "先行価格"
+    "introPricing": "先行価格",
+    "singleReportHeading": "レポート単位でのお支払いをご希望ですか?",
+    "singleReportBody": "サブスクリプション不要で、完全なプロフェッショナル診断レポートを1件購入できます。30日間閲覧可能です。",
+    "singleReportCta": "レポートを1件購入 — $9.99"
   },
   "account": {
     "title": "マイアカウント",

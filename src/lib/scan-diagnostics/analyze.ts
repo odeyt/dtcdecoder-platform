@@ -6,7 +6,14 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getCaseForOwner, transitionCaseStatus } from "@/lib/scan-diagnostics/cases";
-import { recordAiDiagnosticUsage, releaseAiDiagnosticUsage, recordAiDiagnosticRun } from "@/lib/ai-diagnostics/usage";
+import {
+  recordAiDiagnosticUsage,
+  releaseAiDiagnosticUsage,
+  recordAiDiagnosticRun,
+  AiDiagnosticLimitExceededError,
+  type AiDiagnosticAccessLevel,
+} from "@/lib/ai-diagnostics/usage";
+import { redeemSingleReportPurchase } from "@/lib/ai-diagnostics/single-report-purchases";
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
@@ -45,7 +52,27 @@ export async function runScanAnalysis(
   // present and is a no-op, never a double charge. Shared with the DTC
   // Assistant chat feature's daily preview/monthly+daily full-report
   // allowance — see src/lib/ai-diagnostics/usage.ts.
-  const accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
+  //
+  // If the plan-based allowance rejects this request (including Free
+  // tier's hard 0/day ceiling), fall back to redeeming an unused
+  // single-report purchase ($9.99 standalone buy — see
+  // single-report-purchases.ts for why this is checked here rather than
+  // inside record_ai_diagnostic_usage itself) before giving up. A
+  // successful redemption grants full access for this one report,
+  // regardless of plan; resolveReportAccess re-derives the same unlock at
+  // view time.
+  let accessLevel: AiDiagnosticAccessLevel;
+  try {
+    accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
+  } catch (err) {
+    if (err instanceof AiDiagnosticLimitExceededError) {
+      const redeemed = await redeemSingleReportPurchase({ userId, caseId });
+      if (!redeemed) throw err;
+      accessLevel = "full";
+    } else {
+      throw err;
+    }
+  }
   await recordEvent("ai_diagnosis_started", { userId, metadata: { plan, accessLevel } });
 
   const admin = createAdminClient();

@@ -11,6 +11,7 @@ import { getAiDiagnosticUsageSummary } from "@/lib/ai-diagnostics/usage";
 import { accessLevelForPlan } from "@/lib/ai-diagnostics/entitlements";
 import { filterScanReportForAccessLevel, type ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
 import { getOrCreateLocalizedReport } from "@/lib/scan-diagnostics/report-localization";
+import { getActiveSingleReportUnlock } from "@/lib/ai-diagnostics/single-report-purchases";
 import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
 import { computeDiagnosticPriority } from "@/lib/scan-diagnostics/priority";
 import type { DetectedPattern } from "@/lib/scan-diagnostics/patterns";
@@ -38,7 +39,15 @@ export async function resolveReportAccess(
   if (!detail.report) return null;
 
   const plan = await getEffectivePlan(userId, email);
-  const accessLevel = accessLevelForPlan(plan);
+  // A valid, unexpired single-report purchase unlocks THIS case at full
+  // access regardless of the viewer's current plan (e.g. a Free-tier
+  // customer who bought the $9.99 standalone report) — checked before the
+  // plan-derived level, which is otherwise the sole source of access.
+  // Once expires_at passes, this no longer applies and access falls back
+  // to the normal plan computation below — view access "locks again",
+  // nothing is deleted (see migration 0037).
+  const singleReportUnlock = await getActiveSingleReportUnlock(detail.case.id);
+  const accessLevel = singleReportUnlock ? "full" : accessLevelForPlan(plan);
   const usage = await getAiDiagnosticUsageSummary(userId, plan);
 
   // Translation only applies to a full, real report — a preview-access
