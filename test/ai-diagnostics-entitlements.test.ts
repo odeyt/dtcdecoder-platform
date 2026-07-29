@@ -29,7 +29,7 @@ describe("getEntitlements", () => {
       basicDtcLookup: true,
       aiDiagnosticPreviewDailyLimit: null,
       fullDiagnosticMonthlyLimit: 20,
-      fullDiagnosticDailyLimit: 3,
+      fullDiagnosticDailyLimit: null,
       technicianSeatLimit: 1,
       pdfExport: true,
       sharedCases: false,
@@ -39,7 +39,7 @@ describe("getEntitlements", () => {
       basicDtcLookup: true,
       aiDiagnosticPreviewDailyLimit: null,
       fullDiagnosticMonthlyLimit: 75,
-      fullDiagnosticDailyLimit: 8,
+      fullDiagnosticDailyLimit: null,
       technicianSeatLimit: 3,
       pdfExport: true,
       sharedCases: false,
@@ -78,10 +78,10 @@ describe("previewDailyLimit", () => {
 });
 
 describe("fullDailyLimit / fullMonthlyLimit", () => {
-  it("matches the canonical registry's exact numbers", () => {
+  it("no paid plan has a daily cap — only the monthly allowance gates full-report usage", () => {
     expect(fullDailyLimit("free")).toBe(0);
-    expect(fullDailyLimit("pro")).toBe(3);
-    expect(fullDailyLimit("workshop")).toBe(8);
+    expect(fullDailyLimit("pro")).toBeNull();
+    expect(fullDailyLimit("workshop")).toBeNull();
 
     expect(fullMonthlyLimit("free")).toBe(0);
     expect(fullMonthlyLimit("pro")).toBe(20);

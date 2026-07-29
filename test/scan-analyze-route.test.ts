@@ -222,27 +222,24 @@ describe("runScanAnalysis", () => {
     expect(runsForCase).toHaveLength(0);
   });
 
-  it("pro plan: daily report limit exceeded — case stays ready_for_analysis and no AI run is created", async () => {
+  it("pro plan: no daily report cap — several same-day analyses all succeed", async () => {
     seedCase("case-3", "user-1");
     seedCase("case-4", "user-1");
     seedCase("case-5", "user-1");
     seedCase("case-6", "user-1");
 
-    // Pro gets 3 full AI diagnostic reports per day — consume it with three
-    // other cases first.
+    // Pro has no fixed daily ceiling — only the monthly allowance (20)
+    // gates full-report usage. All four same-day analyses must succeed.
     await runScanAnalysis("user-1", "case-3", "pro", fakeProvider());
     await runScanAnalysis("user-1", "case-4", "pro", fakeProvider());
     await runScanAnalysis("user-1", "case-5", "pro", fakeProvider());
-
-    await expect(runScanAnalysis("user-1", "case-6", "pro", fakeProvider())).rejects.toThrow(
-      /daily.*limit/i,
-    );
+    await runScanAnalysis("user-1", "case-6", "pro", fakeProvider());
 
     const case6 = fake().dump("scan_cases").find((c) => c.id === "case-6");
-    expect(case6?.status).toBe("ready_for_analysis");
+    expect(case6?.status).not.toBe("ready_for_analysis");
 
     const runsForCase6 = fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-6");
-    expect(runsForCase6).toHaveLength(0);
+    expect(runsForCase6).toHaveLength(1);
   });
 
   it("cost ceiling exceeded: rejected before the AI provider is ever called, usage reservation released, case untouched", async () => {

@@ -138,7 +138,7 @@ export interface AiDiagnosticUsageSummary {
   previewDailyLimit: number | null;
   fullReportsUsedToday: number;
   fullReportsUsedThisMonth: number;
-  fullDailyLimit: number;
+  fullDailyLimit: number | null;
   fullMonthlyLimit: number;
 }
 

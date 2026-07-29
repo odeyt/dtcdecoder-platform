@@ -303,8 +303,8 @@ describe("proof #18 — subscription billing is disabled by default", () => {
 //  4. Static DTC page views do not consume quota          -> this file
 //  5. Failed searches do not consume quota                -> this file
 //  6. Free user cannot call paid AI endpoints              -> test/ai-diagnostics-usage.test.ts ("free plan (zero AI diagnostic calls)")
-//  7. Pro receives configured monthly and daily limits     -> test/ai-diagnostics-usage.test.ts ("paid plans (full access)")
-//  8. Workshop receives configured monthly and daily limits -> test/ai-diagnostics-usage.test.ts ("workshop's higher allowance")
+//  7. Pro receives its configured monthly limit, no daily cap -> test/ai-diagnostics-usage.test.ts ("paid plans (full access)")
+//  8. Workshop receives its configured monthly limit, no daily cap -> test/ai-diagnostics-usage.test.ts ("workshop's higher allowance")
 //  9. Limits are enforced server-side                      -> every recordAiDiagnosticUsage call resolves plan via getEffectivePlan(userId), never a client-supplied value — see src/lib/ai-diagnostics/usage.ts and its callers
 // 10. Client-side plan manipulation fails                  -> test/ai-diagnostics-client-trust.test.ts
 // 11. Cost reservation is refunded on provider failure     -> test/scan-analyze-route.test.ts ("provider failure...does not double-charge")
