@@ -108,7 +108,10 @@
     "yearlySubline": "~${amount}/ເດືອນ — ປະຫຍັດ ${discount} ທຽບກັບລາຍເດືອນ",
     "redirecting": "ກຳລັງໂອນເສັ້ນທາງ…",
     "emailForCheckout": "ທີ່ຢູ່ອີເມວ",
-    "introPricing": "ລາຄາເປີດໂຕ"
+    "introPricing": "ລາຄາເປີດໂຕ",
+    "singleReportHeading": "ຢາກຈ່າຍເປັນລາຍງານບໍ?",
+    "singleReportBody": "ຊື້ລາຍງານການວິນິດໄສແບບມືອາຊີບເຕັມຮູບແບບໜຶ່ງສະບັບ — ບໍ່ຕ້ອງສະໝັກສະມາຊິກ. ເບິ່ງໄດ້ພາຍໃນ 30 ວັນ.",
+    "singleReportCta": "ຊື້ 1 ລາຍງານ — $9.99"
   },
   "account": {
     "title": "ບັນຊີຂອງຂ້ອຍ",

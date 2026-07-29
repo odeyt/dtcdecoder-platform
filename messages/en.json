@@ -293,7 +293,10 @@
     "yearlySubline": "~${amount}/mo — save ${discount} vs. monthly",
     "redirecting": "Redirecting…",
     "emailForCheckout": "Email address",
-    "introPricing": "Introductory pricing"
+    "introPricing": "Introductory pricing",
+    "singleReportHeading": "Prefer to pay per report?",
+    "singleReportBody": "Buy one full Professional Diagnostic Report — no subscription required. Viewable for 30 days.",
+    "singleReportCta": "Buy 1 report — $9.99"
   },
   "account": {
     "title": "My Account",

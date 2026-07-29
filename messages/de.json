@@ -108,7 +108,10 @@
     "yearlySubline": "~{amount} $/Monat — {discount} $ gegenüber monatlich sparen",
     "redirecting": "Weiterleitung…",
     "emailForCheckout": "E-Mail-Adresse",
-    "introPricing": "Einführungspreis"
+    "introPricing": "Einführungspreis",
+    "singleReportHeading": "Lieber pro Bericht bezahlen?",
+    "singleReportBody": "Kaufen Sie einen vollständigen professionellen Diagnosebericht — kein Abonnement erforderlich. 30 Tage lang einsehbar.",
+    "singleReportCta": "1 Bericht kaufen — 9,99 $"
   },
   "account": {
     "title": "Mein Konto",

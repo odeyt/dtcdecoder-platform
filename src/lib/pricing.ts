@@ -216,3 +216,16 @@ export const ADD_ON_PACKS: readonly AddOnPack[] = [
   { id: "addon-25", reports: 25, priceUsd: 30 },
   { id: "addon-50", reports: 50, priceUsd: 55 },
 ];
+
+// Standalone pay-per-report entry point — unlike ADD_ON_PACKS above, this
+// is buyable by anyone including a Free/no-subscription customer (see
+// single_report_purchases, migration 0037, and
+// src/lib/ai-diagnostics/single-report-purchases.ts for why it's a
+// separate mechanism from the fungible add-on credits). Unlocks exactly
+// one specific report for 30 days from generation, then view access
+// reverts to the normal plan-based preview/locked state — nothing is
+// deleted.
+export const SINGLE_REPORT_PURCHASE = {
+  priceUsd: 9.99,
+  viewWindowDays: 30,
+} as const;

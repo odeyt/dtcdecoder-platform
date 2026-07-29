@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { SubscribeButton } from "@/components/SubscribeButton";
+import { SingleReportPurchaseButton } from "@/components/SingleReportPurchaseButton";
 import {
   PAID_PLANS,
   LAUNCH_PRICING_ACTIVE,
@@ -116,6 +117,16 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
           buttonLabel={t("workshopAccess")}
           signedIn={signedIn}
         />
+      </div>
+
+      {/* Standalone pay-per-report entry point — unlike the plans above,
+          reachable by anyone including an anonymous or Free-tier visitor,
+          not tied to a subscription. See SINGLE_REPORT_PURCHASE in
+          src/lib/pricing.ts and single_report_purchases (migration 0037). */}
+      <div className="glass-panel mx-auto mt-10 max-w-xl rounded-[var(--radius-xl)] p-6 text-center">
+        <h2 className="text-lg font-bold text-[var(--text-primary)]">{t("singleReportHeading")}</h2>
+        <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("singleReportBody")}</p>
+        <SingleReportPurchaseButton signedIn={signedIn} />
       </div>
 
       <p className="mt-6 text-center text-xs text-[var(--text-muted)]">{t("fairUseNote")}</p>

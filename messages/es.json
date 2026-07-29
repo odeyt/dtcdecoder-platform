@@ -293,7 +293,10 @@
     "yearlySubline": "~${amount}/mes — ahorra ${discount} frente al plan mensual",
     "redirecting": "Redirigiendo…",
     "emailForCheckout": "Correo electrónico",
-    "introPricing": "Precio de lanzamiento"
+    "introPricing": "Precio de lanzamiento",
+    "singleReportHeading": "¿Prefieres pagar por informe?",
+    "singleReportBody": "Compra un Informe de Diagnóstico Profesional completo, sin necesidad de suscripción. Disponible para verlo durante 30 días.",
+    "singleReportCta": "Comprar 1 informe — $9.99"
   },
   "account": {
     "title": "Mi Cuenta",

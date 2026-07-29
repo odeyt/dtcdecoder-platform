@@ -7,13 +7,17 @@ import { env } from "@/lib/env";
 import { getCaseDetail } from "@/lib/scan-diagnostics/cases";
 import { resolveReportAccess } from "@/lib/scan-diagnostics/report-access";
 import { getFeedbackForCase } from "@/lib/scan-diagnostics/feedback";
-import { canExportScanReport } from "@/lib/scan-diagnostics/entitlements";
 import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
+import { getActiveSingleReportUnlock } from "@/lib/ai-diagnostics/single-report-purchases";
+import { computeExpiryLabel } from "@/lib/scan-diagnostics/retention";
+import { getAllowedOutputLocales } from "@/lib/i18n/languages";
 import { ScanCaseActionBar } from "@/components/ScanCaseActionBar";
 import { ScanExtractionReviewForm } from "@/components/ScanExtractionReviewForm";
 import { ScanReportView } from "@/components/ScanReportView";
 import { ScanFeedbackForm } from "@/components/ScanFeedbackForm";
 import { ScanPrintButton } from "@/components/ScanPrintButton";
+import { ScanCopyButton } from "@/components/ScanCopyButton";
+import { ScanReportLanguageSwitcher } from "@/components/ScanReportLanguageSwitcher";
 import { UpgradeCard } from "@/components/UpgradeCard";
 
 export const metadata: Metadata = { title: "Diagnostic Case" };
@@ -39,6 +43,13 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
   const plan = await getEffectivePlan(user.id, user.email ?? null);
   const reportAccess = await resolveReportAccess(user.id, user.email ?? null, detail);
   const feedback = scanCase.status === "completed" ? await getFeedbackForCase(user.id, caseId) : null;
+  const singleReportUnlock = scanCase.status === "completed" ? await getActiveSingleReportUnlock(caseId) : null;
+  const expiryLabel =
+    scanCase.status === "completed"
+      ? computeExpiryLabel({ plan, createdAt: scanCase.created_at, singleReportUnlockExpiresAt: singleReportUnlock?.expiresAt })
+      : null;
+  const availableLocales =
+    scanCase.status === "completed" && reportAccess?.accessLevel === "full" ? await getAllowedOutputLocales(plan) : [];
 
   return (
     <div className="container-app px-6 py-16 print:py-0">
@@ -81,9 +92,26 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
 
         {scanCase.status === "completed" && reportAccess && (
           <div className="mt-6 flex flex-col gap-8">
-            <div className="flex justify-end print:hidden">
-              {canExportScanReport(plan) ? (
-                <ScanPrintButton />
+            {expiryLabel && (
+              <p className="text-xs text-[var(--text-muted)] print:hidden">{expiryLabel}</p>
+            )}
+            <div className="flex flex-wrap items-center justify-end gap-3 print:hidden">
+              {/* Gated on the report's actual resolved access level, not
+                  the viewer's plan directly — a valid single-report
+                  purchase already forces accessLevel to "full" for this
+                  one case regardless of plan (see resolveReportAccess),
+                  so re-deriving from plan here would incorrectly hide
+                  these for an unlocked Free-tier buyer. */}
+              {reportAccess.accessLevel === "full" ? (
+                <>
+                  <ScanReportLanguageSwitcher
+                    caseId={scanCase.id}
+                    currentLanguage={scanCase.report_language}
+                    availableLocales={availableLocales}
+                  />
+                  <ScanCopyButton reportAccess={reportAccess} />
+                  <ScanPrintButton />
+                </>
               ) : (
                 <UpgradeCard reason="Upgrade to Pro or Workshop to export and print your diagnostic report." />
               )}

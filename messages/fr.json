@@ -108,7 +108,10 @@
     "yearlySubline": "~{amount} $/mois — économisez {discount} $ par rapport au mensuel",
     "redirecting": "Redirection…",
     "emailForCheckout": "Adresse e-mail",
-    "introPricing": "Tarif de lancement"
+    "introPricing": "Tarif de lancement",
+    "singleReportHeading": "Vous préférez payer par rapport ?",
+    "singleReportBody": "Achetez un rapport de diagnostic professionnel complet, sans abonnement. Consultable pendant 30 jours.",
+    "singleReportCta": "Acheter 1 rapport — 9,99 $"
   },
   "account": {
     "title": "Mon compte",

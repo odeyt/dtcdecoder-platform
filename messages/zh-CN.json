@@ -108,7 +108,10 @@
     "yearlySubline": "约 ${amount}/月——比月付省 ${discount}",
     "redirecting": "正在跳转…",
     "emailForCheckout": "电子邮件地址",
-    "introPricing": "上线优惠价"
+    "introPricing": "上线优惠价",
+    "singleReportHeading": "更想按份付费?",
+    "singleReportBody": "购买一份完整的专业诊断报告——无需订阅。可查看30天。",
+    "singleReportCta": "购买1份报告 — $9.99"
   },
   "account": {
     "title": "我的账户",
