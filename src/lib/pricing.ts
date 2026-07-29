@@ -103,7 +103,11 @@ export const ENTERPRISE_TIER = {
 // - fullDiagnosticMonthlyLimit / fullDiagnosticDailyLimit: paid-tier full
 //   AI diagnostic reports (credit-weighted — see DIAGNOSTIC_CREDIT_WEIGHTS
 //   — a "report" here is 1 standard-report credit's worth of allowance,
-//   not a hard cap on operation count).
+//   not a hard cap on operation count). fullDiagnosticDailyLimit is `null`
+//   for every paid plan — paid subscribers may run as many reports as they
+//   choose, whenever they choose, up to their monthly allowance; once that's
+//   exhausted they're prompted to buy an add-on pack (report_addon_balances,
+//   migration 0024) rather than being throttled to a fixed pace per day.
 // - technicianSeatLimit / sharedCases: Workshop's multi-seat entitlement is
 //   modeled here for pricing/display honesty, but no invite or shared-login
 //   mechanism is implemented yet — see docs/PRICING_AND_ENTITLEMENTS.md.
@@ -112,7 +116,7 @@ export interface AiDiagnosticEntitlements {
   basicDtcLookup: boolean;
   aiDiagnosticPreviewDailyLimit: number | null;
   fullDiagnosticMonthlyLimit: number;
-  fullDiagnosticDailyLimit: number;
+  fullDiagnosticDailyLimit: number | null;
   technicianSeatLimit: number;
   pdfExport: boolean;
   sharedCases: boolean;
@@ -134,7 +138,7 @@ export const AI_DIAGNOSTIC_ENTITLEMENTS: Record<SubscriptionPlan, AiDiagnosticEn
     basicDtcLookup: true,
     aiDiagnosticPreviewDailyLimit: null,
     fullDiagnosticMonthlyLimit: 20,
-    fullDiagnosticDailyLimit: 3,
+    fullDiagnosticDailyLimit: null,
     technicianSeatLimit: 1,
     pdfExport: true,
     sharedCases: false,
@@ -144,7 +148,7 @@ export const AI_DIAGNOSTIC_ENTITLEMENTS: Record<SubscriptionPlan, AiDiagnosticEn
     basicDtcLookup: true,
     aiDiagnosticPreviewDailyLimit: null,
     fullDiagnosticMonthlyLimit: 75,
-    fullDiagnosticDailyLimit: 8,
+    fullDiagnosticDailyLimit: null,
     technicianSeatLimit: 3,
     pdfExport: true,
     sharedCases: false,

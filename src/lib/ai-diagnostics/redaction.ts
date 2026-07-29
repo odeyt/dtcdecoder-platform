@@ -144,7 +144,9 @@ export interface PreviewUsage {
 }
 
 export interface FullUsage {
-  dailyLimit: number;
+  // null = no daily cap — every paid plan today; a technician may run as
+  // many reports as they choose until the monthly allowance is reached.
+  dailyLimit: number | null;
   dailyUsedToday: number;
   monthlyLimit: number;
   monthlyUsedThisMonth: number;

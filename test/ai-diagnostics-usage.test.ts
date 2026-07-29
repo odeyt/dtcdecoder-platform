@@ -145,19 +145,13 @@ describe("recordAiDiagnosticUsage — free plan (zero AI diagnostic calls)", () 
 });
 
 describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
-  it("grants up to pro's daily limit (3), then blocks with DAILY_REPORT_LIMIT_REACHED", async () => {
-    for (let i = 0; i < 3; i++) {
+  it("has no daily cap — a paid plan may run well past the old 3/day figure in one day without being blocked", async () => {
+    // Only the monthly allowance (20 for pro) gates usage now; running 10 in
+    // a single day — more than pro's old fixed daily limit — must succeed.
+    for (let i = 0; i < 10; i++) {
       await expect(
         recordAiDiagnosticUsage({ userId: "user-pro", requestId: `req-${i}`, feature: "scan_report", plan: "pro" }),
       ).resolves.toBe("full");
-    }
-
-    try {
-      await recordAiDiagnosticUsage({ userId: "user-pro", requestId: "req-4th", feature: "scan_report", plan: "pro" });
-      expect.unreachable("should have thrown");
-    } catch (err) {
-      expect(err).toBeInstanceOf(AiDiagnosticLimitExceededError);
-      expect((err as InstanceType<typeof AiDiagnosticLimitExceededError>).code).toBe("DAILY_REPORT_LIMIT_REACHED");
     }
   });
 
@@ -188,15 +182,12 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
     }
   });
 
-  it("workshop's higher allowance (8/day) is enforced independently of pro's", async () => {
-    for (let i = 0; i < 8; i++) {
+  it("workshop also has no daily cap — same-day usage is gated only by its monthly allowance (75)", async () => {
+    for (let i = 0; i < 15; i++) {
       await expect(
         recordAiDiagnosticUsage({ userId: "user-ws", requestId: `req-${i}`, feature: "chat", plan: "workshop" }),
       ).resolves.toBe("full");
     }
-    await expect(
-      recordAiDiagnosticUsage({ userId: "user-ws", requestId: "req-9th", feature: "chat", plan: "workshop" }),
-    ).rejects.toThrow(AiDiagnosticLimitExceededError);
   });
 
   it("blocks workshop with MONTHLY_REPORT_LIMIT_REACHED after 75 reports this month", async () => {
@@ -220,7 +211,18 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
     }
   });
 
-  it("concurrent requests for the same user never grant more slots than the daily limit", async () => {
+  it("concurrent requests for the same user never grant more slots than the monthly limit — the only cap left now that there's no daily one", async () => {
+    // Pre-seed 17 of pro's 20 monthly slots (spread across the month, not
+    // today, so the — now nonexistent — daily check can't interfere).
+    const seeded = Array.from({ length: 17 }, (_, i) => ({
+      user_id: "user-concurrent",
+      request_id: `seed-${i}`,
+      feature: "chat",
+      access_level: "full",
+      created_at: pastDayInCurrentMonthIso(i),
+    }));
+    fake().seed("ai_diagnostic_usage", seeded);
+
     const attempts = Array.from({ length: 10 }, (_, i) =>
       recordAiDiagnosticUsage({ userId: "user-concurrent", requestId: `req-${i}`, feature: "chat", plan: "pro" }).catch(
         () => null,
@@ -228,8 +230,8 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
     );
     const results = await Promise.all(attempts);
     const granted = results.filter((r) => r === "full");
-    // Pro plan's daily report limit is 3 — no matter how many requests
-    // race in at once, at most 3 may be granted.
+    // Only 3 slots remained (20 - 17) — no matter how many requests race in
+    // at once, at most 3 may be granted.
     expect(granted.length).toBe(3);
   });
 
@@ -259,7 +261,7 @@ describe("getAiDiagnosticUsageSummary", () => {
     const summary = await getAiDiagnosticUsageSummary("user-never-used", "pro");
     expect(summary.fullReportsUsedToday).toBe(0);
     expect(summary.fullReportsUsedThisMonth).toBe(0);
-    expect(summary.fullDailyLimit).toBe(3);
+    expect(summary.fullDailyLimit).toBeNull();
     expect(summary.fullMonthlyLimit).toBe(20);
   });
 });
