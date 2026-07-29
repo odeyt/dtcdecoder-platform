@@ -197,7 +197,9 @@
     "placeholder": "DTC 코드, 증상 또는 차량 문제를 입력...",
     "decode": "해독",
     "noResults": "‘{query}’에 대한 게시된 결과가 아직 없습니다. P0420 같은 구체적인 코드를 시도하거나 다음에 문의하세요:",
-    "askAiAssistant": "AI 어시스턴트"
+    "askAiAssistant": "AI 어시스턴트",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "진단 검색 실패",

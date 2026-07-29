@@ -197,7 +197,9 @@
     "placeholder": "បញ្ចូលកូដ DTC រោគសញ្ញា ឬបញ្ហារបស់រថយន្ត...",
     "decode": "ឌិកូដ",
     "noResults": "មិនទាន់មានលទ្ធផលបានផ្សព្វផ្សាយសម្រាប់ “{query}” នៅឡើយទេ។ សូមសាកកូដជាក់លាក់ដូចជា P0420 ឬសួរ",
-    "askAiAssistant": "ជំនួយការ AI"
+    "askAiAssistant": "ជំនួយការ AI",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "ការស្វែងរកវិនិច្ឆ័យបានបរាជ័យ",

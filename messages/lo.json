@@ -197,7 +197,9 @@
     "placeholder": "ໃສ່ລະຫັດ DTC, ອາການ, ຫຼື ບັນຫາຂອງລົດ...",
     "decode": "ຖອດລະຫັດ",
     "noResults": "ຍັງບໍ່ມີຜົນລັບທີ່ເຜີຍແຜ່ສຳລັບ “{query}”. ລອງໃຊ້ລະຫັດທີ່ຈະເພາະ ເຊັ່ນ P0420, ຫຼື ຖາມ",
-    "askAiAssistant": "ຜູ້ຊ່ວຍ AI"
+    "askAiAssistant": "ຜູ້ຊ່ວຍ AI",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "ການຄົ້ນຫາການວິນິດໄສລົ້ມເຫລວ",

@@ -197,7 +197,9 @@
     "placeholder": "DTC コード、症状、または車両の問題を入力...",
     "decode": "解読",
     "noResults": "「{query}」の公開結果はまだありません。P0420 のような具体的なコードを試すか、次に質問してください：",
-    "askAiAssistant": "AI アシスタント"
+    "askAiAssistant": "AI アシスタント",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "診断検索に失敗しました",

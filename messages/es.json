@@ -382,7 +382,9 @@
     "placeholder": "Ingresa código DTC, síntoma o problema del vehículo...",
     "decode": "Decodificar",
     "noResults": "Aún no hay resultados publicados para “{query}”. Prueba con un código específico como P0420, o pregúntale a",
-    "askAiAssistant": "DTC Technician"
+    "askAiAssistant": "DTC Technician",
+    "limitReachedHeading": "Límite de búsquedas gratuitas alcanzado",
+    "limitReachedBody": "Has usado {usedToday} búsquedas hoy o {usedThisMonth} este mes. Actualiza tu plan para diagnósticos profesionales con IA."
   },
   "dtcError": {
     "eyebrow": "Error en la búsqueda de diagnóstico",
