@@ -257,7 +257,7 @@
   },
   "pricing": {
     "title": "Precios",
-    "subtitle": "Empieza gratis con Búsqueda Rápida de Código ilimitada. Actualiza para obtener Reportes de Diagnóstico Profesional completos.",
+    "subtitle": "Empieza gratis con una vista previa limitada de Búsqueda Rápida de Código. Actualiza para obtener Reportes de Diagnóstico Profesional completos.",
     "yourPlan": "Estás en el plan {plan}",
     "planFree": "Gratis",
     "planPro": "Pro Técnico",
@@ -265,9 +265,9 @@
     "yearlySave": "Anual — Ahorra hasta ${amount}",
     "monthly": "Mensual",
     "freeTitle": "Gratis",
-    "freeBullet1": "Acceso ilimitado a guías públicas de DTC",
-    "freeBullet2": "3 búsquedas básicas por día",
-    "freeBullet3": "10 búsquedas básicas por mes",
+    "freeBullet1": "Vista previa de la guía pública de DTC",
+    "freeBullet2": "1 búsqueda básica por día",
+    "freeBullet3": "5 búsquedas básicas por mes",
     "freeBullet4": "Definiciones básicas de códigos y causas comunes",
     "freeBullet5": "Advertencias de seguridad esenciales revisadas",
     "freeBullet6": "DTC Technician disponible en planes de pago",
@@ -370,7 +370,10 @@
     "difficultyModerate": "Moderado — algunas herramientas de diagnóstico son útiles",
     "difficultyHard": "Difícil — se recomienda escáner y experiencia",
     "difficultyProfessional": "Profesional — una visita al taller es el camino más seguro",
-    "contentNotLocalizedNote": "El contenido de referencia de este código (significado, causas, pasos) se muestra en su inglés original — solo las etiquetas circundantes están localizadas."
+    "contentNotLocalizedNote": "El contenido de referencia de este código (significado, causas, pasos) se muestra en su inglés original — solo las etiquetas circundantes están localizadas.",
+    "previewNote": "Las causas completas, los pasos de diagnóstico y los recursos de reparación están disponibles con un plan de pago.",
+    "moreCausesLocked": "+{count} causas posibles más — desbloquea para verlas todas",
+    "repairResourcesLocked": "PDF de reparación / video tutorial"
   },
   "dtcSearch": {
     "title": "Búsqueda Rápida de Código",

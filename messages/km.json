@@ -185,7 +185,10 @@
     "difficultyModerate": "មធ្យម — ឧបករណ៍វិនិច្ឆ័យខ្លះនឹងមានប្រយោជន៍",
     "difficultyHard": "ពិបាក — ណែនាំឲ្យប្រើឧបករណ៍ស្កេន និងមានបទពិសោធន៍",
     "difficultyProfessional": "អាជីព — ការនាំទៅហាងជាផ្លូវដែលមានសុវត្ថិភាពជាង",
-    "contentNotLocalizedNote": "ខ្លឹមសារយោងនៃកូដនេះ (អត្ថន័យ មូលហេតុ ជំហាន) បង្ហាញជាភាសាអង់គ្លេសដើម — មានតែស្លាកជុំវិញប៉ុណ្ណោះដែលត្រូវបានបកប្រែ។"
+    "contentNotLocalizedNote": "ខ្លឹមសារយោងនៃកូដនេះ (អត្ថន័យ មូលហេតុ ជំហាន) បង្ហាញជាភាសាអង់គ្លេសដើម — មានតែស្លាកជុំវិញប៉ុណ្ណោះដែលត្រូវបានបកប្រែ។",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "ស្វែងរកកូដ DTC",

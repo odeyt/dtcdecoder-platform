@@ -185,7 +185,10 @@
     "difficultyModerate": "中程度 — 一部の診断ツールがあると役立ちます",
     "difficultyHard": "難しい — スキャンツールと経験が推奨されます",
     "difficultyProfessional": "プロ向け — 工場に持ち込むのがより安全な方法です",
-    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。"
+    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "DTC 検索",

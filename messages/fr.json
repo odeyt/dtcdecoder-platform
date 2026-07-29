@@ -185,7 +185,10 @@
     "difficultyModerate": "Modéré — quelques outils de diagnostic sont utiles",
     "difficultyHard": "Difficile — outil de scan et expérience recommandés",
     "difficultyProfessional": "Professionnel — une visite en atelier est la voie la plus sûre",
-    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées."
+    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "Recherche DTC",

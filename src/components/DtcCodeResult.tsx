@@ -2,6 +2,7 @@ import Link from "next/link";
 import { useTranslations, useLocale } from "next-intl";
 import { AiDiagnosisCtaLink } from "@/components/AiDiagnosisCtaLink";
 import type { DtcCode } from "@/lib/types";
+import type { DtcRedactionResult } from "@/lib/dtc-redaction";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 import { SeverityBadge } from "@/components/SeverityBadge";
 import { SafetyAlert } from "@/components/SafetyAlert";
@@ -12,10 +13,21 @@ import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
 import { detectSafetyWarnings } from "@/lib/safety-warnings";
 import { deriveDtcCodeStructure } from "@/lib/dtc-category";
 
-export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
+export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: DtcRedactionResult }) {
   const t = useTranslations("dtcResult");
   const locale = useLocale();
   const structure = deriveDtcCodeStructure(dtc.code);
+  const isPreview = redaction.accessLevel === "preview";
+  const lockedSectionTitle: Record<string, string> = {
+    dtcDiagnosticSteps: t("diagnosticChecks"),
+    dtcRepairResources: t("repairResourcesLocked"),
+  };
+  const localizedLockedSections = redaction.lockedSections.map((section) => ({
+    key: section.key,
+    title: lockedSectionTitle[section.key] ?? section.title,
+  }));
+  const diagnosticStepsLocked = localizedLockedSections.some((s) => s.key === "dtcDiagnosticSteps");
+  const repairResourcesLocked = localizedLockedSections.some((s) => s.key === "dtcRepairResources");
 
   const DIFFICULTY_LABEL: Record<DtcCode["difficulty"], string> = {
     easy: t("difficultyEasy"),
@@ -39,6 +51,9 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
           {dtc.title}
         </h1>
         <p className="mt-3 text-[var(--text-secondary)]">{dtc.meaning}</p>
+        {isPreview && (
+          <p className="mt-3 text-xs text-[var(--text-muted)]">{t("previewNote")}</p>
+        )}
         <div className="mt-5 flex flex-wrap gap-2">
           <SeverityBadge severity={dtc.severity} />
           <span className="rounded-full border border-[var(--border-subtle)] px-3 py-1 text-xs text-[var(--text-secondary)]">
@@ -96,6 +111,14 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
           {dtc.causes.map((cause, i) => (
             <CauseCard key={i} cause={cause} rank={i + 1} />
           ))}
+          {redaction.hiddenCausesCount > 0 && (
+            <div className="glass-panel rounded-[var(--radius-lg)] p-4 text-center text-sm text-[var(--text-secondary)]">
+              {t("moreCausesLocked", { count: redaction.hiddenCausesCount })}{" "}
+              <Link href="/pricing" className="font-semibold text-[var(--accent-red)] hover:underline">
+                {t("upgradeButton")}
+              </Link>
+            </div>
+          )}
         </div>
       </ResultSection>
 
@@ -109,13 +132,21 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       </ResultSection>
 
       {/* Recommended diagnostic checks */}
-      <ResultSection title={t("diagnosticChecks")}>
-        <ol className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "decimal" }}>
-          {dtc.diagnostic_steps.map((step, i) => (
-            <li key={i}>{step}</li>
-          ))}
-        </ol>
-      </ResultSection>
+      {diagnosticStepsLocked ? (
+        <ResultSection title={t("diagnosticChecks")}>
+          <LockedResultPanel sections={localizedLockedSections.filter((s) => s.key === "dtcDiagnosticSteps")} />
+        </ResultSection>
+      ) : (
+        dtc.diagnostic_steps.length > 0 && (
+          <ResultSection title={t("diagnosticChecks")}>
+            <ol className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "decimal" }}>
+              {dtc.diagnostic_steps.map((step, i) => (
+                <li key={i}>{step}</li>
+              ))}
+            </ol>
+          </ResultSection>
+        )
+      )}
 
       {/* What not to replace yet */}
       {dtc.common_mistakes && (
@@ -130,7 +161,10 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
       )}
 
       {/* Downloadable / video content */}
-      <section className="grid gap-4 sm:grid-cols-2">
+      {repairResourcesLocked ? (
+        <LockedResultPanel sections={localizedLockedSections.filter((s) => s.key === "dtcRepairResources")} />
+      ) : (
+        <section className="grid gap-4 sm:grid-cols-2">
         {dtc.pdf_url && (
           <a
             href={dtc.pdf_url}
@@ -164,7 +198,8 @@ export function DtcCodeResult({ dtc }: { dtc: DtcCode }) {
             {t("watchWalkthrough")}
           </a>
         )}
-      </section>
+        </section>
+      )}
 
       {/* FAQ */}
       {dtc.faq.length > 0 && (

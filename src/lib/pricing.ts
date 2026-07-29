@@ -167,7 +167,7 @@ export interface BasicSearchLimits {
 }
 
 export const BASIC_SEARCH_LIMITS: Record<SubscriptionPlan, BasicSearchLimits> = {
-  free: { dailyLimit: 3, monthlyLimit: 10 },
+  free: { dailyLimit: 1, monthlyLimit: 5 },
   pro: { dailyLimit: null, monthlyLimit: null },
   workshop: { dailyLimit: null, monthlyLimit: null },
 };

@@ -31,8 +31,12 @@ export const LOCKED_SECTION_CATALOG = [
 
 export type LockedSectionKey = (typeof LOCKED_SECTION_CATALOG)[number]["key"];
 
+// key is a plain string (not the narrower LockedSectionKey) so this ref
+// shape — and the LockedResultCard/LockedResultPanel components that
+// render it — can be reused by other locked-section catalogs (e.g.
+// src/lib/dtc-redaction.ts) without inventing a parallel UI component.
 export interface LockedSectionRef {
-  key: LockedSectionKey;
+  key: string;
   title: string;
 }
 
