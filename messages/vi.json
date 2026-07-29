@@ -197,7 +197,9 @@
     "placeholder": "Nhập mã DTC, triệu chứng hoặc sự cố của xe...",
     "decode": "Giải mã",
     "noResults": "Chưa có kết quả được công bố cho “{query}”. Hãy thử một mã cụ thể như P0420, hoặc hỏi",
-    "askAiAssistant": "trợ lý AI"
+    "askAiAssistant": "trợ lý AI",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "Tra cứu chẩn đoán thất bại",
