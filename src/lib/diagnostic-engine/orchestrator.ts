@@ -36,6 +36,7 @@ import { shouldSkipRedundantAiCall } from "@/lib/diagnostic-engine/cost-optimiza
 import { recordDiagnosticEngineUsage, releaseDiagnosticEngineUsage } from "@/lib/diagnostic-engine/usage";
 import { recordDiagnosticEngineRun, classifyFailure } from "@/lib/diagnostic-engine/observability";
 import { resolveDiagnosticEngineAccess } from "@/lib/diagnostic-engine/entitlements";
+import { AiResponseValidationError } from "@/lib/scan-diagnostics/api-errors";
 import {
   isDiagnosticEngineKillSwitchActive,
   computeDiagnosticEngineBudgetState,
@@ -303,6 +304,13 @@ export async function runDiagnosticEngineTurn(
           hypothesisCount: hypotheses.length,
           safetyClassification: safety.status,
           schemaValidationResult: failureCategory === "invalid_structured_response" ? "invalid" : "not_applicable",
+          // docs/DIAGNOSTIC_ENGINE_TOOL_USE_OBSERVABILITY.md (migration
+          // 0037) — err is only ever an AiResponseValidationError when
+          // failureCategory is "invalid_structured_response"; any other
+          // error type leaves toolUsePresent undefined -> null (not
+          // applicable), matching schemaValidationResult's own "not
+          // applicable" branch above.
+          toolUsePresent: err instanceof AiResponseValidationError ? err.toolUsePresent : undefined,
           status: "failed",
           failureCategory,
         });

@@ -305,6 +305,45 @@ describe("runDiagnosticEngineTurn — provider failure handling", () => {
     expect(runs[0].failure_category).toBe("invalid_structured_response");
     expect(runs[0].schema_validation_result).toBe("invalid");
   });
+
+  // docs/DIAGNOSTIC_ENGINE_TOOL_USE_OBSERVABILITY.md (migration 0037) —
+  // distinguishes "no tool_use block at all" from "a tool_use block was
+  // present but its input failed schema validation" on an invalid run.
+  it("records tool_use_present=false when the provider returned no structured tool call", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const { AiResponseValidationError } = await import("@/lib/scan-diagnostics/api-errors");
+
+    await expect(
+      runDiagnosticEngineTurn(
+        "user-1",
+        "case-1",
+        failingProvider(new AiResponseValidationError("no structured tool call", false)),
+        defaultBilling(),
+      ),
+    ).rejects.toBeInstanceOf(AiResponseValidationError);
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs[0].tool_use_present).toBe(false);
+  });
+
+  it("records tool_use_present=true when the provider's tool call failed schema validation", async () => {
+    seedCase("case-1", "user-1");
+    setFlags(["PROBABILITY_ENGINE_ENABLED"]);
+    const { AiResponseValidationError } = await import("@/lib/scan-diagnostics/api-errors");
+
+    await expect(
+      runDiagnosticEngineTurn(
+        "user-1",
+        "case-1",
+        failingProvider(new AiResponseValidationError("tool call input failed schema validation", true)),
+        defaultBilling(),
+      ),
+    ).rejects.toBeInstanceOf(AiResponseValidationError);
+
+    const runs = fake().dump("diagnostic_engine_runs");
+    expect(runs[0].tool_use_present).toBe(true);
+  });
 });
 
 describe("runDiagnosticEngineTurn — observability", () => {

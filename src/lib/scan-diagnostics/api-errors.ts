@@ -42,10 +42,18 @@ export class InvalidCaseStatusError extends Error {
 export class AiResponseValidationError extends Error {
   readonly code = "AI_RESPONSE_VALIDATION_FAILED";
   readonly retryable = true;
+  // Distinguishes "no tool_use block at all" (false) from "a tool_use
+  // block was present but its input failed schema validation" (true) —
+  // see migration 0037. Never the raw provider output, just this one bit.
+  // Optional: only the Diagnostic Engine turn call site sets it; other
+  // callers (OpenAI provider, the review() path) leave it undefined,
+  // which maps to a null (not applicable) observability column.
+  readonly toolUsePresent?: boolean;
 
-  constructor(message: string) {
+  constructor(message: string, toolUsePresent?: boolean) {
     super(message);
     this.name = "AiResponseValidationError";
+    this.toolUsePresent = toolUsePresent;
   }
 }
 

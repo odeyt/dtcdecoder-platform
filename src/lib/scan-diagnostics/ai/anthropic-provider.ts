@@ -276,13 +276,14 @@ async function callSubmitDiagnosisTool(
 
   const toolUseBlock = message.content.find((block) => block.type === "tool_use");
   if (!toolUseBlock || toolUseBlock.type !== "tool_use") {
-    throw new AiResponseValidationError("Anthropic diagnostic provider did not return a structured tool call.");
+    throw new AiResponseValidationError("Anthropic diagnostic provider did not return a structured tool call.", false);
   }
 
   const parsed = DiagnosticAiOutputSchema.safeParse(toolUseBlock.input);
   if (!parsed.success) {
     throw new AiResponseValidationError(
       `Anthropic diagnostic provider returned an invalid structured output: ${parsed.error.message}`,
+      true,
     );
   }
 

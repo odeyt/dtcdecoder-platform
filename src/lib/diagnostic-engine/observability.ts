@@ -62,6 +62,10 @@ export interface DiagnosticEngineRunEvent {
   confidenceBand?: ConfidenceLevel | null;
   safetyClassification?: DriveSafetyStatus | null;
   schemaValidationResult: "valid" | "invalid" | "not_applicable";
+  // Only meaningful when schemaValidationResult is "invalid" — see
+  // migration 0037. true = a tool_use block was present but its input
+  // failed schema validation; false = no tool_use block at all.
+  toolUsePresent?: boolean | null;
   status: DiagnosticEngineRunStatus;
   failureCategory?: DiagnosticEngineFailureCategory | null;
   /** Which budget dimension blocked the call, when failureCategory is "budget_exceeded" — internal diagnosis only, never shown to the user. */
@@ -95,6 +99,7 @@ export async function recordDiagnosticEngineRun(event: DiagnosticEngineRunEvent)
       confidence_band: event.confidenceBand ?? null,
       safety_classification: event.safetyClassification ?? null,
       schema_validation_result: event.schemaValidationResult,
+      tool_use_present: event.toolUsePresent ?? null,
       status: event.status,
       failure_category: event.failureCategory ?? null,
       blocked_budget_scope: event.blockedBudgetScope ?? null,
