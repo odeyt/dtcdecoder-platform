@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "Code spécifique au constructeur détecté",
+    "manufacturerSpecificBody": "Ce code peut avoir des définitions différentes selon le constructeur, le modèle, l'année, le moteur et le module de commande du véhicule.",
+    "manufacturerSpecificAddVehicle": "Ajouter les détails du véhicule",
+    "manufacturerSpecificKnownFor": "Nous avons des définitions spécifiques au constructeur pour :",
+    "unknownTitle": "Nous n'avons pas pu vérifier de définition publiée pour ce code.",
+    "unknownStep1": "Confirmez le code exactement tel qu'affiché par l'outil de diagnostic.",
+    "unknownStep2": "Identifiez le module de commande qui signale le code.",
+    "unknownStep3": "Ajoutez le VIN du véhicule ou l'année/la marque/le modèle.",
+    "unknownStep4": "Vérifiez la présence de codes associés.",
+    "unknownStep5": "Confirmez si l'état est actuel, en attente, historique ou permanent.",
+    "reservedTitle": "Code réservé",
+    "reservedBody": "Ce code est marqué comme réservé par la norme de diagnostic et n'a pas de définition attribuée.",
+    "relatedCodesLabel": "Codes associés dans cette famille"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

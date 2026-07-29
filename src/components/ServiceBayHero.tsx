@@ -1097,18 +1097,70 @@ function ResultStep({
   onImportScan: () => void;
   onRestart: () => void;
 }) {
+  const resolutionType = result.resolutionType;
+  const showFullDefinition = resolutionType === "generic" || resolutionType === "manufacturer_exact";
+  const isVehicleContextRequired = resolutionType === "vehicle_context_required";
+  const isReserved = resolutionType === "reserved";
+  const isUnknown = resolutionType === "unknown";
+
   return (
     <div className="fade-in-up flex flex-col gap-6">
       <p className="text-sm font-semibold tracking-wide text-[var(--text-muted)] uppercase">{t("reviewStepLabel")}</p>
       <div>
         <p className="font-mono text-sm text-[var(--accent-red)]">{result.dtcCode}</p>
-        <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{result.definition}</p>
-        <p className="mt-1 text-sm text-[var(--text-muted)]">
-          {tIntake("basicResultCategory")}: {result.category}
-        </p>
+        {showFullDefinition && (
+          <>
+            <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{result.definition}</p>
+            <p className="mt-1 text-sm text-[var(--text-muted)]">
+              {tIntake("basicResultCategory")}: {result.category}
+            </p>
+          </>
+        )}
+        {isVehicleContextRequired && (
+          <>
+            <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{tIntake("manufacturerSpecificTitle")}</p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{tIntake("manufacturerSpecificBody")}</p>
+          </>
+        )}
+        {isReserved && (
+          <>
+            <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{tIntake("reservedTitle")}</p>
+            <p className="mt-1 text-sm text-[var(--text-secondary)]">{tIntake("reservedBody")}</p>
+          </>
+        )}
+        {isUnknown && (
+          <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">{tIntake("unknownTitle")}</p>
+        )}
       </div>
 
-      {result.genericCauses.length > 0 && (
+      {isVehicleContextRequired && result.availableManufacturers.length > 0 && (
+        <div>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("manufacturerSpecificKnownFor")}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{result.availableManufacturers.join(", ")}</p>
+        </div>
+      )}
+
+      {isUnknown && (
+        <div>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("basicResultChecks")}</p>
+          <ul className="mt-1 list-inside list-disc text-sm text-[var(--text-secondary)]">
+            <li>{tIntake("unknownStep1")}</li>
+            <li>{tIntake("unknownStep2")}</li>
+            <li>{tIntake("unknownStep3")}</li>
+            <li>{tIntake("unknownStep4")}</li>
+            <li>{tIntake("unknownStep5")}</li>
+          </ul>
+        </div>
+      )}
+
+      {(isVehicleContextRequired || isUnknown) && result.relatedCodes.length > 0 && (
+        <div>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("relatedCodesLabel")}</p>
+          <p className="mt-1 font-mono text-sm text-[var(--text-secondary)]">{result.relatedCodes.join(", ")}</p>
+        </div>
+      )}
+
+      {showFullDefinition && result.genericCauses.length > 0 && (
         <div>
           <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("basicResultCauses")}</p>
           <ul className="mt-1 list-inside list-disc text-sm text-[var(--text-secondary)]">
@@ -1119,7 +1171,7 @@ function ResultStep({
         </div>
       )}
 
-      {result.genericSymptoms.length > 0 && (
+      {showFullDefinition && result.genericSymptoms.length > 0 && (
         <div>
           <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("basicResultSymptoms")}</p>
           <ul className="mt-1 list-inside list-disc text-sm text-[var(--text-secondary)]">
@@ -1130,7 +1182,7 @@ function ResultStep({
         </div>
       )}
 
-      {result.basicChecks.length > 0 && (
+      {showFullDefinition && result.basicChecks.length > 0 && (
         <div>
           <p className="text-sm font-semibold text-[var(--text-primary)]">{tIntake("basicResultChecks")}</p>
           <ul className="mt-1 list-inside list-disc text-sm text-[var(--text-secondary)]">
@@ -1141,7 +1193,7 @@ function ResultStep({
         </div>
       )}
 
-      {result.safetyWarnings.length > 0 && (
+      {showFullDefinition && result.safetyWarnings.length > 0 && (
         <div
           role="alert"
           className="rounded-[var(--radius-lg)] border-2 p-4"
@@ -1156,11 +1208,20 @@ function ResultStep({
         </div>
       )}
 
-      {result.manufacturerSpecificUncertainty && (
+      {showFullDefinition && result.manufacturerSpecificUncertainty && (
         <p className="text-xs text-[var(--text-muted)]">{result.manufacturerSpecificUncertainty}</p>
       )}
 
       <div className="flex flex-wrap gap-3 border-t border-[var(--border-subtle)] pt-5">
+        {isVehicleContextRequired && (
+          <button
+            type="button"
+            onClick={onImportScan}
+            className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm font-medium text-[var(--text-primary)] transition hover:border-[var(--border-red)]"
+          >
+            {tIntake("manufacturerSpecificAddVehicle")}
+          </button>
+        )}
         <button
           type="button"
           onClick={onUnlock}

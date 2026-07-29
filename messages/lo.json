@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "ກວດພົບລະຫັດສະເພາະຂອງຜູ້ຜະລິດ",
+    "manufacturerSpecificBody": "ລະຫັດນີ້ອາດມີຄວາມໝາຍແຕກຕ່າງກັນຂຶ້ນຢູ່ກັບຜູ້ຜະລິດລົດ, ຮຸ່ນ, ປີ, ເຄື່ອງຈັກ, ແລະໂມດູນຄວບຄຸມ.",
+    "manufacturerSpecificAddVehicle": "ເພີ່ມລາຍລະອຽດລົດ",
+    "manufacturerSpecificKnownFor": "ພວກເຮົາມີຄໍານິຍາມສະເພາະຂອງຜູ້ຜະລິດສໍາລັບ:",
+    "unknownTitle": "ພວກເຮົາບໍ່ສາມາດຢືນຢັນຄໍານິຍາມທີ່ເຜີຍແຜ່ສໍາລັບລະຫັດນີ້ໄດ້.",
+    "unknownStep1": "ຢືນຢັນລະຫັດຢ່າງແນ່ນອນຕາມທີ່ສະແດງໂດຍເຄື່ອງມືສະແກນ.",
+    "unknownStep2": "ລະບຸໂມດູນຄວບຄຸມທີ່ລາຍງານລະຫັດ.",
+    "unknownStep3": "ເພີ່ມ VIN ຂອງລົດ ຫຼື ປີ/ຍີ່ຫໍ້/ຮຸ່ນ.",
+    "unknownStep4": "ກວດເບິ່ງລະຫັດທີ່ກ່ຽວຂ້ອງອື່ນໆ.",
+    "unknownStep5": "ຢືນຢັນວ່າສະຖານະແມ່ນປັດຈຸບັນ, ລໍຖ້າ, ປະຫວັດ, ຫຼືຖາວອນ.",
+    "reservedTitle": "ລະຫັດສະຫງວນໄວ້",
+    "reservedBody": "ລະຫັດນີ້ຖືກໝາຍວ່າສະຫງວນໄວ້ໂດຍມາດຕະຖານການວິນິດໄສ ແລະບໍ່ມີຄໍານິຍາມທີ່ກໍານົດໄວ້.",
+    "relatedCodesLabel": "ລະຫັດທີ່ກ່ຽວຂ້ອງໃນກຸ່ມນີ້"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

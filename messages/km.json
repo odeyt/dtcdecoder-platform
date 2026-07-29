@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "បានរកឃើញកូដជាក់លាក់របស់ក្រុមហ៊ុនផលិត",
+    "manufacturerSpecificBody": "កូដនេះអាចមានន័យខុសគ្នាអាស្រ័យលើក្រុមហ៊ុនផលិតរថយន្ត ម៉ូដែល ឆ្នាំ ម៉ាស៊ីន និងម៉ូឌុលត្រួតពិនិត្យ។",
+    "manufacturerSpecificAddVehicle": "បន្ថែមព័ត៌មានលម្អិតរថយន្ត",
+    "manufacturerSpecificKnownFor": "យើងមាននិយមន័យជាក់លាក់សម្រាប់ក្រុមហ៊ុនផលិតដូចខាងក្រោម៖",
+    "unknownTitle": "យើងមិនអាចផ្ទៀងផ្ទាត់និយមន័យដែលបានចេញផ្សាយសម្រាប់កូដនេះបានទេ។",
+    "unknownStep1": "បញ្ជាក់កូដឱ្យបានច្បាស់លាស់តាមការបង្ហាញរបស់ឧបករណ៍ស្កេន។",
+    "unknownStep2": "កំណត់ម៉ូឌុលត្រួតពិនិត្យដែលរាយការណ៍កូដនេះ។",
+    "unknownStep3": "បន្ថែម VIN រថយន្ត ឬឆ្នាំ/ម៉ាក/ម៉ូដែល។",
+    "unknownStep4": "ពិនិត្យមើលកូដពាក់ព័ន្ធផ្សេងទៀត។",
+    "unknownStep5": "បញ្ជាក់ថាតើស្ថានភាពគឺបច្ចុប្បន្ន រង់ចាំ ប្រវត្តិ ឬអចិន្ត្រៃយ៍។",
+    "reservedTitle": "កូដដែលបានបម្រុងទុក",
+    "reservedBody": "កូដនេះត្រូវបានសម្គាល់ថាបានបម្រុងទុកដោយស្តង់ដារវិនិច្ឆ័យ ហើយមិនមាននិយមន័យត្រូវបានកំណត់ទេ។",
+    "relatedCodesLabel": "កូដពាក់ព័ន្ធនៅក្នុងក្រុមនេះ"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

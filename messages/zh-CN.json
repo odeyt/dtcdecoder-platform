@@ -261,7 +261,20 @@
     "basicResultSymptoms": "Generic symptoms",
     "basicResultCauses": "Generic causes",
     "basicResultChecks": "Basic checks",
-    "basicResultSafety": "Safety warning"
+    "basicResultSafety": "Safety warning",
+    "manufacturerSpecificTitle": "检测到制造商专用代码",
+    "manufacturerSpecificBody": "此代码的含义可能因车辆制造商、型号、年份、发动机和控制模块而异。",
+    "manufacturerSpecificAddVehicle": "添加车辆详细信息",
+    "manufacturerSpecificKnownFor": "我们已收录以下制造商的专用定义：",
+    "unknownTitle": "我们无法验证此代码的已发布定义。",
+    "unknownStep1": "确认扫描仪显示的代码是否准确。",
+    "unknownStep2": "确定报告该代码的控制模块。",
+    "unknownStep3": "添加车辆VIN或年份/品牌/型号。",
+    "unknownStep4": "检查是否有相关代码。",
+    "unknownStep5": "确认状态是当前、待定、历史还是永久。",
+    "reservedTitle": "保留代码",
+    "reservedBody": "此代码已根据诊断标准标记为保留，尚未分配定义。",
+    "relatedCodesLabel": "该系列的相关代码"
   },
   "serviceBay": {
     "productLabel": "DTC Technician™",

@@ -1,5 +1,7 @@
 export type DtcDifficulty = "easy" | "moderate" | "hard" | "professional";
 export type DtcSeverity = "low" | "moderate" | "high" | "critical";
+export type DtcCodeType = "generic" | "manufacturer_specific" | "reserved" | "unknown";
+export type DtcReviewStatus = "unreviewed" | "in_review" | "approved" | "rejected";
 
 export interface DtcFaqEntry {
   q: string;
@@ -29,8 +31,71 @@ export interface DtcCode {
   youtube_url: string | null;
   search_count: number;
   is_published: boolean;
+  // --- DTC reference expansion (migration 0038) ---------------------------
+  normalized_code: string;
+  family: string;
+  code_type: DtcCodeType | null;
+  generic_definition: boolean;
+  manufacturer_specific: boolean;
+  reserved_code: boolean;
+  source_type: string;
+  source_name: string | null;
+  source_url: string | null;
+  source_license: string | null;
+  source_version: string | null;
+  source_hash: string | null;
+  review_status: DtcReviewStatus;
+  reviewed_by: string | null;
+  reviewed_at: string | null;
+  active: boolean;
   created_at: string;
   updated_at: string;
+}
+
+// D1 Imports' own confirmed repair intelligence — never a source for the
+// published dtc_codes definition (see migration 0038's comment). Downstream,
+// optional corroboration only.
+export interface DtcVerifiedRepair {
+  id: string;
+  dtc_code_id: string | null;
+  recorded_by_user_id: string | null;
+  vehicle_year: number | null;
+  manufacturer: string | null;
+  model: string | null;
+  engine: string | null;
+  vin_hash: string | null;
+  symptoms: unknown[];
+  related_codes: unknown[];
+  test_results: unknown[];
+  confirmed_root_cause: string;
+  completed_repair: string;
+  parts_used: unknown[];
+  labor_minutes: number | null;
+  verification_method: string | null;
+  outcome: string;
+  technician_notes: string | null;
+  evidence_quality: "unverified" | "self_reported" | "verified";
+  approved_for_aggregation: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface DtcDatasetImport {
+  id: string;
+  dataset_name: string;
+  dataset_version: string | null;
+  source_url: string | null;
+  license_name: string | null;
+  license_url: string | null;
+  imported_record_count: number;
+  inserted_record_count: number;
+  updated_record_count: number;
+  rejected_record_count: number;
+  checksum: string | null;
+  status: "running" | "completed" | "failed" | "rejected";
+  import_log: Record<string, unknown>;
+  started_at: string;
+  completed_at: string | null;
 }
 
 export interface SearchHistoryEntry {
