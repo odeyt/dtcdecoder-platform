@@ -67,7 +67,7 @@ export default async function LocaleLayout({ children, params }: Props) {
   }
 
   // Required so that server-side useTranslations()/useFormatter() calls
-  // inside this tree (SiteFooter, HeroSearch, page components) resolve
+  // inside this tree (SiteFooter, ServiceBayHero, page components) resolve
   // their locale from this cache instead of falling back to reading
   // next/headers() — which would force the whole tree dynamic.
   setRequestLocale(locale);

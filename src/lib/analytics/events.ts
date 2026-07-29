@@ -29,6 +29,9 @@ export const ANALYTICS_EVENT_TYPES = [
   "guided_diagnosis_clicked",
   "locked_feature_viewed",
   "upgrade_from_consultation_clicked",
+  // Digital Service Bay hero (homepage) — one entry per welcome-card path,
+  // not covered by the existing landing/consultation funnel events above.
+  "continue_previous_diagnosis_clicked",
 ] as const;
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];

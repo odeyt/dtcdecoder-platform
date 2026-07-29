@@ -2,25 +2,8 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
-import { LandingDtcTechnician, type GuidedDiagnosisAccess } from "@/components/LandingDtcTechnician";
+import { ServiceBayHero } from "@/components/ServiceBayHero";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
-import { createClient } from "@/lib/supabase/server";
-import { isAllowedAdminEmail } from "@/lib/admin-auth";
-import { isDiagnosticEngineRolloutAllowed } from "@/lib/diagnostic-engine/feature-flags";
-
-// Server-side only (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md) — the
-// exact same check the real /turn API route performs, computed once here
-// so the landing CTA's visual state matches what the API will actually
-// allow. This is UI state only; it grants no access on its own.
-async function resolveGuidedDiagnosisAccess(): Promise<GuidedDiagnosisAccess> {
-  const supabase = await createClient();
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  if (!user) return "anonymous";
-  const isAdmin = isAllowedAdminEmail(user.email);
-  return isDiagnosticEngineRolloutAllowed(user.email, isAdmin) ? "eligible" : "locked";
-}
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -43,6 +26,14 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // (the sync-only hook from "next-intl") — since this is itself an async
 // Server Component (needs to await its own params); next-intl explicitly
 // rejects the sync hook inside an async component.
+function CheckIcon() {
+  return (
+    <svg aria-hidden="true" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="var(--accent-red)" strokeWidth="2" className="shrink-0">
+      <path d="M20 6 9 17l-5-5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  );
+}
+
 const VALUE_PROP_ICONS = [
   // Instant
   <path key="bolt" d="M13 2 4 14h6l-1 8 9-12h-6l1-8z" strokeLinejoin="round" strokeLinecap="round" />,
@@ -64,9 +55,9 @@ const VALUE_PROP_ICONS = [
 
 export default async function HomePage({ params }: Props) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: "hero" });
   const th = await getTranslations({ locale, namespace: "home" });
-  const guidedDiagnosisAccess = await resolveGuidedDiagnosisAccess();
+  const tSb = await getTranslations({ locale, namespace: "serviceBay" });
+  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   const valueProps = [
     { title: th("valueProp1Title"), body: th("valueProp1Body") },
@@ -74,25 +65,54 @@ export default async function HomePage({ params }: Props) {
     { title: th("valueProp3Title"), body: th("valueProp3Body") },
   ];
 
+  const capabilities = [tSb("capabilityCode"), tSb("capabilitySymptom"), tSb("capabilityScan"), tSb("capabilityPlan")];
+
   return (
     <div>
-      {/* Hero */}
-      <section className="container-app px-6 pt-24 pb-20 text-center">
-        <p className="fade-in-up text-xs font-semibold tracking-[0.2em] text-[var(--accent-red)]">
-          {t("eyebrow")}
-        </p>
-        <h1 className="fade-in-up mx-auto mt-4 max-w-3xl text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl md:text-6xl">
-          {t("headline")}
-        </h1>
-        <p
-          className="fade-in-up mx-auto mt-5 max-w-2xl text-base text-[var(--text-secondary)] sm:text-lg"
-          style={{ animationDelay: "80ms" }}
-        >
-          {t("subheadline")}
-        </p>
+      {/* Hero — two-column: static marketing copy (left, this page owns the
+          copy and the real page h1) + the embedded Diagnostic Intake
+          Console (right, ServiceBayHero.tsx owns its own step machine and
+          copy). "Start Diagnosis" is a plain anchor to the console's own
+          id — no client JS needed for the scroll+focus behavior. */}
+      <section className="container-app px-6 pt-16 pb-20">
+        <div className="grid gap-10 lg:grid-cols-2 lg:items-center lg:gap-16">
+          <div className="fade-in-up">
+            <p className="text-xs font-semibold tracking-[0.2em] text-[var(--accent-red)] uppercase">{tSb("leftEyebrow")}</p>
+            <h1 className="mt-4 text-4xl font-extrabold tracking-tight text-[var(--text-primary)] sm:text-5xl">
+              {tSb("leftHeadlinePrefix")}
+              <span className="text-[var(--accent-red)]">{tSb("leftHeadlineAccent")}</span>
+            </h1>
+            <p className="mt-5 max-w-xl text-base text-[var(--text-secondary)] sm:text-lg">{tSb("leftSupportingCopy")}</p>
 
-        <div className="fade-in-up mt-10" style={{ animationDelay: "140ms" }}>
-          <LandingDtcTechnician locale={locale} guidedDiagnosisAccess={guidedDiagnosisAccess} />
+            <ul className="mt-6 flex flex-col gap-2.5">
+              {capabilities.map((item) => (
+                <li key={item} className="flex items-center gap-2.5 text-sm text-[var(--text-secondary)]">
+                  <CheckIcon />
+                  {item}
+                </li>
+              ))}
+            </ul>
+
+            <div className="mt-8 flex flex-wrap gap-3">
+              <a
+                href="#diagnostic-intake-console"
+                className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
+                style={{ boxShadow: "var(--shadow-accent)" }}
+              >
+                {tSb("startDiagnosisCta")}
+              </a>
+              <Link
+                href="/dtc"
+                className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-red)]"
+              >
+                {tNav("dtcLookup")}
+              </Link>
+            </div>
+          </div>
+
+          <div className="fade-in-up" style={{ animationDelay: "80ms" }}>
+            <ServiceBayHero locale={locale} />
+          </div>
         </div>
       </section>
 

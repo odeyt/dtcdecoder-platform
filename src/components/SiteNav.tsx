@@ -71,7 +71,7 @@ export function SiteNav() {
           <span>Decoder</span>
         </Link>
 
-        <nav className="hidden items-center gap-1 md:flex" aria-label={t("primaryNav")}>
+        <nav className="hidden items-center gap-1 lg:flex" aria-label={t("primaryNav")}>
           {NAV_LINKS.map((link) => (
             <Link
               key={link.href}
@@ -93,7 +93,7 @@ export function SiteNav() {
           ))}
         </nav>
 
-        <div className="hidden items-center gap-3 md:flex">
+        <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
           {userEmail ? (
             <div className="flex items-center gap-2">
@@ -130,7 +130,7 @@ export function SiteNav() {
           aria-expanded={menuOpen}
           aria-controls="mobile-nav"
           aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
-          className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-primary)] md:hidden"
+          className="flex h-11 w-11 items-center justify-center rounded-[var(--radius-sm)] text-[var(--text-primary)] lg:hidden"
         >
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true">
             {menuOpen ? (
@@ -156,7 +156,7 @@ export function SiteNav() {
         <nav
           id="mobile-nav"
           aria-label={t("mobileNav")}
-          className="space-y-1 border-t border-[var(--border-subtle)] bg-[var(--surface-0)] px-6 py-4 md:hidden"
+          className="space-y-1 border-t border-[var(--border-subtle)] bg-[var(--surface-0)] px-6 py-4 lg:hidden"
         >
           {NAV_LINKS.map((link) => (
             <Link
