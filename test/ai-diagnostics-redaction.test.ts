@@ -16,6 +16,7 @@ const SCAN_CASE: ScanCase = {
   recent_repairs: null,
   battery_condition: null,
   technician_notes: null,
+  title: null,
   report_language: "en",
   created_at: new Date(0).toISOString(),
   updated_at: new Date(0).toISOString(),
