@@ -44,7 +44,7 @@ export class AiResponseValidationError extends Error {
   readonly retryable = true;
   // Distinguishes "no tool_use block at all" (false) from "a tool_use
   // block was present but its input failed schema validation" (true) —
-  // see migration 0037. Never the raw provider output, just this one bit.
+  // see migration 0040. Never the raw provider output, just this one bit.
   // Optional: only the Diagnostic Engine turn call site sets it; other
   // callers (OpenAI provider, the review() path) leave it undefined,
   // which maps to a null (not applicable) observability column.

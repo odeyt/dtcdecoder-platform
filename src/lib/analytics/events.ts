@@ -33,7 +33,7 @@ export const ANALYTICS_EVENT_TYPES = [
   // not covered by the existing landing/consultation funnel events above.
   "continue_previous_diagnosis_clicked",
   // Diagnostic Workbench (docs/DIAGNOSTIC_WORKBENCH_ARCHITECTURE.md,
-  // migration 0039) — the redesigned scan-report result page.
+  // migration 0042) — the redesigned scan-report result page.
   "diagnostic_report_viewed",
   "diagnostic_report_section_opened",
   "diagnostic_report_filter_changed",

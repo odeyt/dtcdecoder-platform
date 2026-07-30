@@ -242,7 +242,7 @@ export const FeedbackInputSchema = z.object({
 
 export type FeedbackInput = z.infer<typeof FeedbackInputSchema>;
 
-// --- Diagnostic Workbench interactive state (migration 0039) -------------
+// --- Diagnostic Workbench interactive state (migration 0042) -------------
 
 export const ScanCaseNoteCategorySchema = z.enum(["observation", "measurement", "repair_performed", "follow_up"]);
 

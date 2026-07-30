@@ -63,7 +63,7 @@ export interface DiagnosticEngineRunEvent {
   safetyClassification?: DriveSafetyStatus | null;
   schemaValidationResult: "valid" | "invalid" | "not_applicable";
   // Only meaningful when schemaValidationResult is "invalid" — see
-  // migration 0037. true = a tool_use block was present but its input
+  // migration 0040. true = a tool_use block was present but its input
   // failed schema validation; false = no tool_use block at all.
   toolUsePresent?: boolean | null;
   status: DiagnosticEngineRunStatus;

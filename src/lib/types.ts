@@ -31,7 +31,7 @@ export interface DtcCode {
   youtube_url: string | null;
   search_count: number;
   is_published: boolean;
-  // --- DTC reference expansion (migration 0038) ---------------------------
+  // --- DTC reference expansion (migration 0041) ---------------------------
   normalized_code: string;
   family: string;
   code_type: DtcCodeType | null;
@@ -53,7 +53,7 @@ export interface DtcCode {
 }
 
 // D1 Imports' own confirmed repair intelligence — never a source for the
-// published dtc_codes definition (see migration 0038's comment). Downstream,
+// published dtc_codes definition (see migration 0041's comment). Downstream,
 // optional corroboration only.
 export interface DtcVerifiedRepair {
   id: string;
@@ -322,7 +322,7 @@ export interface ScanCase {
   report_language: string;
   created_at: string;
   updated_at: string;
-  // Technician-initiated completion (migration 0039) — distinct from
+  // Technician-initiated completion (migration 0042) — distinct from
   // `status`, which only tracks the AI pipeline stage. "completed" status
   // means a report was generated; these track whether a technician has
   // actually reviewed and closed out the case.
@@ -503,7 +503,7 @@ export interface ScanFeedback {
   submitted_at: string;
 }
 
-// --- Diagnostic Workbench persistence (migration 0039) ------------------
+// --- Diagnostic Workbench persistence (migration 0042) ------------------
 // Ongoing technician notes, per-test/per-cause interactive state, and the
 // verification checklist. All genuinely new — the only prior persistence
 // was ScanCase.technician_notes (write-once at creation) and ScanFeedback

@@ -1,7 +1,7 @@
 "use client";
 
 // Technician Notes — real, persisted per-case notes (scan_case_notes,
-// migration 0039), distinct from ScanCase.technician_notes (a write-once
+// migration 0042), distinct from ScanCase.technician_notes (a write-once
 // field captured at upload time). Never claims "saved" until the server
 // confirms it — see withSaveStatus.
 import { useState } from "react";

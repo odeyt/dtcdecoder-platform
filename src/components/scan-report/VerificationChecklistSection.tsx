@@ -1,7 +1,7 @@
 "use client";
 
 // Verification Checklist — the fixed 8-item post-repair checklist
-// (scan_case_verification, migration 0039). Purely a technician
+// (scan_case_verification, migration 0042). Purely a technician
 // self-attestation; it never feeds back into the AI's own conclusions.
 import { useState } from "react";
 import { useTranslations } from "next-intl";

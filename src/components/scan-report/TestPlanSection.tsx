@@ -3,7 +3,7 @@
 // Interactive Diagnostic Test Plan — recommendedTests come from the
 // immutable, already-generated ScanReport (never re-derived or re-prompted
 // here); only the technician's own progress against that fixed list is
-// mutable, via scan_report_test_progress (migration 0039).
+// mutable, via scan_report_test_progress (migration 0042).
 import { useState } from "react";
 import { useTranslations } from "next-intl";
 import { ResultPill } from "@/components/ResultPill";

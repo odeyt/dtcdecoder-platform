@@ -3,7 +3,7 @@
 // Likely Causes — rankedCauses/confidence/evidence come from the immutable
 // ScanReport (unchanged from today's AI output); only the technician's own
 // review status (untested/supported/ruled_out/confirmed) is mutable, via
-// scan_report_cause_status (migration 0039). Rank ("TOP CANDIDATE") is a
+// scan_report_cause_status (migration 0042). Rank ("TOP CANDIDATE") is a
 // position in the AI's own ordering, never re-derived from the review
 // status below — confirming/ruling out a cause never reorders the list.
 import { useState } from "react";
