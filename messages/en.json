@@ -270,7 +270,7 @@
   },
   "pricing": {
     "title": "Pricing",
-    "subtitle": "Start free with unlimited Quick Code Lookup. Upgrade for full Professional Diagnostic Reports.",
+    "subtitle": "Start free with a limited Quick Code Lookup preview. Upgrade for full Professional Diagnostic Reports.",
     "yourPlan": "You're on the {plan} plan",
     "planFree": "Free",
     "planPro": "Pro Technician",
@@ -278,9 +278,9 @@
     "yearlySave": "Yearly — Save up to ${amount}",
     "monthly": "Monthly",
     "freeTitle": "Free",
-    "freeBullet1": "Unlimited public DTC guide access",
-    "freeBullet2": "3 basic searches per day",
-    "freeBullet3": "10 basic searches per month",
+    "freeBullet1": "Preview access to the public DTC guide",
+    "freeBullet2": "1 basic search per day",
+    "freeBullet3": "5 basic searches per month",
     "freeBullet4": "Basic code definitions and common causes",
     "freeBullet5": "Essential reviewed safety warnings",
     "freeBullet6": "DTC Technician available on paid plans",
@@ -304,7 +304,10 @@
     "yearlySubline": "~${amount}/mo — save ${discount} vs. monthly",
     "redirecting": "Redirecting…",
     "emailForCheckout": "Email address",
-    "introPricing": "Introductory pricing"
+    "introPricing": "Introductory pricing",
+    "singleReportHeading": "Prefer to pay per report?",
+    "singleReportBody": "Buy one full Professional Diagnostic Report — no subscription required. Viewable for 30 days.",
+    "singleReportCta": "Buy 1 report — $9.99"
   },
   "account": {
     "title": "My Account",
@@ -380,7 +383,10 @@
     "difficultyModerate": "Moderate — some diagnostic tools helpful",
     "difficultyHard": "Hard — scan tool and experience recommended",
     "difficultyProfessional": "Professional — a shop visit is the safer path",
-    "contentNotLocalizedNote": "This code's reference content (meaning, causes, steps) is shown in its original English — only the surrounding labels are localized."
+    "contentNotLocalizedNote": "This code's reference content (meaning, causes, steps) is shown in its original English — only the surrounding labels are localized.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "Quick Code Lookup",
@@ -389,7 +395,9 @@
     "placeholder": "Enter DTC code, symptom, or vehicle issue...",
     "decode": "Decode",
     "noResults": "No published results for “{query}” yet. Try a specific code like P0420, or ask",
-    "askAiAssistant": "DTC Technician"
+    "askAiAssistant": "DTC Technician",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "Diagnostic lookup failed",

@@ -5,6 +5,8 @@ import { DtcCodeResult } from "@/components/DtcCodeResult";
 import { UnknownDtcResult } from "@/components/UnknownDtcResult";
 import { InvalidDtcCodeResult } from "@/components/InvalidDtcCodeResult";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectivePlan } from "@/lib/subscriptions";
+import { accessLevelForDtcContent, filterDtcCodeForAccessLevel } from "@/lib/dtc-redaction";
 import { recordSearchHistory } from "@/lib/search-history";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 import { recordEvent } from "@/lib/analytics/events";
@@ -60,12 +62,14 @@ export default async function GenericDtcCodePage({ params }: Props) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
     if (user) {
       recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
     }
     await recordEvent("ai_diagnosis_cta_viewed", { userId: user?.id ?? null, metadata: { source: "known_dtc_page" } });
 
-    return <DtcCodeResult dtc={dtc} />;
+    const redacted = filterDtcCodeForAccessLevel(dtc, accessLevelForDtcContent(plan));
+    return <DtcCodeResult dtc={redacted.visible} redaction={redacted} />;
   }
 
   const relatedCodes = await getRelatedDtcCodes(normalizedCode);

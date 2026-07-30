@@ -106,7 +106,10 @@
     "yearlySubline": "~${amount}/ເດືອນ — ປະຫຍັດ ${discount} ທຽບກັບລາຍເດືອນ",
     "redirecting": "ກຳລັງໂອນເສັ້ນທາງ…",
     "emailForCheckout": "ທີ່ຢູ່ອີເມວ",
-    "introPricing": "ລາຄາເປີດໂຕ"
+    "introPricing": "ລາຄາເປີດໂຕ",
+    "singleReportHeading": "ຢາກຈ່າຍເປັນລາຍງານບໍ?",
+    "singleReportBody": "ຊື້ລາຍງານການວິນິດໄສແບບມືອາຊີບເຕັມຮູບແບບໜຶ່ງສະບັບ — ບໍ່ຕ້ອງສະໝັກສະມາຊິກ. ເບິ່ງໄດ້ພາຍໃນ 30 ວັນ.",
+    "singleReportCta": "ຊື້ 1 ລາຍງານ — $9.99"
   },
   "account": {
     "title": "ບັນຊີຂອງຂ້ອຍ",
@@ -182,7 +185,10 @@
     "difficultyModerate": "ປານກາງ — ມີເຄື່ອງມືວິນິດໄສບາງຢ່າງຈະຊ່ວຍໄດ້",
     "difficultyHard": "ຍາກ — ແນະນຳໃຫ້ໃຊ້ເຄື່ອງສະແກນ ແລະ ມີປະສົບການ",
     "difficultyProfessional": "ລະດັບມືອາຊີບ — ການນຳໄປອູ່ເປັນທາງທີ່ປອດໄພກວ່າ",
-    "contentNotLocalizedNote": "ເນື້ອຫາອ້າງອີງຂອງລະຫັດນີ້ (ຄວາມໝາຍ, ສາເຫດ, ຂັ້ນຕອນ) ສະແດງເປັນພາສາອັງກິດຕົ້ນສະບັບ — ມີພຽງປ້າຍກຳກັບອ້ອມຂ້າງເທົ່ານັ້ນທີ່ຖືກແປ."
+    "contentNotLocalizedNote": "ເນື້ອຫາອ້າງອີງຂອງລະຫັດນີ້ (ຄວາມໝາຍ, ສາເຫດ, ຂັ້ນຕອນ) ສະແດງເປັນພາສາອັງກິດຕົ້ນສະບັບ — ມີພຽງປ້າຍກຳກັບອ້ອມຂ້າງເທົ່ານັ້ນທີ່ຖືກແປ.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "ຄົ້ນຫາລະຫັດ DTC",
@@ -191,7 +197,9 @@
     "placeholder": "ໃສ່ລະຫັດ DTC, ອາການ, ຫຼື ບັນຫາຂອງລົດ...",
     "decode": "ຖອດລະຫັດ",
     "noResults": "ຍັງບໍ່ມີຜົນລັບທີ່ເຜີຍແຜ່ສຳລັບ “{query}”. ລອງໃຊ້ລະຫັດທີ່ຈະເພາະ ເຊັ່ນ P0420, ຫຼື ຖາມ",
-    "askAiAssistant": "ຜູ້ຊ່ວຍ AI"
+    "askAiAssistant": "ຜູ້ຊ່ວຍ AI",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "ການຄົ້ນຫາການວິນິດໄສລົ້ມເຫລວ",

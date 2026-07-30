@@ -106,7 +106,10 @@
     "yearlySubline": "월 약 ${amount} — 월간 대비 ${discount} 절약",
     "redirecting": "리디렉션 중…",
     "emailForCheckout": "이메일 주소",
-    "introPricing": "출시 기념가"
+    "introPricing": "출시 기념가",
+    "singleReportHeading": "리포트 단위로 결제하고 싶으신가요?",
+    "singleReportBody": "구독 없이 전체 전문 진단 리포트 1건을 구매하세요. 30일 동안 열람 가능합니다.",
+    "singleReportCta": "리포트 1건 구매 — $9.99"
   },
   "account": {
     "title": "내 계정",
@@ -182,7 +185,10 @@
     "difficultyModerate": "보통 — 일부 진단 도구가 있으면 유용합니다",
     "difficultyHard": "어려움 — 스캔 도구와 경험이 권장됩니다",
     "difficultyProfessional": "전문가용 — 정비소 방문이 더 안전한 방법입니다",
-    "contentNotLocalizedNote": "이 코드의 참조 내용(의미, 원인, 단계)은 원본 영어로 표시됩니다 — 주변 라벨만 현지화됩니다."
+    "contentNotLocalizedNote": "이 코드의 참조 내용(의미, 원인, 단계)은 원본 영어로 표시됩니다 — 주변 라벨만 현지화됩니다.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "DTC 검색",
@@ -191,7 +197,9 @@
     "placeholder": "DTC 코드, 증상 또는 차량 문제를 입력...",
     "decode": "해독",
     "noResults": "‘{query}’에 대한 게시된 결과가 아직 없습니다. P0420 같은 구체적인 코드를 시도하거나 다음에 문의하세요:",
-    "askAiAssistant": "AI 어시스턴트"
+    "askAiAssistant": "AI 어시스턴트",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "진단 검색 실패",

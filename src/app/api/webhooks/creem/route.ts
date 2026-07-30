@@ -5,9 +5,11 @@ import {
   planForProductId,
   intervalForProductId,
   addonPackForProductId,
+  isSingleReportProductId,
 } from "@/lib/payments/creem";
 import { upsertSubscriptionFromWebhook } from "@/lib/subscriptions";
 import { grantAddOnPack } from "@/lib/ai-diagnostics/addon-balances";
+import { grantSingleReportPurchase } from "@/lib/ai-diagnostics/single-report-purchases";
 
 export async function POST(request: NextRequest) {
   // Read the raw body — verification must happen against the exact bytes
@@ -38,8 +40,29 @@ export async function POST(request: NextRequest) {
   // checkout stays disabled — see /api/checkout/addon).
   if (event.eventType === "checkout.completed") {
     const checkoutObject = event.object;
-    const pack = addonPackForProductId(checkoutObject.product_id);
     const userId = checkoutObject.metadata?.user_id;
+
+    // Standalone $9.99 single-report purchase — a distinct product from
+    // ADD_ON_PACKS, checked first since it's a separate mechanism (see
+    // migration 0037's header comment for why it isn't just another add-on
+    // pack size).
+    if (isSingleReportProductId(checkoutObject.product_id)) {
+      if (!userId) {
+        console.error("checkout.completed webhook for single-report purchase missing user_id metadata", event.id);
+        return NextResponse.json({ received: true });
+      }
+
+      try {
+        await grantSingleReportPurchase({ userId, creemOrderId: checkoutObject.id });
+      } catch (err) {
+        console.error("Failed to grant single-report purchase", userId, err);
+        return NextResponse.json({ error: "Processing failed" }, { status: 500 });
+      }
+
+      return NextResponse.json({ received: true });
+    }
+
+    const pack = addonPackForProductId(checkoutObject.product_id);
 
     if (!pack || !userId) {
       // Not an add-on-pack checkout we recognize (wrong/unset product id,

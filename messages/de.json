@@ -106,7 +106,10 @@
     "yearlySubline": "~{amount} $/Monat — {discount} $ gegenüber monatlich sparen",
     "redirecting": "Weiterleitung…",
     "emailForCheckout": "E-Mail-Adresse",
-    "introPricing": "Einführungspreis"
+    "introPricing": "Einführungspreis",
+    "singleReportHeading": "Lieber pro Bericht bezahlen?",
+    "singleReportBody": "Kaufen Sie einen vollständigen professionellen Diagnosebericht — kein Abonnement erforderlich. 30 Tage lang einsehbar.",
+    "singleReportCta": "1 Bericht kaufen — 9,99 $"
   },
   "account": {
     "title": "Mein Konto",
@@ -182,7 +185,10 @@
     "difficultyModerate": "Mittel — einige Diagnosewerkzeuge sind hilfreich",
     "difficultyHard": "Schwer — Scan-Tool und Erfahrung empfohlen",
     "difficultyProfessional": "Professionell — ein Werkstattbesuch ist der sicherere Weg",
-    "contentNotLocalizedNote": "Der Referenzinhalt dieses Codes (Bedeutung, Ursachen, Schritte) wird im englischen Original angezeigt — nur die umgebenden Beschriftungen sind lokalisiert."
+    "contentNotLocalizedNote": "Der Referenzinhalt dieses Codes (Bedeutung, Ursachen, Schritte) wird im englischen Original angezeigt — nur die umgebenden Beschriftungen sind lokalisiert.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "DTC-Suche",
@@ -191,7 +197,9 @@
     "placeholder": "DTC-Code, Symptom oder Fahrzeugproblem eingeben...",
     "decode": "Entschlüsseln",
     "noResults": "Noch keine veröffentlichten Ergebnisse für „{query}“. Versuchen Sie einen konkreten Code wie P0420 oder fragen Sie den",
-    "askAiAssistant": "KI-Assistenten"
+    "askAiAssistant": "KI-Assistenten",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "Diagnosesuche fehlgeschlagen",

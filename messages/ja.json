@@ -106,7 +106,10 @@
     "yearlySubline": "約 ${amount}/月 — 月間より ${discount} 節約",
     "redirecting": "リダイレクト中…",
     "emailForCheckout": "メールアドレス",
-    "introPricing": "先行価格"
+    "introPricing": "先行価格",
+    "singleReportHeading": "レポート単位でのお支払いをご希望ですか?",
+    "singleReportBody": "サブスクリプション不要で、完全なプロフェッショナル診断レポートを1件購入できます。30日間閲覧可能です。",
+    "singleReportCta": "レポートを1件購入 — $9.99"
   },
   "account": {
     "title": "マイアカウント",
@@ -182,7 +185,10 @@
     "difficultyModerate": "中程度 — 一部の診断ツールがあると役立ちます",
     "difficultyHard": "難しい — スキャンツールと経験が推奨されます",
     "difficultyProfessional": "プロ向け — 工場に持ち込むのがより安全な方法です",
-    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。"
+    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "DTC 検索",
@@ -191,7 +197,9 @@
     "placeholder": "DTC コード、症状、または車両の問題を入力...",
     "decode": "解読",
     "noResults": "「{query}」の公開結果はまだありません。P0420 のような具体的なコードを試すか、次に質問してください：",
-    "askAiAssistant": "AI アシスタント"
+    "askAiAssistant": "AI アシスタント",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "診断検索に失敗しました",

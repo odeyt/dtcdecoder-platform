@@ -83,6 +83,7 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
   const { q } = await searchParams;
   const query = q?.trim() ?? "";
   const t = await getTranslations({ locale, namespace: "dtcSearch" });
+  const tCommon = await getTranslations({ locale, namespace: "common" });
 
   const { identity, plan } = await resolveSearchIdentity();
 
@@ -164,13 +165,15 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
               className="rounded-[var(--radius-lg)] border-2 p-5"
               style={{ borderColor: "var(--accent-red)", background: "rgba(225, 29, 46, 0.1)" }}
             >
-              <p className="font-semibold text-[var(--text-primary)]">Free search limit reached</p>
-              <p className="mt-1 text-sm text-[var(--text-secondary)]">{limitError.message}</p>
+              <p className="font-semibold text-[var(--text-primary)]">{t("limitReachedHeading")}</p>
+              <p className="mt-1 text-sm text-[var(--text-secondary)]">
+                {t("limitReachedBody", { usedToday: limitError.usedToday, usedThisMonth: limitError.usedThisMonth })}
+              </p>
               <Link
                 href="/pricing"
                 className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
               >
-                View plans
+                {tCommon("viewPlans")}
               </Link>
             </div>
             <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />

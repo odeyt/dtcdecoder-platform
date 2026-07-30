@@ -106,7 +106,10 @@
     "yearlySubline": "~${amount}/tháng — tiết kiệm ${discount} so với theo tháng",
     "redirecting": "Đang chuyển hướng…",
     "emailForCheckout": "Địa chỉ email",
-    "introPricing": "Giá ưu đãi ra mắt"
+    "introPricing": "Giá ưu đãi ra mắt",
+    "singleReportHeading": "Bạn muốn trả tiền theo từng báo cáo?",
+    "singleReportBody": "Mua một Báo cáo Chẩn đoán Chuyên nghiệp đầy đủ — không cần đăng ký gói. Có thể xem trong 30 ngày.",
+    "singleReportCta": "Mua 1 báo cáo — 9,99 đô la"
   },
   "account": {
     "title": "Tài khoản của tôi",
@@ -182,7 +185,10 @@
     "difficultyModerate": "Trung bình — một số dụng cụ chẩn đoán sẽ hữu ích",
     "difficultyHard": "Khó — nên dùng máy quét và có kinh nghiệm",
     "difficultyProfessional": "Chuyên nghiệp — đưa đến gara là lựa chọn an toàn hơn",
-    "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa."
+    "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "Tra cứu DTC",
@@ -191,7 +197,9 @@
     "placeholder": "Nhập mã DTC, triệu chứng hoặc sự cố của xe...",
     "decode": "Giải mã",
     "noResults": "Chưa có kết quả được công bố cho “{query}”. Hãy thử một mã cụ thể như P0420, hoặc hỏi",
-    "askAiAssistant": "trợ lý AI"
+    "askAiAssistant": "trợ lý AI",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "Tra cứu chẩn đoán thất bại",

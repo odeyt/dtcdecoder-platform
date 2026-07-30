@@ -142,6 +142,13 @@ beforeEach(() => {
     ]);
     return "recorded";
   });
+
+  // None of these fixtures ever grant a single-report purchase, so the
+  // fallback runScanAnalysis attempts when record_ai_diagnostic_usage
+  // rejects always correctly finds nothing to redeem — see
+  // test/single-report-purchases.test.ts for the dedicated unit tests of
+  // that redemption logic itself.
+  fake().setRpcHandler("redeem_single_report_purchase", () => false);
 });
 
 describe("runScanAnalysis", () => {

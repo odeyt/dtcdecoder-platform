@@ -56,8 +56,8 @@ describe("AI_DIAGNOSTIC_ENTITLEMENTS — free receives no runtime AI diagnostic 
 });
 
 describe("BASIC_SEARCH_LIMITS", () => {
-  it("caps free at 3/day and 10/month; paid plans are unlimited", () => {
-    expect(BASIC_SEARCH_LIMITS.free).toEqual({ dailyLimit: 3, monthlyLimit: 10 });
+  it("caps free at 1/day and 5/month; paid plans are unlimited", () => {
+    expect(BASIC_SEARCH_LIMITS.free).toEqual({ dailyLimit: 1, monthlyLimit: 5 });
     expect(BASIC_SEARCH_LIMITS.pro).toEqual({ dailyLimit: null, monthlyLimit: null });
     expect(BASIC_SEARCH_LIMITS.workshop).toEqual({ dailyLimit: null, monthlyLimit: null });
   });

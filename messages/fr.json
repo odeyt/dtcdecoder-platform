@@ -106,7 +106,10 @@
     "yearlySubline": "~{amount} $/mois — économisez {discount} $ par rapport au mensuel",
     "redirecting": "Redirection…",
     "emailForCheckout": "Adresse e-mail",
-    "introPricing": "Tarif de lancement"
+    "introPricing": "Tarif de lancement",
+    "singleReportHeading": "Vous préférez payer par rapport ?",
+    "singleReportBody": "Achetez un rapport de diagnostic professionnel complet, sans abonnement. Consultable pendant 30 jours.",
+    "singleReportCta": "Acheter 1 rapport — 9,99 $"
   },
   "account": {
     "title": "Mon compte",
@@ -182,7 +185,10 @@
     "difficultyModerate": "Modéré — quelques outils de diagnostic sont utiles",
     "difficultyHard": "Difficile — outil de scan et expérience recommandés",
     "difficultyProfessional": "Professionnel — une visite en atelier est la voie la plus sûre",
-    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées."
+    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées.",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "Recherche DTC",
@@ -191,7 +197,9 @@
     "placeholder": "Saisissez un code DTC, un symptôme ou un problème du véhicule...",
     "decode": "Décoder",
     "noResults": "Aucun résultat publié pour « {query} » pour l'instant. Essayez un code précis comme P0420, ou interrogez l'",
-    "askAiAssistant": "assistant IA"
+    "askAiAssistant": "assistant IA",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "Échec de la recherche de diagnostic",

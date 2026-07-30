@@ -4,6 +4,8 @@ import { getMakeDtcCode } from "@/lib/dtc";
 import { DtcCodeResult } from "@/components/DtcCodeResult";
 import { isReservedMakeSlug } from "@/lib/reserved-slugs";
 import { createClient } from "@/lib/supabase/server";
+import { getEffectivePlan } from "@/lib/subscriptions";
+import { accessLevelForDtcContent, filterDtcCodeForAccessLevel } from "@/lib/dtc-redaction";
 import { recordSearchHistory } from "@/lib/search-history";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 
@@ -42,9 +44,11 @@ export default async function MakeDtcCodePage({ params }: Props) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
+  const plan = user ? await getEffectivePlan(user.id, user.email ?? null) : "free";
   if (user) {
     recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
   }
 
-  return <DtcCodeResult dtc={dtc} />;
+  const redacted = filterDtcCodeForAccessLevel(dtc, accessLevelForDtcContent(plan));
+  return <DtcCodeResult dtc={redacted.visible} redaction={redacted} />;
 }

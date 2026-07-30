@@ -4,6 +4,10 @@ import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { listCasesForOwner, listVinsForCaseIds } from "@/lib/scan-diagnostics/cases";
+import { getEffectivePlan } from "@/lib/subscriptions";
+import { getActiveSingleReportUnlocksForCases } from "@/lib/ai-diagnostics/single-report-purchases";
+import { computeExpiryLabel } from "@/lib/scan-diagnostics/retention";
+import { EditableCaseTitle } from "@/components/EditableCaseTitle";
 
 export const metadata: Metadata = {
   title: "Diagnostic Cases",
@@ -39,6 +43,13 @@ export default async function DiagnosticsPage() {
 
   const cases = await listCasesForOwner(user.id);
   const vinByCaseId = await listVinsForCaseIds(cases.map((c) => c.id));
+  const plan = await getEffectivePlan(user.id, user.email ?? null);
+  const completedCaseIds = cases.filter((c) => c.status === "completed").map((c) => c.id);
+  const singleReportUnlocks = await getActiveSingleReportUnlocksForCases(completedCaseIds);
+
+  function expiryLabel(caseId: string, createdAt: string): string | null {
+    return computeExpiryLabel({ plan, createdAt, singleReportUnlockExpiresAt: singleReportUnlocks.get(caseId) });
+  }
 
   return (
     <div className="container-app px-6 py-16">
@@ -66,31 +77,44 @@ export default async function DiagnosticsPage() {
         ) : (
           <ol className="mt-8 space-y-3">
             {cases.map((c) => (
-              <li key={c.id}>
+              <li key={c.id} className="glass-panel relative rounded-[var(--radius-lg)] transition hover:border-[var(--border-red)]">
+                {/* Full-card "stretched link" to the case detail page — kept
+                    as a separate absolutely-positioned element (rather than
+                    wrapping the whole card, the previous approach) so
+                    EditableCaseTitle's button/input can sit in normal
+                    document flow above it and handle their own clicks
+                    without accidentally triggering navigation. */}
                 <Link
                   href={`/diagnostics/${c.id}`}
-                  className="glass-panel block rounded-[var(--radius-lg)] p-4 transition hover:border-[var(--border-red)]"
-                >
-                  <div className="flex items-center justify-between gap-4">
-                    <div>
-                      <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
-                        {STATUS_LABELS[c.status] ?? c.status}
-                      </span>
-                      <p className="mt-1 font-medium text-[var(--text-primary)]">
-                        {c.complaint || "Untitled case"}
-                      </p>
-                      {vinByCaseId[c.id] && (
-                        <p className="mt-0.5 font-mono text-xs text-[var(--text-muted)]">VIN: {vinByCaseId[c.id]}</p>
-                      )}
+                  className="absolute inset-0 rounded-[var(--radius-lg)]"
+                  aria-label={`Open case: ${c.title || c.complaint || "Untitled case"}`}
+                />
+                <div className="relative flex items-center justify-between gap-4 p-4">
+                  <div className="min-w-0 flex-1">
+                    <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
+                      {STATUS_LABELS[c.status] ?? c.status}
+                    </span>
+                    <div className="relative z-10">
+                      <EditableCaseTitle
+                        caseId={c.id}
+                        initialTitle={c.title}
+                        fallback={c.complaint || "Untitled case"}
+                      />
                     </div>
-                    <time
-                      dateTime={c.created_at}
-                      className="shrink-0 font-mono text-xs text-[var(--text-muted)]"
-                    >
-                      {new Date(c.created_at).toLocaleDateString()}
-                    </time>
+                    {vinByCaseId[c.id] && (
+                      <p className="mt-0.5 font-mono text-xs text-[var(--text-muted)]">VIN: {vinByCaseId[c.id]}</p>
+                    )}
+                    {c.status === "completed" && expiryLabel(c.id, c.created_at) && (
+                      <p className="mt-1 text-xs text-[var(--text-muted)]">{expiryLabel(c.id, c.created_at)}</p>
+                    )}
                   </div>
-                </Link>
+                  <time
+                    dateTime={c.created_at}
+                    className="shrink-0 font-mono text-xs text-[var(--text-muted)]"
+                  >
+                    {new Date(c.created_at).toLocaleDateString()}
+                  </time>
+                </div>
               </li>
             ))}
           </ol>

@@ -60,6 +60,11 @@ export const env = {
   creemAddon25ProductIdOptional: () => process.env.CREEM_ADDON_25_PRODUCT_ID,
   creemAddon50ProductIdOptional: () => process.env.CREEM_ADDON_50_PRODUCT_ID,
 
+  // Standalone $9.99 single-report purchase (SINGLE_REPORT_PURCHASE,
+  // src/lib/pricing.ts) — same "stays disabled until a real product id
+  // exists" rule as the add-on packs above.
+  creemSingleReportProductIdOptional: () => process.env.CREEM_SINGLE_REPORT_PRODUCT_ID,
+
   anthropicApiKey: () =>
     required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),
 
@@ -107,4 +112,14 @@ export const env = {
   // billingEnabled() above for the same requirement.
   scanDiagnosticsEnabled: () =>
     process.env.NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED === "true",
+
+  // Retention-sweep cron (docs: 90-day paid-plan report auto-delete) —
+  // required() since an unset secret must never silently accept
+  // unauthenticated requests to a route that deletes customer data.
+  cronSecret: () => required("CRON_SECRET", process.env.CRON_SECRET),
+  // Defaults to true (dry-run/log-only) — deletion only ever runs live
+  // once explicitly flipped off after reviewing dry-run output in
+  // production, matching this repo's "flags default off" deployment
+  // pattern for anything not fully wired up.
+  retentionSweepDryRun: () => process.env.RETENTION_SWEEP_DRY_RUN !== "false",
 };

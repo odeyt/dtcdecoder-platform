@@ -106,7 +106,10 @@
     "yearlySubline": "约 ${amount}/月——比月付省 ${discount}",
     "redirecting": "正在跳转…",
     "emailForCheckout": "电子邮件地址",
-    "introPricing": "上线优惠价"
+    "introPricing": "上线优惠价",
+    "singleReportHeading": "更想按份付费?",
+    "singleReportBody": "购买一份完整的专业诊断报告——无需订阅。可查看30天。",
+    "singleReportCta": "购买1份报告 — $9.99"
   },
   "account": {
     "title": "我的账户",
@@ -182,7 +185,10 @@
     "difficultyModerate": "中等——一些诊断工具会有帮助",
     "difficultyHard": "困难——建议使用扫描仪并具备经验",
     "difficultyProfessional": "专业——送往车间是更安全的选择",
-    "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。"
+    "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。",
+    "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
+    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
   },
   "dtcSearch": {
     "title": "DTC 查询",
@@ -191,7 +197,9 @@
     "placeholder": "输入 DTC 故障码、症状或车辆问题...",
     "decode": "解读",
     "noResults": "尚无关于“{query}”的已发布结果。请尝试具体的代码，如 P0420，或询问",
-    "askAiAssistant": "AI 助手"
+    "askAiAssistant": "AI 助手",
+    "limitReachedHeading": "Free search limit reached",
+    "limitReachedBody": "You have used {usedToday} searches today or {usedThisMonth} this month. Upgrade for professional AI diagnostics."
   },
   "dtcError": {
     "eyebrow": "诊断查询失败",

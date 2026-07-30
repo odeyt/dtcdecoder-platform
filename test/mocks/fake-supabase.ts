@@ -2,7 +2,7 @@
 // by src/lib/scan-diagnostics/*, src/lib/ai-diagnostics/*, and
 // src/lib/admin-profitability.ts. Not a full reimplementation — only
 // supports the method chains this codebase actually calls (select/eq/gt/
-// gte/not/in/order/limit/maybeSingle/single/insert/upsert/update/delete,
+// gte/lt/not/in/order/limit/maybeSingle/single/insert/upsert/update/delete,
 // plus a pluggable rpc() map). Good enough to unit-test persistence logic
 // without a real database.
 import crypto from "node:crypto";
@@ -24,6 +24,7 @@ interface FakeQueryBuilder extends PromiseLike<{ data: unknown; error: unknown }
   eq(col: string, val: unknown): FakeQueryBuilder;
   gt(col: string, val: number): FakeQueryBuilder;
   gte(col: string, val: unknown): FakeQueryBuilder;
+  lt(col: string, val: unknown): FakeQueryBuilder;
   not(col: string, operator: string, val: unknown): FakeQueryBuilder;
   in(col: string, vals: unknown[]): FakeQueryBuilder;
   is(col: string, val: null | boolean): FakeQueryBuilder;
@@ -129,6 +130,10 @@ export function createFakeSupabase(): FakeSupabase {
       },
       gte(col, val) {
         filters.push((r) => (r[col] as string | number) >= (val as string | number));
+        return self;
+      },
+      lt(col, val) {
+        filters.push((r) => (r[col] as string | number) < (val as string | number));
         return self;
       },
       // Only the "is null" negation is implemented (the only shape this
