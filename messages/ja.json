@@ -107,9 +107,22 @@
     "redirecting": "リダイレクト中…",
     "emailForCheckout": "メールアドレス",
     "introPricing": "先行価格",
-    "singleReportHeading": "レポート単位でのお支払いをご希望ですか?",
-    "singleReportBody": "サブスクリプション不要で、完全なプロフェッショナル診断レポートを1件購入できます。30日間閲覧可能です。",
-    "singleReportCta": "レポートを1件購入 — $9.99"
+    "oneTimeEyebrow": "ワンタイム オプション",
+    "oneTimeHeading": "診断は1回だけで十分ですか?",
+    "oneTimeDescription": "サブスクリプションを開始せずに、完全で車両固有の診断レポートを取得できます。",
+    "oneTimeFeature1": "1件の完全な車両診断ケース",
+    "oneTimeFeature2": "順位付けされた推定原因",
+    "oneTimeFeature3": "推奨されるテスト手順",
+    "oneTimeFeature4": "走行安全に関するガイダンス",
+    "oneTimeFeature5": "予想値と必要な工具",
+    "oneTimeFeature6": "修理確認チェックリスト",
+    "oneTimeFeature7": "DTC Technician™への最大5回のフォローアップ",
+    "oneTimeFeature8": "レポートの再生成1回分を含む",
+    "oneTimeIntroductoryLabel": "先行価格",
+    "oneTimeCta": "プロフェッショナルレポートを1件取得",
+    "oneTimeCheckoutLoading": "安全なチェックアウトを準備しています…",
+    "oneTimeSupportingText": "一回限りのお支払い。サブスクリプションなし。アカウントに保存されます。",
+    "oneTimeFairUseNote": "1回のご購入で、1件の車両診断ケースと関連するDTCが対象になります。異常に大きいアップロードや過度な繰り返し送信には公正利用の制限が適用されます。"
   },
   "account": {
     "title": "マイアカウント",
@@ -123,7 +136,13 @@
     "addOnDescription": "今月、プランに含まれる以上のレポートが必要ですか？パックを購入してください — クレジットは失効せず、月間の割り当てを使い切ると自動的に使用されます。",
     "addOnBalance": "追加レポート残り{count}件",
     "addOnBuy": "購入",
-    "addOnUnavailable": "追加パックはまだ購入できません。"
+    "addOnUnavailable": "追加パックはまだ購入できません。",
+    "oneTimeCreditsTitle": "プロフェッショナルレポート クレジット",
+    "oneTimeCreditsAvailable": "{count} 件利用可能",
+    "startReport": "診断レポートを開始",
+    "paymentProcessing": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。",
+    "paymentProcessingDelayed": "お支払いを確認中です — 1分ほどかかる場合があります。クレジットが表示されない場合は、まもなくこのページを更新してください。",
+    "paymentReceived": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。"
   },
   "preferences": {
     "title": "言語と地域の設定",

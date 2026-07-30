@@ -229,7 +229,34 @@ export const ADD_ON_PACKS: readonly AddOnPack[] = [
 // one specific report for 30 days from generation, then view access
 // reverts to the normal plan-based preview/locked state — nothing is
 // deleted.
-export const SINGLE_REPORT_PURCHASE = {
-  priceUsd: 9.99,
+//
+// "Professional Diagnostic Report" one-time purchase — the customer-facing
+// rebrand/reprice of the same single_report_purchases mechanism above
+// (same table, same grant/redeem RPCs, same 30-day view-lock). `priceUsd`
+// is the real, introductory Creem checkout price; `referencePriceUsd` is a
+// marketing-only crossed-out comparison price, NEVER sent to checkout (see
+// createSingleReportCheckout in src/lib/payments/creem.ts, which reads the
+// charged amount from the Creem product's own configured price, not from
+// this constant). Change the Creem product's configured price before ever
+// changing priceUsd here, or the two will drift.
+export interface OneTimeReportOffer {
+  key: "professional_report_one_time";
+  name: string;
+  priceUsd: number;
+  referencePriceUsd: number;
+  currency: "USD";
+  viewWindowDays: number;
+  maxFollowUps: number;
+  maxRegenerations: number;
+}
+
+export const PROFESSIONAL_REPORT_ONE_TIME: OneTimeReportOffer = {
+  key: "professional_report_one_time",
+  name: "Professional Diagnostic Report",
+  priceUsd: 6.99,
+  referencePriceUsd: 9.99,
+  currency: "USD",
   viewWindowDays: 30,
+  maxFollowUps: 5,
+  maxRegenerations: 1,
 } as const;

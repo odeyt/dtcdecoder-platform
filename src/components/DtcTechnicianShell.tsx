@@ -155,7 +155,11 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
       const res = await fetch("/api/ai/assistant", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message: text, requestId }),
+        body: JSON.stringify({
+          message: text,
+          requestId,
+          ...(activeCaseId ? { caseId: activeCaseId } : {}),
+        }),
         signal: controller.signal,
       });
 

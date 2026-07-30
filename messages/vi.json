@@ -107,9 +107,22 @@
     "redirecting": "Đang chuyển hướng…",
     "emailForCheckout": "Địa chỉ email",
     "introPricing": "Giá ưu đãi ra mắt",
-    "singleReportHeading": "Bạn muốn trả tiền theo từng báo cáo?",
-    "singleReportBody": "Mua một Báo cáo Chẩn đoán Chuyên nghiệp đầy đủ — không cần đăng ký gói. Có thể xem trong 30 ngày.",
-    "singleReportCta": "Mua 1 báo cáo — 9,99 đô la"
+    "oneTimeEyebrow": "TÙY CHỌN MỘT LẦN",
+    "oneTimeHeading": "Chỉ cần một lần chẩn đoán?",
+    "oneTimeDescription": "Nhận báo cáo chẩn đoán đầy đủ, riêng cho xe của bạn mà không cần đăng ký gói.",
+    "oneTimeFeature1": "Một hồ sơ chẩn đoán xe hoàn chỉnh",
+    "oneTimeFeature2": "Các nguyên nhân khả dĩ được xếp hạng",
+    "oneTimeFeature3": "Quy trình kiểm tra được đề xuất",
+    "oneTimeFeature4": "Hướng dẫn an toàn khi lái xe",
+    "oneTimeFeature5": "Giá trị dự kiến và dụng cụ cần thiết",
+    "oneTimeFeature6": "Danh sách kiểm tra xác minh sửa chữa",
+    "oneTimeFeature7": "Tối đa 5 lượt theo dõi với DTC Technician™",
+    "oneTimeFeature8": "Bao gồm 1 lần tạo lại báo cáo",
+    "oneTimeIntroductoryLabel": "Giá ưu đãi ra mắt",
+    "oneTimeCta": "Nhận một báo cáo chuyên nghiệp",
+    "oneTimeCheckoutLoading": "Đang chuẩn bị thanh toán an toàn…",
+    "oneTimeSupportingText": "Thanh toán một lần. Không cần đăng ký gói. Được lưu vào tài khoản của bạn.",
+    "oneTimeFairUseNote": "Một lần mua bao gồm một hồ sơ chẩn đoán xe và các mã DTC liên quan. Giới hạn sử dụng hợp lý áp dụng cho các tải lên có kích thước bất thường hoặc gửi lặp lại quá mức."
   },
   "account": {
     "title": "Tài khoản của tôi",
@@ -123,7 +136,13 @@
     "addOnDescription": "Cần nhiều báo cáo hơn mức gói của bạn bao gồm trong tháng này? Hãy mua một gói — tín dụng không bao giờ hết hạn và được sử dụng tự động khi hạn mức hàng tháng của bạn hết.",
     "addOnBalance": "Còn lại {count} báo cáo bổ sung",
     "addOnBuy": "Mua",
-    "addOnUnavailable": "Các gói bổ sung chưa thể mua được."
+    "addOnUnavailable": "Các gói bổ sung chưa thể mua được.",
+    "oneTimeCreditsTitle": "Tín dụng báo cáo chuyên nghiệp",
+    "oneTimeCreditsAvailable": "Còn {count}",
+    "startReport": "Bắt đầu báo cáo chẩn đoán",
+    "paymentProcessing": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
+    "paymentProcessingDelayed": "Chúng tôi vẫn đang xác nhận thanh toán của bạn — việc này có thể mất một phút. Hãy làm mới trang này sau ít phút nếu tín dụng của bạn chưa xuất hiện.",
+    "paymentReceived": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát."
   },
   "preferences": {
     "title": "Tùy chọn ngôn ngữ và khu vực",

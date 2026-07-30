@@ -4,7 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
 import { SubscribeButton } from "@/components/SubscribeButton";
-import { SingleReportPurchaseButton } from "@/components/SingleReportPurchaseButton";
+import { OneTimeReportCard } from "@/components/OneTimeReportCard";
 import {
   PAID_PLANS,
   LAUNCH_PRICING_ACTIVE,
@@ -64,7 +64,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
         </button>
       </div>
 
-      <div className="mt-8 grid gap-6 md:grid-cols-3">
+      <div data-testid="pricing-plans-grid" className="mt-8 grid gap-6 md:grid-cols-3">
         <PlanCard title={t("freeTitle")} price="$0" priceSuffix="/mo">
           <ul className="space-y-2 text-sm text-[var(--text-secondary)]">
             <li>{t("freeBullet1")}</li>
@@ -117,17 +117,15 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
         />
       </div>
 
+      <p className="mt-6 text-center text-xs text-[var(--text-muted)]">{t("fairUseNote")}</p>
+
       {/* Standalone pay-per-report entry point — unlike the plans above,
           reachable by anyone including an anonymous or Free-tier visitor,
-          not tied to a subscription. See SINGLE_REPORT_PURCHASE in
+          not tied to a subscription. Shares the grid's own outer width
+          (no independent max-width or centered wrapper) so its edges line
+          up with the grid above. See PROFESSIONAL_REPORT_ONE_TIME in
           src/lib/pricing.ts and single_report_purchases (migration 0037). */}
-      <div className="glass-panel mx-auto mt-10 max-w-xl rounded-[var(--radius-xl)] p-6 text-center">
-        <h2 className="text-lg font-bold text-[var(--text-primary)]">{t("singleReportHeading")}</h2>
-        <p className="mt-2 text-sm text-[var(--text-secondary)]">{t("singleReportBody")}</p>
-        <SingleReportPurchaseButton signedIn={signedIn} />
-      </div>
-
-      <p className="mt-6 text-center text-xs text-[var(--text-muted)]">{t("fairUseNote")}</p>
+      <OneTimeReportCard signedIn={signedIn} />
     </div>
   );
 }

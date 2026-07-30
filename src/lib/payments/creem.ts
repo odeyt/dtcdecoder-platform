@@ -148,23 +148,27 @@ interface CreateSingleReportCheckoutInput {
   userId?: string;
 }
 
-// Whether checkout for the standalone $9.99 single-report purchase is
-// actually possible right now — false until a real Creem product id is
-// configured, same "not available yet" rule as the add-on packs.
+// Whether checkout for the Professional Diagnostic Report one-time
+// purchase is actually possible right now — false until a real Creem
+// product id is configured, same "not available yet" rule as the add-on
+// packs.
 export function isSingleReportCheckoutConfigured(): boolean {
-  return Boolean(env.creemSingleReportProductIdOptional());
+  return Boolean(env.creemProfessionalReportProductIdOptional());
 }
 
-// One-time checkout for SINGLE_REPORT_PURCHASE (src/lib/pricing.ts) — a
-// standalone product, not one of ADD_ON_PACKS. metadata carries a fixed
-// marker the webhook uses to recognize this event type; no report count
-// is needed since it's always exactly one.
+// One-time checkout for PROFESSIONAL_REPORT_ONE_TIME (src/lib/pricing.ts)
+// — a standalone product, not one of ADD_ON_PACKS. The browser only ever
+// submits the trusted product key; this function independently resolves
+// the Creem product id server-side and never accepts a price, currency,
+// or product id from the caller. metadata carries product_key/purchase_type
+// so the webhook can recognize this event type without trusting anything
+// else the client sent.
 export async function createSingleReportCheckout(
   input: CreateSingleReportCheckoutInput,
 ): Promise<{ checkoutUrl: string; checkoutId: string }> {
-  const productId = env.creemSingleReportProductIdOptional();
+  const productId = env.creemProfessionalReportProductIdOptional();
   if (!productId) {
-    throw new Error("Single-report purchase has no configured Creem product id yet");
+    throw new Error("Professional Diagnostic Report purchase has no configured Creem product id yet");
   }
 
   const body = {
@@ -172,7 +176,8 @@ export async function createSingleReportCheckout(
     success_url: env.creemSuccessUrl(),
     customer: { email: input.email },
     metadata: {
-      single_report_purchase: "true",
+      product_key: "professional_report_one_time",
+      purchase_type: "one_time_report",
       ...(input.userId ? { user_id: input.userId } : {}),
     },
   };
@@ -269,10 +274,13 @@ export function addonPackForProductId(productId: string | undefined) {
 
 // Reverse lookup for the webhook, parallel to addonPackForProductId above
 // — a standalone product, not a member of ADD_ON_PACKS, so it gets its
-// own boolean check rather than a registry-entry lookup.
+// own boolean check rather than a registry-entry lookup. The webhook route
+// also cross-checks metadata.product_key === "professional_report_one_time"
+// before granting — this function alone decides which Creem product id
+// counts, never a client-supplied value.
 export function isSingleReportProductId(productId: string | undefined): boolean {
   if (!productId) return false;
-  return productId === env.creemSingleReportProductIdOptional();
+  return productId === env.creemProfessionalReportProductIdOptional();
 }
 
 export function intervalForProductId(productId: string | undefined): BillingInterval {

@@ -13,7 +13,11 @@ import {
   AiDiagnosticLimitExceededError,
   type AiDiagnosticAccessLevel,
 } from "@/lib/ai-diagnostics/usage";
-import { redeemSingleReportPurchase } from "@/lib/ai-diagnostics/single-report-purchases";
+import {
+  redeemSingleReportPurchase,
+  getActiveSingleReportUnlock,
+  consumeReportRegeneration,
+} from "@/lib/ai-diagnostics/single-report-purchases";
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
@@ -22,7 +26,11 @@ import { detectPatterns } from "@/lib/scan-diagnostics/patterns";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
-import { AiResponseValidationError, ScanAnalysisFailedError } from "@/lib/scan-diagnostics/api-errors";
+import {
+  AiResponseValidationError,
+  ScanAnalysisFailedError,
+  RegenerationLimitExceededError,
+} from "@/lib/scan-diagnostics/api-errors";
 import { recordEvent } from "@/lib/analytics/events";
 import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { env } from "@/lib/env";
@@ -37,11 +45,26 @@ export interface ScanAnalysisResult {
   report: ScanReport;
 }
 
+export interface ScanAnalysisOptions {
+  // Regeneration path only (see regenerateScanAnalysis below): the case
+  // already has a fully-unlocked, purchased report and this run must NOT
+  // consume a new usage slot or a new single-report purchase — the
+  // caller has already separately verified and atomically consumed the
+  // case's one permitted regeneration via consumeReportRegeneration
+  // before ever calling this. When true, the usage-gate/redemption block
+  // below is skipped entirely and accessLevel is fixed to "full".
+  skipUsageGate?: boolean;
+  // Regeneration starts from "completed", not "ready_for_analysis" —
+  // overrides the normal from-status guard on the "analyzing" transition.
+  fromStatuses?: Parameters<typeof transitionCaseStatus>[1];
+}
+
 export async function runScanAnalysis(
   userId: string,
   caseId: string,
   plan: SubscriptionPlan,
   provider: DiagnosticAIProvider,
+  opts: ScanAnalysisOptions = {},
 ): Promise<ScanAnalysisResult> {
   await getCaseForOwner(userId, caseId);
 
@@ -55,22 +78,27 @@ export async function runScanAnalysis(
   //
   // If the plan-based allowance rejects this request (including Free
   // tier's hard 0/day ceiling), fall back to redeeming an unused
-  // single-report purchase ($9.99 standalone buy — see
-  // single-report-purchases.ts for why this is checked here rather than
-  // inside record_ai_diagnostic_usage itself) before giving up. A
-  // successful redemption grants full access for this one report,
-  // regardless of plan; resolveReportAccess re-derives the same unlock at
-  // view time.
+  // single-report purchase (see single-report-purchases.ts for why this
+  // is checked here rather than inside record_ai_diagnostic_usage
+  // itself) before giving up. A successful redemption grants full access
+  // for this one report, regardless of plan; resolveReportAccess
+  // re-derives the same unlock at view time.
   let accessLevel: AiDiagnosticAccessLevel;
-  try {
-    accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
-  } catch (err) {
-    if (err instanceof AiDiagnosticLimitExceededError) {
-      const redeemed = await redeemSingleReportPurchase({ userId, caseId });
-      if (!redeemed) throw err;
-      accessLevel = "full";
-    } else {
-      throw err;
+  if (opts.skipUsageGate) {
+    accessLevel = "full";
+  } else {
+    try {
+      accessLevel = await recordAiDiagnosticUsage({ userId, requestId: caseId, feature: "scan_report", plan });
+    } catch (err) {
+      if (err instanceof AiDiagnosticLimitExceededError) {
+        const redeemed = await redeemSingleReportPurchase({ userId, caseId });
+        if (!redeemed) throw err;
+        accessLevel = "full";
+        await recordEvent("one_time_report_credit_consumed", { userId });
+        await recordEvent("one_time_report_case_started", { userId });
+      } else {
+        throw err;
+      }
     }
   }
   await recordEvent("ai_diagnosis_started", { userId, metadata: { plan, accessLevel } });
@@ -163,7 +191,7 @@ export async function runScanAnalysis(
     throw err;
   }
 
-  await transitionCaseStatus(caseId, ["ready_for_analysis", "failed"], "analyzing");
+  await transitionCaseStatus(caseId, opts.fromStatuses ?? ["ready_for_analysis", "failed"], "analyzing");
 
   const requestStartedAt = Date.now();
   let providerResult: DiagnosticAIProviderResult;
@@ -323,4 +351,38 @@ export async function runScanAnalysis(
   await recordEvent("ai_diagnosis_completed", { userId, metadata: { plan, accessLevel } });
 
   return { case: completedCase, report };
+}
+
+// Regenerates the final report for a case unlocked by a Professional
+// Diagnostic Report purchase — never available on a plan-based (non-
+// purchased) report, and limited to the one regeneration
+// PROFESSIONAL_REPORT_ONE_TIME.maxRegenerations included with the
+// purchase. The regeneration allowance is atomically consumed BEFORE the
+// case is touched at all: if consumeReportRegeneration returns false
+// (already used, or no active unlock), this throws
+// RegenerationLimitExceededError and neither the case's status nor its
+// existing report are modified. No new usage slot or purchase is
+// consumed — see ScanAnalysisOptions.skipUsageGate.
+export async function regenerateScanAnalysis(
+  userId: string,
+  caseId: string,
+  plan: SubscriptionPlan,
+  provider: DiagnosticAIProvider,
+): Promise<ScanAnalysisResult> {
+  const unlock = await getActiveSingleReportUnlock(caseId);
+  if (!unlock) {
+    throw new RegenerationLimitExceededError(
+      "Report regeneration is only available for a purchased Professional Diagnostic Report.",
+    );
+  }
+
+  const consumed = await consumeReportRegeneration(caseId);
+  if (!consumed) {
+    throw new RegenerationLimitExceededError();
+  }
+
+  return runScanAnalysis(userId, caseId, plan, provider, {
+    skipUsageGate: true,
+    fromStatuses: "completed",
+  });
 }

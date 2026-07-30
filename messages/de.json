@@ -107,9 +107,22 @@
     "redirecting": "Weiterleitung…",
     "emailForCheckout": "E-Mail-Adresse",
     "introPricing": "Einführungspreis",
-    "singleReportHeading": "Lieber pro Bericht bezahlen?",
-    "singleReportBody": "Kaufen Sie einen vollständigen professionellen Diagnosebericht — kein Abonnement erforderlich. 30 Tage lang einsehbar.",
-    "singleReportCta": "1 Bericht kaufen — 9,99 $"
+    "oneTimeEyebrow": "EINMALIGE OPTION",
+    "oneTimeHeading": "Nur eine Diagnose benötigt?",
+    "oneTimeDescription": "Erhalten Sie einen vollständigen, fahrzeugspezifischen Diagnosebericht ohne ein Abonnement abzuschließen.",
+    "oneTimeFeature1": "Ein vollständiger Fahrzeugdiagnosefall",
+    "oneTimeFeature2": "Eingestufte wahrscheinliche Ursachen",
+    "oneTimeFeature3": "Empfohlene Testverfahren",
+    "oneTimeFeature4": "Hinweise zur Fahrsicherheit",
+    "oneTimeFeature5": "Erwartete Werte und benötigte Werkzeuge",
+    "oneTimeFeature6": "Checkliste zur Reparaturverifizierung",
+    "oneTimeFeature7": "Bis zu 5 Rückfragen bei DTC Technician™",
+    "oneTimeFeature8": "Eine Berichtsneuerstellung inbegriffen",
+    "oneTimeIntroductoryLabel": "Einführungspreis",
+    "oneTimeCta": "Einen professionellen Bericht erhalten",
+    "oneTimeCheckoutLoading": "Sichere Kaufabwicklung wird vorbereitet…",
+    "oneTimeSupportingText": "Einmalige Zahlung. Kein Abonnement. In Ihrem Konto gespeichert.",
+    "oneTimeFairUseNote": "Ein Kauf deckt einen Fahrzeugdiagnosefall und die zugehörigen DTCs ab. Fair-Use-Grenzen gelten für ungewöhnlich große Uploads oder übermäßig wiederholte Einreichungen."
   },
   "account": {
     "title": "Mein Konto",
@@ -123,7 +136,13 @@
     "addOnDescription": "Benötigen Sie diesen Monat mehr Berichte, als Ihr Tarif enthält? Kaufen Sie ein Paket — Guthaben verfällt nie und wird automatisch verwendet, sobald Ihr monatliches Kontingent aufgebraucht ist.",
     "addOnBalance": "{count} zusätzliche Berichte verbleibend",
     "addOnBuy": "Kaufen",
-    "addOnUnavailable": "Zusätzliche Pakete können noch nicht gekauft werden."
+    "addOnUnavailable": "Zusätzliche Pakete können noch nicht gekauft werden.",
+    "oneTimeCreditsTitle": "Guthaben für professionelle Berichte",
+    "oneTimeCreditsAvailable": "{count} verfügbar",
+    "startReport": "Diagnosebericht starten",
+    "paymentProcessing": "Zahlung erhalten. Ihr Berichtsguthaben wird in Kürze angezeigt.",
+    "paymentProcessingDelayed": "Ihre Zahlung wird noch bestätigt — dies kann eine Minute dauern. Aktualisieren Sie diese Seite in Kürze, falls Ihr Guthaben nicht erscheint.",
+    "paymentReceived": "Zahlung erhalten. Ihr Berichtsguthaben wird in Kürze angezeigt."
   },
   "preferences": {
     "title": "Sprach- & Regionseinstellungen",

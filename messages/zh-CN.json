@@ -107,9 +107,22 @@
     "redirecting": "正在跳转…",
     "emailForCheckout": "电子邮件地址",
     "introPricing": "上线优惠价",
-    "singleReportHeading": "更想按份付费?",
-    "singleReportBody": "购买一份完整的专业诊断报告——无需订阅。可查看30天。",
-    "singleReportCta": "购买1份报告 — $9.99"
+    "oneTimeEyebrow": "一次性选项",
+    "oneTimeHeading": "只需要一次诊断?",
+    "oneTimeDescription": "无需订阅即可获得完整的、针对您车辆的诊断报告。",
+    "oneTimeFeature1": "一个完整的车辆诊断案例",
+    "oneTimeFeature2": "按可能性排序的可能原因",
+    "oneTimeFeature3": "推荐的测试步骤",
+    "oneTimeFeature4": "行车安全指导",
+    "oneTimeFeature5": "预期值和所需工具",
+    "oneTimeFeature6": "维修验证核对清单",
+    "oneTimeFeature7": "最多5次DTC Technician™追问",
+    "oneTimeFeature8": "包含1次报告重新生成",
+    "oneTimeIntroductoryLabel": "上线优惠价",
+    "oneTimeCta": "获取一份专业报告",
+    "oneTimeCheckoutLoading": "正在准备安全结账…",
+    "oneTimeSupportingText": "一次性付款。无需订阅。已保存到您的账户。",
+    "oneTimeFairUseNote": "一次购买涵盖一个车辆诊断案例及其相关DTC。异常大的上传或过度重复提交将适用合理使用限制。"
   },
   "account": {
     "title": "我的账户",
@@ -123,7 +136,13 @@
     "addOnDescription": "本月需要比套餐包含更多的报告吗？购买一个附加包 — 额度永不过期，并在您的每月额度用完后自动使用。",
     "addOnBalance": "剩余 {count} 份附加报告",
     "addOnBuy": "购买",
-    "addOnUnavailable": "附加包暂时无法购买。"
+    "addOnUnavailable": "附加包暂时无法购买。",
+    "oneTimeCreditsTitle": "专业报告额度",
+    "oneTimeCreditsAvailable": "剩余 {count} 份",
+    "startReport": "开始诊断报告",
+    "paymentProcessing": "已收到付款。您的报告额度将很快显示。",
+    "paymentProcessingDelayed": "我们仍在确认您的付款——这可能需要一分钟。如果您的额度尚未显示,请稍后刷新此页面。",
+    "paymentReceived": "已收到付款。您的报告额度将很快显示。"
   },
   "preferences": {
     "title": "语言与地区偏好",

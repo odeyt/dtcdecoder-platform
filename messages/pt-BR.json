@@ -107,9 +107,22 @@
     "redirecting": "Redirecionando…",
     "emailForCheckout": "Endereço de e-mail",
     "introPricing": "Preço de lançamento",
-    "singleReportHeading": "Prefere pagar por relatório?",
-    "singleReportBody": "Compre um Relatório de Diagnóstico Profissional completo — sem necessidade de assinatura. Disponível para visualização por 30 dias.",
-    "singleReportCta": "Comprar 1 relatório — US$ 9,99"
+    "oneTimeEyebrow": "OPÇÃO ÚNICA",
+    "oneTimeHeading": "Precisa de apenas um diagnóstico?",
+    "oneTimeDescription": "Obtenha um relatório de diagnóstico completo e específico do veículo sem iniciar uma assinatura.",
+    "oneTimeFeature1": "Um caso de diagnóstico completo do veículo",
+    "oneTimeFeature2": "Causas prováveis classificadas",
+    "oneTimeFeature3": "Procedimentos de teste recomendados",
+    "oneTimeFeature4": "Orientação de segurança de condução",
+    "oneTimeFeature5": "Valores esperados e ferramentas necessárias",
+    "oneTimeFeature6": "Lista de verificação pós-reparo",
+    "oneTimeFeature7": "Até 5 acompanhamentos com o DTC Technician™",
+    "oneTimeFeature8": "Uma regeneração de relatório incluída",
+    "oneTimeIntroductoryLabel": "Preço de lançamento",
+    "oneTimeCta": "Obter um relatório profissional",
+    "oneTimeCheckoutLoading": "Preparando o checkout seguro…",
+    "oneTimeSupportingText": "Pagamento único. Sem assinatura. Salvo na sua conta.",
+    "oneTimeFairUseNote": "Uma compra cobre um caso de diagnóstico do veículo e seus DTCs relacionados. Limites de uso justo se aplicam a envios incomumente grandes ou repetidos em excesso."
   },
   "account": {
     "title": "Minha conta",
@@ -123,7 +136,13 @@
     "addOnDescription": "Precisa de mais relatórios do que seu plano inclui neste mês? Compre um pacote — os créditos nunca expiram e são usados automaticamente quando sua cota mensal se esgota.",
     "addOnBalance": "{count} relatórios adicionais restantes",
     "addOnBuy": "Comprar",
-    "addOnUnavailable": "Os pacotes adicionais ainda não estão disponíveis para compra."
+    "addOnUnavailable": "Os pacotes adicionais ainda não estão disponíveis para compra.",
+    "oneTimeCreditsTitle": "Créditos de relatório profissional",
+    "oneTimeCreditsAvailable": "{count} disponível(is)",
+    "startReport": "Iniciar relatório de diagnóstico",
+    "paymentProcessing": "Pagamento recebido. Seu crédito de relatório aparecerá em breve.",
+    "paymentProcessingDelayed": "Ainda estamos confirmando seu pagamento — isso pode levar um minuto. Atualize esta página em breve se o seu crédito não aparecer.",
+    "paymentReceived": "Pagamento recebido. Seu crédito de relatório aparecerá em breve."
   },
   "preferences": {
     "title": "Preferências de idioma e região",

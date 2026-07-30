@@ -42,20 +42,29 @@ export async function POST(request: NextRequest) {
     const checkoutObject = event.object;
     const userId = checkoutObject.metadata?.user_id;
 
-    // Standalone $9.99 single-report purchase — a distinct product from
-    // ADD_ON_PACKS, checked first since it's a separate mechanism (see
-    // migration 0037's header comment for why it isn't just another add-on
-    // pack size).
+    // Professional Diagnostic Report one-time purchase — a distinct
+    // product from ADD_ON_PACKS, checked first since it's a separate
+    // mechanism (see migration 0037's header comment for why it isn't just
+    // another add-on pack size). The product id lookup is the
+    // authoritative check (server-configured, never client-supplied); the
+    // metadata.product_key match is a second, independent signal so a
+    // malformed or unexpected event never silently grants a credit just
+    // because the product id happened to match.
     if (isSingleReportProductId(checkoutObject.product_id)) {
+      if (checkoutObject.metadata?.product_key && checkoutObject.metadata.product_key !== "professional_report_one_time") {
+        console.error("checkout.completed webhook product id/metadata product_key mismatch", event.id);
+        return NextResponse.json({ received: true });
+      }
+
       if (!userId) {
-        console.error("checkout.completed webhook for single-report purchase missing user_id metadata", event.id);
+        console.error("checkout.completed webhook for professional-report purchase missing user_id metadata", event.id);
         return NextResponse.json({ received: true });
       }
 
       try {
         await grantSingleReportPurchase({ userId, creemOrderId: checkoutObject.id });
       } catch (err) {
-        console.error("Failed to grant single-report purchase", userId, err);
+        console.error("Failed to grant professional-report purchase", userId, err);
         return NextResponse.json({ error: "Processing failed" }, { status: 500 });
       }
 

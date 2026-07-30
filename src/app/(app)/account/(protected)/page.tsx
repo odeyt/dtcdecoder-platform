@@ -5,11 +5,13 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { getAiDiagnosticUsageSummary, toLegacyUsageSummary } from "@/lib/ai-diagnostics/usage";
 import { getAddOnBalanceSummary } from "@/lib/ai-diagnostics/addon-balances";
+import { getUnusedSingleReportPurchaseCount } from "@/lib/ai-diagnostics/single-report-purchases";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { UsageMeter } from "@/components/UsageMeter";
 import { UpgradeCard } from "@/components/UpgradeCard";
 import { AddOnPackButton } from "@/components/AddOnPackButton";
 import { ChangePasswordForm } from "@/components/ChangePasswordForm";
+import { CreditGrantPoller } from "@/components/CreditGrantPoller";
 import { ADD_ON_PACKS } from "@/lib/pricing";
 
 export default async function AccountPage() {
@@ -26,6 +28,10 @@ export default async function AccountPage() {
   // Free never gets any AI diagnostic report generation at all, so add-on
   // credits would be unusable — only shown to paid plans.
   const addOnBalance = user && plan !== "free" ? await getAddOnBalanceSummary(user.id) : null;
+  // Unlike addOnBalance, available to every plan including Free — a
+  // Professional Diagnostic Report purchase is the no-subscription entry
+  // point, so it must never be gated behind a paid plan.
+  const oneTimeReportCredits = user ? await getUnusedSingleReportPurchaseCount(user.id) : 0;
 
   const locale = await resolveAppShellLocale();
   const messages = await getAppShellMessages(locale);
@@ -55,9 +61,26 @@ export default async function AccountPage() {
           )}
         </div>
 
+        <CreditGrantPoller initialCount={oneTimeReportCredits} />
+
         {usage && <UsageMeter summary={usage} planLabel={planLabel} />}
 
         {nearLimit && plan === "free" && <UpgradeCard reason={t("nearLimitReason")} />}
+
+        {oneTimeReportCredits > 0 && (
+          <div className="glass-panel rounded-[var(--radius-xl)] p-6">
+            <p className="text-sm font-semibold text-[var(--text-primary)]">{t("oneTimeCreditsTitle")}</p>
+            <p className="mt-1 text-lg font-bold text-[var(--text-primary)]">
+              {t("oneTimeCreditsAvailable", { count: oneTimeReportCredits })}
+            </p>
+            <Link
+              href="/diagnostics/upload"
+              className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110"
+            >
+              {t("startReport")}
+            </Link>
+          </div>
+        )}
 
         {addOnBalance && (
           <div className="glass-panel rounded-[var(--radius-xl)] p-6">
