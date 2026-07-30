@@ -10,7 +10,7 @@ vi.mock("@/lib/supabase/admin", async () => {
   return { createAdminClient: () => fake };
 });
 
-const { runScanAnalysis } = await import("@/lib/scan-diagnostics/analyze");
+const { runScanAnalysis, regenerateScanAnalysis } = await import("@/lib/scan-diagnostics/analyze");
 
 function fake(): FakeSupabase {
   return (globalThis as Record<string, unknown>).__fakeSupabase as FakeSupabase;
@@ -149,7 +149,44 @@ beforeEach(() => {
   // test/single-report-purchases.test.ts for the dedicated unit tests of
   // that redemption logic itself.
   fake().setRpcHandler("redeem_single_report_purchase", () => false);
+
+  // Real behavior mirrored (not just stubbed false) for the
+  // regenerateScanAnalysis tests below, which need an actual active
+  // purchase unlock to exist on a case.
+  fake().setRpcHandler("consume_report_regeneration", (args) => {
+    const caseId = args.p_case_id as string;
+    const max = args.p_max_regenerations as number;
+    const row = fake()
+      .dump("single_report_purchases")
+      .find((r) => r.case_id === caseId && r.status === "consumed");
+    if (!row) return false;
+    const current = (row.regeneration_count as number) ?? 0;
+    if (current >= max) return false;
+    row.regeneration_count = current + 1;
+    return true;
+  });
 });
+
+// Seeds an already-consumed single-report purchase unlocking `caseId` for
+// `userId` — mirrors what redeemSingleReportPurchase's real RPC leaves
+// behind (see migration 0037/0043), used here so regenerateScanAnalysis
+// tests don't need to go through a full checkout+redeem flow just to get
+// a case into "unlocked, completed, unregenerated" state.
+function seedActivePurchaseUnlock(caseId: string, userId: string) {
+  fake().seed("single_report_purchases", [
+    {
+      user_id: userId,
+      status: "consumed",
+      case_id: caseId,
+      creem_order_id: `order-${caseId}`,
+      purchased_at: new Date().toISOString(),
+      consumed_at: new Date().toISOString(),
+      expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+      followup_count: 0,
+      regeneration_count: 0,
+    },
+  ]);
+}
 
 describe("runScanAnalysis", () => {
   it("happy path: transitions through analyzing to completed and persists a report", async () => {
@@ -290,5 +327,53 @@ describe("runScanAnalysis", () => {
     expect(runsForCase).toHaveLength(1);
     expect(runsForCase[0].status).toBe("failed");
     expect(runsForCase[0].estimated_total_cost_micros).toBeGreaterThan(1_500_000);
+  });
+});
+
+describe("regenerateScanAnalysis", () => {
+  it("throws RegenerationLimitExceededError and touches nothing when the case has no purchase unlock", async () => {
+    seedCase("case-no-unlock", "user-1", "completed");
+
+    const { RegenerationLimitExceededError } = await import("@/lib/scan-diagnostics/api-errors");
+    await expect(regenerateScanAnalysis("user-1", "case-no-unlock", "free", fakeProvider())).rejects.toBeInstanceOf(
+      RegenerationLimitExceededError,
+    );
+
+    const caseAfter = fake().dump("scan_cases").find((c) => c.id === "case-no-unlock");
+    expect(caseAfter?.status).toBe("completed");
+    expect(fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-no-unlock")).toHaveLength(0);
+  });
+
+  it("regenerates once for a purchased/unlocked case without consuming a new usage slot", async () => {
+    seedCase("case-regen-1", "user-1", "completed");
+    seedActivePurchaseUnlock("case-regen-1", "user-1");
+
+    const result = await regenerateScanAnalysis("user-1", "case-regen-1", "free", fakeProvider());
+    expect(result.case.status).toBe("completed");
+
+    // No usage-gate reservation was ever made for this regeneration — a
+    // purchased regeneration never touches the free-tier's 0/day ceiling.
+    expect(fake().dump("ai_diagnostic_usage").filter((r) => r.request_id === "case-regen-1")).toHaveLength(0);
+
+    const purchase = fake().dump("single_report_purchases").find((p) => p.case_id === "case-regen-1");
+    expect(purchase?.regeneration_count).toBe(1);
+  });
+
+  it("blocks a second regeneration attempt on the same case", async () => {
+    seedCase("case-regen-2", "user-1", "completed");
+    seedActivePurchaseUnlock("case-regen-2", "user-1");
+
+    await regenerateScanAnalysis("user-1", "case-regen-2", "free", fakeProvider());
+
+    const { RegenerationLimitExceededError } = await import("@/lib/scan-diagnostics/api-errors");
+    await expect(regenerateScanAnalysis("user-1", "case-regen-2", "free", fakeProvider())).rejects.toBeInstanceOf(
+      RegenerationLimitExceededError,
+    );
+
+    // Still exactly one regeneration recorded — the blocked 2nd attempt
+    // never incremented the counter further and never re-ran the provider.
+    const purchase = fake().dump("single_report_purchases").find((p) => p.case_id === "case-regen-2");
+    expect(purchase?.regeneration_count).toBe(1);
+    expect(fake().dump("scan_ai_runs").filter((r) => r.case_id === "case-regen-2")).toHaveLength(1);
   });
 });

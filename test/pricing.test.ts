@@ -6,6 +6,7 @@ import {
   effectiveMonthlyPriceUsd,
   AI_DIAGNOSTIC_ENTITLEMENTS,
   BASIC_SEARCH_LIMITS,
+  PROFESSIONAL_REPORT_ONE_TIME,
 } from "@/lib/pricing";
 
 // Pins the exact numbers from docs/PRICING_AND_AI_COST_AUDIT.md's target
@@ -60,5 +61,26 @@ describe("BASIC_SEARCH_LIMITS", () => {
     expect(BASIC_SEARCH_LIMITS.free).toEqual({ dailyLimit: 1, monthlyLimit: 5 });
     expect(BASIC_SEARCH_LIMITS.pro).toEqual({ dailyLimit: null, monthlyLimit: null });
     expect(BASIC_SEARCH_LIMITS.workshop).toEqual({ dailyLimit: null, monthlyLimit: null });
+  });
+});
+
+describe("PROFESSIONAL_REPORT_ONE_TIME", () => {
+  it("charges $6.99 — never the $9.99 reference price — with the stable checkout key", () => {
+    expect(PROFESSIONAL_REPORT_ONE_TIME.key).toBe("professional_report_one_time");
+    expect(PROFESSIONAL_REPORT_ONE_TIME.priceUsd).toBe(6.99);
+    expect(PROFESSIONAL_REPORT_ONE_TIME.referencePriceUsd).toBe(9.99);
+    expect(PROFESSIONAL_REPORT_ONE_TIME.currency).toBe("USD");
+  });
+
+  it("the reference price is strictly higher than the real checkout price", () => {
+    expect(PROFESSIONAL_REPORT_ONE_TIME.referencePriceUsd).toBeGreaterThan(
+      PROFESSIONAL_REPORT_ONE_TIME.priceUsd,
+    );
+  });
+
+  it("matches the brief's 5 follow-ups / 1 regeneration / 30-day view window", () => {
+    expect(PROFESSIONAL_REPORT_ONE_TIME.maxFollowUps).toBe(5);
+    expect(PROFESSIONAL_REPORT_ONE_TIME.maxRegenerations).toBe(1);
+    expect(PROFESSIONAL_REPORT_ONE_TIME.viewWindowDays).toBe(30);
   });
 });

@@ -305,9 +305,22 @@
     "redirecting": "Redirigiendo…",
     "emailForCheckout": "Correo electrónico",
     "introPricing": "Precio de lanzamiento",
-    "singleReportHeading": "¿Prefieres pagar por informe?",
-    "singleReportBody": "Compra un Informe de Diagnóstico Profesional completo, sin necesidad de suscripción. Disponible para verlo durante 30 días.",
-    "singleReportCta": "Comprar 1 informe — $9.99"
+    "oneTimeEyebrow": "OPCIÓN ÚNICA",
+    "oneTimeHeading": "¿Solo necesitas un diagnóstico?",
+    "oneTimeDescription": "Obtén un informe de diagnóstico completo y específico para tu vehículo sin iniciar una suscripción.",
+    "oneTimeFeature1": "Un caso de diagnóstico completo del vehículo",
+    "oneTimeFeature2": "Causas probables clasificadas",
+    "oneTimeFeature3": "Procedimientos de prueba recomendados",
+    "oneTimeFeature4": "Orientación sobre seguridad de conducción",
+    "oneTimeFeature5": "Valores esperados y herramientas necesarias",
+    "oneTimeFeature6": "Lista de verificación de reparación",
+    "oneTimeFeature7": "Hasta 5 seguimientos con DTC Technician™",
+    "oneTimeFeature8": "Una regeneración de informe incluida",
+    "oneTimeIntroductoryLabel": "Precio de lanzamiento",
+    "oneTimeCta": "Obtener un informe profesional",
+    "oneTimeCheckoutLoading": "Preparando el pago seguro…",
+    "oneTimeSupportingText": "Pago único. Sin suscripción. Guardado en tu cuenta.",
+    "oneTimeFairUseNote": "Una compra cubre un caso de diagnóstico del vehículo y sus DTC relacionados. Se aplican límites de uso justo para cargas inusualmente grandes o envíos repetidos excesivos."
   },
   "account": {
     "title": "Mi Cuenta",
@@ -321,7 +334,13 @@
     "addOnDescription": "¿Necesitas más reportes de los que incluye tu plan este mes? Compra un paquete — los créditos no caducan y se usan automáticamente cuando se agota tu límite mensual.",
     "addOnBalance": "{count} reportes adicionales restantes",
     "addOnBuy": "Comprar",
-    "addOnUnavailable": "Los paquetes adicionales aún no están disponibles para comprar."
+    "addOnUnavailable": "Los paquetes adicionales aún no están disponibles para comprar.",
+    "oneTimeCreditsTitle": "Créditos de informe profesional",
+    "oneTimeCreditsAvailable": "{count} disponibles",
+    "startReport": "Iniciar informe de diagnóstico",
+    "paymentProcessing": "Pago recibido. Tu crédito de informe aparecerá en breve.",
+    "paymentProcessingDelayed": "Todavía estamos confirmando tu pago — esto puede tardar un minuto. Actualiza esta página en breve si tu crédito no ha aparecido.",
+    "paymentReceived": "Pago recibido. Tu crédito de informe aparecerá en breve."
   },
   "preferences": {
     "title": "Preferencias de Idioma y Región",

@@ -60,10 +60,12 @@ export const env = {
   creemAddon25ProductIdOptional: () => process.env.CREEM_ADDON_25_PRODUCT_ID,
   creemAddon50ProductIdOptional: () => process.env.CREEM_ADDON_50_PRODUCT_ID,
 
-  // Standalone $9.99 single-report purchase (SINGLE_REPORT_PURCHASE,
-  // src/lib/pricing.ts) — same "stays disabled until a real product id
-  // exists" rule as the add-on packs above.
-  creemSingleReportProductIdOptional: () => process.env.CREEM_SINGLE_REPORT_PRODUCT_ID,
+  // Professional Diagnostic Report one-time purchase
+  // (PROFESSIONAL_REPORT_ONE_TIME, src/lib/pricing.ts) — same "stays
+  // disabled until a real product id exists" rule as the add-on packs
+  // above. The actual charged price ($6.99 introductory) lives on this
+  // Creem product's own configuration, never passed from this app.
+  creemProfessionalReportProductIdOptional: () => process.env.CREEM_PROFESSIONAL_REPORT_PRODUCT_ID,
 
   anthropicApiKey: () =>
     required("ANTHROPIC_API_KEY", process.env.ANTHROPIC_API_KEY),

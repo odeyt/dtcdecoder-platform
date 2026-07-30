@@ -47,6 +47,18 @@ export const ANALYTICS_EVENT_TYPES = [
   "diagnostic_report_copy_clicked",
   "diagnostic_report_print_clicked",
   "diagnostic_report_completed",
+  // Professional Diagnostic Report one-time-purchase funnel
+  // (docs/billing/ONE_TIME_PROFESSIONAL_REPORT.md). Metadata stays limited
+  // to plan/product-key/reason tags — never VIN, symptoms, scan contents,
+  // email, payment details, or report text.
+  "one_time_report_offer_viewed",
+  "one_time_report_checkout_started",
+  "one_time_report_checkout_failed",
+  "one_time_report_checkout_returned",
+  "one_time_report_credit_granted",
+  "one_time_report_case_started",
+  "one_time_report_credit_consumed",
+  "one_time_report_followup_limit_reached",
 ] as const;
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];

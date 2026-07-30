@@ -100,6 +100,28 @@ export class InvalidReportIndexError extends Error {
   }
 }
 
+// Thrown by regenerateScanAnalysis when the case has no active
+// single-report unlock at all (regeneration is a purchased-report benefit
+// only, never available on a plan-based report) or its one permitted
+// regeneration is already used. The existing report is never touched when
+// this is thrown — see analyze.ts's ordering (consume-then-transition).
+export class RegenerationLimitExceededError extends Error {
+  constructor(message = "This report has already been regenerated once. Regeneration is limited to one per purchased report.") {
+    super(message);
+    this.name = "RegenerationLimitExceededError";
+  }
+}
+
+// Thrown when a case's purchased follow-up allowance (5 per report) is
+// already exhausted. The case/report/consultation history are never
+// touched when this is thrown.
+export class FollowUpLimitExceededError extends Error {
+  constructor(message = "You've used all 5 included follow-up questions for this report.") {
+    super(message);
+    this.name = "FollowUpLimitExceededError";
+  }
+}
+
 export function toSafeErrorResponse(err: unknown, context: string): NextResponse {
   console.error(`[scan-diagnostics] ${context} failed`, err);
 
@@ -161,6 +183,9 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
   }
   if (err instanceof InvalidReportIndexError) {
     return NextResponse.json({ error: err.message }, { status: 400 });
+  }
+  if (err instanceof RegenerationLimitExceededError || err instanceof FollowUpLimitExceededError) {
+    return NextResponse.json({ error: err.message, code: err.name, retryable: false }, { status: 409 });
   }
   if (err instanceof ScanAnalysisFailedError) {
     // `error` (string) is the original, still-supported contract every

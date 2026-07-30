@@ -19,6 +19,9 @@ import {
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
+import { getCaseForOwner } from "@/lib/scan-diagnostics/cases";
+import { getActiveSingleReportUnlock, consumeReportFollowUp } from "@/lib/ai-diagnostics/single-report-purchases";
+import { recordEvent } from "@/lib/analytics/events";
 
 const CHAT_GENERATION_MODEL_ID = modelForTask("chatGeneration");
 const CHAT_TRANSLATION_MODEL_ID = modelForTask("chatTranslation");
@@ -31,6 +34,14 @@ const requestSchema = z.object({
   // double-charges the daily/monthly allowance. Never trusted for anything
   // beyond deduplication (plan/entitlement always come from the server).
   requestId: z.string().trim().min(1).max(100),
+  // Present only when the DTC Technician shell is opened from a specific
+  // scan-diagnostics case (DtcTechnicianShell's `context.caseId`). Only
+  // meaningful, and only ever checked, when that case has an active
+  // Professional Diagnostic Report purchase unlock — see the follow-up
+  // allowance check below. A caseId for a case with no purchase unlock
+  // (or one the user doesn't own) never affects this request beyond a
+  // silent ownership check.
+  caseId: z.string().uuid().optional(),
 });
 
 export async function POST(request: NextRequest) {
@@ -59,6 +70,34 @@ export async function POST(request: NextRequest) {
   }
 
   const plan = await getEffectivePlan(user.id, user.email ?? null);
+
+  // Purchased-report follow-up allowance (5 per PROFESSIONAL_REPORT_ONE_TIME
+  // purchase) — checked and atomically consumed BEFORE the usual usage-gate
+  // reservation below, so a blocked follow-up never reserves a preview/
+  // report slot. Only applies when this case actually has an active
+  // purchase unlock; a case on a plan-based (non-purchased) report, or one
+  // this user doesn't own, is never gated here.
+  if (parsed.data.caseId) {
+    try {
+      await getCaseForOwner(user.id, parsed.data.caseId);
+    } catch {
+      return NextResponse.json({ error: "Case not found." }, { status: 404 });
+    }
+    const unlock = await getActiveSingleReportUnlock(parsed.data.caseId);
+    if (unlock) {
+      const allowed = await consumeReportFollowUp(parsed.data.caseId);
+      if (!allowed) {
+        await recordEvent("one_time_report_followup_limit_reached", { userId: user.id });
+        return NextResponse.json(
+          {
+            error: "You've used all 5 included follow-up questions for this report.",
+            code: "FollowUpLimitExceededError",
+          },
+          { status: 409 },
+        );
+      }
+    }
+  }
 
   let accessLevel;
   try {

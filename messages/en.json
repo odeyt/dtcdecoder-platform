@@ -305,9 +305,22 @@
     "redirecting": "Redirecting…",
     "emailForCheckout": "Email address",
     "introPricing": "Introductory pricing",
-    "singleReportHeading": "Prefer to pay per report?",
-    "singleReportBody": "Buy one full Professional Diagnostic Report — no subscription required. Viewable for 30 days.",
-    "singleReportCta": "Buy 1 report — $9.99"
+    "oneTimeEyebrow": "ONE-TIME OPTION",
+    "oneTimeHeading": "Need only one diagnosis?",
+    "oneTimeDescription": "Get a complete, vehicle-specific diagnostic report without starting a subscription.",
+    "oneTimeFeature1": "One complete vehicle diagnostic case",
+    "oneTimeFeature2": "Ranked likely causes",
+    "oneTimeFeature3": "Recommended test procedures",
+    "oneTimeFeature4": "Drive-safety guidance",
+    "oneTimeFeature5": "Expected values and required tools",
+    "oneTimeFeature6": "Repair-verification checklist",
+    "oneTimeFeature7": "Up to 5 DTC Technician™ follow-ups",
+    "oneTimeFeature8": "One report regeneration included",
+    "oneTimeIntroductoryLabel": "Introductory price",
+    "oneTimeCta": "Get one professional report",
+    "oneTimeCheckoutLoading": "Preparing secure checkout…",
+    "oneTimeSupportingText": "One-time payment. No subscription. Saved to your account.",
+    "oneTimeFairUseNote": "One purchase covers one vehicle diagnostic case and its related DTCs. Fair-use limits apply to unusually large uploads or excessive repeated submissions."
   },
   "account": {
     "title": "My Account",
@@ -321,7 +334,13 @@
     "addOnDescription": "Need more reports than your plan includes this month? Buy a pack — credits never expire and are used automatically once your monthly allowance runs out.",
     "addOnBalance": "{count} add-on reports remaining",
     "addOnBuy": "Buy",
-    "addOnUnavailable": "Add-on packs aren't available for purchase yet."
+    "addOnUnavailable": "Add-on packs aren't available for purchase yet.",
+    "oneTimeCreditsTitle": "Professional report credits",
+    "oneTimeCreditsAvailable": "{count} available",
+    "startReport": "Start diagnostic report",
+    "paymentProcessing": "Payment received. Your report credit will appear shortly.",
+    "paymentProcessingDelayed": "Still confirming your payment — this can take a minute. Refresh this page shortly if your credit hasn't appeared.",
+    "paymentReceived": "Payment received. Your report credit will appear shortly."
   },
   "preferences": {
     "title": "Language & Region Preferences",

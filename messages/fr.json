@@ -107,9 +107,22 @@
     "redirecting": "Redirection…",
     "emailForCheckout": "Adresse e-mail",
     "introPricing": "Tarif de lancement",
-    "singleReportHeading": "Vous préférez payer par rapport ?",
-    "singleReportBody": "Achetez un rapport de diagnostic professionnel complet, sans abonnement. Consultable pendant 30 jours.",
-    "singleReportCta": "Acheter 1 rapport — 9,99 $"
+    "oneTimeEyebrow": "OPTION UNIQUE",
+    "oneTimeHeading": "Besoin d'un seul diagnostic ?",
+    "oneTimeDescription": "Obtenez un rapport de diagnostic complet et spécifique à votre véhicule sans souscrire d'abonnement.",
+    "oneTimeFeature1": "Un dossier de diagnostic complet du véhicule",
+    "oneTimeFeature2": "Causes probables classées",
+    "oneTimeFeature3": "Procédures de test recommandées",
+    "oneTimeFeature4": "Conseils de sécurité de conduite",
+    "oneTimeFeature5": "Valeurs attendues et outils requis",
+    "oneTimeFeature6": "Liste de vérification après réparation",
+    "oneTimeFeature7": "Jusqu'à 5 suivis avec DTC Technician™",
+    "oneTimeFeature8": "Une régénération de rapport incluse",
+    "oneTimeIntroductoryLabel": "Tarif de lancement",
+    "oneTimeCta": "Obtenir un rapport professionnel",
+    "oneTimeCheckoutLoading": "Préparation du paiement sécurisé…",
+    "oneTimeSupportingText": "Paiement unique. Sans abonnement. Enregistré dans votre compte.",
+    "oneTimeFairUseNote": "Un achat couvre un dossier de diagnostic du véhicule et ses codes DTC associés. Des limites d'usage équitable s'appliquent aux téléversements inhabituellement volumineux ou aux soumissions répétées excessives."
   },
   "account": {
     "title": "Mon compte",
@@ -123,7 +136,13 @@
     "addOnDescription": "Besoin de plus de rapports que ce que votre forfait inclut ce mois-ci ? Achetez un pack — les crédits n'expirent jamais et sont utilisés automatiquement une fois votre quota mensuel épuisé.",
     "addOnBalance": "{count} rapports supplémentaires restants",
     "addOnBuy": "Acheter",
-    "addOnUnavailable": "Les packs supplémentaires ne sont pas encore disponibles à l'achat."
+    "addOnUnavailable": "Les packs supplémentaires ne sont pas encore disponibles à l'achat.",
+    "oneTimeCreditsTitle": "Crédits de rapport professionnel",
+    "oneTimeCreditsAvailable": "{count} disponible(s)",
+    "startReport": "Démarrer un rapport de diagnostic",
+    "paymentProcessing": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu.",
+    "paymentProcessingDelayed": "Nous confirmons encore votre paiement — cela peut prendre une minute. Actualisez cette page sous peu si votre crédit n'est pas apparu.",
+    "paymentReceived": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu."
   },
   "preferences": {
     "title": "Préférences de langue et de région",
