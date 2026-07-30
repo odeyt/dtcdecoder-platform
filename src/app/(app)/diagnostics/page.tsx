@@ -83,18 +83,25 @@ export default async function DiagnosticsPage() {
                     wrapping the whole card, the previous approach) so
                     EditableCaseTitle's button/input can sit in normal
                     document flow above it and handle their own clicks
-                    without accidentally triggering navigation. */}
+                    without accidentally triggering navigation. The visible
+                    content wrapper needs pointer-events-none (with
+                    pointer-events-auto re-enabled only on EditableCaseTitle)
+                    — otherwise, despite being positioned "above" the link
+                    only by DOM order/no z-index, it still captures every
+                    click within its bounds, and only genuinely empty
+                    padding around the text would ever reach the link
+                    underneath. */}
                 <Link
                   href={`/diagnostics/${c.id}`}
                   className="absolute inset-0 rounded-[var(--radius-lg)]"
                   aria-label={`Open case: ${c.title || c.complaint || "Untitled case"}`}
                 />
-                <div className="relative flex items-center justify-between gap-4 p-4">
+                <div className="relative flex items-center justify-between gap-4 p-4 pointer-events-none">
                   <div className="min-w-0 flex-1">
                     <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
                       {STATUS_LABELS[c.status] ?? c.status}
                     </span>
-                    <div className="relative z-10">
+                    <div className="relative z-10 pointer-events-auto">
                       <EditableCaseTitle
                         caseId={c.id}
                         initialTitle={c.title}
