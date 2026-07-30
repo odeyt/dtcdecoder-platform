@@ -90,6 +90,16 @@ export class FeatureDisabledError extends Error {
   }
 }
 
+// Thrown by workbench.ts when a test/cause index doesn't correspond to a
+// real item in the report's recommended_tests/ranked_causes array — never
+// silently create an orphan progress row for an index that doesn't exist.
+export class InvalidReportIndexError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = "InvalidReportIndexError";
+  }
+}
+
 export function toSafeErrorResponse(err: unknown, context: string): NextResponse {
   console.error(`[scan-diagnostics] ${context} failed`, err);
 
@@ -148,6 +158,9 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
   }
   if (err instanceof FeatureDisabledError) {
     return NextResponse.json({ error: err.message }, { status: 404 });
+  }
+  if (err instanceof InvalidReportIndexError) {
+    return NextResponse.json({ error: err.message }, { status: 400 });
   }
   if (err instanceof ScanAnalysisFailedError) {
     // `error` (string) is the original, still-supported contract every

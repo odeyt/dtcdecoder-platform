@@ -15,6 +15,11 @@ export default defineConfig({
   },
   test: {
     environment: "node",
-    include: ["test/**/*.test.ts"],
+    // Component test files (.tsx) opt into jsdom themselves via a
+    // `// @vitest-environment jsdom` docblock at the top of the file —
+    // existing plain-.ts tests stay on the faster "node" environment above,
+    // unaffected by this addition.
+    include: ["test/**/*.test.ts", "test/**/*.test.tsx"],
+    setupFiles: ["test/setup-jest-dom.ts"],
   },
 });

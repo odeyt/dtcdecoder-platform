@@ -50,8 +50,9 @@ export function createFakeSupabase(): FakeSupabase {
 
   function builder(name: string): FakeQueryBuilder {
     const filters: Filter[] = [];
-    let orderCol: string | null = null;
-    let orderAscending = true;
+    // Chained .order() calls accumulate (matching real Postgrest — each call
+    // adds a secondary/tertiary sort key rather than replacing the last one).
+    const orderClauses: { col: string; ascending: boolean }[] = [];
     let limitN: number | null = null;
     let op:
       | { type: "insert" | "upsert"; payload?: Row[]; onConflict?: string }
@@ -99,13 +100,15 @@ export function createFakeSupabase(): FakeSupabase {
       }
 
       let result = rows.filter((r) => filters.every((f) => f(r)));
-      if (orderCol) {
-        const col = orderCol;
+      if (orderClauses.length > 0) {
         result = [...result].sort((a, b) => {
-          const av = a[col] as string | number;
-          const bv = b[col] as string | number;
-          if (av === bv) return 0;
-          return (av < bv ? -1 : 1) * (orderAscending ? 1 : -1);
+          for (const { col, ascending } of orderClauses) {
+            const av = a[col] as string | number;
+            const bv = b[col] as string | number;
+            if (av === bv) continue;
+            return (av < bv ? -1 : 1) * (ascending ? 1 : -1);
+          }
+          return 0;
         });
       }
       if (limitN !== null) result = result.slice(0, limitN);
@@ -161,8 +164,7 @@ export function createFakeSupabase(): FakeSupabase {
         return self;
       },
       order(col, opts) {
-        orderCol = col;
-        orderAscending = opts?.ascending ?? true;
+        orderClauses.push({ col, ascending: opts?.ascending ?? true });
         return self;
       },
       limit(n) {

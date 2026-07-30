@@ -35,6 +35,27 @@
   --severity-high: #e0672a;
   --severity-critical: #e11d2e;
 
+  /* ResultPill semantic hues (src/components/ResultPill.tsx) — the one
+     centralized color source for severity/safety/diagnostic-status/system-
+     category pills across the Diagnostic Workbench. Some deliberately
+     reuse the existing accent/severity tokens above where the concept is
+     the same (critical=red, high=orange, low/blue); net-new hues are added
+     here rather than inline in the component so the palette stays in one
+     place, matching this file's own stated purpose. */
+  --pill-red: #e11d2e;
+  --pill-orange: #e0672a;
+  --pill-amber: #d99a3f;
+  --pill-blue: #6ba5c9;
+  --pill-gray: #8b8892;
+  --pill-green: #4caf6e;
+  --pill-teal: #3aa8a0;
+  --pill-slate: #6b7280;
+  --pill-purple: #9b6bd9;
+  --pill-cyan: #3ab4c9;
+  --pill-indigo: #6b7fd9;
+  --pill-sky: #5fb3e0;
+  --pill-rose: #d9527a;
+
   /* Shadow — soft ambient depth, not oversized glow blobs */
   --shadow-ambient: 0 1px 2px rgba(0, 0, 0, 0.4), 0 12px 32px -12px rgba(0, 0, 0, 0.55);
   --shadow-accent: 0 1px 2px rgba(0, 0, 0, 0.4), 0 8px 24px -10px rgba(225, 29, 46, 0.25);
@@ -207,4 +228,48 @@ body {
 }
 .fade-in-up {
   animation: fade-in-up var(--motion-slow) var(--motion-ease) both;
+}
+
+/* ResultPill print override (src/components/ResultPill.tsx) — the pill's
+   colors are set via inline style for screen display, which a plain CSS
+   rule can't override without !important; this is the one place that's an
+   intentional, deliberate exception, not a general pattern to copy
+   elsewhere. Printed pages need dark text on white/light background
+   regardless of the on-screen semantic hue, with the border carrying enough
+   weight to keep the pill legibly separated from surrounding text. */
+@media print {
+  [data-result-pill] {
+    color: #111 !important;
+    background-color: #fff !important;
+    border-color: #999 !important;
+  }
+  [data-result-pill] > span {
+    background-color: #555 !important;
+  }
+}
+
+/* Site-wide print override — this is a dark UI theme (light text, translucent
+   dark glass panels with backdrop-filter) with no prior print handling
+   anywhere on the site; printed on white paper, --text-primary et al. would
+   be near-invisible and .glass-panel's blur/shadow just wastes ink. Redefine
+   the token values (not individual component rules) so every printable
+   surface inherits readable colors automatically. --accent-red is left
+   alone — it's a meaningful semantic color (safety warnings, priority) that
+   prints fine on white and shouldn't be flattened to black. */
+@media print {
+  :root {
+    --text-primary: #111111;
+    --text-secondary: #333333;
+    --text-muted: #555555;
+    --border-subtle: #999999;
+    --surface-2: #ffffff;
+  }
+  body {
+    background: #ffffff !important;
+  }
+  .glass-panel {
+    background: #ffffff !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+  }
 }

@@ -19,6 +19,8 @@ const SCAN_CASE: ScanCase = {
   report_language: "en",
   created_at: new Date(0).toISOString(),
   updated_at: new Date(0).toISOString(),
+  technician_completed_at: null,
+  technician_completed_by: null,
 };
 
 const EXTRACTION: ScanExtraction = {

@@ -66,6 +66,8 @@ const scanCase: ScanCase = {
   report_language: "en",
   created_at: new Date(0).toISOString(),
   updated_at: new Date(0).toISOString(),
+  technician_completed_at: null,
+  technician_completed_by: null,
 };
 
 const parsed = buildParsedScanReportFromText(ZOTYE_SCAN_REPORT_TEXT);

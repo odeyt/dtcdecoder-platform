@@ -322,6 +322,12 @@ export interface ScanCase {
   report_language: string;
   created_at: string;
   updated_at: string;
+  // Technician-initiated completion (migration 0039) — distinct from
+  // `status`, which only tracks the AI pipeline stage. "completed" status
+  // means a report was generated; these track whether a technician has
+  // actually reviewed and closed out the case.
+  technician_completed_at: string | null;
+  technician_completed_by: string | null;
 }
 
 export type ScanFileFormat = "pdf" | "txt" | "csv" | "json" | "xml" | "html" | "unknown";
@@ -495,4 +501,68 @@ export interface ScanFeedback {
   parts_replaced: string[];
   notes: string | null;
   submitted_at: string;
+}
+
+// --- Diagnostic Workbench persistence (migration 0039) ------------------
+// Ongoing technician notes, per-test/per-cause interactive state, and the
+// verification checklist. All genuinely new — the only prior persistence
+// was ScanCase.technician_notes (write-once at creation) and ScanFeedback
+// (one-time post-repair form). See docs/DIAGNOSTIC_WORKBENCH_ARCHITECTURE.md.
+
+export type ScanCaseNoteCategory = "observation" | "measurement" | "repair_performed" | "follow_up";
+
+export interface ScanCaseNote {
+  id: string;
+  case_id: string;
+  user_id: string;
+  category: ScanCaseNoteCategory;
+  body: string;
+  pinned: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
+export type ScanTestOutcome = "pass" | "fail" | "not_tested";
+
+// Keyed by (case_id, test_index) — test_index is the item's position in
+// ScanReport.recommended_tests, which has no stable per-item id of its own.
+export interface ScanReportTestProgress {
+  id: string;
+  case_id: string;
+  report_id: string;
+  test_index: number;
+  completed: boolean;
+  outcome: ScanTestOutcome;
+  actual_result: string | null;
+  technician_note: string | null;
+  completed_at: string | null;
+  updated_at: string;
+}
+
+export type ScanCauseStatus = "untested" | "supported" | "ruled_out" | "confirmed";
+
+// Keyed by (case_id, cause_index) — cause_index is the item's position in
+// ScanReport.ranked_causes.
+export interface ScanReportCauseStatus {
+  id: string;
+  case_id: string;
+  report_id: string;
+  cause_index: number;
+  status: ScanCauseStatus;
+  reviewed: boolean;
+  updated_at: string;
+}
+
+// One row per case — the fixed 8-item post-repair verification checklist.
+export interface ScanCaseVerification {
+  case_id: string;
+  concern_resolved: boolean;
+  dtcs_cleared: boolean;
+  dtcs_did_not_return: boolean;
+  calibration_completed: boolean;
+  road_test_completed: boolean;
+  no_new_warning_lights: boolean;
+  post_repair_scan_reviewed: boolean;
+  customer_notes_recorded: boolean;
+  updated_at: string;
 }

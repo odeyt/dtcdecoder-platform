@@ -54,7 +54,19 @@ describe("Phase 1 branding — dtcTechnician namespace (Slice 1)", () => {
 });
 
 describe("Phase 1 branding — global terminology rollout (Slice 6)", () => {
-  const SWEPT_NAMESPACES = ["nav", "footer", "home", "pricing", "account", "preferences", "dtcResult", "dtcSearch", "history", "meta"] as const;
+  const SWEPT_NAMESPACES = [
+    "nav",
+    "footer",
+    "home",
+    "pricing",
+    "account",
+    "preferences",
+    "dtcResult",
+    "dtcSearch",
+    "history",
+    "meta",
+    "scanReport",
+  ] as const;
 
   it.each(SWEPT_NAMESPACES)("en.%s has no prohibited customer-facing terms", (ns) => {
     assertNoProhibitedTerms((en as Record<string, unknown>)[ns] as Record<string, unknown>, `en.${ns}`);
@@ -88,7 +100,19 @@ describe("Phase 1 branding — report labels (ScanReportView.tsx)", () => {
     const source = await fs.readFile(new URL("../src/components/ScanReportView.tsx", import.meta.url), "utf-8");
     expect(source).not.toMatch(/AI-generated/);
     expect(source).not.toMatch(/AI-assisted evidence review/);
-    expect(source).toContain("Prepared by DTC Technician");
+  });
+
+  // As of the Diagnostic Workbench redesign, ScanReportView.tsx's copy is
+  // fully localized (scanReport namespace) rather than hardcoded — so the
+  // brand-wording check now reads the message catalog instead of grepping
+  // the component source, same as every other already-migrated namespace
+  // above.
+  it("the scanReport namespace uses the DTC Technician™ prepared-by wording", () => {
+    expect(en).toHaveProperty("scanReport.preparedBadge", "Prepared by DTC Technician™ — not OEM service information");
+    expect(es).toHaveProperty(
+      "scanReport.preparedBadge",
+      "Preparado por DTC Technician™ — no es información de servicio OEM",
+    );
   });
 });
 

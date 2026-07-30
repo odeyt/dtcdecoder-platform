@@ -32,6 +32,21 @@ export const ANALYTICS_EVENT_TYPES = [
   // Digital Service Bay hero (homepage) — one entry per welcome-card path,
   // not covered by the existing landing/consultation funnel events above.
   "continue_previous_diagnosis_clicked",
+  // Diagnostic Workbench (docs/DIAGNOSTIC_WORKBENCH_ARCHITECTURE.md,
+  // migration 0039) — the redesigned scan-report result page.
+  "diagnostic_report_viewed",
+  "diagnostic_report_section_opened",
+  "diagnostic_report_filter_changed",
+  "diagnostic_report_test_checked",
+  "diagnostic_report_test_outcome_changed",
+  "diagnostic_report_progress_saved",
+  "diagnostic_report_save_failed",
+  "diagnostic_report_note_added",
+  "diagnostic_report_finding_reviewed",
+  "diagnostic_report_cause_status_changed",
+  "diagnostic_report_copy_clicked",
+  "diagnostic_report_print_clicked",
+  "diagnostic_report_completed",
 ] as const;
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];

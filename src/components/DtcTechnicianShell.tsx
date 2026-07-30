@@ -63,6 +63,18 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
   useEffect(() => {
     const supabase = createClient();
     supabase.auth.getUser().then(({ data }) => setSignedIn(Boolean(data.user)));
+
+    // This shell mounts once in the root layout and persists across
+    // client-side navigation (including the redirect after signing in) —
+    // a one-time getUser() at mount would go stale the moment someone signs
+    // in or out without a full page reload. Subscribing keeps signedIn
+    // accurate for the shell's whole lifetime.
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSignedIn(Boolean(session?.user));
+    });
+    return () => subscription.unsubscribe();
   }, []);
 
   // Cross-component open trigger (docs/DIAGNOSTIC_ENGINE_LANDING_BUTTON_FIX.md)
@@ -203,7 +215,7 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
         aria-label={t("openLabel")}
         aria-haspopup="dialog"
         aria-expanded={open}
-        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-red)] text-white transition hover:brightness-110"
+        className="fixed right-5 bottom-5 z-40 flex h-14 w-14 items-center justify-center rounded-full bg-[var(--accent-red)] text-white transition hover:brightness-110 print:hidden"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
         <svg aria-hidden="true" width="26" height="26" viewBox="0 0 24 24" fill="none">
@@ -217,7 +229,7 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
       </button>
 
       {open && (
-        <div className="fixed inset-0 z-50">
+        <div className="fixed inset-0 z-50 print:hidden">
           <div
             aria-hidden="true"
             className="absolute inset-0 bg-black/50"

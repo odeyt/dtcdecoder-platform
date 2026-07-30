@@ -100,6 +100,19 @@ export async function createQuickDiagnosticCase(
   return scanCase;
 }
 
+// VIN lives on scan_extractions (one row per case), not scan_cases itself —
+// a separate lookup, same pattern as getCaseDetail's parallel per-table
+// queries, rather than a nested PostgREST join.
+export async function listVinsForCaseIds(caseIds: string[]): Promise<Record<string, string | null>> {
+  if (caseIds.length === 0) return {};
+  const supabase = createAdminClient();
+  const { data, error } = await supabase.from("scan_extractions").select("case_id, vin").in("case_id", caseIds);
+  if (error) throw error;
+  const vinByCaseId: Record<string, string | null> = {};
+  for (const row of data ?? []) vinByCaseId[row.case_id as string] = row.vin as string | null;
+  return vinByCaseId;
+}
+
 export async function listCasesForOwner(userId: string): Promise<ScanCase[]> {
   const supabase = createAdminClient();
   const { data, error } = await supabase

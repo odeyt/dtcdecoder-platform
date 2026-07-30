@@ -3,7 +3,7 @@ import Link from "next/link";
 import { redirect, notFound } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
-import { listCasesForOwner } from "@/lib/scan-diagnostics/cases";
+import { listCasesForOwner, listVinsForCaseIds } from "@/lib/scan-diagnostics/cases";
 
 export const metadata: Metadata = {
   title: "Diagnostic Cases",
@@ -17,7 +17,13 @@ const STATUS_LABELS: Record<string, string> = {
   extraction_review: "Awaiting review",
   ready_for_analysis: "Ready for analysis",
   analyzing: "Analyzing",
-  completed: "Completed",
+  // "completed" only means the AI analysis pipeline finished and a report
+  // exists — it says nothing about whether a technician has reviewed it,
+  // and the case stays fully editable (notes, test checkboxes,
+  // verification checklist) after this. "Completed" read as final/locked
+  // to at least one technician, so this label is deliberately softer than
+  // the actual manual-completion feature (technician_completed_at) uses.
+  completed: "Report ready",
   failed: "Failed",
 };
 
@@ -32,6 +38,7 @@ export default async function DiagnosticsPage() {
   if (!user) redirect("/account/login");
 
   const cases = await listCasesForOwner(user.id);
+  const vinByCaseId = await listVinsForCaseIds(cases.map((c) => c.id));
 
   return (
     <div className="container-app px-6 py-16">
@@ -72,6 +79,9 @@ export default async function DiagnosticsPage() {
                       <p className="mt-1 font-medium text-[var(--text-primary)]">
                         {c.complaint || "Untitled case"}
                       </p>
+                      {vinByCaseId[c.id] && (
+                        <p className="mt-0.5 font-mono text-xs text-[var(--text-muted)]">VIN: {vinByCaseId[c.id]}</p>
+                      )}
                     </div>
                     <time
                       dateTime={c.created_at}

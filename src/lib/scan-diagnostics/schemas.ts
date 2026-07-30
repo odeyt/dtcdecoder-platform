@@ -241,3 +241,51 @@ export const FeedbackInputSchema = z.object({
 });
 
 export type FeedbackInput = z.infer<typeof FeedbackInputSchema>;
+
+// --- Diagnostic Workbench interactive state (migration 0039) -------------
+
+export const ScanCaseNoteCategorySchema = z.enum(["observation", "measurement", "repair_performed", "follow_up"]);
+
+export const CreateNoteInputSchema = z.object({
+  category: ScanCaseNoteCategorySchema,
+  body: z.string().trim().min(1).max(4000),
+  pinned: z.boolean().optional(),
+});
+export type CreateNoteInput = z.infer<typeof CreateNoteInputSchema>;
+
+export const UpdateNoteInputSchema = z.object({
+  category: ScanCaseNoteCategorySchema.optional(),
+  body: z.string().trim().min(1).max(4000).optional(),
+  pinned: z.boolean().optional(),
+});
+export type UpdateNoteInput = z.infer<typeof UpdateNoteInputSchema>;
+
+export const ScanTestOutcomeSchema = z.enum(["pass", "fail", "not_tested"]);
+
+export const TestProgressInputSchema = z.object({
+  completed: z.boolean().optional(),
+  outcome: ScanTestOutcomeSchema.optional(),
+  actualResult: z.string().trim().max(2000).optional(),
+  technicianNote: z.string().trim().max(2000).optional(),
+});
+export type TestProgressInput = z.infer<typeof TestProgressInputSchema>;
+
+export const ScanCauseStatusSchema = z.enum(["untested", "supported", "ruled_out", "confirmed"]);
+
+export const CauseStatusInputSchema = z.object({
+  status: ScanCauseStatusSchema.optional(),
+  reviewed: z.boolean().optional(),
+});
+export type CauseStatusInput = z.infer<typeof CauseStatusInputSchema>;
+
+export const VerificationInputSchema = z.object({
+  concernResolved: z.boolean().optional(),
+  dtcsCleared: z.boolean().optional(),
+  dtcsDidNotReturn: z.boolean().optional(),
+  calibrationCompleted: z.boolean().optional(),
+  roadTestCompleted: z.boolean().optional(),
+  noNewWarningLights: z.boolean().optional(),
+  postRepairScanReviewed: z.boolean().optional(),
+  customerNotesRecorded: z.boolean().optional(),
+});
+export type VerificationInput = z.infer<typeof VerificationInputSchema>;
