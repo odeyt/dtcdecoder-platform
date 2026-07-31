@@ -276,6 +276,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "Yearly — Save up to ${amount}",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "Monthly",
     "freeTitle": "Free",
     "freeBullet1": "Preview access to the public DTC guide",

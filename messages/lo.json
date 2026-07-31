@@ -78,6 +78,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "ລາຍປີ — ປະຫຍັດ ${amount}",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "ລາຍເດືອນ",
     "freeTitle": "ຟຣີ",
     "freeBullet1": "ຄົ້ນຫາ DTC ພື້ນຖານບໍ່ຈຳກັດ",

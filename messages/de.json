@@ -78,6 +78,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "Jährlich — {amount} $ sparen",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "Monatlich",
     "freeTitle": "Kostenlos",
     "freeBullet1": "Unbegrenzte einfache DTC-Suche",

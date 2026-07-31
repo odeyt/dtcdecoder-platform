@@ -33,32 +33,45 @@ const MAX_YEARLY_SAVINGS_USD = Math.max(
 // sync with pricing.ts by hand when either changes — there is no
 // automated check tying the two together yet.
 
+// Segmented monthly/yearly control. The unselected half previously rendered
+// as plain muted text with no border, background, or hover state, so it read
+// as a static label rather than a control — customers reported not realising
+// yearly billing was selectable at all. It now carries a visible hover and
+// focus affordance so both halves are recognisably interactive.
+function intervalButtonClass(selected: boolean): string {
+  return [
+    "min-h-11 cursor-pointer rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-semibold transition",
+    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]",
+    selected
+      ? "bg-[var(--accent-red)] text-white"
+      : "text-[var(--text-secondary)] hover:bg-white/10 hover:text-[var(--text-primary)]",
+  ].join(" ");
+}
+
 export function PricingPlans({ signedIn }: { signedIn: boolean }) {
   const t = useTranslations("pricing");
   const [interval, setInterval] = useState<BillingInterval>("monthly");
 
   return (
     <div>
-      <div className="mx-auto flex w-fit rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-1">
+      <div
+        role="group"
+        aria-label={t("billingIntervalLabel")}
+        className="mx-auto flex w-fit rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-1"
+      >
         <button
+          type="button"
           onClick={() => setInterval("yearly")}
           aria-pressed={interval === "yearly"}
-          className={`min-h-11 rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-semibold transition ${
-            interval === "yearly"
-              ? "bg-[var(--accent-red)] text-white"
-              : "text-[var(--text-muted)]"
-          }`}
+          className={intervalButtonClass(interval === "yearly")}
         >
           {t("yearlySave", { amount: MAX_YEARLY_SAVINGS_USD })}
         </button>
         <button
+          type="button"
           onClick={() => setInterval("monthly")}
           aria-pressed={interval === "monthly"}
-          className={`min-h-11 rounded-[var(--radius-sm)] px-4 py-1.5 text-sm font-semibold transition ${
-            interval === "monthly"
-              ? "bg-[var(--accent-red)] text-white"
-              : "text-[var(--text-muted)]"
-          }`}
+          className={intervalButtonClass(interval === "monthly")}
         >
           {t("monthly")}
         </button>

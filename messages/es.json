@@ -276,6 +276,7 @@
     "planPro": "Pro Técnico",
     "planWorkshop": "Taller",
     "yearlySave": "Anual — Ahorra hasta ${amount}",
+    "billingIntervalLabel": "Intervalo de facturación",
     "monthly": "Mensual",
     "freeTitle": "Gratis",
     "freeBullet1": "Vista previa de la guía pública de DTC",
