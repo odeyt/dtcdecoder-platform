@@ -78,6 +78,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "年間 — ${amount} 節約",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "月間",
     "freeTitle": "無料",
     "freeBullet1": "無制限の基本 DTC 検索",

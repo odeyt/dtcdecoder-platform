@@ -78,6 +78,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "年付——省 ${amount}",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "月付",
     "freeTitle": "免费",
     "freeBullet1": "无限次基础 DTC 查询",

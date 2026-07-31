@@ -78,6 +78,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "Theo năm — Tiết kiệm ${amount}",
+    "billingIntervalLabel": "Billing interval",
     "monthly": "Theo tháng",
     "freeTitle": "Miễn phí",
     "freeBullet1": "Tra cứu DTC cơ bản không giới hạn",
