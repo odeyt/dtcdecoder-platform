@@ -42,7 +42,7 @@ export default async function AccountPage() {
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
-      <div className="space-y-6">
+      <div className="space-y-6" data-testid="account-page">
         <div>
           <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t("title")}</h1>
           <p className="mt-2 text-[var(--text-secondary)]">{user?.email}</p>

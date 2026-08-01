@@ -129,7 +129,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
   return (
     <WorkbenchSaveStatusProvider>
       <ReportViewedTracker accessLevel={accessLevel} />
-      <div className="flex flex-col gap-10 print:gap-6">
+      <div className="flex flex-col gap-10 print:gap-6" data-testid="diagnostic-report-content">
         {/* --- Case Header --- */}
         <header className="print:hidden">
           <p className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">{t("eyebrow")}</p>
@@ -484,11 +484,13 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
 
             {/* --- Likely Causes --- */}
             <ResultSection title={t("likelyCausesTitle")}>
-              <LikelyCausesSection
-                caseId={scanCase.id}
-                causes={visibleResult.rankedCauses ?? []}
-                initialStatus={workbench?.causeStatus ?? []}
-              />
+              <div data-testid="scan-analysis-content">
+                <LikelyCausesSection
+                  caseId={scanCase.id}
+                  causes={visibleResult.rankedCauses ?? []}
+                  initialStatus={workbench?.causeStatus ?? []}
+                />
+              </div>
             </ResultSection>
 
             {/* --- Repair Recommendation --- */}

@@ -7,18 +7,18 @@ export const metadata: Metadata = {
 
 function AcceptableUseEn() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
-      <h1 className="text-3xl font-bold text-white">Acceptable Use Policy</h1>
-      <p className="mt-2 text-sm text-zinc-500">Effective Date: July 25, 2026</p>
+    <div className="prose-diagnostic mx-auto px-6 py-16">
+      <h1>Acceptable Use Policy</h1>
+      <p className="text-sm text-[var(--text-muted)]">Effective Date: July 25, 2026</p>
 
-      <p className="mt-6">
+      <p>
         This Acceptable Use Policy governs your use of DTCDecoder. By using the Services, you agree
         not to misuse the platform or help anyone else do so.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Prohibited Activities</h2>
-      <p className="mt-4">You agree not to:</p>
-      <ul className="mt-4 list-disc space-y-2 pl-5">
+      <h2>Prohibited Activities</h2>
+      <p>You agree not to:</p>
+      <ul>
         <li>Reverse engineer, decompile, or attempt to extract our source code or AI prompts</li>
         <li>Scrape, harvest, or bulk-download our database or content</li>
         <li>Abuse, circumvent, or exceed API or usage limits</li>
@@ -30,26 +30,26 @@ function AcceptableUseEn() {
         <li>Impersonate others or misrepresent your affiliation with any person or entity</li>
       </ul>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Account Responsibility</h2>
-      <p className="mt-4">
+      <h2>Account Responsibility</h2>
+      <p>
         You are responsible for all activity under your account and for keeping your access secure.
         Paid plans are licensed for the number of users specified in your plan.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Automated Access</h2>
-      <p className="mt-4">
+      <h2>Automated Access</h2>
+      <p>
         Automated access to the Services is permitted only through interfaces we expressly provide
         and within any documented limits.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Enforcement</h2>
-      <p className="mt-4">
+      <h2>Enforcement</h2>
+      <p>
         Violations may result in warnings, suspension, or termination of access, and where
         appropriate, referral to law enforcement.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
-      <p className="mt-4">
+      <h2>Contact</h2>
+      <p>
         Email:{" "}
         <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
           support@dtcdecoder.com
@@ -61,18 +61,18 @@ function AcceptableUseEn() {
 
 function AcceptableUseEs() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
-      <h1 className="text-3xl font-bold text-white">Política de Uso Aceptable</h1>
-      <p className="mt-2 text-sm text-zinc-500">Fecha de vigencia: 25 de julio de 2026</p>
+    <div className="prose-diagnostic mx-auto px-6 py-16">
+      <h1>Política de Uso Aceptable</h1>
+      <p className="text-sm text-[var(--text-muted)]">Fecha de vigencia: 25 de julio de 2026</p>
 
-      <p className="mt-6">
+      <p>
         Esta Política de Uso Aceptable regula tu uso de DTCDecoder. Al usar los Servicios, aceptas no
         hacer un uso indebido de la plataforma ni ayudar a otros a hacerlo.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Actividades Prohibidas</h2>
-      <p className="mt-4">Aceptas no:</p>
-      <ul className="mt-4 list-disc space-y-2 pl-5">
+      <h2>Actividades Prohibidas</h2>
+      <p>Aceptas no:</p>
+      <ul>
         <li>Aplicar ingeniería inversa, descompilar o intentar extraer nuestro código fuente o instrucciones de IA</li>
         <li>Extraer, recopilar o descargar de forma masiva nuestra base de datos o contenido</li>
         <li>Abusar, eludir o exceder los límites de la API o de uso</li>
@@ -84,26 +84,26 @@ function AcceptableUseEs() {
         <li>Suplantar a otros o tergiversar tu afiliación con cualquier persona o entidad</li>
       </ul>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Responsabilidad de la Cuenta</h2>
-      <p className="mt-4">
+      <h2>Responsabilidad de la Cuenta</h2>
+      <p>
         Eres responsable de toda la actividad realizada en tu cuenta y de mantener tu acceso seguro.
         Los planes pagados se licencian para el número de usuarios especificado en tu plan.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Acceso Automatizado</h2>
-      <p className="mt-4">
+      <h2>Acceso Automatizado</h2>
+      <p>
         El acceso automatizado a los Servicios solo se permite a través de las interfaces que
         proporcionamos expresamente y dentro de los límites documentados.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Cumplimiento</h2>
-      <p className="mt-4">
+      <h2>Cumplimiento</h2>
+      <p>
         Las infracciones pueden dar lugar a advertencias, suspensión o terminación del acceso y,
         cuando corresponda, a la remisión a las autoridades.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Contacto</h2>
-      <p className="mt-4">
+      <h2>Contacto</h2>
+      <p>
         Correo:{" "}
         <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
           support@dtcdecoder.com
