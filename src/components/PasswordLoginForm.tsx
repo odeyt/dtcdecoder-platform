@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { safeRedirectPath } from "@/lib/safe-redirect";
 
 // Password sign-in, added alongside the existing magic-link flow (see
 // CLAUDE.md — password auth was explicitly requested and approved as an
@@ -35,7 +36,10 @@ export function PasswordLoginForm({ next }: { next?: string }) {
       return;
     }
 
-    router.push(next && next.startsWith("/") && !next.startsWith("//") ? next : "/account");
+    // Same guard as the server auth callback — a `next` like
+    // `/\evil.example` resolves to an external origin, so it must be
+    // validated by resolution, not by prefix matching.
+    router.push(safeRedirectPath(next, window.location.origin) ?? "/account");
     router.refresh();
   }
 
