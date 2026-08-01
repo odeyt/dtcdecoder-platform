@@ -30,7 +30,7 @@ const faqsEn: Faq[] = [
     question: "How do I cancel?",
     answer: (
       <>
-        Log into your account and select <strong className="text-white">Billing</strong>, or use the
+        Log into your account and select <strong>Billing</strong>, or use the
         customer billing portal provided by Creem. Cancellation stops future renewals.
       </>
     ),
@@ -109,7 +109,7 @@ const faqsEs: Faq[] = [
     question: "¿Cómo cancelo?",
     answer: (
       <>
-        Inicia sesión en tu cuenta y selecciona <strong className="text-white">Facturación</strong>, o
+        Inicia sesión en tu cuenta y selecciona <strong>Facturación</strong>, o
         usa el portal de facturación para clientes proporcionado por Creem. La cancelación detiene las
         renovaciones futuras.
       </>
@@ -176,16 +176,14 @@ export default async function FaqPage() {
   const faqs = isEs ? faqsEs : faqsEn;
 
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
-      <h1 className="text-3xl font-bold text-white">
-        {isEs ? "Preguntas Frecuentes" : "Frequently Asked Questions"}
-      </h1>
+    <div className="prose-diagnostic mx-auto px-6 py-16" data-testid="faq-content">
+      <h1>{isEs ? "Preguntas Frecuentes" : "Frequently Asked Questions"}</h1>
 
-      <div className="mt-10 space-y-10">
+      <div>
         {faqs.map((faq) => (
           <div key={faq.question}>
-            <h2 className="text-xl font-bold text-white">{faq.question}</h2>
-            <p className="mt-4">{faq.answer}</p>
+            <h2>{faq.question}</h2>
+            <p>{faq.answer}</p>
           </div>
         ))}
       </div>

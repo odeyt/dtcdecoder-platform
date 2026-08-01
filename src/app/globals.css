@@ -107,7 +107,21 @@ body {
     linear-gradient(180deg, var(--surface-0) 0%, var(--surface-1) 100%);
   color: var(--foreground);
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+  font-size: 16px;
+  line-height: 1.65;
   min-height: 100vh;
+}
+
+.text-small {
+  font-size: 0.875rem; /* 14px */
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.text-lead {
+  font-size: 1.125rem; /* 18px */
+  line-height: 1.65;
+  font-weight: 400;
 }
 
 ::selection {
@@ -143,6 +157,193 @@ body {
 .container-app {
   max-width: var(--container-max);
   margin-inline: auto;
+}
+
+/* ---------------------------------------------------------------------
+   Canonical long-form prose system (docs/design/TYPOGRAPHY_SYSTEM.md).
+   Applies to DTC Technician responses, diagnostic report/scan-analysis
+   text, repair procedures, and legal/FAQ pages — anywhere the app renders
+   sustained paragraphs/headings/lists rather than compact UI chrome.
+   `.blog-content` (below) predates this and is left as-is for the blog
+   renderer; new long-form surfaces should use `.prose-diagnostic` instead
+   of hand-repeating heading/paragraph/list utility classes per element.
+--------------------------------------------------------------------- */
+.prose-diagnostic {
+  color: var(--text-secondary);
+  font-size: 1rem; /* 16px */
+  line-height: 1.65;
+  max-width: 74ch;
+}
+
+.prose-diagnostic h1,
+.prose-diagnostic h2,
+.prose-diagnostic h3,
+.prose-diagnostic h4 {
+  color: var(--text-primary);
+  font-family: var(--font-sans);
+}
+
+.prose-diagnostic h1 {
+  font-size: 1.875rem; /* 30px mobile */
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.prose-diagnostic h2 {
+  font-size: 1.625rem; /* 26px mobile */
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  margin-top: 1.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.prose-diagnostic h3 {
+  font-size: 1.375rem; /* 22px */
+  line-height: 1.3;
+  font-weight: 650;
+  margin-top: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.prose-diagnostic h4 {
+  font-size: 1.1875rem; /* 19px */
+  line-height: 1.4;
+  font-weight: 600;
+  margin-top: 1.25rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .prose-diagnostic h1 {
+    font-size: 2.5rem; /* 40px desktop */
+  }
+  .prose-diagnostic h2 {
+    font-size: 1.875rem; /* 30px desktop */
+  }
+}
+
+.prose-diagnostic p {
+  margin-top: 0;
+  margin-bottom: 1rem;
+}
+
+.prose-diagnostic ul,
+.prose-diagnostic ol {
+  margin-top: 0;
+  margin-bottom: 1rem;
+  padding-left: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.prose-diagnostic ul {
+  list-style-type: disc;
+}
+
+.prose-diagnostic ol {
+  list-style-type: decimal;
+}
+
+.prose-diagnostic li > ul,
+.prose-diagnostic li > ol {
+  margin-top: 0.5rem;
+  margin-bottom: 0;
+}
+
+.prose-diagnostic li::marker {
+  color: var(--text-muted);
+}
+
+.prose-diagnostic strong {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.prose-diagnostic em {
+  font-style: italic;
+}
+
+.prose-diagnostic blockquote {
+  border-left: 2px solid var(--border-red);
+  background: color-mix(in srgb, var(--surface-2) 60%, transparent);
+  padding: 0.5rem 1rem;
+  margin: 1rem 0;
+  border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
+  color: var(--text-secondary);
+}
+
+.prose-diagnostic hr {
+  border: none;
+  border-top: 1px solid var(--border-subtle);
+  margin: 1.75rem 0;
+}
+
+.prose-diagnostic a {
+  color: var(--accent-red);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.prose-diagnostic code {
+  font-family: var(--font-mono);
+  background: rgba(255, 255, 255, 0.08);
+  padding: 0.15rem 0.4rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.875em;
+  color: var(--text-primary);
+}
+
+.prose-diagnostic pre {
+  font-family: var(--font-mono);
+  background: var(--surface-2);
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin: 1rem 0;
+  overflow-x: auto;
+  line-height: 1.6;
+}
+
+.prose-diagnostic pre code {
+  background: none;
+  padding: 0;
+  font-size: 0.875rem;
+}
+
+.prose-diagnostic table {
+  display: block;
+  overflow-x: auto;
+  width: 100%;
+  border-collapse: collapse;
+  margin: 1rem 0;
+}
+
+.prose-diagnostic th,
+.prose-diagnostic td {
+  border: 1px solid var(--border-subtle);
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.prose-diagnostic th {
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* DTC codes, VINs, connector pins, measurement values, and other short
+   inline technical tokens — a lighter-weight companion to the full `code`
+   treatment above, meant for a single value inline in a sentence rather
+   than a fenced block. */
+.tech-value {
+  font-family: var(--font-mono);
+  font-size: 0.9em;
+  color: var(--text-primary);
 }
 
 .blog-content {

@@ -53,7 +53,7 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
   const [interval, setInterval] = useState<BillingInterval>("monthly");
 
   return (
-    <div>
+    <div data-testid="pricing-page">
       <div
         role="group"
         aria-label={t("billingIntervalLabel")}

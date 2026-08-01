@@ -359,7 +359,8 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
                   {messages.map((m, i) => (
                     <div key={i} className={m.role === "user" ? "text-right" : ""}>
                       <p
-                        className={`inline-block max-w-full rounded-[var(--radius-lg)] px-3 py-2 text-sm whitespace-pre-wrap ${
+                        data-testid={m.role === "assistant" ? "dtc-technician-response" : undefined}
+                        className={`inline-block max-w-full rounded-[var(--radius-lg)] px-3 py-2 text-sm leading-relaxed whitespace-pre-wrap ${
                           m.role === "user" ? "bg-[var(--accent-red)] text-white" : "bg-white/[0.06] text-[var(--text-primary)]"
                         }`}
                       >

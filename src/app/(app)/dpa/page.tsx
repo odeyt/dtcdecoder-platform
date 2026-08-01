@@ -7,11 +7,11 @@ export const metadata: Metadata = {
 
 export default function DpaPage() {
   return (
-    <div className="mx-auto max-w-2xl px-6 py-16 text-zinc-300">
-      <h1 className="text-3xl font-bold text-white">Data Processing Addendum</h1>
-      <p className="mt-2 text-sm text-zinc-500">Effective Date: July 25, 2026</p>
+    <div className="prose-diagnostic mx-auto px-6 py-16">
+      <h1>Data Processing Addendum</h1>
+      <p className="text-sm text-[var(--text-muted)]">Effective Date: July 25, 2026</p>
 
-      <p className="mt-6">
+      <p>
         This Data Processing Addendum (&quot;DPA&quot;) applies to business customers on whose behalf
         DTCDecoder processes personal data. It supplements our{" "}
         <Link href="/terms" className="text-[var(--accent-red)] underline">
@@ -24,66 +24,66 @@ export default function DpaPage() {
         . A signed copy for enterprise agreements is available on request.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Roles</h2>
-      <p className="mt-4">
+      <h2>Roles</h2>
+      <p>
         Where you use DTCDecoder to process personal data of your own customers or employees, you act
         as the data controller and DTCDecoder acts as a data processor, processing that data only on
         your documented instructions.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Scope and Purpose</h2>
-      <p className="mt-4">
+      <h2>Scope and Purpose</h2>
+      <p>
         Processing is limited to providing the Services — including AI-assisted diagnostics, account
         management, and support — for the duration of your use of the platform.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Sub-processors</h2>
-      <p className="mt-4">
+      <h2>Sub-processors</h2>
+      <p>
         We engage trusted sub-processors to deliver the Services, including:
       </p>
-      <ul className="mt-4 list-disc space-y-2 pl-5">
+      <ul>
         <li>Creem — payment processing (Merchant of Record)</li>
         <li>Anthropic — AI diagnostic processing</li>
         <li>Supabase — database, authentication, and file storage</li>
         <li>Vercel — application hosting</li>
       </ul>
-      <p className="mt-4">
+      <p>
         We require sub-processors to provide data-protection commitments consistent with this DPA.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Security</h2>
-      <p className="mt-4">
+      <h2>Security</h2>
+      <p>
         We maintain commercially reasonable technical and organizational measures to protect
         personal data, including access controls, encryption in transit, and restricted, verified
         access to purchased files.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Data Subject Requests</h2>
-      <p className="mt-4">
+      <h2>Data Subject Requests</h2>
+      <p>
         We will provide reasonable assistance to help you respond to requests from individuals to
         access, correct, delete, or restrict their personal data.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">International Transfers</h2>
-      <p className="mt-4">
+      <h2>International Transfers</h2>
+      <p>
         Where personal data is transferred across borders, we rely on appropriate safeguards
         recognized under applicable data-protection law.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Breach Notification</h2>
-      <p className="mt-4">
+      <h2>Breach Notification</h2>
+      <p>
         We will notify you without undue delay after becoming aware of a personal-data breach
         affecting your data.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Return and Deletion</h2>
-      <p className="mt-4">
+      <h2>Return and Deletion</h2>
+      <p>
         On termination, we will delete or return personal data processed on your behalf, except where
         retention is required by law.
       </p>
 
-      <h2 className="mt-10 text-xl font-bold text-white">Contact</h2>
-      <p className="mt-4">
+      <h2>Contact</h2>
+      <p>
         To request a signed DPA or ask about data processing, email{" "}
         <a href="mailto:support@dtcdecoder.com" className="text-[var(--accent-red)] underline">
           support@dtcdecoder.com
