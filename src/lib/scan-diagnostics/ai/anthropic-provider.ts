@@ -33,7 +33,24 @@ export const DTCDECODER_DIAGNOSTIC_PROMPT_VERSION = "2026-07-safety-v2";
 // budget and routed model this provider actually requests, instead of a
 // second, possibly stale copy of either.
 export const SCAN_REPORT_MODEL_ID = modelForTask("scanMainAnalysis");
-export const SCAN_REPORT_MAX_TOKENS = 4096;
+// `max_tokens` is a hard cap on thinking tokens PLUS the tool-call output,
+// not on the output alone — and adaptive thinking (enabled below) can take
+// a large share of it. The previous 4096 was tuned before this provider
+// moved to Sonnet 5 + adaptive thinking, and left a full diagnostic report
+// (every ranked cause carries three string arrays, plus tests and
+// warnings) sharing one budget with the model's reasoning. When it ran
+// out, the tool call came back truncated: a tool_use block was present but
+// its input was missing fields, which surfaced to the user as the generic
+// "AI analysis failed. Please try again." See the stop_reason guard in
+// callSubmitDiagnosisTool for how that case is now identified explicitly.
+//
+// 16000 is the documented ceiling for a NON-streaming request (above that,
+// SDK HTTP timeouts become the binding constraint) — these calls are
+// non-streaming, so raising it further would trade one failure mode for
+// another. This is a cap, not a spend: billing follows tokens actually
+// produced. The only cost-side effect is the worst-case pre-flight
+// estimate below, which stays far under COST_GUARDS.hardCeilingUsd.
+export const SCAN_REPORT_MAX_TOKENS = 16000;
 
 // Deliberately a SEPARATE admin_settings key from the AI chat assistant's
 // ai_system_prompt (src/lib/ai/assistant.ts) — this is an independent
@@ -245,7 +262,10 @@ You are reasoning about ONE step in an ongoing diagnostic case, not writing a on
 // prompt plus one user-content string, force the same submit_diagnosis
 // tool call, and parse the result against the same DiagnosticAiOutputSchema.
 // Only the system prompt and user content differ between the two callers.
-async function callSubmitDiagnosisTool(
+// One shot at the model. Separated from callSubmitDiagnosisTool below so
+// the retry there re-runs the whole request/parse cycle rather than trying
+// to salvage a response that already failed validation.
+async function attemptSubmitDiagnosisTool(
   systemPrompt: string,
   userContent: string,
   options?: { cacheSystemPrompt?: boolean },
@@ -275,12 +295,42 @@ async function callSubmitDiagnosisTool(
   });
 
   const toolUseBlock = message.content.find((block) => block.type === "tool_use");
+
+  // Checked BEFORE the tool block is parsed, because a truncated response
+  // still contains a tool_use block — just an incomplete one. Parsing it
+  // first reported the symptom ("summary: expected string, received
+  // undefined") and hid the cause, so a budget problem looked like the
+  // model ignoring its own schema. Note max_tokens covers thinking tokens
+  // too, so this can trip even when the emitted JSON is nowhere near the
+  // limit on its own.
+  if (message.stop_reason === "max_tokens") {
+    throw new AiResponseValidationError(
+      `Anthropic diagnostic provider hit the ${SCAN_REPORT_MAX_TOKENS}-token output limit before completing its tool call (thinking tokens share this budget), so the structured output was truncated.`,
+      Boolean(toolUseBlock),
+    );
+  }
+
   if (!toolUseBlock || toolUseBlock.type !== "tool_use") {
     throw new AiResponseValidationError("Anthropic diagnostic provider did not return a structured tool call.", false);
   }
 
   const parsed = DiagnosticAiOutputSchema.safeParse(toolUseBlock.input);
   if (!parsed.success) {
+    // Which top-level keys actually arrived is the single most useful
+    // datum when this recurs, and it is not recoverable from the Zod
+    // message alone (Zod reports what is missing, not what was present).
+    // Key NAMES only — the values are model output about a customer's
+    // vehicle and never belong in logs.
+    const receivedKeys =
+      toolUseBlock.input && typeof toolUseBlock.input === "object"
+        ? Object.keys(toolUseBlock.input as Record<string, unknown>)
+        : [];
+    console.error("[scan-diagnostics] submit_diagnosis output failed schema validation", {
+      stopReason: message.stop_reason,
+      receivedKeys,
+      outputTokens: message.usage.output_tokens,
+      maxTokens: SCAN_REPORT_MAX_TOKENS,
+    });
     throw new AiResponseValidationError(
       `Anthropic diagnostic provider returned an invalid structured output: ${parsed.error.message}`,
       true,
@@ -294,6 +344,50 @@ async function callSubmitDiagnosisTool(
     output: parsed.data,
     tokens: { input: message.usage.input_tokens, output: message.usage.output_tokens },
   };
+}
+
+// AiResponseValidationError is already declared `retryable`, but nothing
+// acted on that: analyze.ts catches it, releases the usage slot, marks the
+// case failed, and asks the customer to press the button again. Sampling
+// is non-deterministic, so a second attempt on the same input frequently
+// succeeds — doing it here spares the customer a dead-end error screen for
+// a fault that was never theirs.
+//
+// Exactly one extra attempt, and only for validation failures. Transport
+// errors (429/5xx/network) are deliberately NOT retried here: the Anthropic
+// SDK already retries those internally, so adding a layer would multiply
+// its attempts rather than add one. The retried call's tokens are not added
+// to the cost ledger — same as the pre-existing behaviour for any failed
+// attempt, which records nothing — so a retry can under-report spend by at
+// most one truncated response.
+const SUBMIT_DIAGNOSIS_ATTEMPTS = 2;
+
+async function callSubmitDiagnosisTool(
+  systemPrompt: string,
+  userContent: string,
+  options?: { cacheSystemPrompt?: boolean },
+): Promise<DiagnosticAIProviderResult & { providerId: string }> {
+  let lastError: AiResponseValidationError | undefined;
+
+  for (let attempt = 1; attempt <= SUBMIT_DIAGNOSIS_ATTEMPTS; attempt += 1) {
+    try {
+      return await attemptSubmitDiagnosisTool(systemPrompt, userContent, options);
+    } catch (err) {
+      if (!(err instanceof AiResponseValidationError)) throw err;
+      lastError = err;
+      if (attempt < SUBMIT_DIAGNOSIS_ATTEMPTS) {
+        console.warn(
+          `[scan-diagnostics] submit_diagnosis attempt ${attempt}/${SUBMIT_DIAGNOSIS_ATTEMPTS} failed validation, retrying`,
+          err.message,
+        );
+      }
+    }
+  }
+
+  // Every attempt failed validation — surface the last failure unchanged so
+  // analyze.ts's existing handling (usage release, failed-run row, case
+  // transition) behaves exactly as it did before retries existed.
+  throw lastError;
 }
 
 export class AnthropicDiagnosticProvider implements DiagnosticAIProvider, DiagnosticReviewer {
@@ -317,6 +411,18 @@ export class AnthropicDiagnosticProvider implements DiagnosticAIProvider, Diagno
     });
 
     const toolUseBlock = message.content.find((block) => block.type === "tool_use");
+
+    // Same truncation trap as the diagnosis call above — this path shares
+    // adaptive thinking and a token ceiling (AI_MAX_REVIEW_OUTPUT_TOKENS,
+    // default 2048), so it can run out of budget mid-tool-call and report a
+    // misleading schema error. The limit itself stays operator-tunable via
+    // that env var; this only names the failure correctly when it happens.
+    if (message.stop_reason === "max_tokens") {
+      throw new AiResponseValidationError(
+        "Anthropic reviewer hit its output token limit before completing its tool call (thinking tokens share this budget), so the structured review was truncated. Raise AI_MAX_REVIEW_OUTPUT_TOKENS if this recurs.",
+      );
+    }
+
     if (!toolUseBlock || toolUseBlock.type !== "tool_use") {
       throw new AiResponseValidationError("Anthropic reviewer did not return a structured tool call.");
     }
