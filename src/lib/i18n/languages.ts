@@ -1,5 +1,6 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createPublicReadClient } from "@/lib/supabase/public-read";
 import { canSelectAiReportLanguage } from "@/lib/i18n/entitlements";
 import type { Currency, Language, SubscriptionPlan, TerminologyGlossaryEntry } from "@/lib/types";
 
@@ -9,7 +10,7 @@ import type { Currency, Language, SubscriptionPlan, TerminologyGlossaryEntry } f
 // report output language; a plan entitlement (canSelectAiReportLanguage)
 // is a separate, additional gate checked at the call site.
 export async function listAiOutputEnabledLocales(): Promise<Language[]> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("languages")
     .select("*")
@@ -33,7 +34,7 @@ export async function getAllowedOutputLocales(plan: SubscriptionPlan): Promise<L
 // preferences UI and admin screens to render locked previews ("Spanish —
 // Pro only", "French — coming soon"), not just the currently-active subset.
 export async function listAllLanguages(): Promise<Language[]> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("languages")
     .select("*")
@@ -44,7 +45,7 @@ export async function listAllLanguages(): Promise<Language[]> {
 }
 
 export async function listAllCurrencies(): Promise<Currency[]> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("currencies")
     .select("*")
@@ -58,7 +59,7 @@ export async function listAllCurrencies(): Promise<Currency[]> {
 // language, which only needs the language to be enabled at all (not
 // necessarily ai_output_enabled too).
 export async function isEnabledLocale(localeCode: string): Promise<boolean> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("languages")
     .select("locale_code")
@@ -71,7 +72,7 @@ export async function isEnabledLocale(localeCode: string): Promise<boolean> {
 }
 
 export async function isEnabledCurrency(code: string): Promise<boolean> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("currencies")
     .select("code")
@@ -84,7 +85,7 @@ export async function isEnabledCurrency(code: string): Promise<boolean> {
 }
 
 export async function isAiOutputEnabledLocale(localeCode: string): Promise<boolean> {
-  const supabase = createAdminClient();
+  const supabase = createPublicReadClient();
   const { data, error } = await supabase
     .from("languages")
     .select("locale_code")
