@@ -36,9 +36,19 @@ jobs:
       - run: npx vitest run
       - run: npm run build
         env:
-          # Build-time placeholders only — never real secrets. Vercel's own
-          # production build already validates real env vars at deploy
-          # time; this build step only needs to succeed structurally.
+          # These must be the project's REAL values, not placeholders: the
+          # build reads the `languages` registry over the network while
+          # prerendering `/[locale]` (generateMetadata -> buildLocaleAlternates
+          # -> listAllLanguages), so an unreachable URL or invalid key fails
+          # the build. They are not secrets — Next.js inlines every
+          # NEXT_PUBLIC_* var into the client bundle, so both already ship to
+          # every browser. Store them as Actions secrets purely to keep them
+          # out of this file.
+          #
+          # No service-role key is required here. That registry read uses the
+          # anon-key client (src/lib/supabase/public-read.ts) against tables
+          # carrying an explicit public-read RLS policy, so merely building
+          # the app never needs a credential that bypasses RLS.
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
       - run: npx playwright install --with-deps chromium firefox webkit
