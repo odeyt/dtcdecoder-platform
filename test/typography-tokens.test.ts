@@ -13,7 +13,7 @@ describe("typography design tokens (globals.css)", () => {
   it("keeps the existing near-white/soft-gray/muted-gray text token values", () => {
     expect(css).toMatch(/--text-primary:\s*#f5f3f1/);
     expect(css).toMatch(/--text-secondary:\s*#a8a6ad/);
-    expect(css).toMatch(/--text-muted:\s*#6f6d75/);
+    expect(css).toMatch(/--text-muted:\s*#86838c/);
   });
 
   it("sets a 16px/1.65 body baseline", () => {

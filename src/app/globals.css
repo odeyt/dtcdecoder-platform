@@ -16,7 +16,12 @@
   /* Text */
   --text-primary: #f5f3f1;
   --text-secondary: #a8a6ad;
-  --text-muted: #6f6d75;
+  /* Lightened from #6f6d75 — the original only cleared ~3.7-3.8:1 against
+     --surface-1/--surface-burgundy at normal text sizes (WCAG AA needs
+     4.5:1), failing real axe scans on every page that uses it for captions/
+     section labels. #86838c clears 4.5:1+ against every dark surface token
+     above while staying visually "muted" relative to --text-secondary. */
+  --text-muted: #86838c;
 
   /* Accents */
   --accent-red: #e11d2e;
