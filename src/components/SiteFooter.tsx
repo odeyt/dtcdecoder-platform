@@ -11,7 +11,7 @@ export function SiteFooter() {
       <div className="container-app px-6 py-14">
         <div className="flex flex-col gap-10 sm:flex-row sm:justify-between">
           <div>
-            <p className="text-lg font-bold tracking-tight text-[var(--text-primary)]">
+            <p className="text-xl font-bold tracking-tight text-[var(--text-primary)]">
               <span className="text-[var(--accent-red)]">DTC</span> Decoder
             </p>
             <p className="mt-2 max-w-xs text-sm text-[var(--text-muted)]">{t("tagline")}</p>

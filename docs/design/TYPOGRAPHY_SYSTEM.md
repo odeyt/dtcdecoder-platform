@@ -34,13 +34,11 @@ requested.
 
 ## Text color tokens
 
-Unchanged — already close to the brief's target values before this pass:
-
 | Token | Value | Use |
 |---|---|---|
 | `--text-primary` | `#f5f3f1` | headings, primary content (near-white, not pure `#fff`) |
 | `--text-secondary` | `#a8a6ad` | body copy |
-| `--text-muted` | `#6f6d75` | meta text, captions |
+| `--text-muted` | `#86838c` | meta text, captions (lightened from `#6f6d75`, which cleared only ~3.7:1 against `--surface-1`/`--surface-burgundy` — below WCAG AA's 4.5:1 for normal text; found via a real axe scan, see `tests/e2e/accessibility/core-a11y.spec.ts`) |
 | `--accent-red` | `#e11d2e` | links, CTAs, true warnings — never used for normal headings |
 
 ## Body baseline
