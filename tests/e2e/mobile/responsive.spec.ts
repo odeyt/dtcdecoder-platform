@@ -9,7 +9,10 @@ test.describe("Responsive layout", () => {
     await page.goto("/");
     const overflow = await page.evaluate(() => document.documentElement.scrollWidth > document.documentElement.clientWidth + 1);
     expect(overflow).toBe(false);
-    await expect(page.getByRole("button", { name: "Consult DTC Technician™" })).toBeVisible();
+    // "Consult DTC Technician™" was the old chat-style hero's own button —
+    // replaced by the Diagnostic Intake Console (ServiceBayHero), whose
+    // welcome-screen entry point is this card (see smoke/landing.spec.ts).
+    await expect(page.getByRole("button", { name: "I have a diagnostic code" })).toBeVisible();
   });
 
   test("DTC Technician shell opens and the consultation panel fits the viewport", async ({ page }) => {

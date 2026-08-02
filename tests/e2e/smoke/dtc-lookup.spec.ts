@@ -24,8 +24,18 @@ test.describe("DTC lookup smoke — P0420", () => {
 
   test("search form resolves P0420 end to end", async ({ page }) => {
     await page.goto("/dtc");
-    await page.getByPlaceholder(/enter a dtc code/i).fill("P0420");
+    // Placeholder copy is "Enter DTC code, symptom, or vehicle issue..." —
+    // no "a" before "DTC code" (messages/en.json's dtcSearch.placeholder).
+    await page.getByPlaceholder(/enter dtc code/i).fill("P0420");
     await page.getByRole("button", { name: "Decode" }).click();
+
+    // The search page shows a results list at /dtc?q=... (it doesn't
+    // auto-navigate to the code's own page even for a single exact match)
+    // — the test drives the same click-through a real visitor would.
+    await expect(page).toHaveURL(/\/dtc\?q=P0420/i);
+    const resultLink = page.getByRole("link", { name: /P0420/i });
+    await expect(resultLink).toBeVisible();
+    await resultLink.click();
     await expect(page).toHaveURL(/\/dtc\/P0420/i);
   });
 });
