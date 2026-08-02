@@ -17,6 +17,13 @@ interface OutputLocaleOption {
   name: string;
 }
 
+interface ExistingVinCase {
+  id: string;
+  status: string;
+  complaint: string | null;
+  createdAt: string;
+}
+
 const ANALYZE_STAGES = [
   "Validating case details",
   "Sending your case to the AI",
@@ -49,11 +56,13 @@ export function QuickDiagnosticForm({
   const [repairHistory, setRepairHistory] = useState("");
   const [scanToolNotes, setScanToolNotes] = useState("");
   const [reportLanguage, setReportLanguage] = useState("en");
-  const [status, setStatus] = useState<"idle" | "submitting" | "error">("idle");
+  const [status, setStatus] = useState<"idle" | "submitting" | "error" | "duplicate_vin">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<{ vin: string; existingCases: ExistingVinCase[] } | null>(
+    null,
+  );
 
-  async function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  async function submitCase(confirmDuplicateVin: boolean) {
     setStatus("submitting");
     setErrorMessage(null);
 
@@ -76,12 +85,18 @@ export function QuickDiagnosticForm({
           repairHistory: repairHistory || undefined,
           scanToolNotes: scanToolNotes || undefined,
           reportLanguage,
+          confirmDuplicateVin: confirmDuplicateVin || undefined,
         }),
       });
 
       const data = await res.json().catch(() => ({}));
 
       if (!res.ok) {
+        if (res.status === 409 && data.code === "DUPLICATE_VIN") {
+          setDuplicateWarning({ vin: data.vin, existingCases: data.existingCases ?? [] });
+          setStatus("duplicate_vin");
+          return;
+        }
         const message =
           typeof data.error === "string" ? data.error : data.error?.message ?? "Something went wrong. Try again.";
         setErrorMessage(message);
@@ -96,8 +111,61 @@ export function QuickDiagnosticForm({
     }
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    submitCase(false);
+  }
+
   if (status === "submitting") {
     return <DiagnosticProgress stages={ANALYZE_STAGES} />;
+  }
+
+  if (status === "duplicate_vin" && duplicateWarning) {
+    return (
+      <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-lg)] p-5">
+        <div>
+          <p className="font-semibold text-[var(--text-primary)]">
+            You already have {duplicateWarning.existingCases.length === 1 ? "a case" : "cases"} for VIN{" "}
+            <span className="tech-value">{duplicateWarning.vin}</span>
+          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Running this again will use another report credit. You can view the existing report instead, or continue
+            if this is a new, separate issue.
+          </p>
+        </div>
+        <ul className="flex flex-col gap-2">
+          {duplicateWarning.existingCases.map((c) => (
+            <li key={c.id}>
+              <a
+                href={`/diagnostics/${c.id}`}
+                className="block rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm text-[var(--text-primary)] transition hover:bg-white/5"
+              >
+                {c.complaint || "Diagnostic case"} — {c.status.replace(/_/g, " ")}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => submitCase(true)}
+            className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2.5 font-semibold text-white transition hover:brightness-110"
+          >
+            Continue anyway
+          </button>
+          <button
+            type="button"
+            onClick={() => {
+              setStatus("idle");
+              setDuplicateWarning(null);
+            }}
+            className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-5 py-2.5 font-semibold text-[var(--text-secondary)] transition hover:bg-white/5"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (

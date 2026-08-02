@@ -1,6 +1,7 @@
 import "server-only";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ScanCaseNotFoundError, InvalidCaseStatusError } from "@/lib/scan-diagnostics/api-errors";
+import type { ExistingVinCase } from "@/lib/scan-diagnostics/api-errors";
 import type { CaseInfoInput, QuickDiagnosticCaseInput } from "@/lib/scan-diagnostics/schemas";
 import type {
   ScanCase,
@@ -111,6 +112,70 @@ export async function listVinsForCaseIds(caseIds: string[]): Promise<Record<stri
   const vinByCaseId: Record<string, string | null> = {};
   for (const row of data ?? []) vinByCaseId[row.case_id as string] = row.vin as string | null;
   return vinByCaseId;
+}
+
+// Duplicate-VIN charge-protection lookup — see DuplicateVinError. VIN
+// comparison is trim+uppercase since scan_extractions.vin is free text (user-
+// typed on the quick form, or parsed from an uploaded scan report) and was
+// never normalized at write time. `excludeCaseId` omits the case the caller
+// is currently analyzing (the analyze route's own case), so a case is never
+// reported as a duplicate of itself. Cases with no scan_extractions row
+// (e.g. still "draft") can never match, so they're excluded implicitly.
+export async function findExistingCasesForVin(
+  userId: string,
+  vin: string,
+  excludeCaseId?: string,
+): Promise<ExistingVinCase[]> {
+  const normalized = vin.trim().toUpperCase();
+  if (!normalized) return [];
+
+  const supabase = createAdminClient();
+  const { data: cases, error: casesError } = await supabase
+    .from("scan_cases")
+    .select("id, status, complaint, created_at")
+    .eq("user_id", userId);
+  if (casesError) throw casesError;
+  if (!cases || cases.length === 0) return [];
+
+  const caseIds = cases.map((c) => c.id as string).filter((id) => id !== excludeCaseId);
+  if (caseIds.length === 0) return [];
+
+  const { data: extractions, error: extractionsError } = await supabase
+    .from("scan_extractions")
+    .select("case_id, vin")
+    .in("case_id", caseIds);
+  if (extractionsError) throw extractionsError;
+
+  const matchingCaseIds = new Set(
+    (extractions ?? [])
+      .filter((e) => typeof e.vin === "string" && e.vin.trim().toUpperCase() === normalized)
+      .map((e) => e.case_id as string),
+  );
+  if (matchingCaseIds.size === 0) return [];
+
+  return cases
+    .filter((c) => matchingCaseIds.has(c.id as string))
+    .map((c) => ({
+      id: c.id as string,
+      status: c.status as ScanCaseStatus,
+      complaint: c.complaint as string | null,
+      createdAt: c.created_at as string,
+    }))
+    .sort((a, b) => (a.createdAt < b.createdAt ? 1 : -1));
+}
+
+// Used only for the duplicate-VIN pre-flight check ahead of the analyze
+// route's runScanAnalysis call — never returned to the client directly.
+// Ownership is enforced separately (getCaseForOwner) before this is called.
+export async function getVinForCase(caseId: string): Promise<string | null> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("scan_extractions")
+    .select("vin")
+    .eq("case_id", caseId)
+    .maybeSingle();
+  if (error) throw error;
+  return (data?.vin as string | null) ?? null;
 }
 
 export async function listCasesForOwner(userId: string): Promise<ScanCase[]> {

@@ -44,6 +44,9 @@ export const QuickDiagnosticCaseInputSchema = z.object({
   repairHistory: z.string().trim().max(4000).optional(),
   scanToolNotes: z.string().trim().max(4000).optional(),
   reportLanguage: z.string().trim().max(10).optional(),
+  // Set by the client after the user acknowledges a DuplicateVinError
+  // warning and chooses "continue anyway" — see cases/quick/route.ts.
+  confirmDuplicateVin: z.boolean().optional(),
 });
 
 export type QuickDiagnosticCaseInput = z.infer<typeof QuickDiagnosticCaseInputSchema>;
