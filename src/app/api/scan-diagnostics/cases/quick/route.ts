@@ -3,11 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
-import { createQuickDiagnosticCase } from "@/lib/scan-diagnostics/cases";
+import { createQuickDiagnosticCase, findExistingCasesForVin } from "@/lib/scan-diagnostics/cases";
 import { runScanAnalysis } from "@/lib/scan-diagnostics/analyze";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { QuickDiagnosticCaseInputSchema } from "@/lib/scan-diagnostics/schemas";
-import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { DuplicateVinError, FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 
 // "Run Full AI Diagnosis" entry point reachable from DTC search results —
 // create a case from typed details (no file) and analyze it in one
@@ -61,6 +61,16 @@ export async function POST(request: NextRequest) {
     const parsed = QuickDiagnosticCaseInputSchema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid diagnostic case information" }, { status: 400 });
+    }
+
+    // Same VIN, same user, no confirmation yet -> warn instead of creating
+    // a second case (and a second charge) for a vehicle already run. See
+    // DuplicateVinError.
+    if (parsed.data.vin && !parsed.data.confirmDuplicateVin) {
+      const existingCases = await findExistingCasesForVin(user.id, parsed.data.vin);
+      if (existingCases.length > 0) {
+        throw new DuplicateVinError(parsed.data.vin, existingCases);
+      }
     }
 
     const scanCase = await createQuickDiagnosticCase(user.id, parsed.data);

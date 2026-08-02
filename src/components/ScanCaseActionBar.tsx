@@ -14,6 +14,13 @@ const ANALYZE_STAGES = [
   "Scoring confidence",
 ];
 
+interface ExistingVinCase {
+  id: string;
+  status: string;
+  complaint: string | null;
+  createdAt: string;
+}
+
 interface ScanCaseActionBarProps {
   caseId: string;
   status: ScanCaseStatus;
@@ -32,14 +39,28 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   const router = useRouter();
   const [running, setRunning] = useState<"extract" | "analyze" | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [duplicateWarning, setDuplicateWarning] = useState<{ vin: string; existingCases: ExistingVinCase[] } | null>(
+    null,
+  );
 
-  async function runStage(stage: "extract" | "analyze") {
+  async function runStage(stage: "extract" | "analyze", confirmDuplicateVin = false) {
     setRunning(stage);
     setError(null);
+    if (confirmDuplicateVin) setDuplicateWarning(null);
     try {
-      const res = await fetch(`/api/scan-diagnostics/cases/${caseId}/${stage}`, { method: "POST" });
+      const res = await fetch(`/api/scan-diagnostics/cases/${caseId}/${stage}`, {
+        method: "POST",
+        ...(stage === "analyze"
+          ? { headers: { "Content-Type": "application/json" }, body: JSON.stringify({ confirmDuplicateVin }) }
+          : {}),
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
+        if (stage === "analyze" && res.status === 409 && data.code === "DUPLICATE_VIN") {
+          setDuplicateWarning({ vin: data.vin, existingCases: data.existingCases ?? [] });
+          setRunning(null);
+          return;
+        }
         // A 429 quota-exceeded response (AiDiagnosticLimitExceededError, see
         // toSafeErrorResponse) shapes `error` as an object, not a string —
         // every other error shape here is a plain string. Extract .message
@@ -62,6 +83,51 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   }
   if (running === "analyze") {
     return <DiagnosticProgress stages={ANALYZE_STAGES} />;
+  }
+
+  if (duplicateWarning) {
+    return (
+      <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-lg)] p-5">
+        <div>
+          <p className="font-semibold text-[var(--text-primary)]">
+            You already have {duplicateWarning.existingCases.length === 1 ? "a case" : "cases"} for VIN{" "}
+            <span className="tech-value">{duplicateWarning.vin}</span>
+          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">
+            Running this analysis will use another report credit. You can view the existing report instead, or
+            continue if this is a new, separate issue.
+          </p>
+        </div>
+        <ul className="flex flex-col gap-2">
+          {duplicateWarning.existingCases.map((c) => (
+            <li key={c.id}>
+              <a
+                href={`/diagnostics/${c.id}`}
+                className="block rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm text-[var(--text-primary)] transition hover:bg-white/5"
+              >
+                {c.complaint || "Diagnostic case"} — {c.status.replace(/_/g, " ")}
+              </a>
+            </li>
+          ))}
+        </ul>
+        <div className="flex flex-wrap gap-3">
+          <button
+            type="button"
+            onClick={() => runStage("analyze", true)}
+            className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2.5 font-semibold text-white transition hover:brightness-110"
+          >
+            Continue anyway
+          </button>
+          <button
+            type="button"
+            onClick={() => setDuplicateWarning(null)}
+            className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-5 py-2.5 font-semibold text-[var(--text-secondary)] transition hover:bg-white/5"
+          >
+            Cancel
+          </button>
+        </div>
+      </div>
+    );
   }
 
   if (status === "extracting" || status === "analyzing") {

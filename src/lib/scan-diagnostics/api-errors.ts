@@ -122,6 +122,33 @@ export class FollowUpLimitExceededError extends Error {
   }
 }
 
+// One row per prior case this user has for the same VIN — surfaced by
+// findExistingCasesForVin (cases.ts) so a duplicate-VIN warning can link
+// straight to the existing case instead of just naming it.
+export interface ExistingVinCase {
+  id: string;
+  status: ScanCase["status"];
+  complaint: string | null;
+  createdAt: string;
+}
+
+// Thrown by the quick-diagnostic and analyze routes when the VIN being
+// submitted already has other cases for this same user and the request
+// didn't set confirmDuplicateVin — a soft, overridable warning (409, not a
+// hard block) so a customer re-running a scan on the same vehicle isn't
+// charged again without at least being told. See
+// findExistingCasesForVin/getVinForCase in cases.ts for the lookup this
+// wraps, and docs/design/DUPLICATE_VIN_WARNING.md for the full flow.
+export class DuplicateVinError extends Error {
+  constructor(
+    public readonly vin: string,
+    public readonly existingCases: ExistingVinCase[],
+  ) {
+    super("You already have a case for this VIN.");
+    this.name = "DuplicateVinError";
+  }
+}
+
 export function toSafeErrorResponse(err: unknown, context: string): NextResponse {
   console.error(`[scan-diagnostics] ${context} failed`, err);
 
@@ -186,6 +213,12 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
   }
   if (err instanceof RegenerationLimitExceededError || err instanceof FollowUpLimitExceededError) {
     return NextResponse.json({ error: err.message, code: err.name, retryable: false }, { status: 409 });
+  }
+  if (err instanceof DuplicateVinError) {
+    return NextResponse.json(
+      { error: err.message, code: "DUPLICATE_VIN", vin: err.vin, existingCases: err.existingCases },
+      { status: 409 },
+    );
   }
   if (err instanceof ScanAnalysisFailedError) {
     // `error` (string) is the original, still-supported contract every
