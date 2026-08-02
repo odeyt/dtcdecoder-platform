@@ -58,6 +58,19 @@ jobs:
           NEXT_PUBLIC_SUPABASE_URL: ${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
           NEXT_PUBLIC_SUPABASE_ANON_KEY: ${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
           SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+          # Feature flags this suite's specs assume are on (not secrets —
+          # see the npm run build step above for why NEXT_PUBLIC_* values
+          # aren't sensitive). Without these, scan-diagnostics/diagnostic-
+          # engine routes 404 before the auth checks the specs are actually
+          # testing ever run (tests/e2e/auth/ordinary-user.spec.ts,
+          # tests/e2e/security/diagnostic-engine-auth.spec.ts).
+          NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED: "true"
+          PROBABILITY_ENGINE_ENABLED: "true"
+          # ordinary-user.spec.ts's own header comment documents this exact
+          # tier: an active (not fully "disabled") rollout that still locks
+          # out a non-admin caller, matching real staged-rollout behavior
+          # rather than a rollout that's off for everyone.
+          DIAGNOSTIC_ENGINE_ROLLOUT_TIER: "internal_only"
       - name: Upload Playwright report
         if: failure()
         uses: actions/upload-artifact@v4
