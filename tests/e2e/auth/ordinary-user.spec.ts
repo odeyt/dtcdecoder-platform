@@ -36,9 +36,15 @@ test.describe("Ordinary authenticated (non-admin) user", () => {
     await expect(page.getByText("P0420", { exact: false }).first()).toBeVisible();
   });
 
-  test("direct Diagnostic Engine API call returns 404, creates no case/usage/run", async ({ page, request }) => {
+  test("direct Diagnostic Engine API call returns 404, creates no case/usage/run", async ({ page }) => {
     await signInWithPassword(page, email, password);
 
+    // Playwright's bare `request` fixture is a separate APIRequestContext
+    // with its own cookie jar — it never sees the session cookie
+    // signInWithPassword just set on `page`. page.context().request shares
+    // the same browser context (and its cookies), so these calls are
+    // actually authenticated as the signed-in synthetic user.
+    const request = page.context().request;
     const { status: caseStatus, caseId } = await createScanCase(request);
     expect(caseStatus).toBe(201);
     expect(caseId).toBeTruthy();
