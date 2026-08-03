@@ -49,6 +49,69 @@ describe("getActiveSubscriptionCounts / estimateMonthlyRecurringRevenueUsd", () 
   });
 });
 
+// Only the Creem webhook ever sets status='canceled', so a row it cannot
+// reach stays 'active' indefinitely and keeps contributing to MRR after its
+// period ends. Production hit exactly that: a Pro subscription whose period
+// ended 2026-08-01 was still counted on 2026-08-03, inflating reported MRR
+// by $39/mo with no code path able to expire it.
+describe("getActiveSubscriptionCounts — a lapsed period is not active", () => {
+  const future = new Date(Date.now() + 7 * 864e5).toISOString();
+  const past = new Date(Date.now() - 2 * 864e5).toISOString();
+
+  it("excludes a status-active row whose period has already ended", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: past },
+      { id: "s2", plan: "workshop", status: "active", current_period_end: future },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 0, workshop: 1 });
+    expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(99);
+  });
+
+  it("still counts a row with no period end, rather than under-reporting", async () => {
+    // upsertSubscriptionFromWebhook writes `current_period_end ?? null`, so a
+    // genuine paid subscription can arrive without one. Dropping those would
+    // trade over-reporting for under-reporting.
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: null },
+      { id: "s2", plan: "workshop", status: "active" },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 1, workshop: 1 });
+  });
+
+  it("counts a row whose period end is unparseable instead of silently dropping it", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: "not-a-date" },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 1, workshop: 0 });
+  });
+
+  it("does not resurrect a canceled row just because its period is still future", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "canceled", current_period_end: future },
+      { id: "s2", plan: "workshop", status: "past_due", current_period_end: future },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 0, workshop: 0 });
+  });
+
+  it("reports zero when every active row has lapsed", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: past },
+      { id: "s2", plan: "workshop", status: "active", current_period_end: past },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(0);
+  });
+});
+
 describe("getReportCostRollup", () => {
   it("aggregates completed cost by plan/model/operation, and counts failed attempts separately", async () => {
     const now = new Date().toISOString();

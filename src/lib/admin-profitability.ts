@@ -49,13 +49,47 @@ export interface ActiveSubscriptionCounts {
 
 // "Active" mirrors the subscription_status enum's own 'active' value —
 // past_due/canceled subscriptions don't count toward active users or MRR.
+//
+// Status alone is not sufficient, though. Only the Creem webhook ever moves
+// a row to 'canceled', so a row it cannot reach stays 'active' forever and
+// keeps contributing to MRR after its period has ended. Two ways that
+// happens: a manually-created row (no creem_subscription_id, so the
+// webhook's upsert can never match it), and a webhook delivery that is
+// missed or never retried. Production hit the first case — a subscription
+// whose period ended was still counted days later.
+//
+// A row whose known period has ended is therefore excluded regardless of
+// status. `current_period_end IS NULL` still counts: the webhook writes
+// `subscription.current_period_end ?? null`, so a real paid subscription
+// can legitimately arrive without one, and dropping those would trade
+// over-reporting for under-reporting.
+//
+// This fixes the arithmetic, not the inputs. Rows that were never backed by
+// a payment still count while their period is in the future — that is a
+// data question (are these comped or phantom?), not something this query
+// can answer.
 export async function getActiveSubscriptionCounts(): Promise<ActiveSubscriptionCounts> {
   const supabase = createAdminClient();
-  const { data, error } = await supabase.from("subscriptions").select("plan").eq("status", "active");
+  const now = Date.now();
+  // The period check is applied here rather than in the query because it is
+  // a two-branch condition (null OR future) and the row set being fetched
+  // is exactly the set being counted — status-active subscriptions — so
+  // nothing extra is read to do it.
+  const { data, error } = await supabase
+    .from("subscriptions")
+    .select("plan, current_period_end")
+    .eq("status", "active");
   if (error) throw error;
 
   const counts: ActiveSubscriptionCounts = { pro: 0, workshop: 0 };
   for (const row of data ?? []) {
+    const periodEnd = row.current_period_end ? Date.parse(row.current_period_end) : null;
+    // An unparseable timestamp is treated the same as a missing one — count
+    // it, and let the row be visible, rather than silently dropping revenue
+    // because of a malformed value.
+    const lapsed = periodEnd !== null && !Number.isNaN(periodEnd) && periodEnd <= now;
+    if (lapsed) continue;
+
     if (row.plan === "pro") counts.pro++;
     else if (row.plan === "workshop") counts.workshop++;
   }
