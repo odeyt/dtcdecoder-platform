@@ -43,8 +43,12 @@ async function fetchThisMonthsRuns(): Promise<AiDiagnosticRunRow[]> {
 }
 
 export interface ActiveSubscriptionCounts {
+  // Billable — a real, paid subscription. These drive the MRR estimate.
   pro: number;
   workshop: number;
+  // Comped — granted, never charged. Real entitlement, no revenue.
+  compedPro: number;
+  compedWorkshop: number;
 }
 
 // "Active" mirrors the subscription_status enum's own 'active' value —
@@ -64,10 +68,12 @@ export interface ActiveSubscriptionCounts {
 // can legitimately arrive without one, and dropping those would trade
 // over-reporting for under-reporting.
 //
-// This fixes the arithmetic, not the inputs. Rows that were never backed by
-// a payment still count while their period is in the future — that is a
-// data question (are these comped or phantom?), not something this query
-// can answer.
+// Comped rows (is_comp, migration 0045) are counted separately rather than
+// billable. They grant real entitlement, so they are not phantom and must
+// not be deleted — but no money arrives for them, so folding them into MRR
+// reports revenue that does not exist. Returned alongside the billable
+// counts instead of silently dropped, so the page can show that the
+// accounts exist without implying they pay.
 export async function getActiveSubscriptionCounts(): Promise<ActiveSubscriptionCounts> {
   const supabase = createAdminClient();
   const now = Date.now();
@@ -77,11 +83,11 @@ export async function getActiveSubscriptionCounts(): Promise<ActiveSubscriptionC
   // nothing extra is read to do it.
   const { data, error } = await supabase
     .from("subscriptions")
-    .select("plan, current_period_end")
+    .select("plan, current_period_end, is_comp")
     .eq("status", "active");
   if (error) throw error;
 
-  const counts: ActiveSubscriptionCounts = { pro: 0, workshop: 0 };
+  const counts: ActiveSubscriptionCounts = { pro: 0, workshop: 0, compedPro: 0, compedWorkshop: 0 };
   for (const row of data ?? []) {
     const periodEnd = row.current_period_end ? Date.parse(row.current_period_end) : null;
     // An unparseable timestamp is treated the same as a missing one — count
@@ -89,6 +95,12 @@ export async function getActiveSubscriptionCounts(): Promise<ActiveSubscriptionC
     // because of a malformed value.
     const lapsed = periodEnd !== null && !Number.isNaN(periodEnd) && periodEnd <= now;
     if (lapsed) continue;
+
+    if (row.is_comp) {
+      if (row.plan === "pro") counts.compedPro++;
+      else if (row.plan === "workshop") counts.compedWorkshop++;
+      continue;
+    }
 
     if (row.plan === "pro") counts.pro++;
     else if (row.plan === "workshop") counts.workshop++;

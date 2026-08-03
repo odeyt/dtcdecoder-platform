@@ -147,6 +147,10 @@ export interface Subscription {
   creem_subscription_id: string | null;
   creem_customer_id: string | null;
   current_period_end: string | null;
+  // Granted rather than paid for (migration 0045). Grants entitlement
+  // exactly like a paid subscription; excluded from revenue estimates.
+  is_comp: boolean;
+  comp_reason: string | null;
   created_at: string;
   updated_at: string;
 }
