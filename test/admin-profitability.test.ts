@@ -37,7 +37,7 @@ describe("getActiveSubscriptionCounts / estimateMonthlyRecurringRevenueUsd", () 
     ]);
 
     return getActiveSubscriptionCounts().then((counts) => {
-      expect(counts).toEqual({ pro: 2, workshop: 1 });
+      expect(counts).toEqual({ pro: 2, workshop: 1, compedPro: 0, compedWorkshop: 0 });
       // Pro $39/mo x2 + Workshop $99/mo x1 = $177.
       expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(177);
     });
@@ -65,7 +65,7 @@ describe("getActiveSubscriptionCounts — a lapsed period is not active", () => 
     ]);
 
     const counts = await getActiveSubscriptionCounts();
-    expect(counts).toEqual({ pro: 0, workshop: 1 });
+    expect(counts).toEqual({ pro: 0, workshop: 1, compedPro: 0, compedWorkshop: 0 });
     expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(99);
   });
 
@@ -79,7 +79,7 @@ describe("getActiveSubscriptionCounts — a lapsed period is not active", () => 
     ]);
 
     const counts = await getActiveSubscriptionCounts();
-    expect(counts).toEqual({ pro: 1, workshop: 1 });
+    expect(counts).toEqual({ pro: 1, workshop: 1, compedPro: 0, compedWorkshop: 0 });
   });
 
   it("counts a row whose period end is unparseable instead of silently dropping it", async () => {
@@ -88,7 +88,7 @@ describe("getActiveSubscriptionCounts — a lapsed period is not active", () => 
     ]);
 
     const counts = await getActiveSubscriptionCounts();
-    expect(counts).toEqual({ pro: 1, workshop: 0 });
+    expect(counts).toEqual({ pro: 1, workshop: 0, compedPro: 0, compedWorkshop: 0 });
   });
 
   it("does not resurrect a canceled row just because its period is still future", async () => {
@@ -98,7 +98,7 @@ describe("getActiveSubscriptionCounts — a lapsed period is not active", () => 
     ]);
 
     const counts = await getActiveSubscriptionCounts();
-    expect(counts).toEqual({ pro: 0, workshop: 0 });
+    expect(counts).toEqual({ pro: 0, workshop: 0, compedPro: 0, compedWorkshop: 0 });
   });
 
   it("reports zero when every active row has lapsed", async () => {
@@ -109,6 +109,73 @@ describe("getActiveSubscriptionCounts — a lapsed period is not active", () => 
 
     const counts = await getActiveSubscriptionCounts();
     expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(0);
+  });
+});
+
+// A comped subscription grants real entitlement but produces no revenue.
+// Before migration 0045 nothing distinguished it from a paid one, so
+// production reported $99/mo of Workshop revenue against $0/mo of actual
+// recurring charges. Deleting such rows was rejected because entitlement is
+// derived from this same table — deleting one silently revokes access.
+describe("getActiveSubscriptionCounts — comped vs paid", () => {
+  const future = new Date(Date.now() + 7 * 864e5).toISOString();
+  const past = new Date(Date.now() - 2 * 864e5).toISOString();
+
+  it("keeps comped subscriptions out of the billable counts", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "workshop", status: "active", current_period_end: future, is_comp: true },
+      { id: "s2", plan: "pro", status: "active", current_period_end: future, is_comp: false },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 1, workshop: 0, compedPro: 0, compedWorkshop: 1 });
+    // Only the paid Pro row contributes: $39, not $39 + $99.
+    expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(39);
+  });
+
+  it("reports comped accounts separately instead of hiding them", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: future, is_comp: true },
+      { id: "s2", plan: "workshop", status: "active", current_period_end: future, is_comp: true },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts.compedPro).toBe(1);
+    expect(counts.compedWorkshop).toBe(1);
+    // The accounts exist and are visible, but no revenue is claimed for them.
+    expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(0);
+  });
+
+  it("treats a missing is_comp as paid, so a pre-migration row is never silently dropped", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "pro", status: "active", current_period_end: future },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts.pro).toBe(1);
+    expect(counts.compedPro).toBe(0);
+  });
+
+  it("excludes a lapsed comped row from both counts", async () => {
+    fake().seed("subscriptions", [
+      { id: "s1", plan: "workshop", status: "active", current_period_end: past, is_comp: true },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(counts).toEqual({ pro: 0, workshop: 0, compedPro: 0, compedWorkshop: 0 });
+  });
+
+  it("reproduces the exact production case: one lapsed paid row, one comped row", async () => {
+    fake().seed("subscriptions", [
+      // Pro, period ended — excluded by the expiry rule (PR #27).
+      { id: "s1", plan: "pro", status: "active", current_period_end: past, is_comp: true },
+      // Workshop, current period, comped — entitlement yes, revenue no.
+      { id: "s2", plan: "workshop", status: "active", current_period_end: future, is_comp: true },
+    ]);
+
+    const counts = await getActiveSubscriptionCounts();
+    expect(estimateMonthlyRecurringRevenueUsd(counts)).toBe(0);
+    expect(counts.compedWorkshop).toBe(1);
   });
 });
 

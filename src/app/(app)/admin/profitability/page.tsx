@@ -27,23 +27,55 @@ export default async function AdminProfitabilityPage() {
   const revenueUsd = estimateMonthlyRecurringRevenueUsd(subscriptionCounts);
   const margin = estimateGrossMargin(revenueUsd, costRollup.totalCostUsd);
 
+  // Comped accounts are surfaced rather than filtered out of sight: they
+  // consume AI budget like any paid account, so the cost figures below
+  // include their usage while the revenue figure above deliberately does not.
+  const compedTotal = subscriptionCounts.compedPro + subscriptionCounts.compedWorkshop;
+  const compedListValueUsd = estimateMonthlyRecurringRevenueUsd({
+    pro: subscriptionCounts.compedPro,
+    workshop: subscriptionCounts.compedWorkshop,
+    compedPro: 0,
+    compedWorkshop: 0,
+  });
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-white">Profitability</h1>
       <p className="mt-2 text-sm text-zinc-400">
-        Current calendar month, UTC. Revenue is an estimate from active-subscription counts x list price — this
+        Current calendar month, UTC. Revenue is an estimate from paid-subscription counts x list price — this
         schema doesn&apos;t store actual Creem-charged amounts anywhere, so treat it as a rough operational figure,
-        not a verified financial number. Do not treat any margin shown here as verified until real production usage
-        exists.
+        not a verified financial number. Comped accounts (granted, never billed) are excluded from revenue and
+        shown separately; their AI usage still counts toward the costs below. Subscriptions whose billing period
+        has ended are excluded even if still marked active. Do not treat any margin shown here as verified until
+        real production usage exists.
       </p>
 
       <section className="mt-8">
         <h2 className="text-lg font-semibold text-white">Revenue &amp; users</h2>
         <div className="mt-3 grid gap-4 sm:grid-cols-3">
-          <Stat label="Active Pro subscribers" value={String(subscriptionCounts.pro)} />
-          <Stat label="Active Workshop subscribers" value={String(subscriptionCounts.workshop)} />
+          <Stat label="Paid Pro subscribers" value={String(subscriptionCounts.pro)} />
+          <Stat label="Paid Workshop subscribers" value={String(subscriptionCounts.workshop)} />
           <Stat label="Estimated MRR" value={usd(revenueUsd)} />
         </div>
+        {compedTotal > 0 && (
+          <div className="mt-3 grid gap-4 sm:grid-cols-3">
+            <Stat
+              label="Comped Pro accounts"
+              value={String(subscriptionCounts.compedPro)}
+              hint="Granted, not billed. Full entitlement, no revenue — excluded from MRR above."
+            />
+            <Stat
+              label="Comped Workshop accounts"
+              value={String(subscriptionCounts.compedWorkshop)}
+              hint="Granted, not billed. Full entitlement, no revenue — excluded from MRR above."
+            />
+            <Stat
+              label="List value of comped accounts"
+              value={usd(compedListValueUsd)}
+              hint="What these accounts would bill at list price if they were paid. Shown as the cost of comping, not as revenue."
+            />
+          </div>
+        )}
       </section>
 
       <section className="mt-8">
