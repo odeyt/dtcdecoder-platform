@@ -85,12 +85,45 @@ export async function upsertSubscriptionFromWebhook(
     return; // stale event — a newer period is already on record
   }
 
+  // Never downgrade a known account link to null. Creem propagates the
+  // checkout's metadata.user_id onto the subscription it creates, but
+  // later lifecycle events for the same subscription (renewals in
+  // particular) can arrive without it. Writing `update.userId` blindly
+  // meant one metadata-less renewal silently unlinked a paying customer:
+  // the row stayed `active`, so billing continued, while getEffectivePlan's
+  // user_id lookup stopped matching. It only kept working at all because
+  // that function falls back to matching on email — which fails the moment
+  // a customer's billing email differs from their login email, at which
+  // point they pay full price and receive Free-tier entitlement.
+  //
+  // The subscription is identified by creem_subscription_id either way, so
+  // an absent user_id in an event is missing information, never an
+  // instruction to forget who owns the row.
+  const userId = update.userId ?? existing?.user_id ?? null;
+
+  if (!update.userId && existing?.user_id) {
+    console.warn(
+      "[creem] subscription event carried no metadata.user_id; preserving the existing account link",
+      update.creemSubscriptionId,
+    );
+  }
+
+  // Both sides null means nothing has ever linked this subscription to an
+  // account. Billing is live and entitlement is not — worth an error-level
+  // line, because the only remaining match is the email fallback.
+  if (!userId) {
+    console.error(
+      "[creem] subscription has no account link (no metadata.user_id, none stored) — entitlement depends entirely on the email fallback",
+      update.creemSubscriptionId,
+    );
+  }
+
   const { error } = await supabase.from("subscriptions").upsert(
     {
       creem_subscription_id: update.creemSubscriptionId,
       creem_customer_id: update.creemCustomerId,
       email: update.email.toLowerCase(),
-      user_id: update.userId,
+      user_id: userId,
       plan: update.plan,
       billing_interval: update.interval,
       status: update.status,
