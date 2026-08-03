@@ -69,7 +69,10 @@ export default async function GenericDtcCodePage({ params }: Props) {
     await recordEvent("ai_diagnosis_cta_viewed", { userId: user?.id ?? null, metadata: { source: "known_dtc_page" } });
 
     const redacted = filterDtcCodeForAccessLevel(dtc, accessLevelForDtcContent(plan));
-    return <DtcCodeResult dtc={redacted.visible} redaction={redacted} />;
+    // signedIn drives only which CTA the upsell panel renders (direct
+    // checkout vs sign-in-then-resume). Entitlement itself is still decided
+    // server-side by `plan` above — this is not an authorization signal.
+    return <DtcCodeResult dtc={redacted.visible} redaction={redacted} signedIn={Boolean(user)} />;
   }
 
   const relatedCodes = await getRelatedDtcCodes(normalizedCode);

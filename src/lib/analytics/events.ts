@@ -59,6 +59,19 @@ export const ANALYTICS_EVENT_TYPES = [
   "one_time_report_case_started",
   "one_time_report_credit_consumed",
   "one_time_report_followup_limit_reached",
+
+  // DTC result-page conversion panel (docs/design/DTC_RESULT_PAGE.md).
+  // Fired from ProfessionalReportUpsell, which replaced nine locked
+  // placeholder cards and their nine separate upgrade buttons — these
+  // three events are what make it possible to tell whether the
+  // consolidated panel converts better than that grid did.
+  //
+  // No metadata is attached at these call sites: the DTC code, the
+  // visitor's symptoms, and their plan are all deliberately left out, in
+  // line with the same-file rule above.
+  "professional_report_upsell_viewed",
+  "professional_report_cta_clicked",
+  "pro_plan_cta_clicked",
 ] as const;
 
 export type AnalyticsEventType = (typeof ANALYTICS_EVENT_TYPES)[number];
