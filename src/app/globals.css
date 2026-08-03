@@ -165,6 +165,36 @@ body {
 }
 
 /* ---------------------------------------------------------------------
+   Diagnostic report widths (docs/design/DTC_RESULT_PAGE.md).
+
+   The app shell (.container-app, 1360px) is right for dashboards and
+   pricing grids but far too wide for a diagnostic result: a one-line cause
+   stretched across 1360px reads as an empty card, which is what the DTC
+   result page looked like before this pass.
+
+   Two measures, deliberately distinct:
+
+   .container-report  structured content — ranked causes, numbered
+                      workflow steps, comparison panels. Wide enough for
+                      two columns, narrow enough that a short row still
+                      looks intentional.
+   .report-measure    running prose and lists inside a section. Capped in
+                      `ch` so it tracks the font rather than the viewport.
+
+   Tables, the conversion panel's two-column grid, and anything that needs
+   real horizontal room stay at .container-report and must NOT be wrapped
+   in .report-measure.
+   --------------------------------------------------------------------- */
+.container-report {
+  max-width: 1140px;
+  margin-inline: auto;
+}
+
+.report-measure {
+  max-width: 74ch;
+}
+
+/* ---------------------------------------------------------------------
    Canonical long-form prose system (docs/design/TYPOGRAPHY_SYSTEM.md).
    Applies to DTC Technician responses, diagnostic report/scan-analysis
    text, repair procedures, and legal/FAQ pages — anywhere the app renders

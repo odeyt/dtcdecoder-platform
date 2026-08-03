@@ -7,13 +7,22 @@ import { EmailSignupForm } from "@/components/EmailSignupForm";
 import { SeverityBadge } from "@/components/SeverityBadge";
 import { SafetyAlert } from "@/components/SafetyAlert";
 import { ResultSection } from "@/components/ResultSection";
-import { CauseCard } from "@/components/CauseCard";
+import { RankedCauseList } from "@/components/RankedCauseList";
+import { DiagnosticStepList } from "@/components/DiagnosticStepList";
+import { ProfessionalReportUpsell } from "@/components/ProfessionalReportUpsell";
 import { LockedResultPanel } from "@/components/LockedResultCard";
-import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
 import { detectSafetyWarnings } from "@/lib/safety-warnings";
 import { deriveDtcCodeStructure } from "@/lib/dtc-category";
 
-export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: DtcRedactionResult }) {
+export function DtcCodeResult({
+  dtc,
+  redaction,
+  signedIn = false,
+}: {
+  dtc: DtcCode;
+  redaction: DtcRedactionResult;
+  signedIn?: boolean;
+}) {
   const t = useTranslations("dtcResult");
   const locale = useLocale();
   const structure = deriveDtcCodeStructure(dtc.code);
@@ -40,7 +49,9 @@ export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: Dtc
   const safetyWarnings = detectSafetyWarnings(warningText);
 
   return (
-    <article className="container-app space-y-10 px-6 py-12">
+    // container-report, not container-app: this is a diagnostic document,
+    // not a dashboard. space-y-12 gives the 48px inter-section rhythm.
+    <article data-testid="dtc-result-page" className="container-report space-y-12 px-6 py-12">
       {/* Summary */}
       <header className="glass-panel rounded-[var(--radius-xl)] p-6 sm:p-8">
         <p className="font-mono text-sm tracking-widest text-[var(--accent-red)]">
@@ -105,31 +116,46 @@ export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: Dtc
         </ResultSection>
       )}
 
-      {/* Most likely causes */}
-      <ResultSection title={t("mostLikelyCauses")}>
-        <div className="space-y-2">
-          {dtc.causes.map((cause, i) => (
-            <CauseCard key={i} cause={cause} rank={i + 1} />
-          ))}
-          {redaction.hiddenCausesCount > 0 && (
-            <div className="glass-panel rounded-[var(--radius-lg)] p-4 text-center text-sm text-[var(--text-secondary)]">
-              {t("moreCausesLocked", { count: redaction.hiddenCausesCount })}{" "}
-              <Link href="/pricing" className="font-semibold text-[var(--accent-red)] hover:underline">
-                {t("upgradeButton")}
-              </Link>
-            </div>
-          )}
-        </div>
-      </ResultSection>
+      {/* Most likely causes — ranked, not scored. The source is an ordered
+          string[], so no reasoning or confidence is shown; see
+          RankedCauseList for why none is synthesised here. */}
+      <div data-testid="most-likely-causes">
+        <ResultSection title={t("mostLikelyCauses")}>
+          <div className="report-measure space-y-3">
+            <RankedCauseList
+              causes={dtc.causes.map((cause, i) => ({ rank: i + 1, text: cause }))}
+            />
+            {redaction.hiddenCausesCount > 0 && (
+              <p className="text-sm text-[var(--text-secondary)]">
+                {t("moreCausesLocked", { count: redaction.hiddenCausesCount })}{" "}
+                <Link href="/pricing" className="font-semibold text-[var(--accent-red)] hover:underline">
+                  {t("upgradeButton")}
+                </Link>
+              </p>
+            )}
+          </div>
+        </ResultSection>
+      </div>
 
-      {/* Evidence from reported symptoms */}
-      <ResultSection title={t("reportedSymptoms")}>
-        <ul className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "disc" }}>
-          {dtc.symptoms.map((s, i) => (
-            <li key={i}>{s}</li>
-          ))}
-        </ul>
-      </ResultSection>
+      {/* Reported symptoms — the schema has no derived "diagnostic
+          evidence" to pair these against, so this stays a single compact
+          panel rather than an invented two-column comparison. */}
+      {dtc.symptoms.length > 0 && (
+        <div data-testid="reported-symptoms">
+          <ResultSection title={t("reportedSymptoms")}>
+            <ul
+              className="report-measure space-y-2 pl-5 text-[var(--text-secondary)]"
+              style={{ listStyleType: "disc" }}
+            >
+              {dtc.symptoms.map((s, i) => (
+                <li key={i} className="pl-1">
+                  {s}
+                </li>
+              ))}
+            </ul>
+          </ResultSection>
+        </div>
+      )}
 
       {/* Recommended diagnostic checks */}
       {diagnosticStepsLocked ? (
@@ -139,25 +165,30 @@ export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: Dtc
       ) : (
         dtc.diagnostic_steps.length > 0 && (
           <ResultSection title={t("diagnosticChecks")}>
-            <ol className="space-y-1 pl-5 text-sm text-[var(--text-secondary)]" style={{ listStyleType: "decimal" }}>
-              {dtc.diagnostic_steps.map((step, i) => (
-                <li key={i}>{step}</li>
-              ))}
-            </ol>
+            <div className="report-measure">
+              <DiagnosticStepList
+                steps={dtc.diagnostic_steps.map((step, i) => ({ step: i + 1, text: step }))}
+              />
+            </div>
           </ResultSection>
         )
       )}
 
-      {/* What not to replace yet */}
+      {/* Do not replace these parts yet — common_mistakes is a single prose
+          string, so it renders as one caution panel. Splitting it into
+          per-part decision rules would require parsing text that has no
+          guaranteed structure. */}
       {dtc.common_mistakes && (
-        <ResultSection title={t("commonMistakes")}>
-          <p
-            className="rounded-[var(--radius-lg)] border p-4 text-sm text-[var(--text-secondary)]"
-            style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
-          >
-            {dtc.common_mistakes}
-          </p>
-        </ResultSection>
+        <div data-testid="do-not-replace">
+          <ResultSection title="Do not replace these parts yet">
+            <p
+              className="report-measure rounded-[var(--radius-lg)] border p-5 text-[var(--text-secondary)]"
+              style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
+            >
+              {dtc.common_mistakes}
+            </p>
+          </ResultSection>
+        </div>
       )}
 
       {/* Downloadable / video content */}
@@ -246,30 +277,24 @@ export function DtcCodeResult({ dtc, redaction }: { dtc: DtcCode; redaction: Dtc
         {t("disclaimer")}
       </p>
 
-      <ResultSection title="Unlock Full AI Diagnosis">
-        <p className="mb-4 text-sm text-[var(--text-secondary)]">
-          Add your vehicle details and symptoms to receive a professional diagnostic workflow.
-        </p>
-        <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
-      </ResultSection>
+      {/* One consolidated conversion panel. This replaced a
+          LockedResultPanel over LOCKED_SECTION_CATALOG — nine placeholder
+          cards, each with skeleton lines and its own "Upgrade" button. Nine
+          near-identical CTAs read as a failed load, not an offer. */}
+      <ProfessionalReportUpsell signedIn={signedIn} />
 
+      {/* Kept separate from the paid panel above: this is the free
+          vehicle-specific intake, not a purchase. */}
       <section className="glass-panel rounded-[var(--radius-xl)] p-6 text-center">
         <p className="text-sm text-[var(--text-secondary)]">{t("upgradeCta")}</p>
-        <div className="mt-3 flex flex-wrap items-center justify-center gap-3">
+        <div className="mt-4 flex flex-wrap items-center justify-center gap-3">
           <AiDiagnosisCtaLink
             href={`/diagnostics/quick?code=${encodeURIComponent(dtc.code)}${dtc.make ? `&make=${encodeURIComponent(dtc.make)}` : ""}${dtc.model ? `&model=${encodeURIComponent(dtc.model)}` : ""}&returnTo=${encodeURIComponent(`/dtc/${dtc.slug}`)}`}
             source="known_dtc_page"
-            className="inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
-            style={{ boxShadow: "var(--shadow-accent)" }}
+            className="inline-block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-red)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
           >
-            Run Full AI Diagnosis
+            Start a DTC Technician diagnosis
           </AiDiagnosisCtaLink>
-          <Link
-            href="/pricing"
-            className="inline-block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
-          >
-            {t("upgradeButton")}
-          </Link>
         </div>
       </section>
 
