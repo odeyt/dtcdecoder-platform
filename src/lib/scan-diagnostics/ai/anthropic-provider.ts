@@ -68,18 +68,35 @@ async function getScanSystemPrompt(): Promise<string> {
   return (data?.value || DEFAULT_SYSTEM_PROMPT) + SAFETY_SUFFIX;
 }
 
+// Strict tool use makes the API itself guarantee that `tool_use.input`
+// validates against this schema, instead of the model being merely asked
+// to comply. That is the structural fix for the production failure where a
+// tool call arrived missing `summary` and `safetyWarnings` and the whole
+// report was discarded (see SCAN_REPORT_MAX_TOKENS above for the other
+// half of that incident).
+//
+// Strict mode constrains what the schema may contain:
+//   - every object needs `additionalProperties: false` and a `required`
+//     listing all of its properties;
+//   - array constraints like `minItems` are not supported, so the
+//     "at least one ranked cause" rule lives only in
+//     DiagnosticAiOutputSchema (zod) now. That is not a loss of coverage:
+//     zod already rejected an empty array, and it is still the last word
+//     on whatever comes back.
 const SUBMIT_DIAGNOSIS_TOOL: Anthropic.Tool = {
   name: "submit_diagnosis",
   description: "Submit the complete structured diagnostic analysis.",
+  strict: true,
   input_schema: {
     type: "object",
+    additionalProperties: false,
     properties: {
       summary: { type: "string", description: "A short plain-language summary of the situation." },
       rankedCauses: {
         type: "array",
-        minItems: 1,
         items: {
           type: "object",
+          additionalProperties: false,
           properties: {
             cause: { type: "string" },
             confidenceLevel: {
@@ -110,6 +127,7 @@ const SUBMIT_DIAGNOSIS_TOOL: Anthropic.Tool = {
         type: "array",
         items: {
           type: "object",
+          additionalProperties: false,
           properties: {
             step: { type: "string" },
             purpose: { type: "string" },
@@ -265,6 +283,31 @@ You are reasoning about ONE step in an ongoing diagnostic case, not writing a on
 // One shot at the model. Separated from callSubmitDiagnosisTool below so
 // the retry there re-runs the whole request/parse cycle rather than trying
 // to salvage a response that already failed validation.
+// Strict mode is a promise the API makes about the tool schema, and the
+// API is the only thing that can confirm the schema qualifies. If it ever
+// rejects SUBMIT_DIAGNOSIS_TOOL as ineligible, every diagnosis would fail
+// — strictly worse than the intermittent fault strict mode is meant to
+// remove. So a schema rejection degrades to the previous non-strict
+// behaviour for that call rather than failing the customer's request.
+//
+// This is deliberately narrow: only a 400 that names the schema or strict
+// mode qualifies. Any other 400 (and every non-400) propagates untouched,
+// because a malformed request or an auth problem must not be silently
+// retried into looking like a success.
+function isStrictSchemaRejection(err: unknown): boolean {
+  if (!(err instanceof Anthropic.APIError) || err.status !== 400) return false;
+  const text = String(err.message).toLowerCase();
+  return text.includes("strict") || text.includes("schema") || text.includes("additionalproperties");
+}
+
+// Same tool, minus the strict guarantee — the exact shape this call used
+// before strict mode was introduced.
+const SUBMIT_DIAGNOSIS_TOOL_NON_STRICT: Anthropic.Tool = (() => {
+  const copy = { ...SUBMIT_DIAGNOSIS_TOOL } as Anthropic.Tool & { strict?: boolean };
+  delete copy.strict;
+  return copy;
+})();
+
 async function attemptSubmitDiagnosisTool(
   systemPrompt: string,
   userContent: string,
@@ -283,16 +326,30 @@ async function attemptSubmitDiagnosisTool(
     ? [{ type: "text" as const, text: systemPrompt, cache_control: { type: "ephemeral" as const } }]
     : systemPrompt;
 
-  const message = await client.messages.create({
+  const request = (tool: Anthropic.Tool) => ({
     model: SCAN_REPORT_MODEL_ID,
     max_tokens: SCAN_REPORT_MAX_TOKENS,
     system,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium" },
-    tools: [SUBMIT_DIAGNOSIS_TOOL],
-    tool_choice: { type: "tool", name: "submit_diagnosis" },
-    messages: [{ role: "user", content: userContent }],
+    thinking: { type: "adaptive" as const },
+    output_config: { effort: "medium" as const },
+    tools: [tool],
+    tool_choice: { type: "tool" as const, name: "submit_diagnosis" },
+    messages: [{ role: "user" as const, content: userContent }],
   });
+
+  let message;
+  try {
+    message = await client.messages.create(request(SUBMIT_DIAGNOSIS_TOOL));
+  } catch (err) {
+    if (!isStrictSchemaRejection(err)) throw err;
+    // Loud on purpose: the schema needs fixing, and the degraded call
+    // silently working is exactly how that would go unnoticed.
+    console.error(
+      "[scan-diagnostics] submit_diagnosis strict schema was rejected by the API — falling back to non-strict for this call. Fix the schema; strict mode is not in effect.",
+      err instanceof Error ? err.message : err,
+    );
+    message = await client.messages.create(request(SUBMIT_DIAGNOSIS_TOOL_NON_STRICT));
+  }
 
   const toolUseBlock = message.content.find((block) => block.type === "tool_use");
 
