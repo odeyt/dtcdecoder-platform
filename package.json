@@ -28,6 +28,7 @@
     "@supabase/ssr": "^0.12.2",
     "@supabase/supabase-js": "^2.110.5",
     "fast-xml-parser": "^5.10.1",
+    "heic-convert": "^2.1.0",
     "marked": "^18.0.7",
     "next": "16.2.10",
     "next-intl": "^4.13.3",
@@ -36,6 +37,7 @@
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "server-only": "^0.0.1",
+    "sharp": "^0.35.3",
     "unpdf": "^1.6.2",
     "zod": "^4.4.3"
   },
@@ -46,6 +48,7 @@
     "@testing-library/jest-dom": "^7.0.0",
     "@testing-library/react": "^16.3.2",
     "@testing-library/user-event": "^14.6.1",
+    "@types/heic-convert": "^2.1.1",
     "@types/node": "^20",
     "@types/papaparse": "^5.5.2",
     "@types/react": "^19",

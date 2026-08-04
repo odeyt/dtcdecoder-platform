@@ -108,6 +108,31 @@ export const env = {
     process.env.SUPABASE_STORAGE_BUCKET_SCAN_FILES ?? "diagnostic-scan-files",
   scanFileMaxSizeBytes: () =>
     Number(process.env.SCAN_FILE_MAX_SIZE_BYTES ?? 15 * 1024 * 1024),
+
+  // Photo/screenshot upload (Android/iPhone camera photos of a scan-tool
+  // screen) — a separate, smaller size ceiling than the text-format limit
+  // above, since a single photo is expected to be well under a PDF export's
+  // typical size, and a case can hold several of them.
+  scanImageMaxSizeBytes: () =>
+    Number(process.env.SCAN_IMAGE_MAX_SIZE_BYTES ?? 10 * 1024 * 1024),
+  // How many photos one scan-analysis case may hold in total.
+  scanImageMaxCount: () => Number(process.env.SCAN_IMAGE_MAX_COUNT ?? 10),
+  // Ceiling across ALL of a case's photos combined — catches "10 photos each
+  // just under the per-file limit" without needing a smaller per-file cap.
+  scanImageMaxTotalSizeBytes: () =>
+    Number(process.env.SCAN_IMAGE_MAX_TOTAL_SIZE_BYTES ?? 40 * 1024 * 1024),
+  // Hard rejection ceiling (decode-bomb / obviously-wrong-file guard) — an
+  // image with either dimension above this is refused outright rather than
+  // processed at all. Deliberately far above any real phone photo's native
+  // resolution.
+  scanImageMaxPixelDimension: () =>
+    Number(process.env.SCAN_IMAGE_MAX_PIXEL_DIMENSION ?? 8000),
+  // Target ceiling for the downscale-only resize step (image-processing.ts)
+  // — large enough to keep on-screen scan-tool text legible to Claude's
+  // vision API, small enough to keep per-image token cost bounded. Never
+  // upscales a smaller image up to this size.
+  scanImageDownscaleMaxDimension: () =>
+    Number(process.env.SCAN_IMAGE_DOWNSCALE_MAX_DIMENSION ?? 2400),
   // Must stay `process.env.NEXT_PUBLIC_SCAN_DIAGNOSTICS_ENABLED` as a
   // static literal (not routed through a shared helper) so Next.js can
   // inline it into client bundles — see the file-header comment and

@@ -34,6 +34,7 @@ function toDtcRecords(parsed: ReturnType<typeof buildParsedScanReportFromText>):
       network_relevance: relevance.networkRelevance,
       battery_relevance: relevance.batteryRelevance,
       bus_off_relevance: relevance.busOffRelevance,
+      source_image_index: null,
     };
   });
 }
@@ -109,6 +110,7 @@ function extractionFrom(parsed: ReturnType<typeof buildParsedScanReportFromText>
     dtcs_parsed: parsed.extractionQuality.dtcsParsed ?? null,
     extraction_truncated: parsed.extractionQuality.truncated,
     extraction_confidence: parsed.extractionQuality.confidence,
+    image_evidence: parsed.evidence ?? [],
   };
 }
 

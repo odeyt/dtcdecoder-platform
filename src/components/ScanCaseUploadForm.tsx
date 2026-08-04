@@ -1,10 +1,24 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 
-const SUPPORTED_FORMATS = "PDF, TXT, CSV, JSON, XML, HTML";
+const SUPPORTED_DOCUMENT_FORMATS = "PDF, TXT, CSV, JSON, XML, HTML";
+const SUPPORTED_PHOTO_FORMATS = "JPG, PNG, WEBP, GIF, HEIC/HEIF";
 const MAX_SIZE_MB = 15;
+const MAX_IMAGE_COUNT = 10;
+const ACCEPT_ATTR = ".pdf,.txt,.csv,.json,.xml,.html,.htm,.jpg,.jpeg,.png,.webp,.gif,.heic,.heif";
+
+const IMAGE_EXT_RE = /\.(jpe?g|png|webp|gif|heic|heif)$/i;
+const HEIC_EXT_RE = /\.(heic|heif)$/i;
+
+function isImageFile(f: File): boolean {
+  return IMAGE_EXT_RE.test(f.name);
+}
+
+function isHeicFile(f: File): boolean {
+  return HEIC_EXT_RE.test(f.name);
+}
 
 // English-only for this initial release — see docs/SCAN_REPORT_ANALYSIS.md
 // ("Known limitations") for why this page doesn't go through next-intl yet.
@@ -12,7 +26,9 @@ export function ScanCaseUploadForm() {
   const router = useRouter();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
-  const [file, setFile] = useState<File | null>(null);
+  const [mode, setMode] = useState<"document" | "photos">("document");
+  const [documentFile, setDocumentFile] = useState<File | null>(null);
+  const [photos, setPhotos] = useState<File[]>([]);
   const [complaint, setComplaint] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [mileage, setMileage] = useState("");
@@ -22,15 +38,85 @@ export function ScanCaseUploadForm() {
   const [status, setStatus] = useState<"idle" | "submitting">("idle");
   const [error, setError] = useState<string | null>(null);
 
-  function pickFile(f: File | null) {
+  const photoPreviews = useMemo(() => photos.map((f) => URL.createObjectURL(f)), [photos]);
+  useEffect(() => {
+    return () => {
+      photoPreviews.forEach((url) => URL.revokeObjectURL(url));
+    };
+  }, [photoPreviews]);
+
+  function pickFiles(incoming: File[]) {
     setError(null);
-    setFile(f);
+    if (incoming.length === 0) return;
+
+    const images = incoming.filter(isImageFile);
+    const nonImages = incoming.filter((f) => !isImageFile(f));
+
+    if (images.length > 0 && nonImages.length > 0) {
+      setError("Photos and scan report files can't be combined in one upload — please choose one or the other.");
+      return;
+    }
+
+    if (nonImages.length > 0) {
+      if (nonImages.length > 1) {
+        setError("Please choose a single scan report file, or upload multiple photos instead.");
+        return;
+      }
+      setMode("document");
+      setPhotos([]);
+      setDocumentFile(nonImages[0]);
+      return;
+    }
+
+    setMode("photos");
+    setDocumentFile(null);
+    setPhotos((prev) => {
+      const combined = [...prev, ...images];
+      if (combined.length > MAX_IMAGE_COUNT) {
+        setError(`You can upload up to ${MAX_IMAGE_COUNT} photos per case.`);
+        return prev;
+      }
+      return combined;
+    });
+  }
+
+  function removePhoto(index: number) {
+    setError(null);
+    setPhotos((prev) => prev.filter((_, i) => i !== index));
+  }
+
+  function movePhoto(index: number, direction: -1 | 1) {
+    setPhotos((prev) => {
+      const target = index + direction;
+      if (target < 0 || target >= prev.length) return prev;
+      const next = [...prev];
+      [next[index], next[target]] = [next[target], next[index]];
+      return next;
+    });
+  }
+
+  async function uploadOneFile(caseId: string, file: File): Promise<{ ok: boolean; error?: string }> {
+    const formData = new FormData();
+    formData.append("file", file);
+    const uploadRes = await fetch(`/api/scan-diagnostics/cases/${caseId}/upload`, {
+      method: "POST",
+      body: formData,
+    });
+    const uploadData = await uploadRes.json().catch(() => ({}));
+    if (!uploadRes.ok) {
+      return { ok: false, error: uploadData.error ?? "Upload failed. Please try again." };
+    }
+    return { ok: true };
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!file) {
+    if (mode === "document" && !documentFile) {
       setError("Please choose a scan report file to upload.");
+      return;
+    }
+    if (mode === "photos" && photos.length === 0) {
+      setError("Please choose at least one photo to upload.");
       return;
     }
 
@@ -60,18 +146,26 @@ export function ScanCaseUploadForm() {
       }
 
       const caseId = caseData.case.id as string;
-      const formData = new FormData();
-      formData.append("file", file);
 
-      const uploadRes = await fetch(`/api/scan-diagnostics/cases/${caseId}/upload`, {
-        method: "POST",
-        body: formData,
-      });
-      const uploadData = await uploadRes.json().catch(() => ({}));
-      if (!uploadRes.ok) {
-        setError(uploadData.error ?? "Upload failed. Please try again.");
-        setStatus("idle");
-        return;
+      if (mode === "document") {
+        const result = await uploadOneFile(caseId, documentFile as File);
+        if (!result.ok) {
+          setError(result.error ?? "Upload failed. Please try again.");
+          setStatus("idle");
+          return;
+        }
+      } else {
+        // Uploaded one at a time, awaited in order — the server derives each
+        // photo's position from how many rows already exist for the case at
+        // insert time, so parallel uploads would race and scramble order.
+        for (let i = 0; i < photos.length; i++) {
+          const result = await uploadOneFile(caseId, photos[i]);
+          if (!result.ok) {
+            setError(result.error ?? `Upload failed on photo ${i + 1} of ${photos.length}. Please try again.`);
+            setStatus("idle");
+            return;
+          }
+        }
       }
 
       router.push(`/diagnostics/${caseId}`);
@@ -98,8 +192,7 @@ export function ScanCaseUploadForm() {
         onDrop={(e) => {
           e.preventDefault();
           setDragOver(false);
-          const dropped = e.dataTransfer.files[0];
-          if (dropped) pickFile(dropped);
+          pickFiles(Array.from(e.dataTransfer.files));
         }}
         className="glass-panel flex cursor-pointer flex-col items-center justify-center rounded-[var(--radius-xl)] border-2 border-dashed p-10 text-center transition-colors"
         style={{ borderColor: dragOver ? "var(--accent-red)" : "var(--border-subtle)" }}
@@ -107,24 +200,94 @@ export function ScanCaseUploadForm() {
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.txt,.csv,.json,.xml,.html,.htm"
+          accept={ACCEPT_ATTR}
+          multiple
           className="hidden"
-          onChange={(e) => pickFile(e.target.files?.[0] ?? null)}
+          onChange={(e) => {
+            pickFiles(Array.from(e.target.files ?? []));
+            e.target.value = "";
+          }}
         />
-        {file ? (
-          <p className="text-[var(--text-primary)]">{file.name}</p>
+        {mode === "document" && documentFile ? (
+          <p className="text-[var(--text-primary)]">{documentFile.name}</p>
+        ) : mode === "photos" && photos.length > 0 ? (
+          <p className="text-[var(--text-primary)]">
+            {photos.length} photo{photos.length > 1 ? "s" : ""} selected — click or drop to add more
+          </p>
         ) : (
           <>
-            <p className="text-[var(--text-primary)]">Drag and drop your scan report here, or click to choose a file</p>
+            <p className="text-[var(--text-primary)]">
+              Drag and drop your scan report or phone photos here, or click to choose files
+            </p>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              Supported formats: {SUPPORTED_FORMATS} · Max {MAX_SIZE_MB} MB
+              Documents: {SUPPORTED_DOCUMENT_FORMATS} (max {MAX_SIZE_MB} MB)
+              <br />
+              Or photos/screenshots: {SUPPORTED_PHOTO_FORMATS} (up to {MAX_IMAGE_COUNT} per case)
             </p>
           </>
         )}
       </div>
 
+      {mode === "photos" && photos.length > 0 && (
+        <div className="glass-panel rounded-[var(--radius-lg)] p-4">
+          <p className="mb-3 text-sm text-[var(--text-secondary)]">
+            {photos.length} photo{photos.length > 1 ? "s" : ""} — will be analyzed in this order
+          </p>
+          <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+            {photos.map((f, i) => (
+              <li
+                key={`${f.name}-${i}`}
+                className="relative flex flex-col gap-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-2"
+              >
+                <span className="absolute left-1 top-1 z-10 rounded bg-black/60 px-1.5 py-0.5 text-xs text-white">
+                  {i + 1}
+                </span>
+                {isHeicFile(f) ? (
+                  <div className="flex h-24 w-full items-center justify-center rounded bg-[var(--surface-2)] text-xs font-medium text-[var(--text-muted)]">
+                    HEIC
+                  </div>
+                ) : (
+                  // eslint-disable-next-line @next/next/no-img-element
+                  <img
+                    src={photoPreviews[i]}
+                    alt={`Photo ${i + 1}: ${f.name}`}
+                    className="h-24 w-full rounded object-cover"
+                  />
+                )}
+                <span className="truncate text-xs text-[var(--text-muted)]">{f.name}</span>
+                <div className="flex items-center justify-between gap-1">
+                  <button
+                    type="button"
+                    onClick={() => movePhoto(i, -1)}
+                    disabled={i === 0}
+                    className="text-xs text-[var(--text-muted)] disabled:opacity-30"
+                  >
+                    ↑
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => movePhoto(i, 1)}
+                    disabled={i === photos.length - 1}
+                    className="text-xs text-[var(--text-muted)] disabled:opacity-30"
+                  >
+                    ↓
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removePhoto(i)}
+                    className="text-xs text-[var(--accent-red)]"
+                  >
+                    Remove
+                  </button>
+                </div>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
       <div className="glass-panel rounded-[var(--radius-lg)] p-5 text-xs text-[var(--text-muted)]">
-        Your file is stored privately and is only used to generate your diagnostic analysis. It is never shared or
+        Your files are stored privately and used only to generate your diagnostic analysis. They are never shared or
         made public.
       </div>
 

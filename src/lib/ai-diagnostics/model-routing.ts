@@ -22,6 +22,7 @@ export type AiTaskType =
   | "chatGeneration" // wired — src/lib/ai/assistant.ts streamAssistantResponse
   | "chatTranslation" // wired — src/lib/ai/assistant.ts translateDiagnosticText
   | "scanMainAnalysis" // wired — src/lib/scan-diagnostics/ai/anthropic-provider.ts
+  | "scanImageExtraction" // wired — src/lib/scan-diagnostics/ai/vision-extraction.ts (photo/screenshot upload)
   | "scanReportTranslation" // reserved — src/lib/ai/translation-provider.ts AnthropicTranslationProvider references this route, but the class is never instantiated by any route/orchestrator (dormant, pre-existing)
   | "languageDetection" // reserved — no call site; language is client-selected today, never detected
   | "symptomNormalization" // reserved — no call site; symptoms are used as-entered
@@ -33,6 +34,10 @@ export const MODEL_ROUTES: Record<AiTaskType, string> = {
   chatGeneration: CLAUDE_SONNET_5,
   chatTranslation: CLAUDE_HAIKU_4_5,
   scanMainAnalysis: CLAUDE_SONNET_5,
+  // Reading DTC codes/VIN characters accurately off a phone photo (and
+  // correctly flagging what's unclear rather than guessing) needs the
+  // stronger reasoning tier, not the economical one.
+  scanImageExtraction: CLAUDE_SONNET_5,
   scanReportTranslation: CLAUDE_HAIKU_4_5,
   // The four reserved tasks below route to the economical tier by default —
   // matches the spec's own guidance ("language detection: economical/

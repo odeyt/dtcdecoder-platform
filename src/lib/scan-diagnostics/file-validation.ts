@@ -4,10 +4,14 @@
 // (e.g. a zip renamed to .xml) is rejected regardless of what the browser
 // claimed. Returns a typed result; never throws on a malformed upload.
 import "server-only";
+import sharp from "sharp";
 import { env } from "@/lib/env";
 import type { ScanFileFormat } from "@/lib/types";
 
-const ALLOWED_EXTENSIONS = new Set(["pdf", "txt", "csv", "json", "xml", "html", "htm"]);
+const ALLOWED_EXTENSIONS = new Set([
+  "pdf", "txt", "csv", "json", "xml", "html", "htm",
+  "jpg", "jpeg", "png", "webp", "gif", "heic", "heif",
+]);
 
 // Explicit denylist kept alongside the allowlist above (belt-and-suspenders):
 // anything here is rejected even if somehow allow-listed elsewhere.
@@ -27,16 +31,58 @@ const ALLOWED_MIME_TYPES = new Set([
   "application/xml",
   "text/xml",
   "text/html",
-  "application/octet-stream", // many scan tools export without a proper MIME type
+  "image/jpeg",
+  "image/png",
+  "image/webp",
+  "image/gif",
+  "image/heic",
+  "image/heif",
+  "application/octet-stream", // many scan tools/cameras export without a proper MIME type
 ]);
 
-export type FileSignatureFormat = "pdf" | "zip" | "json" | "xml" | "html" | "text" | "unknown";
+const IMAGE_EXTENSIONS = new Set(["jpg", "jpeg", "png", "webp", "gif", "heic", "heif"]);
+
+export type FileSignatureFormat =
+  | "pdf" | "zip" | "json" | "xml" | "html" | "text"
+  | "jpeg" | "png" | "webp" | "gif" | "heic"
+  | "unknown";
 
 // Sniffs the actual file content rather than trusting the extension/MIME.
 function sniffSignature(buffer: Buffer): FileSignatureFormat {
   if (buffer.length === 0) return "unknown";
 
   if (buffer.subarray(0, 5).toString("latin1") === "%PDF-") return "pdf";
+
+  // JPEG (FF D8 FF), PNG (89 50 4E 47 0D 0A 1A 0A) — standard magic numbers.
+  if (buffer.length >= 3 && buffer[0] === 0xff && buffer[1] === 0xd8 && buffer[2] === 0xff) return "jpeg";
+  if (
+    buffer.length >= 8 &&
+    buffer[0] === 0x89 && buffer[1] === 0x50 && buffer[2] === 0x4e && buffer[3] === 0x47 &&
+    buffer[4] === 0x0d && buffer[5] === 0x0a && buffer[6] === 0x1a && buffer[7] === 0x0a
+  ) {
+    return "png";
+  }
+  // WebP: "RIFF"....{"WEBP"} — bytes 0-4 and 8-12.
+  if (
+    buffer.length >= 12 &&
+    buffer.subarray(0, 4).toString("latin1") === "RIFF" &&
+    buffer.subarray(8, 12).toString("latin1") === "WEBP"
+  ) {
+    return "webp";
+  }
+  if (buffer.length >= 6 && ["GIF87a", "GIF89a"].includes(buffer.subarray(0, 6).toString("latin1"))) {
+    return "gif";
+  }
+  // HEIC/HEIF: an ISOBMFF "ftyp" box (bytes 4-8) with a HEIC-family major
+  // brand (bytes 8-12) — "avif"/"avis" (a different codec entirely, not
+  // supported here) uses the exact same container and is deliberately
+  // excluded so it isn't misidentified as HEIC.
+  if (buffer.length >= 12 && buffer.subarray(4, 8).toString("latin1") === "ftyp") {
+    const brand = buffer.subarray(8, 12).toString("latin1");
+    if (["heic", "heix", "hevc", "hevx", "heim", "heis", "hevm", "hevs", "mif1", "msf1"].includes(brand)) {
+      return "heic";
+    }
+  }
 
   // ZIP local-file-header magic number — catches docx/xlsx/actual zips
   // disguised under a text-format extension.
@@ -68,8 +114,9 @@ function extensionOf(filename: string): string {
 }
 
 // Which sniffed signatures are acceptable for a given claimed extension.
-// "text" is compatible with every non-PDF format since scan-tool exports
-// vary in how strictly they follow their own extension's syntax.
+// "text" is compatible with every non-PDF text format since scan-tool
+// exports vary in how strictly they follow their own extension's syntax.
+// Images are strict (photo formats don't have this "loose export" problem).
 const COMPATIBLE_SIGNATURES: Record<string, FileSignatureFormat[]> = {
   pdf: ["pdf"],
   txt: ["text", "json", "xml", "html"],
@@ -78,6 +125,13 @@ const COMPATIBLE_SIGNATURES: Record<string, FileSignatureFormat[]> = {
   xml: ["xml", "html", "text"],
   html: ["html", "xml", "text"],
   htm: ["html", "xml", "text"],
+  jpg: ["jpeg"],
+  jpeg: ["jpeg"],
+  png: ["png"],
+  webp: ["webp"],
+  gif: ["gif"],
+  heic: ["heic"],
+  heif: ["heic"],
 };
 
 export interface FileValidationOk {
@@ -102,18 +156,35 @@ const EXTENSION_TO_FORMAT: Record<string, ScanFileFormat> = {
   xml: "xml",
   html: "html",
   htm: "html",
+  jpg: "jpg",
+  jpeg: "jpg",
+  png: "png",
+  webp: "webp",
+  gif: "gif",
+  heic: "heic",
+  heif: "heif",
 };
 
-export function validateScanFile(
+// Async because jpg/png/webp/gif get a real decode-validity + pixel-
+// dimension check via sharp — heic/heif deliberately do NOT (sharp's
+// prebuilt binary only decodes AVIF under the "heif" format id, not actual
+// HEIC/HEVC-coded files; see image-processing.ts, which uses heic-convert
+// instead). A corrupt HEIC that passes the magic-byte check here is caught
+// later, when image-processing.ts actually attempts the conversion —
+// surfaced as a normal extraction failure, same as any other parser error.
+export async function validateScanFile(
   buffer: Buffer,
   filename: string,
   declaredMimeType: string,
-): FileValidationResult {
+): Promise<FileValidationResult> {
   if (buffer.length === 0) {
     return { ok: false, reason: "The uploaded file is empty." };
   }
 
-  const maxBytes = env.scanFileMaxSizeBytes();
+  const extension = extensionOf(filename);
+  const isImage = IMAGE_EXTENSIONS.has(extension);
+
+  const maxBytes = isImage ? env.scanImageMaxSizeBytes() : env.scanFileMaxSizeBytes();
   if (buffer.length > maxBytes) {
     return {
       ok: false,
@@ -121,11 +192,11 @@ export function validateScanFile(
     };
   }
 
-  const extension = extensionOf(filename);
   if (!extension || BLOCKED_EXTENSIONS.has(extension) || !ALLOWED_EXTENSIONS.has(extension)) {
     return {
       ok: false,
-      reason: "Unsupported file type. Supported formats: PDF, TXT, CSV, JSON, XML, HTML.",
+      reason:
+        "Unsupported file type. Supported formats: PDF, TXT, CSV, JSON, XML, HTML, JPG, PNG, WEBP, GIF, HEIC.",
     };
   }
 
@@ -138,9 +209,30 @@ export function validateScanFile(
   if (!compatible.includes(signature)) {
     return {
       ok: false,
-      reason:
-        "The file's contents don't match its extension. Please upload the original, unmodified scan report export.",
+      reason: isImage
+        ? "This doesn't look like a valid image file. Please upload the original photo, unedited."
+        : "The file's contents don't match its extension. Please upload the original, unmodified scan report export.",
     };
+  }
+
+  // Decode-validity + pixel-dimension check — jpg/png/webp/gif only (see
+  // the function comment above for why heic/heif skip this).
+  if (isImage && signature !== "heic") {
+    const maxDimension = env.scanImageMaxPixelDimension();
+    try {
+      const metadata = await sharp(buffer).metadata();
+      if (!metadata.width || !metadata.height) {
+        return { ok: false, reason: "Could not read this image. Please try a different photo." };
+      }
+      if (metadata.width > maxDimension || metadata.height > maxDimension) {
+        return {
+          ok: false,
+          reason: `This image's resolution (${metadata.width}×${metadata.height}) is larger than this app supports. Please use a standard camera photo, not a raw/uncompressed export.`,
+        };
+      }
+    } catch {
+      return { ok: false, reason: "This image file appears to be corrupted or is not a supported format." };
+    }
   }
 
   return { ok: true, extension, signature, formatHint: EXTENSION_TO_FORMAT[extension] };

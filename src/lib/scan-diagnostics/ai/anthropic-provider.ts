@@ -294,7 +294,11 @@ You are reasoning about ONE step in an ongoing diagnostic case, not writing a on
 // mode qualifies. Any other 400 (and every non-400) propagates untouched,
 // because a malformed request or an auth problem must not be silently
 // retried into looking like a success.
-function isStrictSchemaRejection(err: unknown): boolean {
+// Exported so other Anthropic strict-tool-schema call sites (e.g.
+// ai/vision-extraction.ts) can share the exact same "degrade to non-strict
+// rather than fail every request" safety net, instead of each one
+// reimplementing this 400-detection heuristic slightly differently.
+export function isStrictSchemaRejection(err: unknown): boolean {
   if (!(err instanceof Anthropic.APIError) || err.status !== 400) return false;
   const text = String(err.message).toLowerCase();
   return text.includes("strict") || text.includes("schema") || text.includes("additionalproperties");

@@ -335,7 +335,34 @@ export interface ScanCase {
   technician_completed_by: string | null;
 }
 
-export type ScanFileFormat = "pdf" | "txt" | "csv" | "json" | "xml" | "html" | "unknown";
+// Image formats (photo/screenshot upload) — "heic"/"heif" is the ORIGINAL
+// uploaded format; by the time an image reaches the vision extraction call
+// it has always been normalized to jpg/png/webp/gif (Claude's vision API
+// doesn't accept HEIC/HEIF at all), but the original format is preserved
+// here for storage/audit fidelity. See image-processing.ts.
+export type ScanFileFormat =
+  | "pdf"
+  | "txt"
+  | "csv"
+  | "json"
+  | "xml"
+  | "html"
+  | "jpg"
+  | "png"
+  | "webp"
+  | "gif"
+  | "heic"
+  | "heif"
+  | "unknown";
+
+// The subset of ScanFileFormat that's an image — used throughout the
+// upload/extraction pipeline to branch into the multi-photo vision
+// extraction path instead of the single-file text-parser path.
+export const IMAGE_SCAN_FILE_FORMATS: ScanFileFormat[] = ["jpg", "png", "webp", "gif", "heic", "heif"];
+
+export function isImageScanFileFormat(format: ScanFileFormat | null | undefined): boolean {
+  return !!format && (IMAGE_SCAN_FILE_FORMATS as string[]).includes(format);
+}
 
 export interface ScanCaseFile {
   id: string;
@@ -347,6 +374,10 @@ export interface ScanCaseFile {
   file_size_bytes: number;
   file_sha256: string;
   uploaded_at: string;
+  // Preserves selection/capture order across multiple photos in one case
+  // (e.g. VIN plate photo, then DTC screen, then a second module's screen)
+  // — null for pre-existing single-file uploads, never renumbered.
+  upload_order: number | null;
 }
 
 export interface ScanModule {
@@ -390,6 +421,26 @@ export interface ScanExtraction {
   dtcs_parsed: number | null;
   extraction_truncated: boolean;
   extraction_confidence: "high" | "medium" | "low" | null;
+  // Photo-upload provenance (migration 0046) — one entry per source image,
+  // empty for every non-photo extraction. See ExtractedEvidence below.
+  image_evidence: ExtractedEvidence[];
+}
+
+// One entry per uploaded photo/screenshot in a multi-image scan-report
+// upload — lets the app show "which image produced this fact" and surface
+// per-image extraction warnings (e.g. "third character unclear") without
+// conflating them with the report-level warnings every parser already has.
+// Never populated by a text-format parser (pdf/txt/csv/json/xml/html) —
+// only the vision extraction path (scan-diagnostics/ai/vision-extraction.ts)
+// produces this. Shared between the in-memory ParsedScanReport
+// (parsers/types.ts) and this persisted ScanExtraction row — same shape,
+// no divergence, so it's defined once here rather than duplicated.
+export interface ExtractedEvidence {
+  sourceType: "image";
+  sourceName: string;
+  sourceIndex: number;
+  extractedText?: string;
+  warnings?: string[];
 }
 
 export type ScanDtcStatus =
@@ -421,6 +472,10 @@ export interface ScanDtcRecord {
   network_relevance: boolean;
   battery_relevance: boolean;
   bus_off_relevance: boolean;
+  // Photo-upload provenance (migration 0046) — the 0-based index into the
+  // case's ordered photo set this code was read from. Null for every
+  // non-photo extraction.
+  source_image_index: number | null;
 }
 
 export type ScanSystemStatus = "faulted" | "ok" | "unknown";

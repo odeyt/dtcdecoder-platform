@@ -5,6 +5,8 @@ import { env } from "@/lib/env";
 import { getCaseForOwner, transitionCaseStatus } from "@/lib/scan-diagnostics/cases";
 import { validateScanFile } from "@/lib/scan-diagnostics/file-validation";
 import { uploadScanFile } from "@/lib/scan-diagnostics/storage";
+import { isImageScanFileFormat } from "@/lib/types";
+import type { ScanFileFormat } from "@/lib/types";
 import {
   FeatureDisabledError,
   UnsupportedFileError,
@@ -45,14 +47,57 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const validation = validateScanFile(buffer, file.name, file.type);
+    const validation = await validateScanFile(buffer, file.name, file.type);
     if (!validation.ok) {
       throw new UnsupportedFileError(validation.reason);
     }
 
+    const admin = createAdminClient();
+    const isImage = isImageScanFileFormat(validation.formatHint);
+
+    // A case is either an all-photo upload or a single-text-file upload,
+    // never a mix — the extract route's isPhotoUpload branch assumes this
+    // (see its own comment). Existing single-text-file cases are
+    // unaffected: this only ever rejects when the two uploads disagree on
+    // image-ness, which never happens for the pre-existing one-file flow.
+    const { data: existingFiles, error: existingFilesError } = await admin
+      .from("scan_case_files")
+      .select("detected_format, file_size_bytes")
+      .eq("case_id", caseId);
+    if (existingFilesError) throw existingFilesError;
+
+    if (existingFiles && existingFiles.length > 0) {
+      const existingIsImage = isImageScanFileFormat(existingFiles[0].detected_format as ScanFileFormat | null);
+      if (existingIsImage !== isImage) {
+        throw new UnsupportedFileError(
+          existingIsImage
+            ? "This case already has photo(s) uploaded — please start a new case for a non-photo scan report file."
+            : "This case already has a scan report file uploaded — please start a new case to upload photos instead.",
+        );
+      }
+    }
+
+    let uploadOrder: number | null = null;
+    if (isImage) {
+      const existingImageCount = existingFiles?.length ?? 0;
+      const maxCount = env.scanImageMaxCount();
+      if (existingImageCount + 1 > maxCount) {
+        throw new UnsupportedFileError(`This case already has the maximum of ${maxCount} photos.`);
+      }
+
+      const existingTotalBytes = (existingFiles ?? []).reduce((sum, f) => sum + (f.file_size_bytes as number), 0);
+      const maxTotalBytes = env.scanImageMaxTotalSizeBytes();
+      if (existingTotalBytes + buffer.length > maxTotalBytes) {
+        throw new UnsupportedFileError(
+          `Adding this photo would exceed the ${Math.floor(maxTotalBytes / (1024 * 1024))} MB combined limit for one case's photos.`,
+        );
+      }
+
+      uploadOrder = existingImageCount;
+    }
+
     const uploaded = await uploadScanFile(user.id, caseId, buffer, file.type || "application/octet-stream");
 
-    const admin = createAdminClient();
     const { data: fileRow, error: insertError } = await admin
       .from("scan_case_files")
       .insert({
@@ -63,6 +108,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
         detected_format: validation.formatHint,
         file_size_bytes: buffer.length,
         file_sha256: uploaded.sha256,
+        upload_order: uploadOrder,
       })
       .select("*")
       .single();
