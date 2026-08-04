@@ -17,12 +17,14 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { DIAGNOSTIC_ENGINE_FLAGS, diagnosticEngineRolloutTier, isDiagnosticEngineRolloutAllowed } from "@/lib/diagnostic-engine/feature-flags";
 import { runDiagnosticEngineTurn } from "@/lib/diagnostic-engine/orchestrator";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { getOrCreateLocalizedTurn } from "@/lib/diagnostic-engine/turn-localization";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -86,6 +88,37 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // customer data.
     if (!result.safety) {
       console.error("ALERT diagnostic_engine_safety_missing", { caseId, requestId: parsed.data.requestId });
+    }
+
+    // Presentation-only: translates hypotheses/testPlan prose for display,
+    // reusing the case's existing report_language selection (the same field
+    // the Scan Report Analysis language switcher already sets — see
+    // /api/scan-diagnostics/cases/[caseId]/language). Everything upstream
+    // (evidence, probability/confidence engines, safety classification,
+    // difficulty/risk/cost derivation) already ran in English above and is
+    // never re-run or re-derived here. safety.reasoning is deliberately
+    // left untranslated (see turn-translation.ts). A translation failure
+    // falls back to the English result already computed — never blocks the
+    // turn itself.
+    if (result.hypotheses.length > 0 || result.testPlan.length > 0) {
+      try {
+        const admin = createAdminClient();
+        const { data: caseRow } = await admin.from("scan_cases").select("report_language").eq("id", caseId).maybeSingle();
+        const targetLocale = caseRow?.report_language;
+        if (targetLocale && targetLocale !== "en") {
+          const localized = await getOrCreateLocalizedTurn(
+            user.id,
+            plan,
+            caseId,
+            { hypotheses: result.hypotheses, testPlan: result.testPlan },
+            targetLocale,
+          );
+          result.hypotheses = localized.localized.hypotheses;
+          result.testPlan = localized.localized.testPlan;
+        }
+      } catch (err) {
+        console.error("[diagnostic-engine-turn] translation step failed, serving English", err);
+      }
     }
 
     return NextResponse.json(result);
