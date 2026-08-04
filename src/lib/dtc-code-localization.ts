@@ -86,6 +86,12 @@ function buildDtcTranslateStep(): ReportTranslateStep {
       inputTokens: message.usage.input_tokens,
       outputTokens: message.usage.output_tokens,
       latencyMs: Date.now() - startedAt,
+      // Enough to diagnose a JSON.parse failure (markdown fences, a
+      // conversational preamble, truncation) without dumping full
+      // potentially-large translated prose into logs.
+      textHead: text.slice(0, 120),
+      textTail: text.slice(-120),
+      textLength: text.length,
     });
 
     void glossaryVersion;
