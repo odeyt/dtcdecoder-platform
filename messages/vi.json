@@ -161,6 +161,9 @@
     "regionSection": "Khu vực và hiển thị",
     "region": "Khu vực",
     "regionPlaceholder": "vd. US, MX, TH",
+    "regionAppliesDefaults": "Chọn một khu vực sẽ tự động điền các giá trị mặc định phù hợp bên dưới — ngôn ngữ, tiền tệ, múi giờ và định dạng ngày. Bạn vẫn có thể thay đổi từng mục riêng lẻ sau đó.",
+    "timezone": "Múi giờ",
+    "timezonePlaceholder": "vd. Asia/Bangkok",
     "measurementSystem": "Hệ đo lường",
     "metric": "Hệ mét",
     "imperial": "Hệ Anh",
@@ -399,6 +402,11 @@
     "severityCritical": "Nghiêm trọng",
     "ruleSeverityBlock": "Chặn",
     "ruleSeverityWarn": "Cảnh báo"
+  },
+  "regionBanner": {
+    "suggestion": "Có vẻ như bạn đang ở {region}. Bạn có muốn chuyển không?",
+    "switchButton": "Chuyển sang {region}",
+    "dismissButton": "Không, cảm ơn"
   },
   "meta": {
     "homeTitle": "DTC Decoder — Trí tuệ chẩn đoán ô tô bằng AI",

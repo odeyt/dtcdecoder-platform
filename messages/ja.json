@@ -161,6 +161,9 @@
     "regionSection": "地域と表示",
     "region": "地域",
     "regionPlaceholder": "例：US、MX、TH",
+    "regionAppliesDefaults": "地域を選択すると、言語・通貨・タイムゾーン・日付形式に適切な初期値が自動的に入力されます。後からそれぞれを個別に変更することもできます。",
+    "timezone": "タイムゾーン",
+    "timezonePlaceholder": "例：Asia/Bangkok",
     "measurementSystem": "測定単位系",
     "metric": "メートル法",
     "imperial": "ヤード・ポンド法",
@@ -399,6 +402,11 @@
     "severityCritical": "重大",
     "ruleSeverityBlock": "ブロック",
     "ruleSeverityWarn": "警告"
+  },
+  "regionBanner": {
+    "suggestion": "{region}にいらっしゃるようですね。切り替えますか？",
+    "switchButton": "{region}に切り替える",
+    "dismissButton": "いいえ、結構です"
   },
   "meta": {
     "homeTitle": "DTC Decoder — AI による自動車診断インテリジェンス",

@@ -161,6 +161,9 @@
     "regionSection": "地区与显示",
     "region": "地区",
     "regionPlaceholder": "例如 US、MX、TH",
+    "regionAppliesDefaults": "选择一个地区将自动填充下方合适的默认值——语言、货币、时区和日期格式。之后您仍可以单独更改其中任何一项。",
+    "timezone": "时区",
+    "timezonePlaceholder": "例如 Asia/Bangkok",
     "measurementSystem": "计量单位制",
     "metric": "公制",
     "imperial": "英制",
@@ -399,6 +402,11 @@
     "severityCritical": "严重",
     "ruleSeverityBlock": "阻止",
     "ruleSeverityWarn": "警告"
+  },
+  "regionBanner": {
+    "suggestion": "看起来您在{region}。要切换吗？",
+    "switchButton": "切换到{region}",
+    "dismissButton": "不用了，谢谢"
   },
   "meta": {
     "homeTitle": "DTC Decoder — AI 驱动的汽车诊断智能",

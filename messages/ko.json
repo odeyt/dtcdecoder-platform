@@ -161,6 +161,9 @@
     "regionSection": "지역 및 표시",
     "region": "지역",
     "regionPlaceholder": "예: US, MX, TH",
+    "regionAppliesDefaults": "지역을 선택하면 언어, 통화, 표준시간대, 날짜 형식에 적절한 기본값이 아래에 자동으로 채워집니다. 이후에도 각 항목을 개별적으로 변경할 수 있습니다.",
+    "timezone": "표준시간대",
+    "timezonePlaceholder": "예: Asia/Bangkok",
     "measurementSystem": "측정 단위계",
     "metric": "미터법",
     "imperial": "야드파운드법",
@@ -399,6 +402,11 @@
     "severityCritical": "심각",
     "ruleSeverityBlock": "차단",
     "ruleSeverityWarn": "경고"
+  },
+  "regionBanner": {
+    "suggestion": "{region}에 계신 것 같습니다. 전환하시겠습니까?",
+    "switchButton": "{region}(으)로 전환",
+    "dismissButton": "괜찮습니다"
   },
   "meta": {
     "homeTitle": "DTC Decoder — AI 기반 차량 진단 인텔리전스",

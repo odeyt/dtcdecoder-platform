@@ -161,6 +161,9 @@
     "regionSection": "ພາກພື້ນ ແລະ ການສະແດງຜົນ",
     "region": "ພາກພື້ນ",
     "regionPlaceholder": "ເຊັ່ນ US, MX, TH",
+    "regionAppliesDefaults": "ການເລືອກເຂດໜຶ່ງຈະຕື່ມຄ່າເລີ່ມຕົ້ນທີ່ເໝາະສົມຢູ່ລຸ່ມນີ້ — ພາສາ, ສະກຸນເງິນ, ເຂດເວລາ, ແລະຮູບແບບວັນທີ. ທ່ານຍັງສາມາດປ່ຽນແຕ່ລະລາຍການແຍກຕ່າງຫາກພາຍຫຼັງໄດ້.",
+    "timezone": "ເຂດເວລາ",
+    "timezonePlaceholder": "ເຊັ່ນ Asia/Bangkok",
     "measurementSystem": "ລະບົບການວັດແທກ",
     "metric": "ເມຕຣິກ",
     "imperial": "ອິມພີເຣຍລ",
@@ -399,6 +402,11 @@
     "severityCritical": "ຮ້າຍແຮງ",
     "ruleSeverityBlock": "ບລັອກ",
     "ruleSeverityWarn": "ຄຳເຕືອນ"
+  },
+  "regionBanner": {
+    "suggestion": "ເບິ່ງຄືວ່າທ່ານຢູ່ໃນ {region}. ທ່ານຕ້ອງການປ່ຽນບໍ?",
+    "switchButton": "ປ່ຽນເປັນ {region}",
+    "dismissButton": "ບໍ່, ຂອບໃຈ"
   },
   "meta": {
     "homeTitle": "DTC Decoder — ລະບົບວິນິດໄສລົດຍົນອັດສະລິຍະດ້ວຍ AI",

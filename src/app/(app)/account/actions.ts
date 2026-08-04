@@ -13,7 +13,22 @@ import {
   canUseReportMode,
 } from "@/lib/i18n/entitlements";
 import { isEnabledLocale, isAiOutputEnabledLocale, isEnabledCurrency } from "@/lib/i18n/languages";
+import { isRecognizedRegionId } from "@/lib/region/region-registry";
 import type { MeasurementSystem, ReportMode, TemperatureUnit, TimeFormat } from "@/lib/types";
+
+// Intl itself is the authority on valid IANA zone names — constructing a
+// formatter with an unrecognized one throws a RangeError. No hardcoded zone
+// list to maintain, and it's the same platform API region-format.ts's
+// formatters use to actually render dates, so "saves" and "renders" can
+// never disagree about what counts as valid.
+function isValidTimeZone(timeZone: string): boolean {
+  try {
+    new Intl.DateTimeFormat("en-US", { timeZone });
+    return true;
+  } catch {
+    return false;
+  }
+}
 
 const preferencesSchema = z.object({
   interfaceLocale: z.string().trim().toLowerCase().min(2).max(10),
@@ -21,11 +36,19 @@ const preferencesSchema = z.object({
   secondaryReportLocale: z.string().trim().toLowerCase().max(10).optional(),
   reportMode: z.enum(["single", "bilingual", "multilingual"]),
   preferredCurrency: z.string().trim().toUpperCase().length(3).optional(),
+  // Was free text (max 10 chars, no validation) before the Region Profile
+  // system — now re-validated against the real registry below. Still
+  // optional: a blank submission means "no region selected," not an error.
   regionCode: z.string().trim().max(10).optional(),
   measurementSystem: z.enum(["imperial", "metric"]),
   temperatureUnit: z.enum(["celsius", "fahrenheit"]),
   timeFormat: z.enum(["12h", "24h"]),
   dateFormat: z.string().trim().max(20).optional(),
+  // IANA zone name (e.g. "Asia/Bangkok") — not validated against a fixed
+  // list here; Intl.DateTimeFormat itself is the authority (an unrecognized
+  // zone name throws at format time, in region-format.ts's callers, not on
+  // save) rather than this app maintaining its own IANA zone list.
+  timezone: z.string().trim().max(100).optional(),
 });
 
 // Every field is re-validated here against the real registry/entitlement
@@ -62,6 +85,7 @@ export async function savePreferencesAction(
     temperatureUnit: formData.get("temperatureUnit"),
     timeFormat: formData.get("timeFormat"),
     dateFormat: formData.get("dateFormat") || undefined,
+    timezone: formData.get("timezone") || undefined,
   });
 
   if (!parsed.success) {
@@ -71,6 +95,14 @@ export async function savePreferencesAction(
 
   if (!(await isEnabledLocale(input.interfaceLocale))) {
     return { error: "That interface language isn't available." };
+  }
+
+  if (input.regionCode && !isRecognizedRegionId(input.regionCode)) {
+    return { error: "That region isn't recognized." };
+  }
+
+  if (input.timezone && !isValidTimeZone(input.timezone)) {
+    return { error: "That timezone isn't recognized." };
   }
 
   let aiReportLocale: string | null = null;
@@ -124,6 +156,7 @@ export async function savePreferencesAction(
       temperature_unit: input.temperatureUnit as TemperatureUnit,
       time_format: input.timeFormat as TimeFormat,
       date_format: input.dateFormat ?? null,
+      timezone: input.timezone ?? null,
     },
     { onConflict: "user_id" },
   );

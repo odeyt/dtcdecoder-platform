@@ -161,6 +161,9 @@
     "regionSection": "ภูมิภาคและการแสดงผล",
     "region": "ภูมิภาค",
     "regionPlaceholder": "เช่น US, MX, TH",
+    "regionAppliesDefaults": "การเลือกภูมิภาคจะกรอกค่าเริ่มต้นที่เหมาะสมด้านล่างให้อัตโนมัติ — ภาษา สกุลเงิน เขตเวลา และรูปแบบวันที่ คุณยังสามารถเปลี่ยนแต่ละรายการแยกกันได้ในภายหลัง",
+    "timezone": "เขตเวลา",
+    "timezonePlaceholder": "เช่น Asia/Bangkok",
     "measurementSystem": "ระบบหน่วยวัด",
     "metric": "เมตริก",
     "imperial": "อิมพีเรียล",
@@ -399,6 +402,11 @@
     "severityCritical": "วิกฤต",
     "ruleSeverityBlock": "บล็อก",
     "ruleSeverityWarn": "คำเตือน"
+  },
+  "regionBanner": {
+    "suggestion": "ดูเหมือนว่าคุณอยู่ใน {region} ต้องการเปลี่ยนหรือไม่?",
+    "switchButton": "เปลี่ยนเป็น {region}",
+    "dismissButton": "ไม่ ขอบคุณ"
   },
   "meta": {
     "homeTitle": "DTC Decoder — แพลตฟอร์มวินิจฉัยรถยนต์ระดับมืออาชีพ",

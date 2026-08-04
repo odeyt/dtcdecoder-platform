@@ -5,6 +5,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
+import { RegionGeoBanner } from "@/components/RegionGeoBanner";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { directionForLocale } from "@/lib/i18n/locale-codes";
 import "../globals.css";
@@ -63,6 +64,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           formats={{}}
         >
           <SiteNav />
+          {/* Client component, no server data read — safe inside this
+              shared layout without opting currently-static (app) pages
+              (login, privacy, terms, ...) into dynamic rendering. See
+              RegionGeoBanner.tsx. */}
+          <RegionGeoBanner />
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
           <DtcTechnicianShell />
