@@ -46,6 +46,7 @@ function buildJsonArrayTranslationSystemPrompt(
 Non-negotiable rules:
 - The output array MUST have exactly the same number of elements as the input array, in the same order.
 - Preserve DTC codes (e.g. P0420), part numbers, connector/pin names, wire colors, CAN High/CAN Low/LIN/FlexRay/MOST, voltages, resistance/pressure/torque/temperature values and their units, module acronyms (PCM, ECU, ABS, etc.), calibration IDs, and TSB numbers exactly as written in the source — never translate or alter them.
+- If a DTC code (e.g. P0420) appears more than once across the input strings, it must appear the SAME number of times in your output, written exactly the same way every time. Do not replace a repeated code with a pronoun or referential phrase ("this code", "it") even where that would read more naturally — repeat the literal code instead.
 - Do not add, remove, reinterpret, or reorder any content. This is a translation task, not new reference content.
 - Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}`;
 }
@@ -149,7 +150,7 @@ function buildDeps(): LocalizedDtcCodeDeps {
       const glossary = await listGlossaryForLocale(targetLocale);
       const glossaryVersion = String(glossary.length);
       const provider = new AnthropicTranslationProvider(buildDtcTranslateStep());
-      return translateDtcCode({
+      const result = await translateDtcCode({
         dtcCodeId,
         dtcCodeVersion: version,
         targetLocale,
@@ -158,6 +159,18 @@ function buildDeps(): LocalizedDtcCodeDeps {
         glossaryVersion,
         promptVersion: DTC_TRANSLATION_PROMPT_VERSION,
       });
+      if (result.status !== "completed") {
+        // Diagnostic visibility only — this doesn't change behavior, just
+        // makes an otherwise-silent English fallback (no DB row written,
+        // see resolveLocalizedDtcCode) explainable from logs alone.
+        console.log("[dtc-translation] non-completed result", {
+          dtcCodeId,
+          targetLocale,
+          status: result.status,
+          missingTokens: result.missingTokens,
+        });
+      }
+      return result;
     },
 
     async persist(row) {
