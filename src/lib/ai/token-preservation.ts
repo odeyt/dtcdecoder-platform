@@ -37,12 +37,28 @@ const TOKEN_PATTERNS: RegExp[] = [
   // measurement pattern for "5 V"; the word "reference" is natural language.
 ];
 
-// Word-boundary regex for a literal acronym. Case-insensitive: token identity
-// is compared case-insensitively (a dropped/translated acronym is the defect
-// we guard against, not re-casing) — consistent with the measurement patterns.
+// Acronyms that collide with ordinary English words when matched
+// case-insensitively — "can" (the modal verb) and "most" (the superlative)
+// appear constantly in ordinary prose ("can all trigger", "in most areas"),
+// and would otherwise be misidentified as the CAN-bus / MOST-network
+// acronyms, producing a false "protected token dropped" verdict and an
+// unwarranted English fallback. Confirmed live: real DTC reference content
+// mentioning "...can all trigger P0420..." and "In most areas..." tripped
+// this before the fix, with no CAN bus or MOST network content anywhere on
+// the page. Real technical usage of these acronyms is always all-caps
+// ("CAN bus", "MOST protocol"), so requiring exact case here loses no real
+// protection.
+const CASE_SENSITIVE_ACRONYMS = new Set(["CAN", "MAP", "MOST"]);
+
+// Word-boundary regex for a literal acronym. Case-insensitive by default:
+// token identity is compared case-insensitively (a dropped/translated
+// acronym is the defect we guard against, not re-casing) — except for the
+// handful above that collide with common English words, which require exact
+// case to avoid a false-positive match on ordinary prose.
 function acronymRegex(acr: string): RegExp {
   const escaped = acr.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-  return new RegExp(`\\b${escaped}\\b`, "gi");
+  const flags = CASE_SENSITIVE_ACRONYMS.has(acr) ? "g" : "gi";
+  return new RegExp(`\\b${escaped}\\b`, flags);
 }
 
 /**

@@ -64,4 +64,22 @@ describe("verifyTokenPreservation", () => {
     const ok = "P0420 en bank 1 sensor 2. pcm: 12 v, 5 v, 60 Ω.";
     expect(verifyTokenPreservation(english, ok).ok).toBe(true);
   });
+
+  it("does not flag ordinary prose containing 'can' or 'most' as a dropped CAN/MOST acronym", () => {
+    // Real regression: a translation whose source mentions "can all trigger"
+    // and "in most areas" (ordinary English, no CAN bus or MOST network
+    // content anywhere) was incorrectly falling back to English because
+    // lowercase "can"/"most" matched the acronym patterns case-insensitively.
+    const source = "A misfire can all trigger P0420. In most areas this fails an emissions test.";
+    const translated = "Una falla puede provocar P0420. En la mayoría de las áreas esto falla una prueba de emisiones.";
+    expect(verifyTokenPreservation(source, translated)).toEqual({ ok: true, missing: [] });
+  });
+
+  it("still catches a genuinely dropped CAN bus acronym (exact-case match required)", () => {
+    const source = "Check CAN bus voltage at the DLC.";
+    const bad = "Verifique el voltaje del bus en el DLC.";
+    const r = verifyTokenPreservation(source, bad);
+    expect(r.ok).toBe(false);
+    expect(r.missing).toContain("CAN");
+  });
 });
