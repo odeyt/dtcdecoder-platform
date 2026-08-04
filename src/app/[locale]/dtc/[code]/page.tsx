@@ -10,6 +10,8 @@ import { accessLevelForDtcContent, filterDtcCodeForAccessLevel } from "@/lib/dtc
 import { recordSearchHistory } from "@/lib/search-history";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 import { recordEvent } from "@/lib/analytics/events";
+import { detectSafetyWarnings } from "@/lib/safety-warnings";
+import { getOrCreateLocalizedDtcCode, applyLocalizedDtcCode } from "@/lib/dtc-code-localization";
 
 export const revalidate = 3600;
 
@@ -42,7 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 // basic-search quota either way — unchanged from before this page grew a
 // fallback state.
 export default async function GenericDtcCodePage({ params }: Props) {
-  const { code } = await params;
+  const { code, locale } = await params;
   const normalizedCode = code.toUpperCase();
 
   if (!isValidDtcCodeFormat(normalizedCode)) {
@@ -68,11 +70,42 @@ export default async function GenericDtcCodePage({ params }: Props) {
     }
     await recordEvent("ai_diagnosis_cta_viewed", { userId: user?.id ?? null, metadata: { source: "known_dtc_page" } });
 
-    const redacted = filterDtcCodeForAccessLevel(dtc, accessLevelForDtcContent(plan));
+    // Always computed from the CANONICAL English row, before any
+    // localization is applied — an English-keyword regex scanner would
+    // silently miss real danger conditions in translated text.
+    const warningText = [dtc.meaning, dtc.symptoms.join(" "), dtc.causes.join(" "), dtc.drive_recommendation ?? ""].join(
+      " ",
+    );
+    const safetyWarnings = detectSafetyWarnings(warningText);
+
+    // Translate BEFORE redaction: one shared (dtc_code_id, locale) cache
+    // entry serves every visitor regardless of plan, and the existing
+    // redaction logic then strips locked fields identically whether the
+    // underlying text is English or translated.
+    let localizedDtc = dtc;
+    let showUntranslatedNote = false;
+    if (locale !== "en") {
+      const localization = await getOrCreateLocalizedDtcCode(dtc.id, locale);
+      if (localization.status === "completed") {
+        localizedDtc = applyLocalizedDtcCode(dtc, localization.localized);
+      } else {
+        showUntranslatedNote = true;
+      }
+    }
+
+    const redacted = filterDtcCodeForAccessLevel(localizedDtc, accessLevelForDtcContent(plan));
     // signedIn drives only which CTA the upsell panel renders (direct
     // checkout vs sign-in-then-resume). Entitlement itself is still decided
     // server-side by `plan` above — this is not an authorization signal.
-    return <DtcCodeResult dtc={redacted.visible} redaction={redacted} signedIn={Boolean(user)} />;
+    return (
+      <DtcCodeResult
+        dtc={redacted.visible}
+        redaction={redacted}
+        signedIn={Boolean(user)}
+        safetyWarnings={safetyWarnings}
+        showUntranslatedNote={showUntranslatedNote}
+      />
+    );
   }
 
   const relatedCodes = await getRelatedDtcCodes(normalizedCode);

@@ -11,20 +11,29 @@ import { RankedCauseList } from "@/components/RankedCauseList";
 import { DiagnosticStepList } from "@/components/DiagnosticStepList";
 import { ProfessionalReportUpsell } from "@/components/ProfessionalReportUpsell";
 import { LockedResultPanel } from "@/components/LockedResultCard";
-import { detectSafetyWarnings } from "@/lib/safety-warnings";
 import { deriveDtcCodeStructure } from "@/lib/dtc-category";
 
 export function DtcCodeResult({
   dtc,
   redaction,
   signedIn = false,
+  safetyWarnings,
+  showUntranslatedNote = false,
 }: {
   dtc: DtcCode;
   redaction: DtcRedactionResult;
   signedIn?: boolean;
+  /** Always derived from the CANONICAL English text by the caller — an
+   *  English-keyword regex scanner would silently miss real danger
+   *  conditions if run against translated content instead. */
+  safetyWarnings: string[];
+  /** True only when this locale couldn't be translated (not AI-output
+   *  eligible, or the translation attempt fell back to English) — not a
+   *  blanket "locale !== en" check, since real translated content now
+   *  exists for eligible locales. */
+  showUntranslatedNote?: boolean;
 }) {
   const t = useTranslations("dtcResult");
-  const locale = useLocale();
   const structure = deriveDtcCodeStructure(dtc.code);
   const isPreview = redaction.accessLevel === "preview";
   const lockedSectionTitle: Record<string, string> = {
@@ -44,9 +53,6 @@ export function DtcCodeResult({
     hard: t("difficultyHard"),
     professional: t("difficultyProfessional"),
   };
-
-  const warningText = [dtc.meaning, dtc.symptoms.join(" "), dtc.causes.join(" "), dtc.drive_recommendation ?? ""].join(" ");
-  const safetyWarnings = detectSafetyWarnings(warningText);
 
   return (
     // container-report, not container-app: this is a diagnostic document,
@@ -80,7 +86,7 @@ export function DtcCodeResult({
           ))}
         </div>
         <p className="mt-4 text-xs text-[var(--text-muted)]">{t("sourcedFrom")}</p>
-        {locale !== "en" && (
+        {showUntranslatedNote && (
           <p className="mt-1 text-xs text-[var(--text-muted)]">{t("contentNotLocalizedNote")}</p>
         )}
       </header>

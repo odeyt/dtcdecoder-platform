@@ -8,6 +8,8 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { accessLevelForDtcContent, filterDtcCodeForAccessLevel } from "@/lib/dtc-redaction";
 import { recordSearchHistory } from "@/lib/search-history";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
+import { detectSafetyWarnings } from "@/lib/safety-warnings";
+import { getOrCreateLocalizedDtcCode, applyLocalizedDtcCode } from "@/lib/dtc-code-localization";
 
 export const revalidate = 3600;
 
@@ -30,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function MakeDtcCodePage({ params }: Props) {
-  const { make, slug } = await params;
+  const { make, slug, locale } = await params;
 
   // Reserved names (blog, dtc, admin, ...) are never valid `make` values —
   // their own static routes already own that path, so this is unreachable
@@ -49,6 +51,29 @@ export default async function MakeDtcCodePage({ params }: Props) {
     recordSearchHistory(user.id, "lookup", dtc.code, dtc.id).catch(() => {});
   }
 
-  const redacted = filterDtcCodeForAccessLevel(dtc, accessLevelForDtcContent(plan));
-  return <DtcCodeResult dtc={redacted.visible} redaction={redacted} />;
+  const warningText = [dtc.meaning, dtc.symptoms.join(" "), dtc.causes.join(" "), dtc.drive_recommendation ?? ""].join(
+    " ",
+  );
+  const safetyWarnings = detectSafetyWarnings(warningText);
+
+  let localizedDtc = dtc;
+  let showUntranslatedNote = false;
+  if (locale !== "en") {
+    const localization = await getOrCreateLocalizedDtcCode(dtc.id, locale);
+    if (localization.status === "completed") {
+      localizedDtc = applyLocalizedDtcCode(dtc, localization.localized);
+    } else {
+      showUntranslatedNote = true;
+    }
+  }
+
+  const redacted = filterDtcCodeForAccessLevel(localizedDtc, accessLevelForDtcContent(plan));
+  return (
+    <DtcCodeResult
+      dtc={redacted.visible}
+      redaction={redacted}
+      safetyWarnings={safetyWarnings}
+      showUntranslatedNote={showUntranslatedNote}
+    />
+  );
 }
