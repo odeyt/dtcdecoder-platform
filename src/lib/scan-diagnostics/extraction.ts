@@ -46,7 +46,10 @@ function dtcKey(module: string | null, systemName: string | null, code: string, 
 // for this case — a retry after a transient failure never duplicates rows.
 export async function persistExtraction(
   caseId: string,
-  fileId: string,
+  // Null for a photo-upload extraction — several images (several
+  // scan_case_files rows) contributed to one extraction, so there's no
+  // single file to attribute it to. See extract/route.ts.
+  fileId: string | null,
   parserId: string,
   parserVersion: string,
   parsed: ParsedScanReport,
@@ -89,6 +92,7 @@ export async function persistExtraction(
         dtcs_parsed: parsed.extractionQuality.dtcsParsed ?? null,
         extraction_truncated: parsed.extractionQuality.truncated,
         extraction_confidence: parsed.extractionQuality.confidence,
+        image_evidence: parsed.evidence ?? [],
       },
       { onConflict: "case_id" },
     )
@@ -125,6 +129,7 @@ export async function persistExtraction(
           network_relevance: relevance.networkRelevance,
           battery_relevance: relevance.batteryRelevance,
           bus_off_relevance: relevance.busOffRelevance,
+          source_image_index: dtc.sourceImageIndex ?? null,
         };
       })
       .filter((row) => !existingKeys.has(dtcKey(row.module, row.system_name, row.code, row.status)));

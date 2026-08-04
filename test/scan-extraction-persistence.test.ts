@@ -57,6 +57,76 @@ describe("persistExtraction", () => {
 
     expect(fake().dump("scan_dtc_records")).toHaveLength(2);
   });
+
+  it("accepts a null fileId for a photo-upload extraction, where several images (not one file) contributed", async () => {
+    const report = emptyParsedScanReport();
+    report.vin = "1FTFW1ET1EFA00001";
+
+    await persistExtraction("case-1", null, "vision-extraction", "claude-sonnet-5", report);
+
+    const extraction = fake().dump("scan_extractions")[0];
+    expect(extraction.file_id).toBeNull();
+  });
+
+  it("stores image evidence provenance on the extraction row", async () => {
+    const report = emptyParsedScanReport();
+    report.evidence = [
+      { sourceType: "image", sourceName: "vin-plate.jpg", sourceIndex: 0, extractedText: "VIN plate photo" },
+      {
+        sourceType: "image",
+        sourceName: "ecm-dtcs.jpg",
+        sourceIndex: 1,
+        extractedText: "ECM DTC list screen",
+        warnings: ["Third character of one code obscured by glare."],
+      },
+    ];
+
+    await persistExtraction("case-1", null, "vision-extraction", "claude-sonnet-5", report);
+
+    const extraction = fake().dump("scan_extractions")[0];
+    expect(extraction.image_evidence).toEqual(report.evidence);
+  });
+
+  it("defaults image_evidence to an empty array for a text-format extraction with no evidence", async () => {
+    const report = emptyParsedScanReport();
+
+    await persistExtraction("case-1", "file-1", "generic-txt", "1.0.0", report);
+
+    const extraction = fake().dump("scan_extractions")[0];
+    expect(extraction.image_evidence).toEqual([]);
+  });
+
+  it("stores each DTC's sourceImageIndex, preserving which photo it came from", async () => {
+    const report = emptyParsedScanReport();
+    report.dtcCodes = [
+      { module: "ECM", code: "P0300", sourceImageIndex: 1 },
+      { module: "TCM", code: "P0741", sourceImageIndex: 0 },
+    ];
+
+    await persistExtraction("case-1", null, "vision-extraction", "claude-sonnet-5", report);
+
+    const dtcs = fake().dump("scan_dtc_records");
+    expect(dtcs.find((d) => d.code === "P0300")?.source_image_index).toBe(1);
+    expect(dtcs.find((d) => d.code === "P0741")?.source_image_index).toBe(0);
+  });
+
+  it("defaults source_image_index to null for a DTC with no image provenance (text-format extraction)", async () => {
+    const report = emptyParsedScanReport();
+    report.dtcCodes = [{ module: "ECM", code: "P0300" }];
+
+    await persistExtraction("case-1", "file-1", "generic-txt", "1.0.0", report);
+
+    expect(fake().dump("scan_dtc_records")[0].source_image_index).toBeNull();
+  });
+
+  it("preserves an uncertain DTC code character (e.g. a literal '?') without normalizing it", async () => {
+    const report = emptyParsedScanReport();
+    report.dtcCodes = [{ module: "ECM", code: "P0?17", sourceImageIndex: 0 }];
+
+    await persistExtraction("case-1", null, "vision-extraction", "claude-sonnet-5", report);
+
+    expect(fake().dump("scan_dtc_records")[0].code).toBe("P0?17");
+  });
 });
 
 describe("applyExtractionReview", () => {

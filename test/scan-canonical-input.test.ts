@@ -44,6 +44,7 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
         network_relevance: false,
         battery_relevance: false,
         bus_off_relevance: false,
+        source_image_index: null,
       },
     ];
 
@@ -80,6 +81,7 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
         network_relevance: false,
         battery_relevance: false,
         bus_off_relevance: false,
+        source_image_index: null,
       },
     ];
     const input = buildCanonicalDiagnosticInput(baseCase(), null, dtcRecords);
@@ -122,6 +124,7 @@ describe("buildCanonicalDiagnosticInput — missing DTC description (fixture 8)"
       dtcs_parsed: null,
       extraction_truncated: false,
       extraction_confidence: null,
+      image_evidence: [],
     };
     const input = buildCanonicalDiagnosticInput(baseCase(), extraction, []);
     expect(input.vehicle.make).toBe("Ford");

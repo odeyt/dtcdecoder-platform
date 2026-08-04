@@ -58,6 +58,7 @@ const EXTRACTION: ScanExtraction = {
   dtcs_parsed: null,
   extraction_truncated: false,
   extraction_confidence: null,
+  image_evidence: [],
 };
 
 const DTC_RECORDS: ScanDtcRecord[] = [
@@ -77,6 +78,7 @@ const DTC_RECORDS: ScanDtcRecord[] = [
     network_relevance: false,
     battery_relevance: false,
     bus_off_relevance: false,
+    source_image_index: null,
   },
 ];
 

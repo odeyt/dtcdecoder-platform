@@ -19,6 +19,7 @@ function dtc(overrides: Partial<ScanDtcRecord>): ScanDtcRecord {
     network_relevance: false,
     battery_relevance: false,
     bus_off_relevance: false,
+    source_image_index: null,
     ...overrides,
   };
 }

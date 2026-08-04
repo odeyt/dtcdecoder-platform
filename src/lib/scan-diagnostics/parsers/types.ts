@@ -1,4 +1,6 @@
-import type { ScanFileFormat, ScanSystemStatus } from "@/lib/types";
+import type { ScanFileFormat, ScanSystemStatus, ExtractedEvidence } from "@/lib/types";
+
+export type { ExtractedEvidence };
 
 export interface ParsedDtcCode {
   module?: string;
@@ -13,6 +15,10 @@ export interface ParsedDtcCode {
   systemName?: string;
   sourcePage?: number;
   sourceText?: string;
+  // Photo-upload provenance only (undefined for every other format) — the
+  // 0-based index into the case's ordered photo set this code was read
+  // from. See ExtractedEvidence below for the image-level counterpart.
+  sourceImageIndex?: number;
 }
 
 // One detected "system" or "module" section from a multi-system scan
@@ -68,6 +74,10 @@ export interface ParsedScanReport {
   imageOnlyPdf: boolean;
   warnings: string[];
   extractionQuality: ParsedExtractionQuality;
+  // Only populated by the photo-upload vision extraction path — undefined
+  // (never an empty array) for every text-format parser, so "no evidence
+  // field at all" stays a clean signal for "not a photo upload."
+  evidence?: ExtractedEvidence[];
 }
 
 export function emptyParsedScanReport(): ParsedScanReport {
