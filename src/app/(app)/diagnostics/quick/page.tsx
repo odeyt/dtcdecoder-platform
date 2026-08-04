@@ -4,6 +4,7 @@ import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
 import { getAllowedOutputLocales } from "@/lib/i18n/languages";
+import { resolveDefaultReportLanguage } from "@/lib/i18n/ai-language-server";
 import { env } from "@/lib/env";
 import { notFound } from "next/navigation";
 import { QuickDiagnosticForm } from "@/components/QuickDiagnosticForm";
@@ -89,6 +90,10 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
 
   const locales = await getAllowedOutputLocales(plan);
   const languageOptions = locales.map((l) => ({ code: l.locale_code, name: l.english_name }));
+  // Pre-select whatever this account/region/UI already resolves to, rather
+  // than always defaulting the dropdown to English — same resolution used
+  // for the file-upload path's server-side default (ai-language-server.ts).
+  const defaultReportLanguage = await resolveDefaultReportLanguage(user.id, user.email ?? null);
 
   return (
     <div className="container-app px-6 py-16">
@@ -108,6 +113,7 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
               engine: params.engine ?? "",
             }}
             languageOptions={languageOptions}
+            defaultReportLanguage={defaultReportLanguage}
           />
         </div>
       </div>

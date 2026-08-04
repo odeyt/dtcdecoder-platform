@@ -27,6 +27,7 @@ export async function createCase(userId: string, info: CaseInfoInput): Promise<S
       recent_repairs: info.recentRepairs ?? null,
       battery_condition: info.batteryCondition ?? null,
       technician_notes: info.technicianNotes ?? null,
+      report_language: info.reportLanguage ?? "en",
     })
     .select("*")
     .single();

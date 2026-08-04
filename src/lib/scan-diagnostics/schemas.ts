@@ -11,6 +11,7 @@ export const CaseInfoInputSchema = z.object({
   recentRepairs: z.string().trim().max(4000).optional(),
   batteryCondition: z.string().trim().max(500).optional(),
   technicianNotes: z.string().trim().max(4000).optional(),
+  reportLanguage: z.string().trim().max(10).optional(),
 });
 
 export type CaseInfoInput = z.infer<typeof CaseInfoInputSchema>;

@@ -39,9 +39,11 @@ const ANALYZE_STAGES = [
 export function QuickDiagnosticForm({
   prefill,
   languageOptions,
+  defaultReportLanguage,
 }: {
   prefill: Prefill;
   languageOptions: OutputLocaleOption[];
+  defaultReportLanguage: string;
 }) {
   const router = useRouter();
   const [dtcCode, setDtcCode] = useState(prefill.dtcCode);
@@ -55,7 +57,7 @@ export function QuickDiagnosticForm({
   const [freezeFrameNotes, setFreezeFrameNotes] = useState("");
   const [repairHistory, setRepairHistory] = useState("");
   const [scanToolNotes, setScanToolNotes] = useState("");
-  const [reportLanguage, setReportLanguage] = useState("en");
+  const [reportLanguage, setReportLanguage] = useState(defaultReportLanguage);
   const [status, setStatus] = useState<"idle" | "submitting" | "error" | "duplicate_vin">("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState<{ vin: string; existingCases: ExistingVinCase[] } | null>(

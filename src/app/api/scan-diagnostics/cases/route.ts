@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { createCase } from "@/lib/scan-diagnostics/cases";
 import { CaseInfoInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveDefaultReportLanguage } from "@/lib/i18n/ai-language-server";
 
 export async function POST(request: NextRequest) {
   try {
@@ -30,7 +31,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Invalid case information" }, { status: 400 });
     }
 
-    const scanCase = await createCase(user.id, parsed.data);
+    // No client currently sends reportLanguage on this path (unlike the
+    // quick-diagnostic form, which has its own selector) — default it to
+    // whatever this signed-in user's account/region/UI already resolve to,
+    // so an uploaded report doesn't silently stay English just because
+    // nobody thought to use ScanReportLanguageSwitcher after the fact.
+    const reportLanguage =
+      parsed.data.reportLanguage ?? (await resolveDefaultReportLanguage(user.id, user.email ?? null));
+
+    const scanCase = await createCase(user.id, { ...parsed.data, reportLanguage });
     return NextResponse.json({ case: scanCase }, { status: 201 });
   } catch (err) {
     return toSafeErrorResponse(err, "create case");

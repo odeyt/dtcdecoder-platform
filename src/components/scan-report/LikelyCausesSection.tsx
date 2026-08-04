@@ -80,7 +80,7 @@ export function LikelyCausesSection({ caseId, causes, initialStatus }: LikelyCau
           <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+                className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
                 style={{
                   borderColor: i === 0 ? "var(--accent-red)" : "var(--border-subtle)",
                   color: i === 0 ? "var(--accent-red)" : "var(--text-muted)",

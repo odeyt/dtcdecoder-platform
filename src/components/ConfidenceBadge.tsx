@@ -21,7 +21,7 @@ export function ConfidenceBadge({ level, label: labelOverride }: { level?: strin
   return (
     <span
       aria-label={`Diagnostic confidence: ${label}`}
-      className="rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+      className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
       style={{
         borderColor: isEstablished ? CONFIDENCE_COLOR[level as string] : "var(--border-subtle)",
         color: isEstablished ? CONFIDENCE_COLOR[level as string] : "var(--text-muted)",
