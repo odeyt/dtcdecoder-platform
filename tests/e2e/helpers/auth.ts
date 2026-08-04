@@ -14,11 +14,31 @@ export async function signInWithPassword(page: Page, email: string, password: st
   await page.getByPlaceholder("you@example.com").fill(email);
   await page.getByPlaceholder("Password").fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  // Not "Sign Out" visibility — SiteNav.tsx only renders that button inside
-  // the collapsed mobile nav panel below the `lg` breakpoint, so it's never
-  // visible on a mobile viewport without first opening the hamburger menu.
-  // The post-sign-in redirect to /account is viewport-independent.
-  await expect(page.getByRole("heading", { name: "My Account" })).toBeVisible({ timeout: 15_000 });
+  // Not "Sign Out" visibility (hidden on mobile behind SiteNav.tsx's
+  // collapsed hamburger panel) and not the "My Account" heading text either
+  // (an account whose saved interface_locale isn't English — e.g. a Region
+  // Profile test that just switched it to Thai — renders that heading in
+  // its own language, not literally "My Account"). The post-sign-in
+  // redirect to /account is both viewport- and locale-independent.
+  // A predicate on url.pathname, not a regex against the full URL string:
+  // a regex here is easy to get subtly wrong in both directions — unanchored,
+  // "/account/login" (where this flow starts) itself satisfies "contains
+  // /account", so waitForURL resolves before sign-in even happens; anchored
+  // with `^`, it stops matching the full "http://host/account" URL
+  // entirely, since that doesn't start with "/". Comparing the parsed
+  // pathname sidesteps both.
+  await page.waitForURL((url) => url.pathname === "/account" || url.pathname === "/account/", {
+    timeout: 15_000,
+  });
+  // The client-side redirect can land before the session cookie has fully
+  // propagated to server-side reads — confirmed via a real repro where the
+  // header already showed "Sign Out" and the signed-in email, but the
+  // server-rendered page body still showed the sign-in form. One reload
+  // gives the next request a cookie that's actually settled.
+  if (await page.getByPlaceholder("you@example.com").isVisible().catch(() => false)) {
+    await page.reload();
+  }
+  await expect(page.getByPlaceholder("you@example.com")).not.toBeVisible({ timeout: 15_000 });
 }
 
 export async function signOut(page: Page): Promise<void> {

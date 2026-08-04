@@ -359,6 +359,9 @@
     "regionSection": "Región y visualización",
     "region": "Región",
     "regionPlaceholder": "p. ej. US, MX, TH",
+    "regionAppliesDefaults": "Elegir una región completa valores predeterminados a continuación: idioma, moneda, zona horaria y formato de fecha. Aún puedes cambiar cualquiera de ellos individualmente después.",
+    "timezone": "Zona horaria",
+    "timezonePlaceholder": "p. ej. Asia/Bangkok",
     "measurementSystem": "Sistema de medidas",
     "metric": "Métrico",
     "imperial": "Imperial",
@@ -668,6 +671,11 @@
     "severityCritical": "Crítico",
     "ruleSeverityBlock": "Bloqueo",
     "ruleSeverityWarn": "Advertencia"
+  },
+  "regionBanner": {
+    "suggestion": "Parece que estás en {region}. ¿Te gustaría cambiar?",
+    "switchButton": "Cambiar a {region}",
+    "dismissButton": "No, gracias"
   },
   "meta": {
     "homeTitle": "DTC Decoder — Plataforma Profesional de Diagnóstico Automotriz",

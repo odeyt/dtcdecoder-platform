@@ -161,6 +161,9 @@
     "regionSection": "តំបន់ និងការបង្ហាញ",
     "region": "តំបន់",
     "regionPlaceholder": "ឧ. US, MX, TH",
+    "regionAppliesDefaults": "ការជ្រើសរើសតំបន់មួយនឹងបំពេញតម្លៃលំនាំដើមសមស្របខាងក្រោម — ភាសា រូបិយប័ណ្ណ តំបន់ពេលវេលា និងទម្រង់កាលបរិច្ឆេទ។ អ្នកនៅតែអាចផ្លាស់ប្តូរនីមួយៗដោយឡែកនៅពេលក្រោយ។",
+    "timezone": "តំបន់ពេលវេលា",
+    "timezonePlaceholder": "ឧ. Asia/Bangkok",
     "measurementSystem": "ប្រព័ន្ធរង្វាស់",
     "metric": "ម៉ែត្រិក",
     "imperial": "អាំងភេរីយ៉ាល",
@@ -399,6 +402,11 @@
     "severityCritical": "ធ្ងន់ធ្ងរ",
     "ruleSeverityBlock": "ទប់ស្កាត់",
     "ruleSeverityWarn": "ការព្រមាន"
+  },
+  "regionBanner": {
+    "suggestion": "ហាក់ដូចជាអ្នកនៅ {region}។ តើអ្នកចង់ប្តូរទេ?",
+    "switchButton": "ប្តូរទៅ {region}",
+    "dismissButton": "ទេ អរគុណ"
   },
   "meta": {
     "homeTitle": "DTC Decoder — បញ្ញាវិនិច្ឆ័យរថយន្តដោយ AI",

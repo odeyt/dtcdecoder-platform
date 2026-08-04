@@ -1,12 +1,24 @@
 "use client";
 
-import { useActionState } from "react";
+import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { savePreferencesAction } from "@/app/(app)/account/actions";
 import { UpgradeCard } from "@/components/UpgradeCard";
 import { PAID_PLANS } from "@/lib/pricing";
+import { listRegionProfiles, getRegionProfile } from "@/lib/region/region-registry";
+import type { RegionProfile } from "@/lib/region/region-types";
 import type { Currency, Language, SubscriptionPlan, UserPreferences } from "@/lib/types";
 import type { DisplayPriceEstimate } from "@/lib/currency";
+
+// RegionProfile.dateFormat uses slash/uppercase labels ("DD/MM/YYYY"); this
+// form's existing <select> uses lowercase-dash values to match what's
+// already stored in user_preferences.date_format. Converts one region
+// default into the other — doesn't touch the DB's existing value format.
+function dateFormatSelectValue(profileDateFormat: string): string {
+  if (profileDateFormat === "DD/MM/YYYY") return "dd-mm-yyyy";
+  if (profileDateFormat === "MM/DD/YYYY") return "mm-dd-yyyy";
+  return "yyyy-mm-dd";
+}
 
 interface Props {
   plan: SubscriptionPlan;
@@ -42,6 +54,42 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
 
   const disabled = !isPaid || pending;
 
+  // Region Profile System: picking a region pre-fills these fields with
+  // that country's sensible defaults (docs/REGION_PROFILE_ARCHITECTURE.md).
+  // Controlled, not locked — every field below stays independently editable
+  // afterward, and the region selector itself is just one more field this
+  // form saves (region_code), not a lock on the others.
+  const [regionCode, setRegionCode] = useState(preferences.region_code ?? "");
+  const [interfaceLocale, setInterfaceLocale] = useState(preferences.interface_locale);
+  const [preferredCurrency, setPreferredCurrency] = useState(preferences.preferred_currency ?? "USD");
+  const [measurementSystem, setMeasurementSystem] = useState(preferences.measurement_system);
+  const [dateFormat, setDateFormat] = useState(preferences.date_format ?? "yyyy-mm-dd");
+  const [timezone, setTimezone] = useState(preferences.timezone ?? "");
+
+  function applyRegionDefaults(profile: RegionProfile) {
+    // Only apply a default when the target value is actually usable today —
+    // e.g. Thailand's default currency (THB) may not be enabled in the
+    // admin currency registry yet, in which case the currency field is left
+    // exactly as it was rather than silently saving a value the server
+    // would reject. Same honest-fallback principle as the rest of this app.
+    if (interfaceLocaleOptions.some((l) => l.locale_code === profile.defaultLanguage)) {
+      setInterfaceLocale(profile.defaultLanguage);
+    }
+    if (enabledCurrencies.some((c) => c.code === profile.currency)) {
+      setPreferredCurrency(profile.currency);
+    }
+    setMeasurementSystem(profile.measurementSystem);
+    setDateFormat(dateFormatSelectValue(profile.dateFormat));
+    setTimezone(profile.timezone);
+  }
+
+  function handleRegionChange(nextRegionCode: string) {
+    setRegionCode(nextRegionCode);
+    if (nextRegionCode) {
+      applyRegionDefaults(getRegionProfile(nextRegionCode));
+    }
+  }
+
   return (
     <form action={formAction} className="space-y-8">
       {!isPaid && <UpgradeCard reason={t("upgradeReason")} />}
@@ -53,7 +101,8 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             <select
               id="interfaceLocale"
               name="interfaceLocale"
-              defaultValue={preferences.interface_locale}
+              value={interfaceLocale}
+              onChange={(e) => setInterfaceLocale(e.target.value)}
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
@@ -129,15 +178,35 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
 
       <section className="glass-panel rounded-[var(--radius-xl)] p-6">
         <h2 className="text-lg font-semibold text-[var(--text-primary)]">{t("regionSection")}</h2>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">{t("regionAppliesDefaults")}</p>
         <div className="mt-4 grid gap-4 sm:grid-cols-2">
           <Field label={t("region")} htmlFor="regionCode">
-            <input
+            <select
               id="regionCode"
               name="regionCode"
-              type="text"
-              defaultValue={preferences.region_code ?? ""}
+              value={regionCode}
+              onChange={(e) => handleRegionChange(e.target.value)}
               disabled={disabled}
-              placeholder={t("regionPlaceholder")}
+              className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
+            >
+              <option value="">{t("none")}</option>
+              {listRegionProfiles().map((profile) => (
+                <option key={profile.id} value={profile.id}>
+                  {profile.name}
+                </option>
+              ))}
+            </select>
+          </Field>
+
+          <Field label={t("timezone")} htmlFor="timezone">
+            <input
+              id="timezone"
+              name="timezone"
+              type="text"
+              value={timezone}
+              onChange={(e) => setTimezone(e.target.value)}
+              disabled={disabled}
+              placeholder={t("timezonePlaceholder")}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)] disabled:opacity-60"
             />
           </Field>
@@ -146,7 +215,8 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             <select
               id="measurementSystem"
               name="measurementSystem"
-              defaultValue={preferences.measurement_system}
+              value={measurementSystem}
+              onChange={(e) => setMeasurementSystem(e.target.value as UserPreferences["measurement_system"])}
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
@@ -185,7 +255,8 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             <select
               id="dateFormat"
               name="dateFormat"
-              defaultValue={preferences.date_format ?? "yyyy-mm-dd"}
+              value={dateFormat}
+              onChange={(e) => setDateFormat(e.target.value)}
               disabled={disabled}
               className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
@@ -204,7 +275,8 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             <select
               id="preferredCurrency"
               name="preferredCurrency"
-              defaultValue={preferences.preferred_currency ?? "USD"}
+              value={preferredCurrency}
+              onChange={(e) => setPreferredCurrency(e.target.value)}
               disabled={disabled}
               className="min-h-11 w-full max-w-xs rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] disabled:opacity-60"
             >
@@ -216,7 +288,13 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
             </select>
           </Field>
           <p className="mt-3 text-xs text-[var(--text-muted)]">{t("currencyDisclaimer")}</p>
-          {preferences.preferred_currency && preferences.preferred_currency !== "USD" && (
+          {/* priceEstimate is computed server-side for the currency saved
+              before this render — a pre-existing characteristic, not
+              something the region selector introduces. Selecting a new
+              currency here updates the dropdown and this line's
+              visibility immediately; the estimate amount itself reflects
+              the new currency after Save reloads the page. */}
+          {preferredCurrency && preferredCurrency !== "USD" && (
             <p className="mt-2 text-xs text-[var(--text-secondary)]">
               {priceEstimate.isEstimate
                 ? t("exampleEstimateReal", {
