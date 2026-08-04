@@ -1,6 +1,20 @@
 import { verifyTokenPreservation } from "@/lib/ai/token-preservation";
 import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 
+// Every JSON-array translation prompt in this app instructs the model to
+// return ONLY the array, no markdown fences — models don't reliably comply
+// (confirmed live: Claude wrapped a DTC translation response in ```json
+// fences despite the instruction, which broke every caller's JSON.parse).
+// Strip a fence that wraps the ENTIRE response defensively rather than
+// trust prompt compliance; only matches a fence spanning the whole trimmed
+// string, so a legitimate ``` appearing inside translated prose content is
+// never touched.
+function stripMarkdownJsonFence(text: string): string {
+  const trimmed = text.trim();
+  const match = trimmed.match(/^```(?:json)?\s*\n?([\s\S]*?)\n?```$/);
+  return match ? match[1].trim() : trimmed;
+}
+
 // Provider abstraction for translating a CANONICAL English diagnostic report
 // into a target locale. This is the non-streaming, stored-report path (distinct
 // from the streaming AI-assistant chat). English is the source of truth: the
@@ -116,11 +130,12 @@ export class AnthropicTranslationProvider implements TranslationProvider {
 
     let translated: string;
     try {
-      translated = await this.translate({
+      const raw = await this.translate({
         englishText: canonical,
         targetLocale: input.targetLocale,
         glossaryVersion: input.glossaryVersion,
       });
+      translated = stripMarkdownJsonFence(raw);
     } catch {
       // Provider failure → English canonical, marked failed. Caller must NOT
       // consume paid translation quota for this outcome.

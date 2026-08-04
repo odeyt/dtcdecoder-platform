@@ -70,6 +70,40 @@ describe("AnthropicTranslationProvider", () => {
     expect(r.missingTokens).toContain("P0420");
   });
 
+  it("strips a markdown code fence wrapping the whole response before validating/returning it", async () => {
+    // Real regression: Claude wrapped a translated response in ```json
+    // fences despite the prompt explicitly saying not to — every caller's
+    // JSON.parse(result.text) then failed. The fence must be stripped
+    // before token-preservation validation and before the text is returned,
+    // not left for each of the three callers to defend against separately.
+    const translate: ReportTranslateStep = async () =>
+      "```json\nP0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.\n```";
+    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const r = await provider.translateDiagnosticReport(makeInput("es"));
+    expect(r.status).toBe("completed");
+    expect(r.text).not.toContain("```");
+    expect(r.text.startsWith("P0420")).toBe(true);
+  });
+
+  it("leaves a response with no fence untouched", async () => {
+    const translate: ReportTranslateStep = async () =>
+      "P0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.";
+    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const r = await provider.translateDiagnosticReport(makeInput("es"));
+    expect(r.status).toBe("completed");
+    expect(r.text).toBe(
+      "P0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.",
+    );
+  });
+
+  it("does not strip a ``` that appears inside the translated content itself, only a fence wrapping the whole response", async () => {
+    const inline = "P0420: código ```especial``` en Bank 1 Sensor 2. PCM 12 V.";
+    const translate: ReportTranslateStep = async () => inline;
+    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const r = await provider.translateDiagnosticReport(makeInput("es"));
+    expect(r.text).toBe(inline);
+  });
+
   it("falls back to English (status failed) when the provider throws", async () => {
     const translate: ReportTranslateStep = async () => {
       throw new Error("timeout");
