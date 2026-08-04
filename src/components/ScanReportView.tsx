@@ -282,7 +282,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                       <td className="py-2 pr-4 text-[var(--text-primary)]">{row.systemName}</td>
                       <td className="py-2 pr-4">
                         <span
-                          className="rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                          className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
                           style={{
                             borderColor: row.status === "faulted" ? "var(--accent-red)" : "var(--border-subtle)",
                             color: row.status === "faulted" ? "var(--accent-red)" : "var(--text-muted)",
@@ -318,7 +318,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                 <div key={pattern.patternType} className="glass-panel rounded-[var(--radius-lg)] p-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className="rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                      className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
                       style={{
                         borderColor: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
                         color: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
