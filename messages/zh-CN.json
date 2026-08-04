@@ -250,6 +250,7 @@
   "scanReport": {
     "eyebrow": "专业诊断报告",
     "preparedBadge": "由 DTC Technician™ 编制 — 并非原厂（OEM）服务信息",
+    "disclosure": "DTC Technician 提供软件辅助的诊断指导，并非现场技术人员。请结合适当的维修服务资料和专业判断，自行确认测试步骤和维修决定。",
     "freePreviewBadge": "免费预览",
     "addNote": "添加备注",
     "markComplete": "标记为已完成",

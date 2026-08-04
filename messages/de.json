@@ -250,6 +250,7 @@
   "scanReport": {
     "eyebrow": "Professioneller Diagnosebericht",
     "preparedBadge": "Erstellt von DTC Technician™ — keine OEM-Serviceinformation",
+    "disclosure": "DTC Technician bietet softwaregestützte Diagnoseunterstützung und ist kein Techniker vor Ort. Bestätigen Sie Prüfverfahren und Reparaturentscheidungen anhand geeigneter Serviceinformationen und fachlichen Urteilsvermögens.",
     "freePreviewBadge": "Kostenlose Vorschau",
     "addNote": "Notiz hinzufügen",
     "markComplete": "Als abgeschlossen markieren",

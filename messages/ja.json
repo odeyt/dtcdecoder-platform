@@ -250,6 +250,7 @@
   "scanReport": {
     "eyebrow": "プロフェッショナル診断レポート",
     "preparedBadge": "DTC Technician™ 作成 — メーカー純正のサービス情報ではありません",
+    "disclosure": "DTC Technicianはソフトウェア支援による診断ガイダンスを提供するものであり、現地に赴く技術者ではありません。適切なサービス情報と専門的判断に基づき、テスト手順および修理の判断を確認してください。",
     "freePreviewBadge": "無料プレビュー",
     "addNote": "メモを追加",
     "markComplete": "完了にする",

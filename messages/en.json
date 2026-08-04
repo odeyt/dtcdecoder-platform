@@ -519,6 +519,7 @@
   "scanReport": {
     "eyebrow": "Professional Diagnostic Report",
     "preparedBadge": "Prepared by DTC Technician™ — not OEM service information",
+    "disclosure": "DTC Technician provides software-assisted diagnostic guidance and is not an in-person technician. Confirm test procedures and repair decisions using appropriate service information and professional judgment.",
     "freePreviewBadge": "Free preview",
     "addNote": "Add note",
     "markComplete": "Mark complete",

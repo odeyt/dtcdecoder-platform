@@ -519,6 +519,7 @@
   "scanReport": {
     "eyebrow": "Informe de Diagnóstico Profesional",
     "preparedBadge": "Preparado por DTC Technician™ — no es información de servicio OEM",
+    "disclosure": "DTC Technician ofrece orientación diagnóstica asistida por software y no es un técnico presencial. Confirme los procedimientos de prueba y las decisiones de reparación utilizando la información de servicio adecuada y su criterio profesional.",
     "freePreviewBadge": "Vista previa gratuita",
     "addNote": "Agregar nota",
     "markComplete": "Marcar como completado",

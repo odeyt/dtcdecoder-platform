@@ -27,7 +27,6 @@ import type {
   ScanReportCauseStatus,
   ScanReportTestProgress,
 } from "@/lib/types";
-import { BRAND_DISCLOSURE } from "@/lib/branding/terminology";
 
 interface SafetyFinding {
   ruleId: string;
@@ -143,7 +142,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               </span>
             )}
           </div>
-          <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">{BRAND_DISCLOSURE}</p>
+          <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">{t("disclosure")}</p>
 
           {isFull && (
             <div className="mt-4 flex flex-wrap items-center gap-3">

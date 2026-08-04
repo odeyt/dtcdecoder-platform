@@ -250,6 +250,7 @@
   "scanReport": {
     "eyebrow": "Báo cáo Chẩn đoán Chuyên nghiệp",
     "preparedBadge": "Được chuẩn bị bởi DTC Technician™ — không phải thông tin dịch vụ chính hãng OEM",
+    "disclosure": "DTC Technician cung cấp hướng dẫn chẩn đoán được hỗ trợ bởi phần mềm và không phải là kỹ thuật viên trực tiếp. Vui lòng xác nhận quy trình kiểm tra và quyết định sửa chữa bằng cách sử dụng thông tin dịch vụ phù hợp và đánh giá chuyên môn.",
     "freePreviewBadge": "Xem trước miễn phí",
     "addNote": "Thêm ghi chú",
     "markComplete": "Đánh dấu hoàn tất",

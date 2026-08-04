@@ -250,6 +250,7 @@
   "scanReport": {
     "eyebrow": "전문 진단 보고서",
     "preparedBadge": "DTC Technician™ 작성 — OEM 서비스 정보가 아닙니다",
+    "disclosure": "DTC Technician은 소프트웨어 기반의 진단 안내를 제공하며, 현장 기술자가 아닙니다. 적절한 서비스 정보와 전문가의 판단을 활용하여 테스트 절차와 수리 결정을 확인하십시오.",
     "freePreviewBadge": "무료 미리보기",
     "addNote": "메모 추가",
     "markComplete": "완료로 표시",
