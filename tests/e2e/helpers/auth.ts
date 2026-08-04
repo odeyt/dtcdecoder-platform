@@ -14,11 +14,24 @@ export async function signInWithPassword(page: Page, email: string, password: st
   await page.getByPlaceholder("you@example.com").fill(email);
   await page.getByPlaceholder("Password").fill(password);
   await page.getByRole("button", { name: "Sign in", exact: true }).click();
-  await expect(page.getByRole("button", { name: "Sign Out" })).toBeVisible({ timeout: 15_000 });
+  // Not "Sign Out" visibility — SiteNav.tsx only renders that button inside
+  // the collapsed mobile nav panel below the `lg` breakpoint, so it's never
+  // visible on a mobile viewport without first opening the hamburger menu.
+  // The post-sign-in redirect to /account is viewport-independent.
+  await expect(page.getByRole("heading", { name: "My Account" })).toBeVisible({ timeout: 15_000 });
 }
 
 export async function signOut(page: Page): Promise<void> {
-  const signOutButton = page.getByRole("button", { name: "Sign Out" });
+  let signOutButton = page.getByRole("button", { name: "Sign Out" });
+  if (!(await signOutButton.isVisible().catch(() => false))) {
+    // Mobile viewport (below SiteNav.tsx's `lg` breakpoint) — Sign Out only
+    // renders inside the collapsed hamburger panel, so open it first.
+    const openMenu = page.getByRole("button", { name: "Open menu" });
+    if (await openMenu.isVisible().catch(() => false)) {
+      await openMenu.click();
+      signOutButton = page.getByRole("button", { name: "Sign Out" });
+    }
+  }
   if (await signOutButton.isVisible().catch(() => false)) {
     await signOutButton.click();
   }
