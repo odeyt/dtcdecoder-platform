@@ -269,7 +269,22 @@
     "save": "Salvar preferências",
     "saving": "Salvando…",
     "saved": "Preferências salvas.",
-    "upgradeReason": "As preferências de idioma, relatório de IA e moeda são salvas nos planos Pro e Workshop. Contas gratuitas ainda podem trocar o idioma da interface temporariamente em qualquer página."
+    "upgradeReason": "As preferências de idioma, relatório de IA e moeda são salvas nos planos Pro e Workshop. Contas gratuitas ainda podem trocar o idioma da interface temporariamente em qualquer página.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "Faça login para salvar as preferências.",
+    "errorUpgradeLanguagePrefs": "Faça upgrade para Pro ou Workshop para salvar as preferências de idioma.",
+    "errorInvalidSubmission": "Preferências enviadas inválidas.",
+    "errorInterfaceLocaleUnavailable": "Esse idioma de interface não está disponível.",
+    "errorRegionUnrecognized": "Essa região não é reconhecida.",
+    "errorTimezoneUnrecognized": "Esse fuso horário não é reconhecido.",
+    "errorUpgradeAiReportLocale": "Faça upgrade para Pro ou Workshop para salvar um idioma de relatório com IA.",
+    "errorAiReportLocaleUnavailable": "Esse idioma de relatório com IA ainda não está disponível.",
+    "errorUpgradeSecondaryLocale": "Faça upgrade para Pro ou Workshop para definir um idioma de relatório secundário.",
+    "errorSecondaryLocaleUnavailable": "Esse idioma secundário ainda não está disponível.",
+    "errorReportModeNotIncluded": "Seu plano não inclui esse modo de relatório.",
+    "errorUpgradeCurrency": "Faça upgrade para Pro ou Workshop para definir uma moeda preferida.",
+    "errorCurrencyUnavailable": "Essa moeda ainda não está disponível.",
+    "errorSaveFailed": "Não foi possível salvar as preferências. Tente novamente."
   },
   "dtcResult": {
     "generic": "Genérico",

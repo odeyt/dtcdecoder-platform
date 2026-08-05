@@ -269,7 +269,22 @@
     "save": "설정 저장",
     "saving": "저장 중…",
     "saved": "설정이 저장되었습니다.",
-    "upgradeReason": "언어, AI 리포트, 통화 설정은 Pro 및 Workshop 요금제에 저장됩니다. 무료 계정도 모든 페이지에서 인터페이스 언어를 일시적으로 전환할 수 있습니다."
+    "upgradeReason": "언어, AI 리포트, 통화 설정은 Pro 및 Workshop 요금제에 저장됩니다. 무료 계정도 모든 페이지에서 인터페이스 언어를 일시적으로 전환할 수 있습니다.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "설정을 저장하려면 로그인하세요.",
+    "errorUpgradeLanguagePrefs": "언어 설정을 저장하려면 Pro Technician 또는 Workshop으로 업그레이드하세요.",
+    "errorInvalidSubmission": "제출된 설정이 유효하지 않습니다.",
+    "errorInterfaceLocaleUnavailable": "해당 인터페이스 언어는 사용할 수 없습니다.",
+    "errorRegionUnrecognized": "해당 지역을 인식할 수 없습니다.",
+    "errorTimezoneUnrecognized": "해당 시간대를 인식할 수 없습니다.",
+    "errorUpgradeAiReportLocale": "AI 리포트 언어를 저장하려면 Pro Technician 또는 Workshop으로 업그레이드하세요.",
+    "errorAiReportLocaleUnavailable": "해당 AI 리포트 언어는 아직 사용할 수 없습니다.",
+    "errorUpgradeSecondaryLocale": "보조 리포트 언어를 설정하려면 Pro Technician 또는 Workshop으로 업그레이드하세요.",
+    "errorSecondaryLocaleUnavailable": "해당 보조 언어는 아직 사용할 수 없습니다.",
+    "errorReportModeNotIncluded": "회원님의 요금제에는 해당 리포트 모드가 포함되어 있지 않습니다.",
+    "errorUpgradeCurrency": "선호 통화를 설정하려면 Pro Technician 또는 Workshop으로 업그레이드하세요.",
+    "errorCurrencyUnavailable": "해당 통화는 아직 사용할 수 없습니다.",
+    "errorSaveFailed": "설정을 저장하지 못했습니다. 다시 시도해 주세요."
   },
   "dtcResult": {
     "generic": "일반",

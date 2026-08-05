@@ -269,7 +269,22 @@
     "save": "Enregistrer les préférences",
     "saving": "Enregistrement…",
     "saved": "Préférences enregistrées.",
-    "upgradeReason": "Les préférences de langue, de rapport IA et de devise sont enregistrées pour les forfaits Pro et Atelier. Les comptes gratuits peuvent tout de même changer temporairement la langue d'interface sur n'importe quelle page."
+    "upgradeReason": "Les préférences de langue, de rapport IA et de devise sont enregistrées pour les forfaits Pro et Atelier. Les comptes gratuits peuvent tout de même changer temporairement la langue d'interface sur n'importe quelle page.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "Connectez-vous pour enregistrer les préférences.",
+    "errorUpgradeLanguagePrefs": "Passez à Pro ou Workshop pour enregistrer les préférences de langue.",
+    "errorInvalidSubmission": "Préférences soumises non valides.",
+    "errorInterfaceLocaleUnavailable": "Cette langue d'interface n'est pas disponible.",
+    "errorRegionUnrecognized": "Cette région n'est pas reconnue.",
+    "errorTimezoneUnrecognized": "Ce fuseau horaire n'est pas reconnu.",
+    "errorUpgradeAiReportLocale": "Passez à Pro ou Workshop pour enregistrer une langue de rapport IA.",
+    "errorAiReportLocaleUnavailable": "Cette langue de rapport IA n'est pas encore disponible.",
+    "errorUpgradeSecondaryLocale": "Passez à Pro ou Workshop pour définir une langue de rapport secondaire.",
+    "errorSecondaryLocaleUnavailable": "Cette langue secondaire n'est pas encore disponible.",
+    "errorReportModeNotIncluded": "Votre forfait n'inclut pas ce mode de rapport.",
+    "errorUpgradeCurrency": "Passez à Pro ou Workshop pour définir une devise préférée.",
+    "errorCurrencyUnavailable": "Cette devise n'est pas encore disponible.",
+    "errorSaveFailed": "Impossible d'enregistrer les préférences. Réessayez."
   },
   "dtcResult": {
     "generic": "Générique",

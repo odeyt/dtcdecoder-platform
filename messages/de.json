@@ -269,7 +269,22 @@
     "save": "Einstellungen speichern",
     "saving": "Wird gespeichert…",
     "saved": "Einstellungen gespeichert.",
-    "upgradeReason": "Sprach-, KI-Bericht- und Währungseinstellungen werden für die Tarife Pro und Workshop gespeichert. Kostenlose Konten können die Oberflächensprache auf jeder Seite dennoch vorübergehend wechseln."
+    "upgradeReason": "Sprach-, KI-Bericht- und Währungseinstellungen werden für die Tarife Pro und Workshop gespeichert. Kostenlose Konten können die Oberflächensprache auf jeder Seite dennoch vorübergehend wechseln.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "Melde dich an, um Einstellungen zu speichern.",
+    "errorUpgradeLanguagePrefs": "Upgrade auf Pro oder Workshop, um Spracheinstellungen zu speichern.",
+    "errorInvalidSubmission": "Ungültige Einstellungen übermittelt.",
+    "errorInterfaceLocaleUnavailable": "Diese Oberflächensprache ist nicht verfügbar.",
+    "errorRegionUnrecognized": "Diese Region wurde nicht erkannt.",
+    "errorTimezoneUnrecognized": "Diese Zeitzone wurde nicht erkannt.",
+    "errorUpgradeAiReportLocale": "Upgrade auf Pro oder Workshop, um eine KI-Berichtssprache zu speichern.",
+    "errorAiReportLocaleUnavailable": "Diese KI-Berichtssprache ist noch nicht verfügbar.",
+    "errorUpgradeSecondaryLocale": "Upgrade auf Pro oder Workshop, um eine zweite Berichtssprache festzulegen.",
+    "errorSecondaryLocaleUnavailable": "Diese zweite Sprache ist noch nicht verfügbar.",
+    "errorReportModeNotIncluded": "Dieser Berichtsmodus ist in deinem Tarif nicht enthalten.",
+    "errorUpgradeCurrency": "Upgrade auf Pro oder Workshop, um eine bevorzugte Währung festzulegen.",
+    "errorCurrencyUnavailable": "Diese Währung ist noch nicht verfügbar.",
+    "errorSaveFailed": "Einstellungen konnten nicht gespeichert werden. Versuche es erneut."
   },
   "dtcResult": {
     "generic": "Generisch",

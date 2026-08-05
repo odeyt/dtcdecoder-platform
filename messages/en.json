@@ -467,7 +467,22 @@
     "save": "Save preferences",
     "saving": "Saving…",
     "saved": "Preferences saved.",
-    "upgradeReason": "Language, diagnostic report, and currency preferences are saved for Pro and Workshop plans. Free accounts can still switch the interface language temporarily on any page."
+    "upgradeReason": "Language, diagnostic report, and currency preferences are saved for Pro and Workshop plans. Free accounts can still switch the interface language temporarily on any page.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "Sign in to save preferences.",
+    "errorUpgradeLanguagePrefs": "Upgrade to Pro or Workshop to save language preferences.",
+    "errorInvalidSubmission": "Invalid preferences submitted.",
+    "errorInterfaceLocaleUnavailable": "That interface language isn't available.",
+    "errorRegionUnrecognized": "That region isn't recognized.",
+    "errorTimezoneUnrecognized": "That timezone isn't recognized.",
+    "errorUpgradeAiReportLocale": "Upgrade to Pro or Workshop to save an AI report language.",
+    "errorAiReportLocaleUnavailable": "That AI report language isn't available yet.",
+    "errorUpgradeSecondaryLocale": "Upgrade to Pro or Workshop to set a secondary report language.",
+    "errorSecondaryLocaleUnavailable": "That secondary language isn't available yet.",
+    "errorReportModeNotIncluded": "Your plan doesn't include that report mode.",
+    "errorUpgradeCurrency": "Upgrade to Pro or Workshop to set a preferred currency.",
+    "errorCurrencyUnavailable": "That currency isn't available yet.",
+    "errorSaveFailed": "Failed to save preferences. Try again."
   },
   "dtcResult": {
     "generic": "Generic",

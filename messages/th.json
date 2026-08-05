@@ -269,7 +269,22 @@
     "save": "บันทึกการตั้งค่า",
     "saving": "กำลังบันทึก…",
     "saved": "บันทึกการตั้งค่าแล้ว",
-    "upgradeReason": "การตั้งค่าภาษา รายงาน AI และสกุลเงินจะถูกบันทึกสำหรับแพ็กเกจ Pro และ Workshop บัญชีฟรียังสามารถสลับภาษาอินเทอร์เฟซชั่วคราวได้ในทุกหน้า"
+    "upgradeReason": "การตั้งค่าภาษา รายงาน AI และสกุลเงินจะถูกบันทึกสำหรับแพ็กเกจ Pro และ Workshop บัญชีฟรียังสามารถสลับภาษาอินเทอร์เฟซชั่วคราวได้ในทุกหน้า",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "เข้าสู่ระบบเพื่อบันทึกการตั้งค่า",
+    "errorUpgradeLanguagePrefs": "อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อบันทึกการตั้งค่าภาษา",
+    "errorInvalidSubmission": "การตั้งค่าที่ส่งมาไม่ถูกต้อง",
+    "errorInterfaceLocaleUnavailable": "ภาษาส่วนติดต่อผู้ใช้นั้นไม่พร้อมใช้งาน",
+    "errorRegionUnrecognized": "ไม่รู้จักภูมิภาคนั้น",
+    "errorTimezoneUnrecognized": "ไม่รู้จักเขตเวลานั้น",
+    "errorUpgradeAiReportLocale": "อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อบันทึกภาษารายงาน AI",
+    "errorAiReportLocaleUnavailable": "ภาษารายงาน AI นั้นยังไม่พร้อมใช้งาน",
+    "errorUpgradeSecondaryLocale": "อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อกำหนดภาษารายงานที่สอง",
+    "errorSecondaryLocaleUnavailable": "ภาษาที่สองนั้นยังไม่พร้อมใช้งาน",
+    "errorReportModeNotIncluded": "แพ็กเกจของคุณไม่รวมโหมดรายงานนั้น",
+    "errorUpgradeCurrency": "อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อกำหนดสกุลเงินที่ต้องการ",
+    "errorCurrencyUnavailable": "สกุลเงินนั้นยังไม่พร้อมใช้งาน",
+    "errorSaveFailed": "ไม่สามารถบันทึกการตั้งค่าได้ กรุณาลองใหม่อีกครั้ง"
   },
   "dtcResult": {
     "generic": "ทั่วไป",

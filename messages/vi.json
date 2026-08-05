@@ -269,7 +269,22 @@
     "save": "Lưu tùy chọn",
     "saving": "Đang lưu…",
     "saved": "Đã lưu tùy chọn.",
-    "upgradeReason": "Tùy chọn ngôn ngữ, báo cáo AI và tiền tệ được lưu cho gói Pro và Workshop. Tài khoản miễn phí vẫn có thể tạm thời đổi ngôn ngữ giao diện trên bất kỳ trang nào."
+    "upgradeReason": "Tùy chọn ngôn ngữ, báo cáo AI và tiền tệ được lưu cho gói Pro và Workshop. Tài khoản miễn phí vẫn có thể tạm thời đổi ngôn ngữ giao diện trên bất kỳ trang nào.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "Đăng nhập để lưu tùy chọn.",
+    "errorUpgradeLanguagePrefs": "Nâng cấp lên Pro Technician hoặc Workshop để lưu tùy chọn ngôn ngữ.",
+    "errorInvalidSubmission": "Tùy chọn đã gửi không hợp lệ.",
+    "errorInterfaceLocaleUnavailable": "Ngôn ngữ giao diện đó không khả dụng.",
+    "errorRegionUnrecognized": "Khu vực đó không được nhận dạng.",
+    "errorTimezoneUnrecognized": "Múi giờ đó không được nhận dạng.",
+    "errorUpgradeAiReportLocale": "Nâng cấp lên Pro Technician hoặc Workshop để lưu ngôn ngữ báo cáo AI.",
+    "errorAiReportLocaleUnavailable": "Ngôn ngữ báo cáo AI đó chưa khả dụng.",
+    "errorUpgradeSecondaryLocale": "Nâng cấp lên Pro Technician hoặc Workshop để đặt ngôn ngữ báo cáo thứ hai.",
+    "errorSecondaryLocaleUnavailable": "Ngôn ngữ thứ hai đó chưa khả dụng.",
+    "errorReportModeNotIncluded": "Gói của bạn không bao gồm chế độ báo cáo đó.",
+    "errorUpgradeCurrency": "Nâng cấp lên Pro Technician hoặc Workshop để đặt loại tiền tệ ưa thích.",
+    "errorCurrencyUnavailable": "Loại tiền tệ đó chưa khả dụng.",
+    "errorSaveFailed": "Không thể lưu tùy chọn. Vui lòng thử lại."
   },
   "dtcResult": {
     "generic": "Chung",

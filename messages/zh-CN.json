@@ -269,7 +269,22 @@
     "save": "保存偏好",
     "saving": "正在保存…",
     "saved": "偏好已保存。",
-    "upgradeReason": "语言、AI 报告和货币偏好会为 Pro 和 Workshop 套餐保存。免费账户仍可在任何页面临时切换界面语言。"
+    "upgradeReason": "语言、AI 报告和货币偏好会为 Pro 和 Workshop 套餐保存。免费账户仍可在任何页面临时切换界面语言。",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "登录以保存偏好设置。",
+    "errorUpgradeLanguagePrefs": "升级到 Pro Technician 或 Workshop 以保存语言偏好设置。",
+    "errorInvalidSubmission": "提交的偏好设置无效。",
+    "errorInterfaceLocaleUnavailable": "该界面语言不可用。",
+    "errorRegionUnrecognized": "无法识别该地区。",
+    "errorTimezoneUnrecognized": "无法识别该时区。",
+    "errorUpgradeAiReportLocale": "升级到 Pro Technician 或 Workshop 以保存 AI 报告语言。",
+    "errorAiReportLocaleUnavailable": "该 AI 报告语言尚不可用。",
+    "errorUpgradeSecondaryLocale": "升级到 Pro Technician 或 Workshop 以设置第二报告语言。",
+    "errorSecondaryLocaleUnavailable": "该第二语言尚不可用。",
+    "errorReportModeNotIncluded": "您的套餐不包含该报告模式。",
+    "errorUpgradeCurrency": "升级到 Pro Technician 或 Workshop 以设置首选货币。",
+    "errorCurrencyUnavailable": "该货币尚不可用。",
+    "errorSaveFailed": "无法保存偏好设置，请重试。"
   },
   "dtcResult": {
     "generic": "通用",

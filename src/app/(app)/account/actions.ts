@@ -2,8 +2,10 @@
 
 import { z } from "zod";
 import { revalidatePath } from "next/cache";
+import { getTranslations } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { resolveAppShellLocale } from "@/lib/i18n/app-shell-locale";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import {
   canSaveLanguagePreferences,
@@ -59,19 +61,22 @@ const preferencesSchema = z.object({
 export async function savePreferencesAction(
   formData: FormData,
 ): Promise<{ error?: string; success?: boolean }> {
+  const locale = await resolveAppShellLocale();
+  const t = await getTranslations({ locale, namespace: "preferences" });
+
   const supabase = await createClient();
   const {
     data: { user },
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return { error: "Sign in to save preferences." };
+    return { error: t("errorSignInRequired") };
   }
 
   const plan = await getEffectivePlan(user.id, user.email ?? null);
 
   if (!canSaveLanguagePreferences(plan)) {
-    return { error: "Upgrade to Pro or Workshop to save language preferences." };
+    return { error: t("errorUpgradeLanguagePrefs") };
   }
 
   const parsed = preferencesSchema.safeParse({
@@ -89,29 +94,29 @@ export async function savePreferencesAction(
   });
 
   if (!parsed.success) {
-    return { error: "Invalid preferences submitted." };
+    return { error: t("errorInvalidSubmission") };
   }
   const input = parsed.data;
 
   if (!(await isEnabledLocale(input.interfaceLocale))) {
-    return { error: "That interface language isn't available." };
+    return { error: t("errorInterfaceLocaleUnavailable") };
   }
 
   if (input.regionCode && !isRecognizedRegionId(input.regionCode)) {
-    return { error: "That region isn't recognized." };
+    return { error: t("errorRegionUnrecognized") };
   }
 
   if (input.timezone && !isValidTimeZone(input.timezone)) {
-    return { error: "That timezone isn't recognized." };
+    return { error: t("errorTimezoneUnrecognized") };
   }
 
   let aiReportLocale: string | null = null;
   if (input.aiReportLocale) {
     if (!canSaveAiReportLocale(plan)) {
-      return { error: "Upgrade to Pro or Workshop to save an AI report language." };
+      return { error: t("errorUpgradeAiReportLocale") };
     }
     if (!(await isAiOutputEnabledLocale(input.aiReportLocale))) {
-      return { error: "That AI report language isn't available yet." };
+      return { error: t("errorAiReportLocaleUnavailable") };
     }
     aiReportLocale = input.aiReportLocale;
   }
@@ -119,25 +124,25 @@ export async function savePreferencesAction(
   let secondaryReportLocale: string | null = null;
   if (input.secondaryReportLocale) {
     if (!canSelectSecondaryLanguage(plan)) {
-      return { error: "Upgrade to Pro or Workshop to set a secondary report language." };
+      return { error: t("errorUpgradeSecondaryLocale") };
     }
     if (!(await isAiOutputEnabledLocale(input.secondaryReportLocale))) {
-      return { error: "That secondary language isn't available yet." };
+      return { error: t("errorSecondaryLocaleUnavailable") };
     }
     secondaryReportLocale = input.secondaryReportLocale;
   }
 
   if (!canUseReportMode(plan, input.reportMode as ReportMode)) {
-    return { error: "Your plan doesn't include that report mode." };
+    return { error: t("errorReportModeNotIncluded") };
   }
 
   let preferredCurrency: string | null = null;
   if (input.preferredCurrency) {
     if (!canSelectDisplayCurrency(plan)) {
-      return { error: "Upgrade to Pro or Workshop to set a preferred currency." };
+      return { error: t("errorUpgradeCurrency") };
     }
     if (!(await isEnabledCurrency(input.preferredCurrency))) {
-      return { error: "That currency isn't available yet." };
+      return { error: t("errorCurrencyUnavailable") };
     }
     preferredCurrency = input.preferredCurrency;
   }
@@ -162,7 +167,7 @@ export async function savePreferencesAction(
   );
 
   if (error) {
-    return { error: "Failed to save preferences. Try again." };
+    return { error: t("errorSaveFailed") };
   }
 
   revalidatePath("/account/preferences");

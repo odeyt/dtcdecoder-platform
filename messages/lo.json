@@ -269,7 +269,22 @@
     "save": "ບັນທຶກການຕັ້ງຄ່າ",
     "saving": "ກຳລັງບັນທຶກ…",
     "saved": "ບັນທຶກການຕັ້ງຄ່າແລ້ວ.",
-    "upgradeReason": "ການຕັ້ງຄ່າພາສາ, ລາຍງານ AI, ແລະ ສະກຸນເງິນຈະຖືກບັນທຶກສຳລັບແພັກເກັດ Pro ແລະ Workshop. ບັນຊີຟຣີຍັງສາມາດປ່ຽນພາສາໜ້າຈໍຊົ່ວຄາວໄດ້ໃນທຸກໜ້າ."
+    "upgradeReason": "ການຕັ້ງຄ່າພາສາ, ລາຍງານ AI, ແລະ ສະກຸນເງິນຈະຖືກບັນທຶກສຳລັບແພັກເກັດ Pro ແລະ Workshop. ບັນຊີຟຣີຍັງສາມາດປ່ຽນພາສາໜ້າຈໍຊົ່ວຄາວໄດ້ໃນທຸກໜ້າ.",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "ເຂົ້າສູ່ລະບົບເພື່ອບັນທຶກການຕັ້ງຄ່າ.",
+    "errorUpgradeLanguagePrefs": "ອັບເກຣດເປັນ Pro ຫຼື Workshop ເພື່ອບັນທຶກການຕັ້ງຄ່າພາສາ.",
+    "errorInvalidSubmission": "ການຕັ້ງຄ່າທີ່ສົ່ງມາບໍ່ຖືກຕ້ອງ.",
+    "errorInterfaceLocaleUnavailable": "ພາສາອິນເຕີເຟດນັ້ນບໍ່ສາມາດໃຊ້ໄດ້.",
+    "errorRegionUnrecognized": "ພາກພື້ນນັ້ນບໍ່ໄດ້ຖືກຮັບຮູ້.",
+    "errorTimezoneUnrecognized": "ເຂດເວລານັ້ນບໍ່ໄດ້ຖືກຮັບຮູ້.",
+    "errorUpgradeAiReportLocale": "ອັບເກຣດເປັນ Pro ຫຼື Workshop ເພື່ອບັນທຶກພາສາລາຍງານ AI.",
+    "errorAiReportLocaleUnavailable": "ພາສາລາຍງານ AI ນັ້ນຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
+    "errorUpgradeSecondaryLocale": "ອັບເກຣດເປັນ Pro ຫຼື Workshop ເພື່ອຕັ້ງພາສາລາຍງານທີສອງ.",
+    "errorSecondaryLocaleUnavailable": "ພາສາທີສອງນັ້ນຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
+    "errorReportModeNotIncluded": "ແຜນຂອງທ່ານບໍ່ລວມຮູບແບບລາຍງານນັ້ນ.",
+    "errorUpgradeCurrency": "ອັບເກຣດເປັນ Pro ຫຼື Workshop ເພື່ອຕັ້ງສະກຸນເງິນທີ່ຕ້ອງການ.",
+    "errorCurrencyUnavailable": "ສະກຸນເງິນນັ້ນຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
+    "errorSaveFailed": "ບໍ່ສາມາດບັນທຶກການຕັ້ງຄ່າໄດ້. ກະລຸນາລອງໃໝ່."
   },
   "dtcResult": {
     "generic": "ທົ່ວໄປ",

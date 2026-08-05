@@ -109,7 +109,7 @@ export function AccountPreferencesForm({ plan, preferences, languages, currencie
               {interfaceLocaleOptions.map((l) => (
                 <option key={l.locale_code} value={l.locale_code}>
                   {l.english_name}
-                  {l.paid_only ? " — Pro/Workshop" : ""}
+                  {l.paid_only ? t("paidOnlyBadge") : ""}
                 </option>
               ))}
             </select>

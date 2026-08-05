@@ -269,7 +269,22 @@
     "save": "រក្សាទុកចំណូលចិត្ត",
     "saving": "កំពុងរក្សាទុក…",
     "saved": "បានរក្សាទុកចំណូលចិត្ត។",
-    "upgradeReason": "ចំណូលចិត្តភាសា របាយការណ៍ AI និងរូបិយប័ណ្ណត្រូវបានរក្សាទុកសម្រាប់គម្រោង Pro និង Workshop។ គណនីឥតគិតថ្លៃនៅតែអាចប្តូរភាសាចំណុចប្រទាក់បណ្តោះអាសន្ននៅគ្រប់ទំព័រ។"
+    "upgradeReason": "ចំណូលចិត្តភាសា របាយការណ៍ AI និងរូបិយប័ណ្ណត្រូវបានរក្សាទុកសម្រាប់គម្រោង Pro និង Workshop។ គណនីឥតគិតថ្លៃនៅតែអាចប្តូរភាសាចំណុចប្រទាក់បណ្តោះអាសន្ននៅគ្រប់ទំព័រ។",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "ចូលគណនីដើម្បីរក្សាទុកការកំណត់។",
+    "errorUpgradeLanguagePrefs": "ដំឡើងកម្រិតទៅ Pro ឬ Workshop ដើម្បីរក្សាទុកការកំណត់ភាសា។",
+    "errorInvalidSubmission": "ការកំណត់ដែលបានដាក់ស្នើមិនត្រឹមត្រូវ។",
+    "errorInterfaceLocaleUnavailable": "ភាសាចំណុចប្រទាក់នោះមិនអាចប្រើបានទេ។",
+    "errorRegionUnrecognized": "តំបន់នោះមិនត្រូវបានទទួលស្គាល់ទេ។",
+    "errorTimezoneUnrecognized": "តំបន់ពេលវេលានោះមិនត្រូវបានទទួលស្គាល់ទេ។",
+    "errorUpgradeAiReportLocale": "ដំឡើងកម្រិតទៅ Pro ឬ Workshop ដើម្បីរក្សាទុកភាសារបាយការណ៍ AI។",
+    "errorAiReportLocaleUnavailable": "ភាសារបាយការណ៍ AI នោះមិនទាន់អាចប្រើបានទេ។",
+    "errorUpgradeSecondaryLocale": "ដំឡើងកម្រិតទៅ Pro ឬ Workshop ដើម្បីកំណត់ភាសារបាយការណ៍ទីពីរ។",
+    "errorSecondaryLocaleUnavailable": "ភាសាទីពីរនោះមិនទាន់អាចប្រើបានទេ។",
+    "errorReportModeNotIncluded": "គម្រោងរបស់អ្នកមិនរួមបញ្ចូលរបៀបរបាយការណ៍នោះទេ។",
+    "errorUpgradeCurrency": "ដំឡើងកម្រិតទៅ Pro ឬ Workshop ដើម្បីកំណត់រូបិយប័ណ្ណដែលចង់បាន។",
+    "errorCurrencyUnavailable": "រូបិយប័ណ្ណនោះមិនទាន់អាចប្រើបានទេ។",
+    "errorSaveFailed": "មិនអាចរក្សាទុកការកំណត់បានទេ។ សូមព្យាយាមម្តងទៀត។"
   },
   "dtcResult": {
     "generic": "ទូទៅ",

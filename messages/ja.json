@@ -269,7 +269,22 @@
     "save": "設定を保存",
     "saving": "保存中…",
     "saved": "設定を保存しました。",
-    "upgradeReason": "言語、AI レポート、通貨の設定は Pro と Workshop プランで保存されます。無料アカウントでも、どのページでもインターフェース言語を一時的に切り替えられます。"
+    "upgradeReason": "言語、AI レポート、通貨の設定は Pro と Workshop プランで保存されます。無料アカウントでも、どのページでもインターフェース言語を一時的に切り替えられます。",
+    "paidOnlyBadge": " — Pro/Workshop",
+    "errorSignInRequired": "設定を保存するにはサインインしてください。",
+    "errorUpgradeLanguagePrefs": "言語設定を保存するには、Pro TechnicianまたはWorkshopにアップグレードしてください。",
+    "errorInvalidSubmission": "無効な設定が送信されました。",
+    "errorInterfaceLocaleUnavailable": "そのインターフェース言語は利用できません。",
+    "errorRegionUnrecognized": "その地域は認識されませんでした。",
+    "errorTimezoneUnrecognized": "そのタイムゾーンは認識されませんでした。",
+    "errorUpgradeAiReportLocale": "AIレポート言語を保存するには、Pro TechnicianまたはWorkshopにアップグレードしてください。",
+    "errorAiReportLocaleUnavailable": "そのAIレポート言語はまだ利用できません。",
+    "errorUpgradeSecondaryLocale": "第2のレポート言語を設定するには、Pro TechnicianまたはWorkshopにアップグレードしてください。",
+    "errorSecondaryLocaleUnavailable": "その第2言語はまだ利用できません。",
+    "errorReportModeNotIncluded": "お使いのプランにはそのレポートモードは含まれていません。",
+    "errorUpgradeCurrency": "希望通貨を設定するには、Pro TechnicianまたはWorkshopにアップグレードしてください。",
+    "errorCurrencyUnavailable": "その通貨はまだ利用できません。",
+    "errorSaveFailed": "設定を保存できませんでした。もう一度お試しください。"
   },
   "dtcResult": {
     "generic": "汎用",
