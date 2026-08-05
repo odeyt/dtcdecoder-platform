@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 // Reached only via the link in a password-reset email. Supabase's browser
@@ -15,6 +16,8 @@ import { createClient } from "@/lib/supabase/client";
 // with an explanatory message instead of silently failing on submit.
 export function ResetPasswordForm() {
   const router = useRouter();
+  const t = useTranslations("auth");
+  const tAccount = useTranslations("account");
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -40,12 +43,12 @@ export function ResetPasswordForm() {
     setErrorMessage(null);
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters.");
+      setErrorMessage(tAccount("passwordTooShort"));
       setStatus("error");
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords don't match.");
+      setErrorMessage(tAccount("passwordsDontMatch"));
       setStatus("error");
       return;
     }
@@ -68,9 +71,9 @@ export function ResetPasswordForm() {
   if (!ready) {
     return (
       <p className="text-sm text-[var(--text-secondary)]">
-        This reset link is invalid or has expired.{" "}
+        {t("resetLinkInvalid")}{" "}
         <Link href="/account/forgot-password" className="text-[var(--text-primary)] underline">
-          Request a new one
+          {t("requestNewOne")}
         </Link>
         .
       </p>
@@ -84,7 +87,7 @@ export function ResetPasswordForm() {
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="New password"
+        placeholder={tAccount("newPasswordPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <input
@@ -92,7 +95,7 @@ export function ResetPasswordForm() {
         required
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm new password"
+        placeholder={tAccount("confirmPasswordPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
@@ -101,7 +104,7 @@ export function ResetPasswordForm() {
         className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        {status === "loading" ? "Saving…" : "Set new password"}
+        {status === "loading" ? tAccount("settingPassword") : tAccount("setPassword")}
       </button>
       {status === "error" && errorMessage && (
         <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>

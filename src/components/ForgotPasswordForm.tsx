@@ -1,9 +1,12 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 export function ForgotPasswordForm() {
+  const t = useTranslations("auth");
+  const tc = useTranslations("common");
   const [email, setEmail] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "sent" | "error">("idle");
 
@@ -22,12 +25,7 @@ export function ForgotPasswordForm() {
   }
 
   if (status === "sent") {
-    return (
-      <p className="text-sm text-[var(--text-secondary)]">
-        If an account exists for <strong className="text-[var(--text-primary)]">{email}</strong>,
-        we&apos;ve sent a password reset link.
-      </p>
-    );
+    return <p className="text-sm text-[var(--text-secondary)]">{t("resetLinkSent", { email })}</p>;
   }
 
   return (
@@ -37,7 +35,7 @@ export function ForgotPasswordForm() {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@example.com"
+        placeholder={t("emailPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
@@ -46,9 +44,9 @@ export function ForgotPasswordForm() {
         className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        {status === "loading" ? "Sending…" : "Send reset link"}
+        {status === "loading" ? t("sendingLoginLink") : t("sendResetLink")}
       </button>
-      {status === "error" && <p className="text-sm text-[var(--accent-red)]">Something went wrong. Try again.</p>}
+      {status === "error" && <p className="text-sm text-[var(--accent-red)]">{tc("genericError")}</p>}
     </form>
   );
 }

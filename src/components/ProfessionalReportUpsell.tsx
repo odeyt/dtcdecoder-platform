@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { recordClientEvent } from "@/lib/analytics/client";
 import { formatPrice } from "@/lib/format";
 import { PROFESSIONAL_REPORT_ONE_TIME } from "@/lib/pricing";
@@ -23,28 +24,6 @@ import { PROFESSIONAL_REPORT_ONE_TIME } from "@/lib/pricing";
 // second copy of it — see the loginHref comment below.
 const CHECKOUT_ROUTE = "/api/checkout/single-report";
 
-// Mirrors the free tier this page actually renders above the panel, so the
-// comparison is honest: every line here corresponds to a section the
-// visitor can already see.
-const FREE_INCLUDES = [
-  "Code definition",
-  "Common causes",
-  "Reported symptoms",
-  "Initial diagnostic checks",
-  "Basic replacement caution",
-] as const;
-
-// Matches the entitlements in PROFESSIONAL_REPORT_ONE_TIME (maxFollowUps: 5)
-// and the locked-section catalog this panel replaced.
-const REPORT_INCLUDES = [
-  "Complete root-cause ranking",
-  "Vehicle-specific diagnostic workflow",
-  "Expected voltage, resistance, pressure, and live-data values",
-  "Independent drive-safety review",
-  "Five DTC Technician follow-up questions",
-  "Downloadable final report",
-] as const;
-
 function CheckIcon() {
   return (
     <svg aria-hidden="true" viewBox="0 0 20 20" className="mt-1 h-3.5 w-3.5 shrink-0" fill="currentColor">
@@ -58,9 +37,33 @@ function CheckIcon() {
 }
 
 export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
+  const t = useTranslations("reportUpsell");
+  const tc = useTranslations("common");
   const viewed = useRef(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Mirrors the free tier this page actually renders above the panel, so
+  // the comparison is honest: every line here corresponds to a section the
+  // visitor can already see.
+  const FREE_INCLUDES = [
+    t("freeInclude1"),
+    t("freeInclude2"),
+    t("freeInclude3"),
+    t("freeInclude4"),
+    t("freeInclude5"),
+  ];
+
+  // Matches the entitlements in PROFESSIONAL_REPORT_ONE_TIME (maxFollowUps: 5)
+  // and the locked-section catalog this panel replaced.
+  const REPORT_INCLUDES = [
+    t("reportInclude1"),
+    t("reportInclude2"),
+    t("reportInclude3"),
+    t("reportInclude4"),
+    t("reportInclude5"),
+    t("reportInclude6"),
+  ];
 
   useEffect(() => {
     if (viewed.current) return;
@@ -76,13 +79,13 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
       const res = await fetch(CHECKOUT_ROUTE, { method: "POST" });
       const data = await res.json().catch(() => ({}));
       if (!res.ok || !data.checkoutUrl) {
-        setError(data.error ?? "Something went wrong. Please try again.");
+        setError(data.error ?? tc("genericError"));
         setLoading(false);
         return;
       }
       window.location.href = data.checkoutUrl;
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(tc("genericError"));
       setLoading(false);
     }
   }
@@ -98,7 +101,7 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
     `/pricing?start_checkout=${PROFESSIONAL_REPORT_ONE_TIME.key}`,
   )}`;
 
-  const ctaLabel = `One ${PROFESSIONAL_REPORT_ONE_TIME.name} — ${price}`;
+  const ctaLabel = t("ctaLabel", { name: PROFESSIONAL_REPORT_ONE_TIME.name, price });
 
   return (
     <section
@@ -111,17 +114,14 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
         id="professional-report-upsell-heading"
         className="text-xl font-semibold text-[var(--text-primary)] sm:text-2xl"
       >
-        Complete the diagnosis with DTC Technician
+        {t("heading")}
       </h2>
-      <p className="mt-2 max-w-[70ch] text-[var(--text-secondary)]">
-        Turn this code result into a complete diagnostic plan with vehicle-specific root-cause ranking, test
-        order, expected readings, safety guidance, and DTC Technician follow-ups.
-      </p>
+      <p className="mt-2 max-w-[70ch] text-[var(--text-secondary)]">{t("description")}</p>
 
       <div className="mt-6 grid gap-6 md:grid-cols-2 md:gap-10">
         <div>
           <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-            Your free result includes
+            {t("freeIncludesTitle")}
           </h3>
           <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
             {FREE_INCLUDES.map((item) => (
@@ -135,7 +135,7 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
 
         <div className="border-t border-[var(--border-subtle)] pt-6 md:border-t-0 md:border-l md:pt-0 md:pl-10">
           <h3 className="text-xs font-semibold uppercase tracking-wide text-[var(--accent-red)]">
-            {PROFESSIONAL_REPORT_ONE_TIME.name} adds
+            {t("reportAddsTitle", { name: PROFESSIONAL_REPORT_ONE_TIME.name })}
           </h3>
           <ul className="mt-3 space-y-2 text-sm text-[var(--text-secondary)]">
             {REPORT_INCLUDES.map((item) => (
@@ -169,7 +169,7 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
             className="min-h-11 w-full rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] disabled:opacity-60 sm:w-auto"
             style={{ boxShadow: "var(--shadow-accent)" }}
           >
-            {loading ? "Starting checkout…" : ctaLabel}
+            {loading ? t("startingCheckout") : ctaLabel}
           </button>
         ) : (
           <Link
@@ -189,11 +189,11 @@ export function ProfessionalReportUpsell({ signedIn }: { signedIn: boolean }) {
           onClick={() => recordClientEvent("pro_plan_cta_clicked")}
           className="flex min-h-11 w-full items-center justify-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 font-semibold text-[var(--text-secondary)] transition hover:bg-white/5 hover:text-[var(--text-primary)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)] sm:w-auto"
         >
-          View Pro Technician plans
+          {t("viewProPlans")}
         </Link>
       </div>
 
-      <p className="mt-3 text-xs text-[var(--text-muted)]">One-time payment. No subscription required.</p>
+      <p className="mt-3 text-xs text-[var(--text-muted)]">{t("oneTimeNote")}</p>
     </section>
   );
 }

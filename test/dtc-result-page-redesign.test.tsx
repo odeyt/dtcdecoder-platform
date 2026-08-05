@@ -13,6 +13,8 @@
 // inventing them.
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { cleanup, render, screen, within } from "@testing-library/react";
+import { NextIntlClientProvider } from "next-intl";
+import en from "../messages/en.json";
 import { RankedCauseList } from "@/components/RankedCauseList";
 import { DiagnosticStepList } from "@/components/DiagnosticStepList";
 import { ProfessionalReportUpsell } from "@/components/ProfessionalReportUpsell";
@@ -22,6 +24,14 @@ import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
 vi.mock("@/lib/analytics/client", () => ({ recordClientEvent: vi.fn() }));
 
 afterEach(cleanup);
+
+function renderUpsell(props: React.ComponentProps<typeof ProfessionalReportUpsell>) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en} timeZone="UTC" now={new Date()} formats={{}}>
+      <ProfessionalReportUpsell {...props} />
+    </NextIntlClientProvider>,
+  );
+}
 
 const CAUSES = [
   "Vacuum leak in the intake boot or PCV hose",
@@ -87,14 +97,14 @@ describe("diagnostic workflow", () => {
 
 describe("professional report conversion panel", () => {
   it("uses DTC Technician terminology, not generic AI wording", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     expect(screen.getByRole("heading", { name: /complete the diagnosis with dtc technician/i })).toBeTruthy();
     expect(screen.queryByText(/unlock full ai diagnosis/i)).toBeNull();
     expect(screen.queryByText(/\bAI diagnosis\b/i)).toBeNull();
   });
 
   it("shows the canonical one-time price rather than a second hardcoded figure", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     const cta = screen.getByTestId("professional-report-cta");
     // Sourced from PROFESSIONAL_REPORT_ONE_TIME so a price change in
     // pricing.ts cannot leave this panel showing a stale number.
@@ -103,19 +113,19 @@ describe("professional report conversion panel", () => {
   });
 
   it("offers exactly one primary purchase action and one secondary plans action", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     expect(screen.getAllByTestId("professional-report-cta")).toHaveLength(1);
     expect(screen.getAllByTestId("pro-plan-cta")).toHaveLength(1);
   });
 
   it("renders no repeated Upgrade buttons", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     expect(screen.queryAllByRole("button", { name: /^upgrade$/i })).toHaveLength(0);
     expect(screen.queryAllByRole("link", { name: /^upgrade$/i })).toHaveLength(0);
   });
 
   it("replaces the nine-card locked grid with a single panel", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     // Every locked-section title that used to occupy its own card, with its
     // own Upgrade button, is gone from this surface.
     for (const section of LOCKED_SECTION_CATALOG) {
@@ -125,7 +135,7 @@ describe("professional report conversion panel", () => {
   });
 
   it("states both what the free result already gives and what the report adds", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     expect(screen.getByText(/your free result includes/i)).toBeTruthy();
     expect(screen.getByText(/complete root-cause ranking/i)).toBeTruthy();
     expect(screen.getByText(/five dtc technician follow-up questions/i)).toBeTruthy();
@@ -133,7 +143,7 @@ describe("professional report conversion panel", () => {
   });
 
   it("sends an anonymous visitor through the existing sign-in resume flow", () => {
-    render(<ProfessionalReportUpsell signedIn={false} />);
+    renderUpsell({ signedIn: false });
     const cta = screen.getByTestId("professional-report-cta") as HTMLAnchorElement;
     // Not a second checkout implementation: /pricing already knows how to
     // auto-resume this exact purchase after login.
@@ -142,12 +152,12 @@ describe("professional report conversion panel", () => {
   });
 
   it("gives a signed-in visitor a real button rather than a link", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     expect(screen.getByTestId("professional-report-cta").tagName).toBe("BUTTON");
   });
 
   it("labels the panel for assistive technology", () => {
-    render(<ProfessionalReportUpsell signedIn />);
+    renderUpsell({ signedIn: true });
     const panel = screen.getByTestId("professional-report-upsell");
     expect(panel.getAttribute("aria-labelledby")).toBe("professional-report-upsell-heading");
   });
