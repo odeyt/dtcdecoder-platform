@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { Language } from "@/lib/types";
 
 // Changes scan_cases.report_language on an ALREADY-GENERATED report, then
@@ -20,6 +21,8 @@ export function ScanReportLanguageSwitcher({
   availableLocales: Language[];
 }) {
   const router = useRouter();
+  const t = useTranslations("scanReport");
+  const tCommon = useTranslations("common");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -39,13 +42,13 @@ export function ScanReportLanguageSwitcher({
       });
       if (!res.ok) {
         const data = await res.json().catch(() => null);
-        setError(data?.error ?? "Unable to change the report language.");
+        setError(data?.error ?? t("unableToChangeLanguage"));
         setLoading(false);
         return;
       }
       router.refresh();
     } catch {
-      setError("Unable to change the report language.");
+      setError(t("unableToChangeLanguage"));
       setLoading(false);
     }
   }
@@ -53,7 +56,7 @@ export function ScanReportLanguageSwitcher({
   return (
     <div className="flex items-center gap-2">
       <label htmlFor="report-language-select" className="sr-only">
-        Report language
+        {t("reportLanguageSrLabel")}
       </label>
       <select
         id="report-language-select"
@@ -62,7 +65,7 @@ export function ScanReportLanguageSwitcher({
         onChange={(e) => handleChange(e.target.value)}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2 text-sm text-[var(--text-primary)] disabled:opacity-60"
       >
-        <option value="en">English</option>
+        <option value="en">{tCommon("languageEnglish")}</option>
         {availableLocales.map((locale) => (
           <option key={locale.locale_code} value={locale.locale_code}>
             {locale.english_name}

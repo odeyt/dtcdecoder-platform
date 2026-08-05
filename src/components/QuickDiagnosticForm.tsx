@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 
 interface Prefill {
@@ -24,14 +25,6 @@ interface ExistingVinCase {
   createdAt: string;
 }
 
-const ANALYZE_STAGES = [
-  "Validating case details",
-  "Sending your case to the AI",
-  "Running diagnostic reasoning",
-  "Running safety review",
-  "Scoring confidence",
-];
-
 // Submits directly to /api/scan-diagnostics/cases/quick (create + analyze
 // in one request — see that route). On success, redirects to the same
 // case-detail page the file-upload flow already uses (ScanReportView and
@@ -46,6 +39,17 @@ export function QuickDiagnosticForm({
   defaultReportLanguage: string;
 }) {
   const router = useRouter();
+  const t = useTranslations("quickDiagnostic");
+  const tStages = useTranslations("diagnosticStages");
+  const tVin = useTranslations("scanDuplicateVin");
+  const tCommon = useTranslations("common");
+  const ANALYZE_STAGES = [
+    tStages("validatingCaseDetails"),
+    tStages("sendingToAi"),
+    tStages("runningDiagnosticReasoning"),
+    tStages("runningSafetyReview"),
+    tStages("scoringConfidence"),
+  ];
   const [dtcCode, setDtcCode] = useState(prefill.dtcCode);
   const [vin, setVin] = useState("");
   const [make, setMake] = useState(prefill.make);
@@ -100,7 +104,7 @@ export function QuickDiagnosticForm({
           return;
         }
         const message =
-          typeof data.error === "string" ? data.error : data.error?.message ?? "Something went wrong. Try again.";
+          typeof data.error === "string" ? data.error : data.error?.message ?? tCommon("genericError");
         setErrorMessage(message);
         setStatus("error");
         return;
@@ -108,7 +112,7 @@ export function QuickDiagnosticForm({
 
       router.push(`/diagnostics/${data.case.id}`);
     } catch {
-      setErrorMessage("Something went wrong. Try again.");
+      setErrorMessage(tCommon("genericError"));
       setStatus("error");
     }
   }
@@ -127,13 +131,10 @@ export function QuickDiagnosticForm({
       <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-lg)] p-5">
         <div>
           <p className="font-semibold text-[var(--text-primary)]">
-            You already have {duplicateWarning.existingCases.length === 1 ? "a case" : "cases"} for VIN{" "}
+            {duplicateWarning.existingCases.length === 1 ? tVin("headingOne") : tVin("headingMany")}{" "}
             <span className="tech-value">{duplicateWarning.vin}</span>
           </p>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Running this again will use another report credit. You can view the existing report instead, or continue
-            if this is a new, separate issue.
-          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{tVin("body")}</p>
         </div>
         <ul className="flex flex-col gap-2">
           {duplicateWarning.existingCases.map((c) => (
@@ -142,7 +143,7 @@ export function QuickDiagnosticForm({
                 href={`/diagnostics/${c.id}`}
                 className="block rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm text-[var(--text-primary)] transition hover:bg-white/5"
               >
-                {c.complaint || "Diagnostic case"} — {c.status.replace(/_/g, " ")}
+                {c.complaint || tVin("diagnosticCaseFallback")} — {c.status.replace(/_/g, " ")}
               </a>
             </li>
           ))}
@@ -153,7 +154,7 @@ export function QuickDiagnosticForm({
             onClick={() => submitCase(true)}
             className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2.5 font-semibold text-white transition hover:brightness-110"
           >
-            Continue anyway
+            {tVin("continueAnyway")}
           </button>
           <button
             type="button"
@@ -163,7 +164,7 @@ export function QuickDiagnosticForm({
             }}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-5 py-2.5 font-semibold text-[var(--text-secondary)] transition hover:bg-white/5"
           >
-            Cancel
+            {tCommon("cancel")}
           </button>
         </div>
       </div>
@@ -172,7 +173,7 @@ export function QuickDiagnosticForm({
 
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-4">
-      <Field label="DTC code (required)">
+      <Field label={t("fieldDtcCode")}>
         <input
           required
           value={dtcCode}
@@ -183,31 +184,31 @@ export function QuickDiagnosticForm({
       </Field>
 
       <div className="grid gap-4 sm:grid-cols-2">
-        <Field label="Year"><input value={modelYear} onChange={(e) => setModelYear(e.target.value)} inputMode="numeric" className={inputClass} /></Field>
-        <Field label="Make"><input value={make} onChange={(e) => setMake(e.target.value)} className={inputClass} /></Field>
-        <Field label="Model"><input value={model} onChange={(e) => setModel(e.target.value)} className={inputClass} /></Field>
-        <Field label="Engine"><input value={engine} onChange={(e) => setEngine(e.target.value)} className={inputClass} /></Field>
-        <Field label="VIN"><input value={vin} onChange={(e) => setVin(e.target.value)} maxLength={17} className={inputClass} /></Field>
-        <Field label="Control module"><input value={module} onChange={(e) => setModuleField(e.target.value)} placeholder="PCM, ECM, BCM…" className={inputClass} /></Field>
+        <Field label={t("fieldYear")}><input value={modelYear} onChange={(e) => setModelYear(e.target.value)} inputMode="numeric" className={inputClass} /></Field>
+        <Field label={t("fieldMake")}><input value={make} onChange={(e) => setMake(e.target.value)} className={inputClass} /></Field>
+        <Field label={t("fieldModel")}><input value={model} onChange={(e) => setModel(e.target.value)} className={inputClass} /></Field>
+        <Field label={t("fieldEngine")}><input value={engine} onChange={(e) => setEngine(e.target.value)} className={inputClass} /></Field>
+        <Field label={t("fieldVin")}><input value={vin} onChange={(e) => setVin(e.target.value)} maxLength={17} className={inputClass} /></Field>
+        <Field label={t("fieldControlModule")}><input value={module} onChange={(e) => setModuleField(e.target.value)} placeholder={t("controlModulePlaceholder")} className={inputClass} /></Field>
       </div>
 
-      <Field label="Symptoms (one per line)">
+      <Field label={t("fieldSymptoms")}>
         <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} rows={3} className={inputClass} />
       </Field>
-      <Field label="Freeze-frame data (optional)">
+      <Field label={t("fieldFreezeFrame")}>
         <textarea value={freezeFrameNotes} onChange={(e) => setFreezeFrameNotes(e.target.value)} rows={2} className={inputClass} />
       </Field>
-      <Field label="Repair history (optional)">
+      <Field label={t("fieldRepairHistory")}>
         <textarea value={repairHistory} onChange={(e) => setRepairHistory(e.target.value)} rows={2} className={inputClass} />
       </Field>
-      <Field label="Scan-tool notes (optional)">
+      <Field label={t("fieldScanToolNotes")}>
         <textarea value={scanToolNotes} onChange={(e) => setScanToolNotes(e.target.value)} rows={2} className={inputClass} />
       </Field>
 
       {languageOptions.length > 0 && (
-        <Field label="Report language">
+        <Field label={t("fieldReportLanguage")}>
           <select value={reportLanguage} onChange={(e) => setReportLanguage(e.target.value)} className={inputClass}>
-            <option value="en">English</option>
+            <option value="en">{tCommon("languageEnglish")}</option>
             {languageOptions.map((option) => (
               <option key={option.code} value={option.code}>
                 {option.name}
@@ -224,7 +225,7 @@ export function QuickDiagnosticForm({
         className="mt-2 min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        Run Full Professional Diagnosis
+        {t("pageTitle")}
       </button>
     </form>
   );

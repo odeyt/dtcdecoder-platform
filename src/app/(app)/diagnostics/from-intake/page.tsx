@@ -3,10 +3,9 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 import { LANDING_INTAKE_STORAGE_KEY } from "@/lib/landing-intake/handoff";
-
-const STAGES = ["Reading your diagnostic case", "Saving vehicle and code details"];
 
 // The sign-in redirect target for a visitor who was mid-intake on the
 // landing page (see lib/landing-intake/handoff.ts's saveIntakeForHandoff —
@@ -16,6 +15,9 @@ const STAGES = ["Reading your diagnostic case", "Saving vehicle and code details
 // in URLs"), so this page must run in the browser to read it at all.
 export default function FromIntakePage() {
   const router = useRouter();
+  const t = useTranslations("scanFromIntake");
+  const tStages = useTranslations("diagnosticStages");
+  const STAGES = [tStages("readingDiagnosticCase"), tStages("savingVehicleDetails")];
   const [status, setStatus] = useState<"working" | "no_code" | "error">("working");
 
   useEffect(() => {
@@ -72,23 +74,20 @@ export default function FromIntakePage() {
     return (
       <div className="container-app px-6 py-16 text-center">
         <div className="mx-auto max-w-lg">
-          <h1 className="text-2xl font-bold text-[var(--text-primary)]">No diagnostic code identified</h1>
-          <p className="mt-3 text-[var(--text-secondary)]">
-            We couldn&apos;t identify a specific DTC from your Diagnostic Consultation. Import a vehicle scan report
-            instead, or start a new diagnostic case.
-          </p>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)]">{t("noCodeHeading")}</h1>
+          <p className="mt-3 text-[var(--text-secondary)]">{t("noCodeBody")}</p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <Link
               href="/diagnostics/upload"
               className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
             >
-              Import Vehicle Scan
+              {t("importVehicleScan")}
             </Link>
             <Link
               href="/"
               className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-red)]"
             >
-              New Diagnostic Case
+              {t("newDiagnosticCase")}
             </Link>
           </div>
         </div>
@@ -99,9 +98,9 @@ export default function FromIntakePage() {
   if (status === "error") {
     return (
       <div className="container-app px-6 py-16 text-center">
-        <p className="text-[var(--text-secondary)]">Something went wrong saving your diagnostic case. Try again.</p>
+        <p className="text-[var(--text-secondary)]">{t("errorSaving")}</p>
         <Link href="/" className="mt-4 inline-block text-[var(--accent-red)] underline">
-          Back to DTC Technician™
+          {t("backToDtcTechnician")}
         </Link>
       </div>
     );

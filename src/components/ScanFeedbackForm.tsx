@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ScanFeedback } from "@/lib/types";
 
 interface ScanFeedbackFormProps {
@@ -9,6 +10,7 @@ interface ScanFeedbackFormProps {
 }
 
 export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormProps) {
+  const t = useTranslations("scanFeedback");
   const [diagnosisWasCorrect, setDiagnosisWasCorrect] = useState<boolean | undefined>(
     existingFeedback?.diagnosis_was_correct ?? undefined,
   );
@@ -40,13 +42,13 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Could not save your feedback. Please try again.");
+        setError(data.error ?? t("errorSaveFailed"));
         setStatus("idle");
         return;
       }
       setStatus("saved");
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("errorGeneric"));
       setStatus("idle");
     }
   }
@@ -54,7 +56,7 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
   return (
     <form onSubmit={handleSubmit} className="glass-panel flex flex-col gap-4 rounded-[var(--radius-lg)] p-5">
       <div>
-        <p className="text-sm font-semibold text-[var(--text-primary)]">Was this diagnosis correct?</p>
+        <p className="text-sm font-semibold text-[var(--text-primary)]">{t("wasCorrectQuestion")}</p>
         <div className="mt-2 flex gap-3">
           <button
             type="button"
@@ -65,7 +67,7 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
               color: diagnosisWasCorrect === true ? "var(--accent-red)" : "var(--text-secondary)",
             }}
           >
-            Yes
+            {t("yes")}
           </button>
           <button
             type="button"
@@ -76,13 +78,13 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
               color: diagnosisWasCorrect === false ? "var(--accent-red)" : "var(--text-secondary)",
             }}
           >
-            No
+            {t("no")}
           </button>
         </div>
       </div>
 
       <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-        Actual root cause
+        {t("fieldActualRootCause")}
         <input
           value={actualRootCause}
           onChange={(e) => setActualRootCause(e.target.value)}
@@ -91,7 +93,7 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
       </label>
 
       <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-        What fixed it?
+        {t("fieldConfirmedFix")}
         <input
           value={confirmedFix}
           onChange={(e) => setConfirmedFix(e.target.value)}
@@ -100,7 +102,7 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
       </label>
 
       <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-        Parts replaced (comma-separated)
+        {t("fieldPartsReplaced")}
         <input
           value={partsReplaced}
           onChange={(e) => setPartsReplaced(e.target.value)}
@@ -109,7 +111,7 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
       </label>
 
       <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-        Additional notes
+        {t("fieldNotes")}
         <textarea
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
@@ -119,14 +121,14 @@ export function ScanFeedbackForm({ caseId, existingFeedback }: ScanFeedbackFormP
       </label>
 
       {error && <p className="text-sm text-[var(--accent-red)]">{error}</p>}
-      {status === "saved" && <p className="text-sm text-[var(--text-secondary)]">Feedback saved. Thank you.</p>}
+      {status === "saved" && <p className="text-sm text-[var(--text-secondary)]">{t("feedbackSaved")}</p>}
 
       <button
         type="submit"
         disabled={status === "submitting"}
         className="min-h-11 w-fit rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {status === "submitting" ? "Saving…" : existingFeedback ? "Update feedback" : "Submit feedback"}
+        {status === "submitting" ? t("saving") : existingFeedback ? t("updateFeedback") : t("submitFeedback")}
       </button>
     </form>
   );

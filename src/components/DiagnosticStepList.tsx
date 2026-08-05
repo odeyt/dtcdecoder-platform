@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { useTranslations } from "next-intl";
 
 // Numbered diagnostic workflow for the DTC result page.
 //
@@ -22,6 +23,7 @@ export interface DiagnosticStepItem {
 }
 
 export function DiagnosticStepList({ steps }: { steps: readonly DiagnosticStepItem[] }) {
+  const t = useTranslations("dtcResult");
   if (steps.length === 0) return null;
 
   return (
@@ -42,7 +44,7 @@ export function DiagnosticStepList({ steps }: { steps: readonly DiagnosticStepIt
           </span>
           <div className="min-w-0 flex-1">
             <p className="text-sm text-[var(--text-secondary)]">
-              <span className="sr-only">Step {item.step}: </span>
+              <span className="sr-only">{t("stepSrPrefix", { step: item.step })}</span>
               {item.text}
             </p>
             {item.detail}

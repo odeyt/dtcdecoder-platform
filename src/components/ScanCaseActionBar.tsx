@@ -2,17 +2,10 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 import { UpgradeCard } from "@/components/UpgradeCard";
 import type { ScanCaseStatus } from "@/lib/types";
-
-const EXTRACT_STAGES = ["Parsing the scan report", "Extracting DTCs and vehicle info"];
-const ANALYZE_STAGES = [
-  "Sending your case to the AI",
-  "Running diagnostic reasoning",
-  "Running safety review",
-  "Scoring confidence",
-];
 
 interface ExistingVinCase {
   id: string;
@@ -37,6 +30,17 @@ interface ScanCaseActionBarProps {
 // this exact request actually does (see the endpoint each button calls).
 export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage, canAnalyze }: ScanCaseActionBarProps) {
   const router = useRouter();
+  const t = useTranslations("scanCaseActionBar");
+  const tStages = useTranslations("diagnosticStages");
+  const tVin = useTranslations("scanDuplicateVin");
+  const tCommon = useTranslations("common");
+  const EXTRACT_STAGES = [tStages("parsingScanReport"), tStages("extractingDtcs")];
+  const ANALYZE_STAGES = [
+    tStages("sendingToAi"),
+    tStages("runningDiagnosticReasoning"),
+    tStages("runningSafetyReview"),
+    tStages("scoringConfidence"),
+  ];
   const [running, setRunning] = useState<"extract" | "analyze" | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [duplicateWarning, setDuplicateWarning] = useState<{ vin: string; existingCases: ExistingVinCase[] } | null>(
@@ -65,14 +69,14 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
         // toSafeErrorResponse) shapes `error` as an object, not a string —
         // every other error shape here is a plain string. Extract .message
         // so this never renders a raw object as a React child.
-        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? "Something went wrong. Please try again.");
+        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? t("errorGeneric"));
         setError(message);
         setRunning(null);
         return;
       }
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("errorGeneric"));
     } finally {
       setRunning(null);
     }
@@ -90,13 +94,10 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
       <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-lg)] p-5">
         <div>
           <p className="font-semibold text-[var(--text-primary)]">
-            You already have {duplicateWarning.existingCases.length === 1 ? "a case" : "cases"} for VIN{" "}
+            {duplicateWarning.existingCases.length === 1 ? tVin("headingOne") : tVin("headingMany")}{" "}
             <span className="tech-value">{duplicateWarning.vin}</span>
           </p>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Running this analysis will use another report credit. You can view the existing report instead, or
-            continue if this is a new, separate issue.
-          </p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{tVin("body")}</p>
         </div>
         <ul className="flex flex-col gap-2">
           {duplicateWarning.existingCases.map((c) => (
@@ -105,7 +106,7 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
                 href={`/diagnostics/${c.id}`}
                 className="block rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2.5 text-sm text-[var(--text-primary)] transition hover:bg-white/5"
               >
-                {c.complaint || "Diagnostic case"} — {c.status.replace(/_/g, " ")}
+                {c.complaint || tVin("diagnosticCaseFallback")} — {c.status.replace(/_/g, " ")}
               </a>
             </li>
           ))}
@@ -116,14 +117,14 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
             onClick={() => runStage("analyze", true)}
             className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2.5 font-semibold text-white transition hover:brightness-110"
           >
-            Continue anyway
+            {tVin("continueAnyway")}
           </button>
           <button
             type="button"
             onClick={() => setDuplicateWarning(null)}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-5 py-2.5 font-semibold text-[var(--text-secondary)] transition hover:bg-white/5"
           >
-            Cancel
+            {tCommon("cancel")}
           </button>
         </div>
       </div>
@@ -133,21 +134,20 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   if (status === "extracting" || status === "analyzing") {
     return (
       <div className="glass-panel rounded-[var(--radius-lg)] p-5 text-sm text-[var(--text-secondary)]">
-        {status === "extracting" ? "Extraction is in progress…" : "AI analysis is in progress…"} Reload this page in
-        a moment if this was started from another tab.
+        {status === "extracting" ? t("extractionInProgress") : t("analysisInProgress")} {t("reloadNote")}
       </div>
     );
   }
 
   const action =
     status === "uploaded"
-      ? { label: "Run extraction", stage: "extract" as const }
+      ? { label: t("runExtraction"), stage: "extract" as const }
       : status === "ready_for_analysis"
-        ? { label: "Start AI diagnostic analysis", stage: "analyze" as const }
+        ? { label: t("startAnalysis"), stage: "analyze" as const }
         : status === "failed"
           ? hasExtraction
-            ? { label: "Retry AI analysis", stage: "analyze" as const }
-            : { label: "Retry extraction", stage: "extract" as const }
+            ? { label: t("retryAnalysis"), stage: "analyze" as const }
+            : { label: t("retryExtraction"), stage: "extract" as const }
           : null;
 
   if (!action) return null;
@@ -156,7 +156,7 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
     return (
       <div className="flex flex-col gap-3">
         {status === "failed" && errorMessage && <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>}
-        <UpgradeCard reason="AI diagnostic analysis isn't included on the Free plan. Upgrade to Pro Technician or Workshop to analyze this case." />
+        <UpgradeCard reason={t("upgradeReason")} />
       </div>
     );
   }

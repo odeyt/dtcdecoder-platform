@@ -2,6 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import type { ScanDtcRecord, ScanExtraction } from "@/lib/types";
 
 interface DtcRow {
@@ -38,9 +39,9 @@ interface ScanExtractionReviewFormProps {
   dtcRecords: ScanDtcRecord[];
 }
 
-// English-only for this initial release — see docs/SCAN_REPORT_ANALYSIS.md.
 export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: ScanExtractionReviewFormProps) {
   const router = useRouter();
+  const t = useTranslations("scanExtractionReview");
 
   const reviewed = extraction.reviewed_fields as Record<string, unknown>;
   const [vin, setVin] = useState(String(reviewed.vin ?? extraction.vin ?? ""));
@@ -121,13 +122,13 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
       });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) {
-        setError(data.error ?? "Could not save your review. Please try again.");
+        setError(data.error ?? t("errorSaveFailed"));
         setStatus("idle");
         return;
       }
       router.refresh();
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("errorGeneric"));
       setStatus("idle");
     }
   }
@@ -138,7 +139,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
       {extraction.warnings.length > 0 && (
         <div className="rounded-[var(--radius-lg)] border border-[var(--border-red)] p-4 text-sm text-[var(--text-secondary)]">
-          <p className="font-semibold text-[var(--text-primary)]">Extraction warnings</p>
+          <p className="font-semibold text-[var(--text-primary)]">{t("warningsHeading")}</p>
           <ul className="mt-1 list-disc pl-5">
             {extraction.warnings.map((w) => (
               <li key={w}>{w}</li>
@@ -148,13 +149,11 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
       )}
 
       <section>
-        <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">Vehicle identity</h2>
-        <p className="mt-1 text-xs text-[var(--text-muted)]">
-          Extracted from your file — correct anything that looks wrong before continuing.
-        </p>
+        <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">{t("vehicleIdentityHeading")}</h2>
+        <p className="mt-1 text-xs text-[var(--text-muted)]">{t("vehicleIdentityNote")}</p>
         <div className="mt-3 grid gap-4 sm:grid-cols-2">
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            VIN
+            {t("fieldVin")}
             <input
               value={vin}
               onChange={(e) => setVin(e.target.value)}
@@ -162,7 +161,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            Year
+            {t("fieldYear")}
             <input
               value={modelYear}
               onChange={(e) => setModelYear(e.target.value)}
@@ -171,7 +170,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            Make
+            {t("fieldMake")}
             <input
               value={make}
               onChange={(e) => setMake(e.target.value)}
@@ -179,7 +178,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            Model
+            {t("fieldModel")}
             <input
               value={model}
               onChange={(e) => setModel(e.target.value)}
@@ -187,7 +186,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            Engine
+            {t("fieldEngine")}
             <input
               value={engine}
               onChange={(e) => setEngine(e.target.value)}
@@ -195,7 +194,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
             />
           </label>
           <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-            Mileage
+            {t("fieldMileage")}
             <input
               value={odometerMiles}
               onChange={(e) => setOdometerMiles(e.target.value)}
@@ -208,57 +207,57 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
 
       <section>
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">Diagnostic trouble codes</h2>
+          <h2 className="text-sm font-semibold tracking-wide text-[var(--text-primary)]">{t("dtcHeading")}</h2>
           <button
             type="button"
             onClick={() => setRows((prev) => [...prev, newRow()])}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-3 py-1.5 text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
           >
-            + Add DTC
+            {t("addDtc")}
           </button>
         </div>
 
         <div className="mt-3 space-y-3">
           {visibleRows.length === 0 && (
-            <p className="text-sm text-[var(--text-muted)]">No DTCs extracted — add any manually if needed.</p>
+            <p className="text-sm text-[var(--text-muted)]">{t("noDtcsExtracted")}</p>
           )}
           {visibleRows.map((row) => (
             <div key={row.key} className="glass-panel rounded-[var(--radius-lg)] p-4">
               <div className="flex items-center justify-between">
                 <span className="rounded-full border border-[var(--border-subtle)] px-2 py-0.5 font-mono text-[10px] text-[var(--text-muted)]">
-                  {row.id ? "Extracted" : "User-added"}
+                  {row.id ? t("extracted") : t("userAdded")}
                 </span>
                 <button
                   type="button"
                   onClick={() => removeRow(row.key)}
                   className="text-xs text-[var(--accent-red)] hover:underline"
                 >
-                  Remove
+                  {t("remove")}
                 </button>
               </div>
               <div className="mt-2 grid gap-3 sm:grid-cols-4">
                 <input
                   value={row.code}
                   onChange={(e) => updateRow(row.key, { code: e.target.value })}
-                  placeholder="Code (e.g. P0300)"
+                  placeholder={t("codePlaceholder")}
                   className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 font-mono text-[var(--text-primary)]"
                 />
                 <input
                   value={row.module}
                   onChange={(e) => updateRow(row.key, { module: e.target.value })}
-                  placeholder="Module"
+                  placeholder={t("modulePlaceholder")}
                   className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
                 />
                 <input
                   value={row.status}
                   onChange={(e) => updateRow(row.key, { status: e.target.value })}
-                  placeholder="Status"
+                  placeholder={t("statusPlaceholder")}
                   className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
                 />
                 <input
                   value={row.descriptionRaw}
                   onChange={(e) => updateRow(row.key, { descriptionRaw: e.target.value })}
-                  placeholder="Description"
+                  placeholder={t("descriptionPlaceholder")}
                   className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
                 />
               </div>
@@ -274,7 +273,7 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
         disabled={status === "submitting"}
         className="min-h-11 w-fit rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {status === "submitting" ? "Saving…" : "Confirm and start analysis"}
+        {status === "submitting" ? t("saving") : t("confirmAndAnalyze")}
       </button>
     </form>
   );

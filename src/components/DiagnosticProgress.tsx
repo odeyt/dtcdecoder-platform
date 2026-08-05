@@ -1,8 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-
-const SYSTEMS = ["Engine", "Fuel", "Ignition", "Emissions", "Network", "Safety"];
+import { useTranslations } from "next-intl";
 
 export interface DiagnosticProgressProps {
   /** Real, honest stage labels — must correspond to actual steps this
@@ -20,6 +19,16 @@ export interface DiagnosticProgressProps {
 // wait would not be. This is ambient motion only: it never blocks or delays
 // the actual request, and unmounts as soon as the real response arrives.
 export function DiagnosticProgress({ stages, query, onCancel }: DiagnosticProgressProps) {
+  const t = useTranslations("diagnosticProgress");
+  const tc = useTranslations("common");
+  const SYSTEMS = [
+    t("systemEngine"),
+    t("systemFuel"),
+    t("systemIgnition"),
+    t("systemEmissions"),
+    t("systemNetwork"),
+    t("systemSafety"),
+  ];
   const [stageIndex, setStageIndex] = useState(0);
   const [reducedMotion, setReducedMotion] = useState(() =>
     typeof window === "undefined"
@@ -84,7 +93,7 @@ export function DiagnosticProgress({ stages, query, onCancel }: DiagnosticProgre
       <div className="relative">
         {query && (
           <p className="font-mono text-xs text-[var(--text-muted)]">
-            Query: <span className="text-[var(--text-secondary)]">{query}</span>
+            {t("queryLabel")} <span className="text-[var(--text-secondary)]">{query}</span>
           </p>
         )}
 
@@ -130,13 +139,11 @@ export function DiagnosticProgress({ stages, query, onCancel }: DiagnosticProgre
             onClick={onCancel}
             className="mt-8 min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
           >
-            Cancel
+            {tc("cancel")}
           </button>
         )}
 
-        <span className="sr-only">
-          Diagnostic in progress: {stages[stageIndex]}
-        </span>
+        <span className="sr-only">{t("srProgress", { stage: stages[stageIndex] })}</span>
       </div>
 
       <style>{`

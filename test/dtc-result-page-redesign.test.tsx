@@ -16,7 +16,7 @@ import { cleanup, render, screen, within } from "@testing-library/react";
 import { NextIntlClientProvider } from "next-intl";
 import en from "../messages/en.json";
 import { RankedCauseList } from "@/components/RankedCauseList";
-import { DiagnosticStepList } from "@/components/DiagnosticStepList";
+import { DiagnosticStepList, type DiagnosticStepItem } from "@/components/DiagnosticStepList";
 import { ProfessionalReportUpsell } from "@/components/ProfessionalReportUpsell";
 import { PROFESSIONAL_REPORT_ONE_TIME } from "@/lib/pricing";
 import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
@@ -29,6 +29,14 @@ function renderUpsell(props: React.ComponentProps<typeof ProfessionalReportUpsel
   return render(
     <NextIntlClientProvider locale="en" messages={en} timeZone="UTC" now={new Date()} formats={{}}>
       <ProfessionalReportUpsell {...props} />
+    </NextIntlClientProvider>,
+  );
+}
+
+function renderStepList(steps: readonly DiagnosticStepItem[]) {
+  return render(
+    <NextIntlClientProvider locale="en" messages={en} timeZone="UTC" now={new Date()} formats={{}}>
+      <DiagnosticStepList steps={steps} />
     </NextIntlClientProvider>,
   );
 }
@@ -76,21 +84,19 @@ describe("diagnostic workflow", () => {
   const STEPS = ["Check for stored freeze-frame data", "Inspect the intake tract for cracks"];
 
   it("numbers steps and renders their text unchanged", () => {
-    render(<DiagnosticStepList steps={STEPS.map((text, i) => ({ step: i + 1, text }))} />);
+    renderStepList(STEPS.map((text, i) => ({ step: i + 1, text })));
     for (const text of STEPS) expect(screen.getByText(text)).toBeTruthy();
     expect(screen.getByTestId("diagnostic-step-1")).toBeTruthy();
     expect(screen.getByTestId("diagnostic-step-2")).toBeTruthy();
   });
 
   it("uses an ordered list", () => {
-    const { container } = render(
-      <DiagnosticStepList steps={STEPS.map((text, i) => ({ step: i + 1, text }))} />,
-    );
+    const { container } = renderStepList(STEPS.map((text, i) => ({ step: i + 1, text })));
     expect(container.querySelector("ol")).toBeTruthy();
   });
 
   it("handles an empty workflow safely", () => {
-    const { container } = render(<DiagnosticStepList steps={[]} />);
+    const { container } = renderStepList([]);
     expect(container.firstChild).toBeNull();
   });
 });

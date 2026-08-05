@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 
 const SUPPORTED_DOCUMENT_FORMATS = "PDF, TXT, CSV, JSON, XML, HTML";
 const SUPPORTED_PHOTO_FORMATS = "JPG, PNG, WEBP, GIF, HEIC/HEIF";
@@ -20,10 +21,9 @@ function isHeicFile(f: File): boolean {
   return HEIC_EXT_RE.test(f.name);
 }
 
-// English-only for this initial release — see docs/SCAN_REPORT_ANALYSIS.md
-// ("Known limitations") for why this page doesn't go through next-intl yet.
 export function ScanCaseUploadForm() {
   const router = useRouter();
+  const t = useTranslations("scanUpload");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [dragOver, setDragOver] = useState(false);
   const [mode, setMode] = useState<"document" | "photos">("document");
@@ -53,13 +53,13 @@ export function ScanCaseUploadForm() {
     const nonImages = incoming.filter((f) => !isImageFile(f));
 
     if (images.length > 0 && nonImages.length > 0) {
-      setError("Photos and scan report files can't be combined in one upload — please choose one or the other.");
+      setError(t("errorMixedFiles"));
       return;
     }
 
     if (nonImages.length > 0) {
       if (nonImages.length > 1) {
-        setError("Please choose a single scan report file, or upload multiple photos instead.");
+        setError(t("errorMultipleDocuments"));
         return;
       }
       setMode("document");
@@ -73,7 +73,7 @@ export function ScanCaseUploadForm() {
     setPhotos((prev) => {
       const combined = [...prev, ...images];
       if (combined.length > MAX_IMAGE_COUNT) {
-        setError(`You can upload up to ${MAX_IMAGE_COUNT} photos per case.`);
+        setError(t("errorMaxPhotos", { max: MAX_IMAGE_COUNT }));
         return prev;
       }
       return combined;
@@ -104,7 +104,7 @@ export function ScanCaseUploadForm() {
     });
     const uploadData = await uploadRes.json().catch(() => ({}));
     if (!uploadRes.ok) {
-      return { ok: false, error: uploadData.error ?? "Upload failed. Please try again." };
+      return { ok: false, error: uploadData.error ?? t("errorUploadFailed") };
     }
     return { ok: true };
   }
@@ -112,11 +112,11 @@ export function ScanCaseUploadForm() {
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (mode === "document" && !documentFile) {
-      setError("Please choose a scan report file to upload.");
+      setError(t("errorChooseDocument"));
       return;
     }
     if (mode === "photos" && photos.length === 0) {
-      setError("Please choose at least one photo to upload.");
+      setError(t("errorChoosePhoto"));
       return;
     }
 
@@ -140,7 +140,7 @@ export function ScanCaseUploadForm() {
       });
       const caseData = await caseRes.json().catch(() => ({}));
       if (!caseRes.ok) {
-        setError(caseData.error ?? "Could not create the case. Please try again.");
+        setError(caseData.error ?? t("errorCreateCase"));
         setStatus("idle");
         return;
       }
@@ -150,7 +150,7 @@ export function ScanCaseUploadForm() {
       if (mode === "document") {
         const result = await uploadOneFile(caseId, documentFile as File);
         if (!result.ok) {
-          setError(result.error ?? "Upload failed. Please try again.");
+          setError(result.error ?? t("errorUploadFailed"));
           setStatus("idle");
           return;
         }
@@ -161,7 +161,7 @@ export function ScanCaseUploadForm() {
         for (let i = 0; i < photos.length; i++) {
           const result = await uploadOneFile(caseId, photos[i]);
           if (!result.ok) {
-            setError(result.error ?? `Upload failed on photo ${i + 1} of ${photos.length}. Please try again.`);
+            setError(result.error ?? t("errorUploadPhotoFailed", { index: i + 1, total: photos.length }));
             setStatus("idle");
             return;
           }
@@ -170,7 +170,7 @@ export function ScanCaseUploadForm() {
 
       router.push(`/diagnostics/${caseId}`);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("errorGeneric"));
       setStatus("idle");
     }
   }
@@ -212,17 +212,17 @@ export function ScanCaseUploadForm() {
           <p className="text-[var(--text-primary)]">{documentFile.name}</p>
         ) : mode === "photos" && photos.length > 0 ? (
           <p className="text-[var(--text-primary)]">
-            {photos.length} photo{photos.length > 1 ? "s" : ""} selected — click or drop to add more
+            {photos.length > 1
+              ? t("photoSelectedMany", { count: photos.length })
+              : t("photoSelectedOne", { count: photos.length })}
           </p>
         ) : (
           <>
-            <p className="text-[var(--text-primary)]">
-              Drag and drop your scan report or phone photos here, or click to choose files
-            </p>
+            <p className="text-[var(--text-primary)]">{t("dropzonePrompt")}</p>
             <p className="mt-2 text-sm text-[var(--text-muted)]">
-              Documents: {SUPPORTED_DOCUMENT_FORMATS} (max {MAX_SIZE_MB} MB)
+              {t("dropzoneDocumentsInfo", { formats: SUPPORTED_DOCUMENT_FORMATS, maxSize: MAX_SIZE_MB })}
               <br />
-              Or photos/screenshots: {SUPPORTED_PHOTO_FORMATS} (up to {MAX_IMAGE_COUNT} per case)
+              {t("dropzonePhotosInfo", { formats: SUPPORTED_PHOTO_FORMATS, maxCount: MAX_IMAGE_COUNT })}
             </p>
           </>
         )}
@@ -231,7 +231,9 @@ export function ScanCaseUploadForm() {
       {mode === "photos" && photos.length > 0 && (
         <div className="glass-panel rounded-[var(--radius-lg)] p-4">
           <p className="mb-3 text-sm text-[var(--text-secondary)]">
-            {photos.length} photo{photos.length > 1 ? "s" : ""} — will be analyzed in this order
+            {photos.length > 1
+              ? t("photoOrderNoteMany", { count: photos.length })
+              : t("photoOrderNoteOne", { count: photos.length })}
           </p>
           <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
             {photos.map((f, i) => (
@@ -277,7 +279,7 @@ export function ScanCaseUploadForm() {
                     onClick={() => removePhoto(i)}
                     className="text-xs text-[var(--accent-red)]"
                   >
-                    Remove
+                    {t("remove")}
                   </button>
                 </div>
               </li>
@@ -287,33 +289,32 @@ export function ScanCaseUploadForm() {
       )}
 
       <div className="glass-panel rounded-[var(--radius-lg)] p-5 text-xs text-[var(--text-muted)]">
-        Your files are stored privately and used only to generate your diagnostic analysis. They are never shared or
-        made public.
+        {t("privacyNote")}
       </div>
 
       <div className="grid gap-4 sm:grid-cols-2">
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)] sm:col-span-2">
-          Customer complaint
+          {t("fieldComplaint")}
           <textarea
             value={complaint}
             onChange={(e) => setComplaint(e.target.value)}
             rows={3}
             className="rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
-            placeholder="e.g. Check engine light on, rough idle at stoplights"
+            placeholder={t("fieldComplaintPlaceholder")}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)] sm:col-span-2">
-          Observed symptoms (comma-separated)
+          {t("fieldSymptoms")}
           <input
             type="text"
             value={symptoms}
             onChange={(e) => setSymptoms(e.target.value)}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
-            placeholder="rough idle, hesitation on acceleration"
+            placeholder={t("fieldSymptomsPlaceholder")}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-          Mileage
+          {t("fieldMileage")}
           <input
             type="number"
             min={0}
@@ -323,17 +324,17 @@ export function ScanCaseUploadForm() {
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)]">
-          Battery condition
+          {t("fieldBatteryCondition")}
           <input
             type="text"
             value={batteryCondition}
             onChange={(e) => setBatteryCondition(e.target.value)}
             className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
-            placeholder="e.g. tested, 12.6V resting"
+            placeholder={t("fieldBatteryConditionPlaceholder")}
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)] sm:col-span-2">
-          Recent repairs
+          {t("fieldRecentRepairs")}
           <textarea
             value={recentRepairs}
             onChange={(e) => setRecentRepairs(e.target.value)}
@@ -342,7 +343,7 @@ export function ScanCaseUploadForm() {
           />
         </label>
         <label className="flex flex-col gap-1 text-sm text-[var(--text-secondary)] sm:col-span-2">
-          Technician notes
+          {t("fieldTechnicianNotes")}
           <textarea
             value={technicianNotes}
             onChange={(e) => setTechnicianNotes(e.target.value)}
@@ -359,7 +360,7 @@ export function ScanCaseUploadForm() {
         disabled={status === "submitting"}
         className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {status === "submitting" ? "Uploading…" : "Upload and continue"}
+        {status === "submitting" ? t("uploading") : t("uploadAndContinue")}
       </button>
     </form>
   );

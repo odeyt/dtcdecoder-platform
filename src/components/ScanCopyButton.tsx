@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import type { ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
 import { formatReportForClipboard } from "@/lib/scan-diagnostics/report-clipboard";
 
@@ -9,6 +10,7 @@ import { formatReportForClipboard } from "@/lib/scan-diagnostics/report-clipboar
 // as plain text, so there's no server round-trip and nothing beyond what's
 // already on screen is ever touched.
 export function ScanCopyButton({ reportAccess }: { reportAccess: ScanReportAccessResult }) {
+  const t = useTranslations("scanReport");
   const [copied, setCopied] = useState(false);
 
   async function handleCopy() {
@@ -29,7 +31,7 @@ export function ScanCopyButton({ reportAccess }: { reportAccess: ScanReportAcces
       className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-4 py-2 text-sm font-medium text-[var(--text-primary)] transition hover:bg-white/5"
     >
       <span role="status" aria-live="polite">
-        {copied ? "Copied" : "Copy report"}
+        {copied ? t("copied") : t("copyReport")}
       </span>
     </button>
   );
