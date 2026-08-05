@@ -19,7 +19,6 @@ export function SiteNav() {
   const locale = useLocale();
   const href = (path: string) => localizeContentHref(path, locale);
   const NAV_LINKS = [
-    { href: "/dtc", label: t("dtcLookup") },
     { href: "/ai-assistant", label: t("aiDiagnostic") },
     ...(env.scanDiagnosticsEnabled() ? [{ href: "/diagnostics", label: t("scanDiagnostics") }] : []),
     { href: "/repair-pdfs", label: t("repairLibrary") },

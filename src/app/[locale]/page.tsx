@@ -57,7 +57,6 @@ export default async function HomePage({ params }: Props) {
   const { locale } = await params;
   const th = await getTranslations({ locale, namespace: "home" });
   const tSb = await getTranslations({ locale, namespace: "serviceBay" });
-  const tNav = await getTranslations({ locale, namespace: "nav" });
 
   const valueProps = [
     { title: th("valueProp1Title"), body: th("valueProp1Body") },
@@ -101,12 +100,6 @@ export default async function HomePage({ params }: Props) {
               >
                 {tSb("startDiagnosisCta")}
               </a>
-              <Link
-                href="/dtc"
-                className="inline-flex min-h-11 items-center rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 font-semibold text-[var(--text-primary)] transition hover:border-[var(--border-red)]"
-              >
-                {tNav("dtcLookup")}
-              </Link>
             </div>
           </div>
 
