@@ -18,22 +18,22 @@ interface RouteParams {
   params: Promise<{ caseId: string }>;
 }
 
-function featureDisabledResponse() {
-  return NextResponse.json({ error: "Repair verification is not available yet." }, { status: 404 });
+function featureDisabledResponse(t: Record<string, string>) {
+  return NextResponse.json({ error: t.repairVerificationNotAvailable }, { status: 404 });
 }
 
 export async function GET(_request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
   try {
-    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse(t);
 
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToViewRepairVerification }, { status: 401 });
     }
 
@@ -48,15 +48,15 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 export async function POST(_request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
   try {
-    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse(t);
 
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToGenerateRepairVerification }, { status: 401 });
     }
 
@@ -77,15 +77,15 @@ const UpdateItemSchema = z.object({
 export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
   try {
-    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+    if (!DIAGNOSTIC_ENGINE_FLAGS.repairVerificationEnabled()) return featureDisabledResponse(t);
 
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToUpdateRepairVerification }, { status: 401 });
     }
 
@@ -93,7 +93,7 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
     const parsed = UpdateItemSchema.safeParse(await request.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid checklist update payload." }, { status: 400 });
+      return NextResponse.json({ error: t.invalidChecklistUpdatePayload }, { status: 400 });
     }
 
     const verification = await updateRepairVerificationItem(caseId, parsed.data.item, parsed.data.completed, parsed.data.notes);

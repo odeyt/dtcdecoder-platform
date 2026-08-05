@@ -14,6 +14,16 @@ import { safeRedirectPath } from "@/lib/safe-redirect";
 // covers signing in to an existing account.
 export function PasswordLoginForm({ next }: { next?: string }) {
   const t = useTranslations("auth");
+  // Maps the stable Supabase Auth error .code (not .message, which is raw
+  // English and not guaranteed stable wording) to a translated string —
+  // any code not in this map falls back to a generic translated message,
+  // never the raw SDK text.
+  const ERROR_CODE_LABEL: Record<string, string> = {
+    invalid_credentials: t("incorrectCredentials"),
+    email_not_confirmed: t("signInEmailNotConfirmed"),
+    over_request_rate_limit: t("signInRateLimited"),
+    user_banned: t("signInAccountDisabled"),
+  };
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -29,9 +39,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
     const { error } = await supabase.auth.signInWithPassword({ email, password });
 
     if (error) {
-      setErrorMessage(
-        error.message === "Invalid login credentials" ? t("incorrectCredentials") : error.message,
-      );
+      setErrorMessage((error.code && ERROR_CODE_LABEL[error.code]) ?? t("signInGenericError"));
       setStatus("error");
       return;
     }

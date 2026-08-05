@@ -88,6 +88,10 @@
     "signIn": "ចូល",
     "signingIn": "កំពុងចូល…",
     "incorrectCredentials": "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។",
+    "signInGenericError": "មានបញ្ហាកើតឡើងពេលចូលគណនី។ សូមព្យាយាមម្តងទៀត។",
+    "signInEmailNotConfirmed": "សូមបញ្ជាក់អាសយដ្ឋានអ៊ីមែលរបស់អ្នកមុននឹងចូលគណនី។",
+    "signInRateLimited": "ការព្យាយាមច្រើនពេកបណ្តើម។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេលពីរបីនាទី។",
+    "signInAccountDisabled": "គណនីនេះត្រូវបានផ្អាកដំណើរការ។ សូមទាក់ទងផ្នែកជំនួយសម្រាប់ជំនួយ។",
     "forgotPassword": "ភ្លេចពាក្យសម្ងាត់?",
     "resetPasswordHeading": "កំណត់ពាក្យសម្ងាត់ឡើងវិញ",
     "resetPasswordSubtext": "បញ្ចូលអ៊ីមែលនៃគណនីរបស់អ្នក ហើយយើងនឹងផ្ញើតំណមួយឲ្យអ្នកដើម្បីកំណត់ពាក្យសម្ងាត់ថ្មី។",
@@ -213,7 +217,12 @@
     "setPassword": "កំណត់ពាក្យសម្ងាត់",
     "passwordUpdated": "ពាក្យសម្ងាត់បានធ្វើបច្ចុប្បន្នភាព។",
     "passwordTooShort": "ពាក្យសម្ងាត់ត្រូវមានយ៉ាងហោចណាស់ ៨ តួអក្សរ។",
-    "passwordsDontMatch": "ពាក្យសម្ងាត់មិនត្រូវគ្នា។"
+    "passwordsDontMatch": "ពាក្យសម្ងាត់មិនត្រូវគ្នា។",
+    "passwordUpdateGenericError": "មានបញ្ហាកើតឡើងពេលធ្វើបច្ចុប្បន្នភាពពាក្យសម្ងាត់របស់អ្នក។ សូមព្យាយាមម្តងទៀត។",
+    "passwordUpdateWeakPassword": "សូមជ្រើសរើសពាក្យសម្ងាត់ដែលមានសុវត្ថិភាពជាងនេះ។",
+    "passwordUpdateSamePassword": "ពាក្យសម្ងាត់ថ្មីត្រូវតែខុសពីពាក្យសម្ងាត់បច្ចុប្បន្នរបស់អ្នក។",
+    "passwordUpdateRateLimited": "ការព្យាយាមច្រើនពេកបណ្តើម។ សូមព្យាយាមម្តងទៀតក្នុងរយៈពេលពីរបីនាទី។",
+    "passwordUpdateSessionExpired": "សម័យរបស់អ្នកបានផុតកំណត់។ សូមចូលគណនីម្តងទៀត ហើយព្យាយាមម្តងទៀត។"
   },
   "scanCases": {
     "title": "ករណីវិនិច្ឆ័យ",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "សូមចូលគណនីដើម្បីមើលកំណត់ចំណាំ។",
     "signInToAddNote": "សូមចូលគណនីដើម្បីបន្ថែមកំណត់ចំណាំ។",
     "signInToUpdateTestProgress": "សូមចូលគណនីដើម្បីធ្វើបច្ចុប្បន្នភាពដំណើរការតេស្ត។",
-    "signInToRegenerateReport": "សូមចូលគណនីដើម្បីបង្កើតរបាយការណ៍នេះឡើងវិញ។"
+    "signInToRegenerateReport": "សូមចូលគណនីដើម្បីបង្កើតរបាយការណ៍នេះឡើងវិញ។",
+    "invalidCaseInformation": "ព័ត៌មានករណីមិនត្រឹមត្រូវ",
+    "expectedMultipartFormData": "ត្រូវការទិន្នន័យ multipart/form-data។",
+    "noFileProvided": "មិនបានផ្តល់ឯកសារទេ។",
+    "languageNotAvailableOnPlan": "ភាសានោះមិនអាចប្រើបានលើគម្រោងរបស់អ្នកទេ។",
+    "invalidExtractionReview": "ការត្រួតពិនិត្យការស្រង់ចេញមិនត្រឹមត្រូវ",
+    "invalidFeedback": "មតិយោបល់មិនត្រឹមត្រូវ",
+    "invalidNote": "កំណត់ចំណាំមិនត្រឹមត្រូវ",
+    "invalidCauseIndex": "លិបិក្រមមូលហេតុមិនត្រឹមត្រូវ",
+    "invalidCauseStatusUpdate": "ការធ្វើបច្ចុប្បន្នភាពស្ថានភាពមូលហេតុមិនត្រឹមត្រូវ",
+    "invalidTestIndex": "លិបិក្រមតេស្តមិនត្រឹមត្រូវ",
+    "invalidTestProgressUpdate": "ការធ្វើបច្ចុប្បន្នភាពដំណើរការតេស្តមិនត្រឹមត្រូវ",
+    "invalidVerificationUpdate": "ការធ្វើបច្ចុប្បន្នភាពការផ្ទៀងផ្ទាត់មិនត្រឹមត្រូវ",
+    "invalidDiagnosticCaseInfo": "ព័ត៌មានករណីវិនិច្ឆ័យមិនត្រឹមត្រូវ។",
+    "fullAiDiagnosisUpgradeRequired": "ការវិនិច្ឆ័យ AI ពេញលេញអាចប្រើបានលើគម្រោង Pro Technician និង Workshop។",
+    "diagnosticEngineNotAvailable": "ម៉ាស៊ីនវិនិច្ឆ័យ AI មិនទាន់អាចប្រើបានទេ។",
+    "invalidTurnRequestPayload": "ទិន្នន័យសំណើវេនមិនត្រឹមត្រូវ។",
+    "invalidAnswerPayload": "ទិន្នន័យចម្លើយមិនត្រឹមត្រូវ។",
+    "repairVerificationNotAvailable": "ការផ្ទៀងផ្ទាត់ការជួសជុលមិនទាន់អាចប្រើបានទេ។",
+    "invalidChecklistUpdatePayload": "ទិន្នន័យធ្វើបច្ចុប្បន្នភាពបញ្ជីត្រួតពិនិត្យមិនត្រឹមត្រូវ។",
+    "invalidDiagnosticIntakeData": "ទិន្នន័យទទួលចូលវិនិច្ឆ័យមិនត្រឹមត្រូវ។",
+    "noDtcCodeIdentified": "រកមិនឃើញកូដវិនិច្ឆ័យទេ។ សូមសាកល្បងប្រើការនាំចូលការស្កេនយានយន្តជំនួសវិញ។"
   }
 }

@@ -28,8 +28,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
 
   try {
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     if (!DIAGNOSTIC_ENGINE_FLAGS.questionEngineEnabled()) {
-      return NextResponse.json({ error: "The AI Diagnostic Engine is not available yet." }, { status: 404 });
+      return NextResponse.json({ error: t.diagnosticEngineNotAvailable }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -37,8 +40,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToAnswerQuestions }, { status: 401 });
     }
 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const parsed = AnswerBodySchema.safeParse(await request.json());
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid answer payload." }, { status: 400 });
+      return NextResponse.json({ error: t.invalidAnswerPayload }, { status: 400 });
     }
     const { questionId, fieldKey, answerText, answerValue } = parsed.data;
 

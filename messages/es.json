@@ -286,6 +286,10 @@
     "signIn": "Iniciar sesión",
     "signingIn": "Iniciando sesión…",
     "incorrectCredentials": "Correo electrónico o contraseña incorrectos.",
+    "signInGenericError": "Ocurrió un error al iniciar sesión. Inténtalo de nuevo.",
+    "signInEmailNotConfirmed": "Confirma tu dirección de correo electrónico antes de iniciar sesión.",
+    "signInRateLimited": "Demasiados intentos. Inténtalo de nuevo en unos minutos.",
+    "signInAccountDisabled": "Esta cuenta ha sido deshabilitada. Contacta a soporte para obtener ayuda.",
     "forgotPassword": "¿Olvidaste tu contraseña?",
     "resetPasswordHeading": "Restablece tu contraseña",
     "resetPasswordSubtext": "Ingresa el correo de tu cuenta y te enviaremos un enlace para establecer una nueva contraseña.",
@@ -411,7 +415,12 @@
     "setPassword": "Establecer contraseña",
     "passwordUpdated": "Contraseña actualizada.",
     "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
-    "passwordsDontMatch": "Las contraseñas no coinciden."
+    "passwordsDontMatch": "Las contraseñas no coinciden.",
+    "passwordUpdateGenericError": "Ocurrió un error al actualizar tu contraseña. Inténtalo de nuevo.",
+    "passwordUpdateWeakPassword": "Elige una contraseña más segura.",
+    "passwordUpdateSamePassword": "La nueva contraseña debe ser diferente de tu contraseña actual.",
+    "passwordUpdateRateLimited": "Demasiados intentos. Inténtalo de nuevo en unos minutos.",
+    "passwordUpdateSessionExpired": "Tu sesión ha expirado. Inicia sesión de nuevo e inténtalo otra vez."
   },
   "scanCases": {
     "title": "Casos de diagnóstico",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "Inicia sesión para ver las notas.",
     "signInToAddNote": "Inicia sesión para agregar una nota.",
     "signInToUpdateTestProgress": "Inicia sesión para actualizar el progreso de la prueba.",
-    "signInToRegenerateReport": "Inicia sesión para regenerar este reporte."
+    "signInToRegenerateReport": "Inicia sesión para regenerar este reporte.",
+    "invalidCaseInformation": "Información del caso no válida",
+    "expectedMultipartFormData": "Se esperaba multipart/form-data.",
+    "noFileProvided": "No se proporcionó ningún archivo.",
+    "languageNotAvailableOnPlan": "Ese idioma no está disponible en tu plan.",
+    "invalidExtractionReview": "Revisión de extracción no válida",
+    "invalidFeedback": "Comentario no válido",
+    "invalidNote": "Nota no válida",
+    "invalidCauseIndex": "Índice de causa no válido",
+    "invalidCauseStatusUpdate": "Actualización de estado de causa no válida",
+    "invalidTestIndex": "Índice de prueba no válido",
+    "invalidTestProgressUpdate": "Actualización de progreso de prueba no válida",
+    "invalidVerificationUpdate": "Actualización de verificación no válida",
+    "invalidDiagnosticCaseInfo": "Información del caso de diagnóstico no válida.",
+    "fullAiDiagnosisUpgradeRequired": "El diagnóstico completo con IA está disponible en los planes Pro Technician y Workshop.",
+    "diagnosticEngineNotAvailable": "El motor de diagnóstico con IA aún no está disponible.",
+    "invalidTurnRequestPayload": "Datos de la solicitud de turno no válidos.",
+    "invalidAnswerPayload": "Datos de la respuesta no válidos.",
+    "repairVerificationNotAvailable": "La verificación de reparación aún no está disponible.",
+    "invalidChecklistUpdatePayload": "Datos de actualización de la lista de verificación no válidos.",
+    "invalidDiagnosticIntakeData": "Datos de admisión de diagnóstico no válidos.",
+    "noDtcCodeIdentified": "No se identificó ningún código de diagnóstico. Prueba con Importar escaneo del vehículo en su lugar."
   }
 }

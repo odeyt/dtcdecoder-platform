@@ -88,6 +88,10 @@
     "signIn": "ເຂົ້າສູ່ລະບົບ",
     "signingIn": "ກຳລັງເຂົ້າສູ່ລະບົບ…",
     "incorrectCredentials": "ອີເມວ ຫຼື ລະຫັດຜ່ານບໍ່ຖືກຕ້ອງ.",
+    "signInGenericError": "ມີບັນຫາເກີດຂຶ້ນໃນການເຂົ້າສູ່ລະບົບ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.",
+    "signInEmailNotConfirmed": "ກະລຸນາຢືນຢັນທີ່ຢູ່ອີເມວຂອງທ່ານກ່ອນເຂົ້າສູ່ລະບົບ.",
+    "signInRateLimited": "ພະຍາຍາມຫຼາຍເທື່ອເກີນໄປ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງໃນອີກສອງສາມນາທີ.",
+    "signInAccountDisabled": "ບັນຊີນີ້ຖືກປິດການໃຊ້ງານແລ້ວ. ກະລຸນາຕິດຕໍ່ຝ່າຍສະໜັບສະໜູນເພື່ອຂໍຄວາມຊ່ວຍເຫຼືອ.",
     "forgotPassword": "ລືມລະຫັດຜ່ານບໍ?",
     "resetPasswordHeading": "ຣີເຊັດລະຫັດຜ່ານຂອງທ່ານ",
     "resetPasswordSubtext": "ໃສ່ອີເມວຂອງບັນຊີທ່ານ ແລະພວກເຮົາຈະສົ່ງລິ້ງໃຫ້ທ່ານເພື່ອຕັ້ງລະຫັດຜ່ານໃໝ່.",
@@ -213,7 +217,12 @@
     "setPassword": "ຕັ້ງລະຫັດຜ່ານ",
     "passwordUpdated": "ອັບເດດລະຫັດຜ່ານແລ້ວ.",
     "passwordTooShort": "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
-    "passwordsDontMatch": "ລະຫັດຜ່ານບໍ່ກົງກັນ."
+    "passwordsDontMatch": "ລະຫັດຜ່ານບໍ່ກົງກັນ.",
+    "passwordUpdateGenericError": "ມີບັນຫາເກີດຂຶ້ນໃນການອັບເດດລະຫັດຜ່ານຂອງທ່ານ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງ.",
+    "passwordUpdateWeakPassword": "ກະລຸນາເລືອກລະຫັດຜ່ານທີ່ປອດໄພກວ່ານີ້.",
+    "passwordUpdateSamePassword": "ລະຫັດຜ່ານໃໝ່ຕ້ອງແຕກຕ່າງຈາກລະຫັດຜ່ານປັດຈຸບັນຂອງທ່ານ.",
+    "passwordUpdateRateLimited": "ພະຍາຍາມຫຼາຍເທື່ອເກີນໄປ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງໃນອີກສອງສາມນາທີ.",
+    "passwordUpdateSessionExpired": "ເຊດຊັນຂອງທ່ານໝົດອາຍຸແລ້ວ. ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່ແລ້ວລອງອີກຄັ້ງ."
   },
   "scanCases": {
     "title": "ກໍລະນີການວິນິດໄສ",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອເບິ່ງບັນທຶກ.",
     "signInToAddNote": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອເພີ່ມບັນທຶກ.",
     "signInToUpdateTestProgress": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອອັບເດດຄວາມຄືບໜ້າການທົດສອບ.",
-    "signInToRegenerateReport": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອສ້າງບົດລາຍງານນີ້ຄືນໃໝ່."
+    "signInToRegenerateReport": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອສ້າງບົດລາຍງານນີ້ຄືນໃໝ່.",
+    "invalidCaseInformation": "ຂໍ້ມູນກໍລະນີບໍ່ຖືກຕ້ອງ",
+    "expectedMultipartFormData": "ຕ້ອງການຂໍ້ມູນແບບ multipart/form-data.",
+    "noFileProvided": "ບໍ່ໄດ້ລະບຸໄຟລ໌.",
+    "languageNotAvailableOnPlan": "ພາສານັ້ນບໍ່ສາມາດໃຊ້ໄດ້ໃນແພັກເກັດຂອງທ່ານ.",
+    "invalidExtractionReview": "ການກວດສອບການສະກັດຂໍ້ມູນບໍ່ຖືກຕ້ອງ",
+    "invalidFeedback": "ຄຳຕິຊົມບໍ່ຖືກຕ້ອງ",
+    "invalidNote": "ບັນທຶກບໍ່ຖືກຕ້ອງ",
+    "invalidCauseIndex": "ດັດຊະນີສາເຫດບໍ່ຖືກຕ້ອງ",
+    "invalidCauseStatusUpdate": "ການອັບເດດສະຖານະສາເຫດບໍ່ຖືກຕ້ອງ",
+    "invalidTestIndex": "ດັດຊະນີການທົດສອບບໍ່ຖືກຕ້ອງ",
+    "invalidTestProgressUpdate": "ການອັບເດດຄວາມຄືບໜ້າການທົດສອບບໍ່ຖືກຕ້ອງ",
+    "invalidVerificationUpdate": "ການອັບເດດການຢັ້ງຢືນບໍ່ຖືກຕ້ອງ",
+    "invalidDiagnosticCaseInfo": "ຂໍ້ມູນກໍລະນີວິນິດໄສບໍ່ຖືກຕ້ອງ.",
+    "fullAiDiagnosisUpgradeRequired": "ການວິນິດໄສ AI ແບບເຕັມຮູບແບບສາມາດໃຊ້ໄດ້ໃນແພັກເກັດ Pro Technician ແລະ Workshop.",
+    "diagnosticEngineNotAvailable": "ເຄື່ອງມືວິນິດໄສ AI ຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
+    "invalidTurnRequestPayload": "ຂໍ້ມູນຄຳຮ້ອງຂໍຮອບການວິນິດໄສບໍ່ຖືກຕ້ອງ.",
+    "invalidAnswerPayload": "ຂໍ້ມູນຄຳຕອບບໍ່ຖືກຕ້ອງ.",
+    "repairVerificationNotAvailable": "ການຢັ້ງຢືນການສ້ອມແປງຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
+    "invalidChecklistUpdatePayload": "ຂໍ້ມູນການອັບເດດລາຍການກວດສອບບໍ່ຖືກຕ້ອງ.",
+    "invalidDiagnosticIntakeData": "ຂໍ້ມູນການຮັບເຂົ້າວິນິດໄສບໍ່ຖືກຕ້ອງ.",
+    "noDtcCodeIdentified": "ບໍ່ພົບລະຫັດວິນິດໄສທີ່ລະບຸໄດ້. ລອງໃຊ້ການນຳເຂົ້າຂໍ້ມູນສະແກນລົດແທນ."
   }
 }

@@ -25,14 +25,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
     if (!Number.isInteger(causeIndex) || causeIndex < 0) {
-      return NextResponse.json({ error: "Invalid cause index" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidCauseIndex }, { status: 400 });
     }
 
     const user = await requireUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToUpdateFinding }, { status: 401 });
     }
 
@@ -40,12 +40,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
     }
 
     const parsed = CauseStatusInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid cause status update" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidCauseStatusUpdate }, { status: 400 });
     }
 
     const status = await upsertCauseStatus(user.id, caseId, causeIndex, parsed.data);

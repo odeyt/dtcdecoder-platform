@@ -12,6 +12,17 @@ import { createClient } from "@/lib/supabase/client";
 // relies on.
 export function ChangePasswordForm() {
   const t = useTranslations("account");
+  // Maps the stable Supabase Auth error .code (not .message, which is raw
+  // English and not guaranteed stable wording) to a translated string —
+  // any code not in this map falls back to a generic translated message,
+  // never the raw SDK text.
+  const ERROR_CODE_LABEL: Record<string, string> = {
+    weak_password: t("passwordUpdateWeakPassword"),
+    same_password: t("passwordUpdateSamePassword"),
+    over_request_rate_limit: t("passwordUpdateRateLimited"),
+    session_expired: t("passwordUpdateSessionExpired"),
+    user_not_found: t("passwordUpdateSessionExpired"),
+  };
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -37,7 +48,7 @@ export function ChangePasswordForm() {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage((error.code && ERROR_CODE_LABEL[error.code]) ?? t("passwordUpdateGenericError"));
       setStatus("error");
       return;
     }

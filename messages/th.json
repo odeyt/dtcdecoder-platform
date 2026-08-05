@@ -88,6 +88,10 @@
     "signIn": "เข้าสู่ระบบ",
     "signingIn": "กำลังเข้าสู่ระบบ…",
     "incorrectCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    "signInGenericError": "เกิดปัญหาขณะเข้าสู่ระบบ กรุณาลองใหม่อีกครั้ง",
+    "signInEmailNotConfirmed": "กรุณายืนยันที่อยู่อีเมลของคุณก่อนเข้าสู่ระบบ",
+    "signInRateLimited": "พยายามหลายครั้งเกินไป กรุณาลองใหม่อีกครั้งในอีกไม่กี่นาที",
+    "signInAccountDisabled": "บัญชีนี้ถูกปิดใช้งาน กรุณาติดต่อฝ่ายสนับสนุนเพื่อขอความช่วยเหลือ",
     "forgotPassword": "ลืมรหัสผ่านใช่ไหม?",
     "resetPasswordHeading": "รีเซ็ตรหัสผ่านของคุณ",
     "resetPasswordSubtext": "ป้อนอีเมลของบัญชีคุณ แล้วเราจะส่งลิงก์ให้คุณตั้งรหัสผ่านใหม่",
@@ -213,7 +217,12 @@
     "setPassword": "ตั้งรหัสผ่าน",
     "passwordUpdated": "อัปเดตรหัสผ่านแล้ว",
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร",
-    "passwordsDontMatch": "รหัสผ่านไม่ตรงกัน"
+    "passwordsDontMatch": "รหัสผ่านไม่ตรงกัน",
+    "passwordUpdateGenericError": "เกิดปัญหาขณะอัปเดตรหัสผ่านของคุณ กรุณาลองใหม่อีกครั้ง",
+    "passwordUpdateWeakPassword": "กรุณาเลือกรหัสผ่านที่ปลอดภัยกว่านี้",
+    "passwordUpdateSamePassword": "รหัสผ่านใหม่ต้องแตกต่างจากรหัสผ่านปัจจุบันของคุณ",
+    "passwordUpdateRateLimited": "พยายามหลายครั้งเกินไป กรุณาลองใหม่อีกครั้งในอีกไม่กี่นาที",
+    "passwordUpdateSessionExpired": "เซสชันของคุณหมดอายุแล้ว กรุณาเข้าสู่ระบบใหม่แล้วลองอีกครั้ง"
   },
   "scanCases": {
     "title": "เคสการวินิจฉัย",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "กรุณาเข้าสู่ระบบเพื่อดูบันทึก",
     "signInToAddNote": "กรุณาเข้าสู่ระบบเพื่อเพิ่มบันทึก",
     "signInToUpdateTestProgress": "กรุณาเข้าสู่ระบบเพื่ออัปเดตความคืบหน้าการทดสอบ",
-    "signInToRegenerateReport": "กรุณาเข้าสู่ระบบเพื่อสร้างรายงานนี้ใหม่"
+    "signInToRegenerateReport": "กรุณาเข้าสู่ระบบเพื่อสร้างรายงานนี้ใหม่",
+    "invalidCaseInformation": "ข้อมูลเคสไม่ถูกต้อง",
+    "expectedMultipartFormData": "ต้องการข้อมูลแบบ multipart/form-data",
+    "noFileProvided": "ไม่ได้ระบุไฟล์",
+    "languageNotAvailableOnPlan": "ภาษานั้นไม่พร้อมใช้งานสำหรับแพ็กเกจของคุณ",
+    "invalidExtractionReview": "การตรวจสอบข้อมูลที่ดึงออกมาไม่ถูกต้อง",
+    "invalidFeedback": "ความคิดเห็นไม่ถูกต้อง",
+    "invalidNote": "บันทึกไม่ถูกต้อง",
+    "invalidCauseIndex": "ดัชนีสาเหตุไม่ถูกต้อง",
+    "invalidCauseStatusUpdate": "การอัปเดตสถานะสาเหตุไม่ถูกต้อง",
+    "invalidTestIndex": "ดัชนีการทดสอบไม่ถูกต้อง",
+    "invalidTestProgressUpdate": "การอัปเดตความคืบหน้าการทดสอบไม่ถูกต้อง",
+    "invalidVerificationUpdate": "การอัปเดตการตรวจสอบไม่ถูกต้อง",
+    "invalidDiagnosticCaseInfo": "ข้อมูลเคสวินิจฉัยไม่ถูกต้อง",
+    "fullAiDiagnosisUpgradeRequired": "การวินิจฉัยด้วย AI แบบเต็มรูปแบบใช้ได้กับแพ็กเกจ Pro Technician และ Workshop",
+    "diagnosticEngineNotAvailable": "เครื่องมือวินิจฉัยด้วย AI ยังไม่พร้อมใช้งาน",
+    "invalidTurnRequestPayload": "ข้อมูลคำขอรอบการวินิจฉัยไม่ถูกต้อง",
+    "invalidAnswerPayload": "ข้อมูลคำตอบไม่ถูกต้อง",
+    "repairVerificationNotAvailable": "การตรวจสอบการซ่อมยังไม่พร้อมใช้งาน",
+    "invalidChecklistUpdatePayload": "ข้อมูลการอัปเดตรายการตรวจสอบไม่ถูกต้อง",
+    "invalidDiagnosticIntakeData": "ข้อมูลการรับเรื่องวินิจฉัยไม่ถูกต้อง",
+    "noDtcCodeIdentified": "ไม่พบรหัสวินิจฉัยที่ระบุได้ ลองใช้การนำเข้าผลสแกนรถยนต์แทน"
   }
 }

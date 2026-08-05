@@ -88,6 +88,10 @@
     "signIn": "Đăng nhập",
     "signingIn": "Đang đăng nhập…",
     "incorrectCredentials": "Email hoặc mật khẩu không đúng.",
+    "signInGenericError": "Đã xảy ra sự cố khi đăng nhập. Vui lòng thử lại.",
+    "signInEmailNotConfirmed": "Vui lòng xác nhận địa chỉ email trước khi đăng nhập.",
+    "signInRateLimited": "Quá nhiều lần thử. Vui lòng thử lại sau vài phút.",
+    "signInAccountDisabled": "Tài khoản này đã bị vô hiệu hóa. Liên hệ bộ phận hỗ trợ để được giúp đỡ.",
     "forgotPassword": "Quên mật khẩu?",
     "resetPasswordHeading": "Đặt lại mật khẩu của bạn",
     "resetPasswordSubtext": "Nhập email của tài khoản và chúng tôi sẽ gửi cho bạn liên kết để đặt mật khẩu mới.",
@@ -213,7 +217,12 @@
     "setPassword": "Đặt mật khẩu",
     "passwordUpdated": "Đã cập nhật mật khẩu.",
     "passwordTooShort": "Mật khẩu phải có ít nhất 8 ký tự.",
-    "passwordsDontMatch": "Mật khẩu không khớp."
+    "passwordsDontMatch": "Mật khẩu không khớp.",
+    "passwordUpdateGenericError": "Đã xảy ra sự cố khi cập nhật mật khẩu của bạn. Vui lòng thử lại.",
+    "passwordUpdateWeakPassword": "Hãy chọn một mật khẩu mạnh hơn.",
+    "passwordUpdateSamePassword": "Mật khẩu mới phải khác với mật khẩu hiện tại của bạn.",
+    "passwordUpdateRateLimited": "Quá nhiều lần thử. Vui lòng thử lại sau vài phút.",
+    "passwordUpdateSessionExpired": "Phiên của bạn đã hết hạn. Hãy đăng nhập lại và thử lại."
   },
   "scanCases": {
     "title": "Ca chẩn đoán",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "Đăng nhập để xem ghi chú.",
     "signInToAddNote": "Đăng nhập để thêm ghi chú.",
     "signInToUpdateTestProgress": "Đăng nhập để cập nhật tiến độ kiểm tra.",
-    "signInToRegenerateReport": "Đăng nhập để tạo lại báo cáo này."
+    "signInToRegenerateReport": "Đăng nhập để tạo lại báo cáo này.",
+    "invalidCaseInformation": "Thông tin hồ sơ không hợp lệ",
+    "expectedMultipartFormData": "Cần dữ liệu multipart/form-data.",
+    "noFileProvided": "Không có tệp nào được cung cấp.",
+    "languageNotAvailableOnPlan": "Ngôn ngữ đó không khả dụng trong gói của bạn.",
+    "invalidExtractionReview": "Xem xét trích xuất không hợp lệ",
+    "invalidFeedback": "Phản hồi không hợp lệ",
+    "invalidNote": "Ghi chú không hợp lệ",
+    "invalidCauseIndex": "Chỉ số nguyên nhân không hợp lệ",
+    "invalidCauseStatusUpdate": "Cập nhật trạng thái nguyên nhân không hợp lệ",
+    "invalidTestIndex": "Chỉ số kiểm tra không hợp lệ",
+    "invalidTestProgressUpdate": "Cập nhật tiến độ kiểm tra không hợp lệ",
+    "invalidVerificationUpdate": "Cập nhật xác minh không hợp lệ",
+    "invalidDiagnosticCaseInfo": "Thông tin hồ sơ chẩn đoán không hợp lệ.",
+    "fullAiDiagnosisUpgradeRequired": "Chẩn đoán AI đầy đủ khả dụng trên các gói Pro Technician và Workshop.",
+    "diagnosticEngineNotAvailable": "Công cụ chẩn đoán AI chưa khả dụng.",
+    "invalidTurnRequestPayload": "Dữ liệu yêu cầu lượt không hợp lệ.",
+    "invalidAnswerPayload": "Dữ liệu câu trả lời không hợp lệ.",
+    "repairVerificationNotAvailable": "Xác minh sửa chữa chưa khả dụng.",
+    "invalidChecklistUpdatePayload": "Dữ liệu cập nhật danh sách kiểm tra không hợp lệ.",
+    "invalidDiagnosticIntakeData": "Dữ liệu tiếp nhận chẩn đoán không hợp lệ.",
+    "noDtcCodeIdentified": "Không xác định được mã chẩn đoán. Hãy thử dùng Nhập bản quét xe thay thế."
   }
 }

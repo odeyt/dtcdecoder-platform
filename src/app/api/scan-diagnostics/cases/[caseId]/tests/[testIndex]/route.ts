@@ -25,14 +25,14 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
 
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
     if (!Number.isInteger(testIndex) || testIndex < 0) {
-      return NextResponse.json({ error: "Invalid test index" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidTestIndex }, { status: 400 });
     }
 
     const user = await requireUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToUpdateTestProgress }, { status: 401 });
     }
 
@@ -40,12 +40,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
     }
 
     const parsed = TestProgressInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid test progress update" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidTestProgressUpdate }, { status: 400 });
     }
 
     const progress = await upsertTestProgress(user.id, caseId, testIndex, parsed.data);

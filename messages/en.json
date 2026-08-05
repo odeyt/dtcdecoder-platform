@@ -286,6 +286,10 @@
     "signIn": "Sign in",
     "signingIn": "Signing in…",
     "incorrectCredentials": "Incorrect email or password.",
+    "signInGenericError": "Something went wrong signing in. Try again.",
+    "signInEmailNotConfirmed": "Confirm your email address before signing in.",
+    "signInRateLimited": "Too many attempts. Try again in a few minutes.",
+    "signInAccountDisabled": "This account has been disabled. Contact support for help.",
     "forgotPassword": "Forgot password?",
     "resetPasswordHeading": "Reset your password",
     "resetPasswordSubtext": "Enter the email on your account and we'll send you a link to set a new password.",
@@ -411,7 +415,12 @@
     "setPassword": "Set password",
     "passwordUpdated": "Password updated.",
     "passwordTooShort": "Password must be at least 8 characters.",
-    "passwordsDontMatch": "Passwords don't match."
+    "passwordsDontMatch": "Passwords don't match.",
+    "passwordUpdateGenericError": "Something went wrong updating your password. Try again.",
+    "passwordUpdateWeakPassword": "Choose a stronger password.",
+    "passwordUpdateSamePassword": "New password must be different from your current password.",
+    "passwordUpdateRateLimited": "Too many attempts. Try again in a few minutes.",
+    "passwordUpdateSessionExpired": "Your session has expired. Sign in again and retry."
   },
   "scanCases": {
     "title": "Diagnostic Cases",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "Sign in to view notes.",
     "signInToAddNote": "Sign in to add a note.",
     "signInToUpdateTestProgress": "Sign in to update test progress.",
-    "signInToRegenerateReport": "Sign in to regenerate this report."
+    "signInToRegenerateReport": "Sign in to regenerate this report.",
+    "invalidCaseInformation": "Invalid case information",
+    "expectedMultipartFormData": "Expected multipart/form-data.",
+    "noFileProvided": "No file provided.",
+    "languageNotAvailableOnPlan": "That language isn't available on your plan.",
+    "invalidExtractionReview": "Invalid extraction review",
+    "invalidFeedback": "Invalid feedback",
+    "invalidNote": "Invalid note",
+    "invalidCauseIndex": "Invalid cause index",
+    "invalidCauseStatusUpdate": "Invalid cause status update",
+    "invalidTestIndex": "Invalid test index",
+    "invalidTestProgressUpdate": "Invalid test progress update",
+    "invalidVerificationUpdate": "Invalid verification update",
+    "invalidDiagnosticCaseInfo": "Invalid diagnostic case information.",
+    "fullAiDiagnosisUpgradeRequired": "Full AI diagnosis is available on Pro Technician and Workshop plans.",
+    "diagnosticEngineNotAvailable": "The AI Diagnostic Engine is not available yet.",
+    "invalidTurnRequestPayload": "Invalid turn request payload.",
+    "invalidAnswerPayload": "Invalid answer payload.",
+    "repairVerificationNotAvailable": "Repair verification is not available yet.",
+    "invalidChecklistUpdatePayload": "Invalid checklist update payload.",
+    "invalidDiagnosticIntakeData": "Invalid diagnostic intake data.",
+    "noDtcCodeIdentified": "No diagnostic code was identified. Try Import Vehicle Scan instead."
   }
 }

@@ -43,8 +43,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
 
   try {
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     if (!DIAGNOSTIC_ENGINE_FLAGS.probabilityEngineEnabled()) {
-      return NextResponse.json({ error: "The AI Diagnostic Engine is not available yet." }, { status: 404 });
+      return NextResponse.json({ error: t.diagnosticEngineNotAvailable }, { status: 404 });
     }
 
     const supabase = await createClient();
@@ -53,19 +56,17 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToUseDiagnosticEngine }, { status: 401 });
     }
 
     const isAdmin = isAllowedAdminEmail(user.email);
     if (!isDiagnosticEngineRolloutAllowed(user.email, isAdmin)) {
-      return NextResponse.json({ error: "The AI Diagnostic Engine is not available yet." }, { status: 404 });
+      return NextResponse.json({ error: t.diagnosticEngineNotAvailable }, { status: 404 });
     }
 
     const parsed = TurnBodySchema.safeParse(await request.json().catch(() => ({})));
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid turn request payload." }, { status: 400 });
+      return NextResponse.json({ error: t.invalidTurnRequestPayload }, { status: 400 });
     }
 
     // Fail closed: any error resolving the plan denies the request rather

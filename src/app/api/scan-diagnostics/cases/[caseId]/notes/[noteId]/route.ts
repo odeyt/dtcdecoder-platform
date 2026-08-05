@@ -22,10 +22,10 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   const { caseId, noteId } = await params;
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
     const user = await requireUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToEditNote }, { status: 401 });
     }
 
@@ -33,12 +33,12 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
     }
 
     const parsed = UpdateNoteInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid note" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidNote }, { status: 400 });
     }
 
     const note = await updateNote(user.id, caseId, noteId, parsed.data);

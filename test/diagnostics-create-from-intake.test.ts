@@ -10,12 +10,20 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getUser: async () => ({ data: { user: currentUser } }) },
   }),
 }));
-// The unauthenticated branch now resolves the caller's locale (Supabase
-// auth + the interface-locale cookie) for a translated error message —
-// next/headers's cookies() throws outside a real request scope.
+// Every response now resolves the caller's locale (Supabase auth + the
+// interface-locale cookie) for translated error/success text —
+// next/headers's cookies() throws outside a real request scope, and an
+// authenticated caller's locale lookup goes through getUserPreferences
+// (createAdminClient), which needs a working fake client (no seeded row ->
+// gracefully falls through to the cookie/default), same pattern as
+// scan-case-title-route.test.ts.
 vi.mock("next/headers", () => ({
   cookies: async () => ({ get: () => undefined }),
 }));
+vi.mock("@/lib/supabase/admin", async () => {
+  const { createFakeSupabase } = await import("./mocks/fake-supabase");
+  return { createAdminClient: () => createFakeSupabase() };
+});
 vi.mock("@/lib/scan-diagnostics/cases", () => ({
   createQuickDiagnosticCase: (...args: unknown[]) => createQuickDiagnosticCaseMock(...args),
 }));

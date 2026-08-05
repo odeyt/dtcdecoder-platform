@@ -88,6 +88,10 @@
     "signIn": "로그인",
     "signingIn": "로그인 중…",
     "incorrectCredentials": "이메일 또는 비밀번호가 올바르지 않습니다.",
+    "signInGenericError": "로그인 중 문제가 발생했습니다. 다시 시도해 주세요.",
+    "signInEmailNotConfirmed": "로그인하기 전에 이메일 주소를 확인해 주세요.",
+    "signInRateLimited": "시도 횟수가 너무 많습니다. 몇 분 후에 다시 시도해 주세요.",
+    "signInAccountDisabled": "이 계정은 비활성화되었습니다. 도움이 필요하면 지원팀에 문의하세요.",
     "forgotPassword": "비밀번호를 잊으셨나요?",
     "resetPasswordHeading": "비밀번호 재설정",
     "resetPasswordSubtext": "계정에 등록된 이메일을 입력하시면 새 비밀번호를 설정할 수 있는 링크를 보내드립니다.",
@@ -213,7 +217,12 @@
     "setPassword": "비밀번호 설정",
     "passwordUpdated": "비밀번호가 업데이트되었습니다.",
     "passwordTooShort": "비밀번호는 8자 이상이어야 합니다.",
-    "passwordsDontMatch": "비밀번호가 일치하지 않습니다."
+    "passwordsDontMatch": "비밀번호가 일치하지 않습니다.",
+    "passwordUpdateGenericError": "비밀번호 업데이트 중 문제가 발생했습니다. 다시 시도해 주세요.",
+    "passwordUpdateWeakPassword": "더 안전한 비밀번호를 선택하세요.",
+    "passwordUpdateSamePassword": "새 비밀번호는 현재 비밀번호와 달라야 합니다.",
+    "passwordUpdateRateLimited": "시도 횟수가 너무 많습니다. 몇 분 후에 다시 시도해 주세요.",
+    "passwordUpdateSessionExpired": "세션이 만료되었습니다. 다시 로그인한 후 시도해 주세요."
   },
   "scanCases": {
     "title": "진단 사례",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "메모를 보려면 로그인하세요.",
     "signInToAddNote": "메모를 추가하려면 로그인하세요.",
     "signInToUpdateTestProgress": "테스트 진행 상황을 업데이트하려면 로그인하세요.",
-    "signInToRegenerateReport": "이 리포트를 재생성하려면 로그인하세요."
+    "signInToRegenerateReport": "이 리포트를 재생성하려면 로그인하세요.",
+    "invalidCaseInformation": "케이스 정보가 유효하지 않습니다",
+    "expectedMultipartFormData": "multipart/form-data가 필요합니다.",
+    "noFileProvided": "파일이 제공되지 않았습니다.",
+    "languageNotAvailableOnPlan": "해당 언어는 현재 플랜에서 이용할 수 없습니다.",
+    "invalidExtractionReview": "추출 검토 내용이 유효하지 않습니다",
+    "invalidFeedback": "피드백이 유효하지 않습니다",
+    "invalidNote": "메모가 유효하지 않습니다",
+    "invalidCauseIndex": "원인 인덱스가 유효하지 않습니다",
+    "invalidCauseStatusUpdate": "원인 상태 업데이트가 유효하지 않습니다",
+    "invalidTestIndex": "테스트 인덱스가 유효하지 않습니다",
+    "invalidTestProgressUpdate": "테스트 진행 상황 업데이트가 유효하지 않습니다",
+    "invalidVerificationUpdate": "검증 업데이트가 유효하지 않습니다",
+    "invalidDiagnosticCaseInfo": "진단 케이스 정보가 유효하지 않습니다.",
+    "fullAiDiagnosisUpgradeRequired": "전체 AI 진단은 Pro Technician 및 Workshop 플랜에서 이용할 수 있습니다.",
+    "diagnosticEngineNotAvailable": "AI 진단 엔진은 아직 이용할 수 없습니다.",
+    "invalidTurnRequestPayload": "턴 요청 데이터가 유효하지 않습니다.",
+    "invalidAnswerPayload": "답변 데이터가 유효하지 않습니다.",
+    "repairVerificationNotAvailable": "수리 검증은 아직 이용할 수 없습니다.",
+    "invalidChecklistUpdatePayload": "체크리스트 업데이트 데이터가 유효하지 않습니다.",
+    "invalidDiagnosticIntakeData": "진단 접수 데이터가 유효하지 않습니다.",
+    "noDtcCodeIdentified": "진단 코드를 식별할 수 없습니다. 대신 차량 스캔 가져오기를 이용해 보세요."
   }
 }

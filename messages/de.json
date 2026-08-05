@@ -88,6 +88,10 @@
     "signIn": "Anmelden",
     "signingIn": "Anmeldung läuft…",
     "incorrectCredentials": "Falsche E-Mail-Adresse oder falsches Passwort.",
+    "signInGenericError": "Bei der Anmeldung ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "signInEmailNotConfirmed": "Bestätige deine E-Mail-Adresse, bevor du dich anmeldest.",
+    "signInRateLimited": "Zu viele Versuche. Bitte versuche es in ein paar Minuten erneut.",
+    "signInAccountDisabled": "Dieses Konto wurde deaktiviert. Wende dich für Hilfe an den Support.",
     "forgotPassword": "Passwort vergessen?",
     "resetPasswordHeading": "Passwort zurücksetzen",
     "resetPasswordSubtext": "Gib die E-Mail-Adresse deines Kontos ein, und wir senden dir einen Link zum Festlegen eines neuen Passworts.",
@@ -213,7 +217,12 @@
     "setPassword": "Passwort festlegen",
     "passwordUpdated": "Passwort aktualisiert.",
     "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
-    "passwordsDontMatch": "Die Passwörter stimmen nicht überein."
+    "passwordsDontMatch": "Die Passwörter stimmen nicht überein.",
+    "passwordUpdateGenericError": "Beim Aktualisieren deines Passworts ist ein Fehler aufgetreten. Bitte versuche es erneut.",
+    "passwordUpdateWeakPassword": "Wähle ein sichereres Passwort.",
+    "passwordUpdateSamePassword": "Das neue Passwort muss sich von deinem aktuellen Passwort unterscheiden.",
+    "passwordUpdateRateLimited": "Zu viele Versuche. Bitte versuche es in ein paar Minuten erneut.",
+    "passwordUpdateSessionExpired": "Deine Sitzung ist abgelaufen. Melde dich erneut an und versuche es noch einmal."
   },
   "scanCases": {
     "title": "Diagnosefälle",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "Melde dich an, um Notizen anzuzeigen.",
     "signInToAddNote": "Melde dich an, um eine Notiz hinzuzufügen.",
     "signInToUpdateTestProgress": "Melde dich an, um den Testfortschritt zu aktualisieren.",
-    "signInToRegenerateReport": "Melde dich an, um diesen Bericht neu zu erstellen."
+    "signInToRegenerateReport": "Melde dich an, um diesen Bericht neu zu erstellen.",
+    "invalidCaseInformation": "Ungültige Fallinformationen",
+    "expectedMultipartFormData": "multipart/form-data erwartet.",
+    "noFileProvided": "Keine Datei bereitgestellt.",
+    "languageNotAvailableOnPlan": "Diese Sprache ist in deinem Plan nicht verfügbar.",
+    "invalidExtractionReview": "Ungültige Extraktionsüberprüfung",
+    "invalidFeedback": "Ungültiges Feedback",
+    "invalidNote": "Ungültige Notiz",
+    "invalidCauseIndex": "Ungültiger Ursachenindex",
+    "invalidCauseStatusUpdate": "Ungültige Aktualisierung des Ursachenstatus",
+    "invalidTestIndex": "Ungültiger Testindex",
+    "invalidTestProgressUpdate": "Ungültige Aktualisierung des Testfortschritts",
+    "invalidVerificationUpdate": "Ungültige Aktualisierung der Prüfliste",
+    "invalidDiagnosticCaseInfo": "Ungültige Diagnosefall-Informationen.",
+    "fullAiDiagnosisUpgradeRequired": "Die vollständige KI-Diagnose ist mit den Plänen Pro Technician und Workshop verfügbar.",
+    "diagnosticEngineNotAvailable": "Die KI-Diagnose-Engine ist noch nicht verfügbar.",
+    "invalidTurnRequestPayload": "Ungültige Anfragedaten für die Runde.",
+    "invalidAnswerPayload": "Ungültige Antwortdaten.",
+    "repairVerificationNotAvailable": "Die Reparaturüberprüfung ist noch nicht verfügbar.",
+    "invalidChecklistUpdatePayload": "Ungültige Aktualisierungsdaten für die Prüfliste.",
+    "invalidDiagnosticIntakeData": "Ungültige Diagnose-Aufnahmedaten.",
+    "noDtcCodeIdentified": "Es wurde kein Diagnosecode erkannt. Versuche stattdessen „Fahrzeug-Scan importieren“."
   }
 }

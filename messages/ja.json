@@ -88,6 +88,10 @@
     "signIn": "サインイン",
     "signingIn": "サインイン中…",
     "incorrectCredentials": "メールアドレスまたはパスワードが正しくありません。",
+    "signInGenericError": "サインイン中に問題が発生しました。もう一度お試しください。",
+    "signInEmailNotConfirmed": "サインインする前にメールアドレスを確認してください。",
+    "signInRateLimited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+    "signInAccountDisabled": "このアカウントは無効化されています。サポートにお問い合わせください。",
     "forgotPassword": "パスワードをお忘れですか？",
     "resetPasswordHeading": "パスワードをリセット",
     "resetPasswordSubtext": "アカウントのメールアドレスを入力すると、新しいパスワードを設定するためのリンクをお送りします。",
@@ -213,7 +217,12 @@
     "setPassword": "パスワードを設定",
     "passwordUpdated": "パスワードを更新しました。",
     "passwordTooShort": "パスワードは8文字以上で入力してください。",
-    "passwordsDontMatch": "パスワードが一致しません。"
+    "passwordsDontMatch": "パスワードが一致しません。",
+    "passwordUpdateGenericError": "パスワードの更新中に問題が発生しました。もう一度お試しください。",
+    "passwordUpdateWeakPassword": "より安全なパスワードを選択してください。",
+    "passwordUpdateSamePassword": "新しいパスワードは現在のパスワードと異なるものにしてください。",
+    "passwordUpdateRateLimited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
+    "passwordUpdateSessionExpired": "セッションの有効期限が切れました。再度サインインしてお試しください。"
   },
   "scanCases": {
     "title": "診断ケース",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "メモを表示するにはサインインしてください。",
     "signInToAddNote": "メモを追加するにはサインインしてください。",
     "signInToUpdateTestProgress": "テストの進捗を更新するにはサインインしてください。",
-    "signInToRegenerateReport": "このレポートを再生成するにはサインインしてください。"
+    "signInToRegenerateReport": "このレポートを再生成するにはサインインしてください。",
+    "invalidCaseInformation": "ケース情報が無効です",
+    "expectedMultipartFormData": "multipart/form-data が必要です。",
+    "noFileProvided": "ファイルが指定されていません。",
+    "languageNotAvailableOnPlan": "その言語は現在のプランでは利用できません。",
+    "invalidExtractionReview": "抽出内容の確認が無効です",
+    "invalidFeedback": "フィードバックが無効です",
+    "invalidNote": "メモが無効です",
+    "invalidCauseIndex": "原因インデックスが無効です",
+    "invalidCauseStatusUpdate": "原因ステータスの更新が無効です",
+    "invalidTestIndex": "テストインデックスが無効です",
+    "invalidTestProgressUpdate": "テスト進捗の更新が無効です",
+    "invalidVerificationUpdate": "検証内容の更新が無効です",
+    "invalidDiagnosticCaseInfo": "診断ケースの情報が無効です。",
+    "fullAiDiagnosisUpgradeRequired": "フルAI診断はPro TechnicianおよびWorkshopプランでご利用いただけます。",
+    "diagnosticEngineNotAvailable": "AI診断エンジンはまだご利用いただけません。",
+    "invalidTurnRequestPayload": "ターンリクエストのデータが無効です。",
+    "invalidAnswerPayload": "回答データが無効です。",
+    "repairVerificationNotAvailable": "修理検証はまだご利用いただけません。",
+    "invalidChecklistUpdatePayload": "チェックリスト更新のデータが無効です。",
+    "invalidDiagnosticIntakeData": "診断受付データが無効です。",
+    "noDtcCodeIdentified": "診断コードを特定できませんでした。代わりに「車両スキャンをインポート」をお試しください。"
   }
 }

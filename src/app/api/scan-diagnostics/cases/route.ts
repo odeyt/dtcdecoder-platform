@@ -11,14 +11,15 @@ export async function POST(request: NextRequest) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToStartCase }, { status: 401 });
     }
 
@@ -31,7 +32,7 @@ export async function POST(request: NextRequest) {
 
     const parsed = CaseInfoInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid case information" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidCaseInformation }, { status: 400 });
     }
 
     // No client currently sends reportLanguage on this path (unlike the

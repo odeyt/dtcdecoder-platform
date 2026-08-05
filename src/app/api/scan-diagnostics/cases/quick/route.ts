@@ -21,14 +21,15 @@ export async function POST(request: NextRequest) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToRunQuickReport }, { status: 401 });
     }
 
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
           success: false,
           error: {
             code: "UPGRADE_REQUIRED",
-            message: "Full AI diagnosis is available on Pro Technician and Workshop plans.",
+            message: t.fullAiDiagnosisUpgradeRequired,
             upgradeRequired: true,
           },
         },
@@ -63,7 +64,7 @@ export async function POST(request: NextRequest) {
 
     const parsed = QuickDiagnosticCaseInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid diagnostic case information" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidDiagnosticCaseInfo }, { status: 400 });
     }
 
     // Same VIN, same user, no confirmation yet -> warn instead of creating

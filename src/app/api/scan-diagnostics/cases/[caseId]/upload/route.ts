@@ -22,6 +22,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     const { caseId } = await params;
     const supabase = await createClient();
     const {
@@ -29,8 +32,6 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToUploadScanReport }, { status: 401 });
     }
 
@@ -41,12 +42,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     try {
       formData = await request.formData();
     } catch {
-      return NextResponse.json({ error: "Expected multipart/form-data." }, { status: 400 });
+      return NextResponse.json({ error: t.expectedMultipartFormData }, { status: 400 });
     }
 
     const file = formData.get("file");
     if (!(file instanceof File)) {
-      return NextResponse.json({ error: "No file provided." }, { status: 400 });
+      return NextResponse.json({ error: t.noFileProvided }, { status: 400 });
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());

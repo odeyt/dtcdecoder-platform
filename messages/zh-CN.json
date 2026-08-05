@@ -88,6 +88,10 @@
     "signIn": "登录",
     "signingIn": "正在登录…",
     "incorrectCredentials": "电子邮件或密码不正确。",
+    "signInGenericError": "登录时出现问题，请重试。",
+    "signInEmailNotConfirmed": "请在登录前确认您的电子邮件地址。",
+    "signInRateLimited": "尝试次数过多，请几分钟后再试。",
+    "signInAccountDisabled": "此账户已被禁用，如需帮助请联系支持团队。",
     "forgotPassword": "忘记密码？",
     "resetPasswordHeading": "重置您的密码",
     "resetPasswordSubtext": "输入您账户的电子邮箱，我们会向您发送用于设置新密码的链接。",
@@ -213,7 +217,12 @@
     "setPassword": "设置密码",
     "passwordUpdated": "密码已更新。",
     "passwordTooShort": "密码长度至少为 8 个字符。",
-    "passwordsDontMatch": "两次输入的密码不一致。"
+    "passwordsDontMatch": "两次输入的密码不一致。",
+    "passwordUpdateGenericError": "更新密码时出现问题，请重试。",
+    "passwordUpdateWeakPassword": "请选择更安全的密码。",
+    "passwordUpdateSamePassword": "新密码必须与当前密码不同。",
+    "passwordUpdateRateLimited": "尝试次数过多，请几分钟后再试。",
+    "passwordUpdateSessionExpired": "您的会话已过期，请重新登录后再试。"
   },
   "scanCases": {
     "title": "诊断案例",
@@ -1079,6 +1088,27 @@
     "signInToViewNotes": "请登录以查看笔记。",
     "signInToAddNote": "请登录以添加笔记。",
     "signInToUpdateTestProgress": "请登录以更新测试进度。",
-    "signInToRegenerateReport": "请登录以重新生成此报告。"
+    "signInToRegenerateReport": "请登录以重新生成此报告。",
+    "invalidCaseInformation": "案例信息无效",
+    "expectedMultipartFormData": "需要 multipart/form-data 格式。",
+    "noFileProvided": "未提供文件。",
+    "languageNotAvailableOnPlan": "该语言在您的方案中不可用。",
+    "invalidExtractionReview": "提取审核内容无效",
+    "invalidFeedback": "反馈内容无效",
+    "invalidNote": "笔记无效",
+    "invalidCauseIndex": "原因索引无效",
+    "invalidCauseStatusUpdate": "原因状态更新无效",
+    "invalidTestIndex": "测试索引无效",
+    "invalidTestProgressUpdate": "测试进度更新无效",
+    "invalidVerificationUpdate": "验证更新无效",
+    "invalidDiagnosticCaseInfo": "诊断案例信息无效。",
+    "fullAiDiagnosisUpgradeRequired": "完整 AI 诊断适用于 Pro Technician 和 Workshop 方案。",
+    "diagnosticEngineNotAvailable": "AI 诊断引擎暂未开放。",
+    "invalidTurnRequestPayload": "回合请求数据无效。",
+    "invalidAnswerPayload": "回答数据无效。",
+    "repairVerificationNotAvailable": "维修验证功能暂未开放。",
+    "invalidChecklistUpdatePayload": "清单更新数据无效。",
+    "invalidDiagnosticIntakeData": "诊断接入数据无效。",
+    "noDtcCodeIdentified": "未能识别诊断代码。请改为尝试导入车辆扫描。"
   }
 }

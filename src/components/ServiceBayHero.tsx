@@ -140,7 +140,7 @@ export function ServiceBayHero({ locale }: { locale: string }) {
       const res = await fetch("/api/public/diagnostic-intake", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ message, intake: nextIntake }),
+        body: JSON.stringify({ message, intake: nextIntake, locale }),
       });
       const body: unknown = await res.json().catch(() => null);
       const errorFromBody =

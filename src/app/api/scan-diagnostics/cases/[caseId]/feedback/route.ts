@@ -24,10 +24,11 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     const user = await requireUser();
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToSubmitFeedback }, { status: 401 });
     }
 
@@ -35,12 +36,12 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     try {
       body = await request.json();
     } catch {
-      return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
     }
 
     const parsed = FeedbackInputSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid feedback" }, { status: 400 });
+      return NextResponse.json({ error: t.invalidFeedback }, { status: 400 });
     }
 
     const feedback = await submitFeedback(user.id, caseId, parsed.data);

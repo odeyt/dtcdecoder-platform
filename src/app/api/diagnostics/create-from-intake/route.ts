@@ -25,14 +25,15 @@ export async function POST(request: NextRequest) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     const supabase = await createClient();
     const {
       data: { user },
     } = await supabase.auth.getUser();
 
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToContinueCase }, { status: 401 });
     }
 
@@ -45,7 +46,7 @@ export async function POST(request: NextRequest) {
 
     const parsed = RequestSchema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid diagnostic intake data." }, { status: 400 });
+      return NextResponse.json({ error: t.invalidDiagnosticIntakeData }, { status: 400 });
     }
 
     const { intake } = parsed.data;
@@ -56,7 +57,7 @@ export async function POST(request: NextRequest) {
       // placeholder code, the client falls back to the Import Vehicle Scan
       // path, which builds a case from real scan-tool content instead.
       return NextResponse.json(
-        { error: "No diagnostic code was identified. Try Import Vehicle Scan instead.", code: "NO_DTC_CODE" },
+        { error: t.noDtcCodeIdentified, code: "NO_DTC_CODE" },
         { status: 422 },
       );
     }
