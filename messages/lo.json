@@ -126,6 +126,11 @@
     "masterPdfDescription": "ຂັ້ນຕອນການສ້ອມແປງແບບມືອາຊີບຄົບຖ້ວນ, ກວມເອົາການກວດສາຍໄຟ, ຂໍ້ມູນເຄື່ອງມືສະແກນ, ຂັ້ນຕອນການທົດສອບ, ແລະທິດທາງການສ້ອມແປງ.",
     "getRepairPdf": "ຮັບ PDF ການສ້ອມແປງ"
   },
+  "videosPage": {
+    "title": "ວິດີໂອ",
+    "subtitle": "ຂັ້ນຕອນການວິນິດໄສຕົວຈິງ ແລະກໍລະນີສຶກສາຂອງຊ່າງ.",
+    "watchOnYoutube": "ເບິ່ງໃນ YouTube"
+  },
   "pricing": {
     "title": "ລາຄາ",
     "subtitle": "ເລີ່ມຟຣີດ້ວຍການຄົ້ນຫາ DTC ບໍ່ຈຳກັດ. ອັບເກຣດເພື່ອຮັບລາຍງານການວິນິດໄສ AI ແບບເຕັມ.",
@@ -320,7 +325,12 @@
     "categoryLabel": "ໝວດໝູ່",
     "typeLabel": "ປະເພດ",
     "likelySystemLabel": "ລະບົບທີ່ເປັນໄປໄດ້",
-    "stepSrPrefix": "ຂັ້ນຕອນທີ {step}: "
+    "stepSrPrefix": "ຂັ້ນຕອນທີ {step}: ",
+    "severityLow": "ຄວາມຮ້າຍແຮງຕ່ຳ",
+    "severityModerate": "ຄວາມຮ້າຍແຮງປານກາງ",
+    "severityHigh": "ຄວາມຮ້າຍແຮງສູງ",
+    "severityCritical": "ຄວາມຮ້າຍແຮງທີ່ສຸດ",
+    "mostLikelyBadge": "ມີແນວໂນ້ມຫຼາຍທີ່ສຸດ"
   },
   "dtcUnknown": {
     "heading": "ລະຫັດນີ້ຍັງບໍ່ມີຢູ່ໃນຖານຂໍ້ມູນ DTC ພື້ນຖານໃນຕອນນີ້.",

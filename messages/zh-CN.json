@@ -126,6 +126,11 @@
     "masterPdfDescription": "完整的专业维修工作流程，涵盖线路检查、扫描工具数据、测试步骤和维修方向。",
     "getRepairPdf": "获取维修 PDF"
   },
+  "videosPage": {
+    "title": "视频",
+    "subtitle": "真实的诊断演示和技师案例研究。",
+    "watchOnYoutube": "在 YouTube 上观看"
+  },
   "pricing": {
     "title": "价格",
     "subtitle": "免费开始，DTC 查询不限次数。升级即可获得完整的 AI 诊断报告。",
@@ -320,7 +325,12 @@
     "categoryLabel": "类别",
     "typeLabel": "类型",
     "likelySystemLabel": "可能涉及的系统",
-    "stepSrPrefix": "步骤 {step}："
+    "stepSrPrefix": "步骤 {step}：",
+    "severityLow": "严重程度：低",
+    "severityModerate": "严重程度：中",
+    "severityHigh": "严重程度：高",
+    "severityCritical": "严重程度：严重",
+    "mostLikelyBadge": "最可能"
   },
   "dtcUnknown": {
     "heading": "此代码目前尚未收录在基础 DTC 数据库中。",

@@ -324,6 +324,11 @@
     "masterPdfDescription": "The complete professional repair workflow, covering wiring checks, scan tool data, testing steps, and repair direction.",
     "getRepairPdf": "Get Repair PDF"
   },
+  "videosPage": {
+    "title": "Videos",
+    "subtitle": "Real diagnostic walkthroughs and technician case studies.",
+    "watchOnYoutube": "Watch on YouTube"
+  },
   "pricing": {
     "title": "Pricing",
     "subtitle": "Start free with a limited Quick Code Lookup preview. Upgrade for full Professional Diagnostic Reports.",
@@ -518,7 +523,12 @@
     "categoryLabel": "Category",
     "typeLabel": "Type",
     "likelySystemLabel": "Likely system",
-    "stepSrPrefix": "Step {step}: "
+    "stepSrPrefix": "Step {step}: ",
+    "severityLow": "Low severity",
+    "severityModerate": "Moderate severity",
+    "severityHigh": "High severity",
+    "severityCritical": "Critical severity",
+    "mostLikelyBadge": "Most likely"
   },
   "dtcUnknown": {
     "heading": "This code is not currently available in the basic DTC database.",

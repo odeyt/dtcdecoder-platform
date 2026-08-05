@@ -126,6 +126,11 @@
     "masterPdfDescription": "Quy trình sửa chữa chuyên nghiệp đầy đủ, bao gồm kiểm tra hệ thống dây điện, dữ liệu công cụ quét, các bước kiểm tra và hướng dẫn sửa chữa.",
     "getRepairPdf": "Nhận PDF Sửa Chữa"
   },
+  "videosPage": {
+    "title": "Video",
+    "subtitle": "Video hướng dẫn chẩn đoán thực tế và các nghiên cứu điển hình của kỹ thuật viên.",
+    "watchOnYoutube": "Xem trên YouTube"
+  },
   "pricing": {
     "title": "Bảng giá",
     "subtitle": "Bắt đầu miễn phí với tra cứu DTC không giới hạn. Nâng cấp để có báo cáo chẩn đoán AI đầy đủ.",
@@ -320,7 +325,12 @@
     "categoryLabel": "Danh mục",
     "typeLabel": "Loại",
     "likelySystemLabel": "Hệ thống có khả năng",
-    "stepSrPrefix": "Bước {step}: "
+    "stepSrPrefix": "Bước {step}: ",
+    "severityLow": "Mức độ nghiêm trọng thấp",
+    "severityModerate": "Mức độ nghiêm trọng trung bình",
+    "severityHigh": "Mức độ nghiêm trọng cao",
+    "severityCritical": "Mức độ nghiêm trọng cao nhất",
+    "mostLikelyBadge": "Có khả năng nhất"
   },
   "dtcUnknown": {
     "heading": "Mã này hiện chưa có trong cơ sở dữ liệu DTC cơ bản.",

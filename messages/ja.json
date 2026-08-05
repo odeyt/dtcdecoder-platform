@@ -126,6 +126,11 @@
     "masterPdfDescription": "配線チェック、スキャンツールデータ、テスト手順、修理方針を網羅した完全なプロフェッショナル修理ワークフロー。",
     "getRepairPdf": "修理用PDFを取得"
   },
+  "videosPage": {
+    "title": "動画",
+    "subtitle": "実際の診断ウォークスルーと技術者のケーススタディ。",
+    "watchOnYoutube": "YouTubeで見る"
+  },
   "pricing": {
     "title": "料金",
     "subtitle": "DTC 検索が無制限の無料プランで開始。アップグレードすると完全な AI 診断レポートを利用できます。",
@@ -320,7 +325,12 @@
     "categoryLabel": "カテゴリー",
     "typeLabel": "タイプ",
     "likelySystemLabel": "推定システム",
-    "stepSrPrefix": "ステップ{step}: "
+    "stepSrPrefix": "ステップ{step}: ",
+    "severityLow": "重大度：低",
+    "severityModerate": "重大度：中",
+    "severityHigh": "重大度：高",
+    "severityCritical": "重大度：重大",
+    "mostLikelyBadge": "最も可能性が高い"
   },
   "dtcUnknown": {
     "heading": "このコードは現在、基本DTCデータベースには登録されていません。",

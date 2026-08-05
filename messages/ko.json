@@ -126,6 +126,11 @@
     "masterPdfDescription": "배선 점검, 스캔 툴 데이터, 테스트 단계, 수리 방향을 포함한 완전한 전문 수리 워크플로우.",
     "getRepairPdf": "수리 PDF 받기"
   },
+  "videosPage": {
+    "title": "동영상",
+    "subtitle": "실제 진단 워크스루와 기술자 사례 연구.",
+    "watchOnYoutube": "YouTube에서 보기"
+  },
   "pricing": {
     "title": "요금제",
     "subtitle": "무제한 DTC 검색으로 무료로 시작하세요. 업그레이드하면 완전한 AI 진단 리포트를 이용할 수 있습니다.",
@@ -320,7 +325,12 @@
     "categoryLabel": "카테고리",
     "typeLabel": "유형",
     "likelySystemLabel": "예상 시스템",
-    "stepSrPrefix": "{step}단계: "
+    "stepSrPrefix": "{step}단계: ",
+    "severityLow": "낮은 심각도",
+    "severityModerate": "중간 심각도",
+    "severityHigh": "높은 심각도",
+    "severityCritical": "심각한 수준",
+    "mostLikelyBadge": "가능성이 가장 높음"
   },
   "dtcUnknown": {
     "heading": "이 코드는 현재 기본 DTC 데이터베이스에서 제공되지 않습니다.",

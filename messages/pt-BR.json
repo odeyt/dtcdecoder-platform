@@ -126,6 +126,11 @@
     "masterPdfDescription": "O fluxo de trabalho de reparo profissional completo, cobrindo verificações de fiação, dados do scanner, etapas de teste e direção de reparo.",
     "getRepairPdf": "Obter PDF de Reparo"
   },
+  "videosPage": {
+    "title": "Vídeos",
+    "subtitle": "Demonstrações reais de diagnóstico e estudos de caso de técnicos.",
+    "watchOnYoutube": "Assistir no YouTube"
+  },
   "pricing": {
     "title": "Preços",
     "subtitle": "Comece de graça com consulta de DTC ilimitada. Faça upgrade para relatórios completos de diagnóstico com IA.",
@@ -320,7 +325,12 @@
     "categoryLabel": "Categoria",
     "typeLabel": "Tipo",
     "likelySystemLabel": "Sistema provável",
-    "stepSrPrefix": "Etapa {step}: "
+    "stepSrPrefix": "Etapa {step}: ",
+    "severityLow": "Gravidade baixa",
+    "severityModerate": "Gravidade moderada",
+    "severityHigh": "Gravidade alta",
+    "severityCritical": "Gravidade crítica",
+    "mostLikelyBadge": "Mais provável"
   },
   "dtcUnknown": {
     "heading": "Este código ainda não está disponível no banco de dados básico de DTC.",

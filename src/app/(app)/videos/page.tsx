@@ -1,4 +1,6 @@
 import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
+import { resolveAppShellLocale } from "@/lib/i18n/app-shell-locale";
 import { listPublishedDtcCodes } from "@/lib/dtc";
 
 export const metadata: Metadata = {
@@ -9,13 +11,13 @@ export const metadata: Metadata = {
 export default async function VideosPage() {
   const codes = await listPublishedDtcCodes();
   const withVideos = codes.filter((dtc) => dtc.youtube_url);
+  const locale = await resolveAppShellLocale();
+  const t = await getTranslations({ locale, namespace: "videosPage" });
 
   return (
     <div className="mx-auto max-w-4xl px-6 py-16">
-      <h1 className="text-3xl font-bold text-white">Videos</h1>
-      <p className="mt-2 text-zinc-400">
-        Real diagnostic walkthroughs and technician case studies.
-      </p>
+      <h1 className="text-3xl font-bold text-white">{t("title")}</h1>
+      <p className="mt-2 text-zinc-400">{t("subtitle")}</p>
 
       <div className="mt-10 rounded-2xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-md">
         <a
@@ -24,7 +26,7 @@ export default async function VideosPage() {
           rel="noopener noreferrer"
           className="inline-block rounded-full border border-white/20 px-6 py-3 font-semibold text-white transition hover:bg-white/10"
         >
-          Watch on YouTube
+          {t("watchOnYoutube")}
         </a>
       </div>
 

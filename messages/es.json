@@ -324,6 +324,11 @@
     "masterPdfDescription": "El flujo de trabajo de reparación profesional completo, que cubre comprobaciones de cableado, datos del escáner, pasos de prueba y orientación de reparación.",
     "getRepairPdf": "Obtener PDF de reparación"
   },
+  "videosPage": {
+    "title": "Videos",
+    "subtitle": "Recorridos de diagnóstico reales y casos prácticos de técnicos.",
+    "watchOnYoutube": "Ver en YouTube"
+  },
   "pricing": {
     "title": "Precios",
     "subtitle": "Empieza gratis con una vista previa limitada de Búsqueda Rápida de Código. Actualiza para obtener Reportes de Diagnóstico Profesional completos.",
@@ -518,7 +523,12 @@
     "categoryLabel": "Categoría",
     "typeLabel": "Tipo",
     "likelySystemLabel": "Sistema probable",
-    "stepSrPrefix": "Paso {step}: "
+    "stepSrPrefix": "Paso {step}: ",
+    "severityLow": "Gravedad baja",
+    "severityModerate": "Gravedad moderada",
+    "severityHigh": "Gravedad alta",
+    "severityCritical": "Gravedad crítica",
+    "mostLikelyBadge": "Más probable"
   },
   "dtcUnknown": {
     "heading": "Este código aún no está disponible en la base de datos básica de DTC.",

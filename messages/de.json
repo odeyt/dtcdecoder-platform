@@ -126,6 +126,11 @@
     "masterPdfDescription": "Der vollständige professionelle Reparaturablauf mit Verkabelungsprüfungen, Scan-Tool-Daten, Testschritten und Reparaturanweisungen.",
     "getRepairPdf": "Reparatur-PDF erhalten"
   },
+  "videosPage": {
+    "title": "Videos",
+    "subtitle": "Echte Diagnose-Walkthroughs und Fallstudien von Technikern.",
+    "watchOnYoutube": "Auf YouTube ansehen"
+  },
   "pricing": {
     "title": "Preise",
     "subtitle": "Kostenlos starten mit unbegrenzter DTC-Suche. Upgraden Sie für vollständige KI-Diagnoseberichte.",
@@ -320,7 +325,12 @@
     "categoryLabel": "Kategorie",
     "typeLabel": "Typ",
     "likelySystemLabel": "Wahrscheinliches System",
-    "stepSrPrefix": "Schritt {step}: "
+    "stepSrPrefix": "Schritt {step}: ",
+    "severityLow": "Geringer Schweregrad",
+    "severityModerate": "Mittlerer Schweregrad",
+    "severityHigh": "Hoher Schweregrad",
+    "severityCritical": "Kritischer Schweregrad",
+    "mostLikelyBadge": "Am wahrscheinlichsten"
   },
   "dtcUnknown": {
     "heading": "Dieser Code ist derzeit nicht in der Basis-DTC-Datenbank verfügbar.",

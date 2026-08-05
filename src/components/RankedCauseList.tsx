@@ -26,7 +26,7 @@ export interface RankedCauseItem {
   detail?: ReactNode;
 }
 
-function RankBadge({ rank }: { rank: number }) {
+function RankBadge({ rank, mostLikelyLabel }: { rank: number; mostLikelyLabel: string }) {
   const isTop = rank === 1;
   return (
     <span
@@ -43,12 +43,19 @@ function RankBadge({ rank }: { rank: number }) {
       >
         #{rank}
       </span>
-      {isTop && <span className="uppercase tracking-wide">Most likely</span>}
+      {isTop && <span className="uppercase tracking-wide">{mostLikelyLabel}</span>}
     </span>
   );
 }
 
-export function RankedCauseList({ causes }: { causes: readonly RankedCauseItem[] }) {
+export function RankedCauseList({
+  causes,
+  mostLikelyLabel = "Most likely",
+}: {
+  causes: readonly RankedCauseItem[];
+  /** Localized override for the #1-rank badge text. */
+  mostLikelyLabel?: string;
+}) {
   if (causes.length === 0) return null;
 
   return (
@@ -68,7 +75,7 @@ export function RankedCauseList({ causes }: { causes: readonly RankedCauseItem[]
                 : "flex flex-col gap-1.5 rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-3 sm:flex-row sm:items-baseline sm:gap-3"
             }
           >
-            <RankBadge rank={cause.rank} />
+            <RankBadge rank={cause.rank} mostLikelyLabel={mostLikelyLabel} />
             <div className="min-w-0 flex-1">
               <p
                 className={

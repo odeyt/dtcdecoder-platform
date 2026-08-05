@@ -21,7 +21,9 @@ const SEVERITY_CONFIG: Record<DtcSeverity, { label: string; color: string; bg: s
 
 // Severity is always conveyed by the label text, not color alone — the
 // component renders the word "Low/Moderate/High/Critical" every time.
-export function SeverityBadge({ severity }: { severity: DtcSeverity }) {
+// `label` lets callers pass a localized override; the config label is only
+// an English fallback for callers that don't localize.
+export function SeverityBadge({ severity, label }: { severity: DtcSeverity; label?: string }) {
   const config = SEVERITY_CONFIG[severity];
   return (
     <span
@@ -29,7 +31,7 @@ export function SeverityBadge({ severity }: { severity: DtcSeverity }) {
       style={{ color: config.color, backgroundColor: config.bg, borderColor: config.color }}
     >
       <span aria-hidden="true" className="h-1.5 w-1.5 rounded-full" style={{ backgroundColor: config.color }} />
-      {config.label}
+      {label ?? config.label}
     </span>
   );
 }

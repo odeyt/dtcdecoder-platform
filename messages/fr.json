@@ -126,6 +126,11 @@
     "masterPdfDescription": "Le flux de travail de réparation professionnel complet, couvrant les vérifications du câblage, les données de l'outil de diagnostic, les étapes de test et l'orientation de réparation.",
     "getRepairPdf": "Obtenir le PDF de réparation"
   },
+  "videosPage": {
+    "title": "Vidéos",
+    "subtitle": "Démonstrations de diagnostic réelles et études de cas de techniciens.",
+    "watchOnYoutube": "Regarder sur YouTube"
+  },
   "pricing": {
     "title": "Tarifs",
     "subtitle": "Commencez gratuitement avec la recherche DTC illimitée. Passez à un forfait supérieur pour des rapports de diagnostic IA complets.",
@@ -320,7 +325,12 @@
     "categoryLabel": "Catégorie",
     "typeLabel": "Type",
     "likelySystemLabel": "Système probable",
-    "stepSrPrefix": "Étape {step} : "
+    "stepSrPrefix": "Étape {step} : ",
+    "severityLow": "Gravité faible",
+    "severityModerate": "Gravité modérée",
+    "severityHigh": "Gravité élevée",
+    "severityCritical": "Gravité critique",
+    "mostLikelyBadge": "Le plus probable"
   },
   "dtcUnknown": {
     "heading": "Ce code n'est pas encore disponible dans la base de données DTC de base.",

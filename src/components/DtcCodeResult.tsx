@@ -54,6 +54,13 @@ export function DtcCodeResult({
     professional: t("difficultyProfessional"),
   };
 
+  const SEVERITY_LABEL: Record<DtcCode["severity"], string> = {
+    low: t("severityLow"),
+    moderate: t("severityModerate"),
+    high: t("severityHigh"),
+    critical: t("severityCritical"),
+  };
+
   return (
     // container-report, not container-app: this is a diagnostic document,
     // not a dashboard. space-y-12 gives the 48px inter-section rhythm.
@@ -72,7 +79,7 @@ export function DtcCodeResult({
           <p className="mt-3 text-xs text-[var(--text-muted)]">{t("previewNote")}</p>
         )}
         <div className="mt-5 flex flex-wrap gap-2">
-          <SeverityBadge severity={dtc.severity} />
+          <SeverityBadge severity={dtc.severity} label={SEVERITY_LABEL[dtc.severity]} />
           <span className="rounded-full border border-[var(--border-subtle)] px-3 py-1 text-xs text-[var(--text-secondary)]">
             {DIFFICULTY_LABEL[dtc.difficulty]}
           </span>
@@ -130,6 +137,7 @@ export function DtcCodeResult({
           <div className="report-measure space-y-3">
             <RankedCauseList
               causes={dtc.causes.map((cause, i) => ({ rank: i + 1, text: cause }))}
+              mostLikelyLabel={t("mostLikelyBadge")}
             />
             {redaction.hiddenCausesCount > 0 && (
               <p className="text-sm text-[var(--text-secondary)]">

@@ -126,6 +126,11 @@
     "masterPdfDescription": "ขั้นตอนการซ่อมระดับมืออาชีพแบบครบถ้วน ครอบคลุมการตรวจสอบสายไฟ ข้อมูลเครื่องมือสแกน ขั้นตอนการทดสอบ และแนวทางการซ่อม",
     "getRepairPdf": "รับ PDF การซ่อม"
   },
+  "videosPage": {
+    "title": "วิดีโอ",
+    "subtitle": "การสาธิตการวินิจฉัยจริงและกรณีศึกษาจากช่างเทคนิค",
+    "watchOnYoutube": "ดูใน YouTube"
+  },
   "pricing": {
     "title": "ราคา",
     "subtitle": "เริ่มต้นฟรีด้วยการค้นหา DTC ไม่จำกัด อัปเกรดเพื่อรับรายงานวินิจฉัยด้วย AI แบบเต็ม",
@@ -320,7 +325,12 @@
     "categoryLabel": "หมวดหมู่",
     "typeLabel": "ประเภท",
     "likelySystemLabel": "ระบบที่น่าจะเป็น",
-    "stepSrPrefix": "ขั้นตอนที่ {step}: "
+    "stepSrPrefix": "ขั้นตอนที่ {step}: ",
+    "severityLow": "ความรุนแรงต่ำ",
+    "severityModerate": "ความรุนแรงปานกลาง",
+    "severityHigh": "ความรุนแรงสูง",
+    "severityCritical": "ความรุนแรงร้ายแรง",
+    "mostLikelyBadge": "เป็นไปได้มากที่สุด"
   },
   "dtcUnknown": {
     "heading": "ขณะนี้ยังไม่มีรหัสนี้ในฐานข้อมูล DTC พื้นฐาน",
