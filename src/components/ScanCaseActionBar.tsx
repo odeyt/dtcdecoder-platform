@@ -176,7 +176,7 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
 
   return (
     <div className="flex flex-col gap-3">
-      {status === "failed" && errorMessage && <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>}
+      {status === "failed" && displayErrorMessage && <p className="text-sm text-[var(--accent-red)]">{displayErrorMessage}</p>}
       {error && <p className="text-sm text-[var(--accent-red)]">{error}</p>}
       <button
         onClick={() => runStage(action.stage)}
