@@ -75,7 +75,7 @@ export async function POST(request: NextRequest) {
       reportLanguage: intake.locale,
     });
     if (!caseInput.success) {
-      return NextResponse.json({ error: "Invalid diagnostic case information." }, { status: 400 });
+      return NextResponse.json({ error: t.invalidDiagnosticCaseInfo }, { status: 400 });
     }
 
     const scanCase = await createQuickDiagnosticCase(user.id, caseInput.data);
