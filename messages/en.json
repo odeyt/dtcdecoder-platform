@@ -371,6 +371,27 @@
     "passwordTooShort": "Password must be at least 8 characters.",
     "passwordsDontMatch": "Passwords don't match."
   },
+  "scanCases": {
+    "title": "Diagnostic Cases",
+    "subtitle": "Import a vehicle scan report and get a structured Professional Scan Analysis.",
+    "importVehicleScan": "Import Vehicle Scan",
+    "noScansYet": "You haven't uploaded a scan report yet.",
+    "statusDraft": "Draft",
+    "statusUploaded": "Uploaded",
+    "statusExtracting": "Extracting",
+    "statusExtractionReview": "Awaiting review",
+    "statusReadyForAnalysis": "Ready for analysis",
+    "statusAnalyzing": "Analyzing",
+    "statusCompleted": "Report ready",
+    "statusFailed": "Failed",
+    "untitledCase": "Untitled case",
+    "openCase": "Open case: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "Expires in {days, plural, one {# day} other {# days}}",
+    "caseTitleLabel": "Case title",
+    "renameCaseLabel": "Rename case (currently \"{title}\")",
+    "allCases": "All cases"
+  },
   "preferences": {
     "title": "Language & Region Preferences",
     "subtitle": "Choose your interface language, AI report language, and display currency.",

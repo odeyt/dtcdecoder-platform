@@ -173,6 +173,27 @@
     "passwordTooShort": "Mật khẩu phải có ít nhất 8 ký tự.",
     "passwordsDontMatch": "Mật khẩu không khớp."
   },
+  "scanCases": {
+    "title": "Ca chẩn đoán",
+    "subtitle": "Nhập báo cáo quét xe và nhận Phân tích quét chuyên nghiệp có cấu trúc.",
+    "importVehicleScan": "Nhập bản quét xe",
+    "noScansYet": "Bạn chưa tải lên báo cáo quét nào.",
+    "statusDraft": "Bản nháp",
+    "statusUploaded": "Đã tải lên",
+    "statusExtracting": "Đang trích xuất",
+    "statusExtractionReview": "Đang chờ xem xét",
+    "statusReadyForAnalysis": "Sẵn sàng phân tích",
+    "statusAnalyzing": "Đang phân tích",
+    "statusCompleted": "Báo cáo đã sẵn sàng",
+    "statusFailed": "Thất bại",
+    "untitledCase": "Ca không có tiêu đề",
+    "openCase": "Mở ca: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "Hết hạn sau {days} ngày",
+    "caseTitleLabel": "Tiêu đề ca",
+    "renameCaseLabel": "Đổi tên ca (hiện tại \"{title}\")",
+    "allCases": "Tất cả các ca"
+  },
   "preferences": {
     "title": "Tùy chọn ngôn ngữ và khu vực",
     "subtitle": "Chọn ngôn ngữ giao diện, ngôn ngữ báo cáo AI và đơn vị tiền tệ hiển thị.",

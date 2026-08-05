@@ -173,6 +173,27 @@
     "passwordTooShort": "รหัสผ่านต้องมีอย่างน้อย 8 ตัวอักษร",
     "passwordsDontMatch": "รหัสผ่านไม่ตรงกัน"
   },
+  "scanCases": {
+    "title": "เคสการวินิจฉัย",
+    "subtitle": "นำเข้ารายงานการสแกนรถยนต์และรับการวิเคราะห์การสแกนระดับมืออาชีพแบบมีโครงสร้าง",
+    "importVehicleScan": "นำเข้าการสแกนรถยนต์",
+    "noScansYet": "คุณยังไม่ได้อัปโหลดรายงานการสแกน",
+    "statusDraft": "ฉบับร่าง",
+    "statusUploaded": "อัปโหลดแล้ว",
+    "statusExtracting": "กำลังดึงข้อมูล",
+    "statusExtractionReview": "รอการตรวจสอบ",
+    "statusReadyForAnalysis": "พร้อมวิเคราะห์",
+    "statusAnalyzing": "กำลังวิเคราะห์",
+    "statusCompleted": "รายงานพร้อมแล้ว",
+    "statusFailed": "ล้มเหลว",
+    "untitledCase": "เคสไม่มีชื่อ",
+    "openCase": "เปิดเคส: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "หมดอายุใน {days} วัน",
+    "caseTitleLabel": "ชื่อเคส",
+    "renameCaseLabel": "เปลี่ยนชื่อเคส (ปัจจุบัน \"{title}\")",
+    "allCases": "เคสทั้งหมด"
+  },
   "preferences": {
     "title": "การตั้งค่าภาษาและภูมิภาค",
     "subtitle": "เลือกภาษาของอินเทอร์เฟซ ภาษาของรายงาน AI และสกุลเงินที่แสดง",

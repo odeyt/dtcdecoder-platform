@@ -173,6 +173,27 @@
     "passwordTooShort": "A senha deve ter pelo menos 8 caracteres.",
     "passwordsDontMatch": "As senhas não coincidem."
   },
+  "scanCases": {
+    "title": "Casos de diagnóstico",
+    "subtitle": "Importe um relatório de escaneamento do veículo e obtenha uma Análise de Escaneamento Profissional estruturada.",
+    "importVehicleScan": "Importar escaneamento do veículo",
+    "noScansYet": "Você ainda não enviou nenhum relatório de escaneamento.",
+    "statusDraft": "Rascunho",
+    "statusUploaded": "Enviado",
+    "statusExtracting": "Extraindo",
+    "statusExtractionReview": "Aguardando revisão",
+    "statusReadyForAnalysis": "Pronto para análise",
+    "statusAnalyzing": "Analisando",
+    "statusCompleted": "Relatório pronto",
+    "statusFailed": "Falhou",
+    "untitledCase": "Caso sem título",
+    "openCase": "Abrir caso: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "Expira em {days, plural, one {# dia} other {# dias}}",
+    "caseTitleLabel": "Título do caso",
+    "renameCaseLabel": "Renomear caso (atualmente \"{title}\")",
+    "allCases": "Todos os casos"
+  },
   "preferences": {
     "title": "Preferências de idioma e região",
     "subtitle": "Escolha o idioma da interface, o idioma dos relatórios de IA e a moeda de exibição.",

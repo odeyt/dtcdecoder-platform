@@ -173,6 +173,27 @@
     "passwordTooShort": "ລະຫັດຜ່ານຕ້ອງມີຢ່າງໜ້ອຍ 8 ຕົວອັກສອນ.",
     "passwordsDontMatch": "ລະຫັດຜ່ານບໍ່ກົງກັນ."
   },
+  "scanCases": {
+    "title": "ກໍລະນີການວິນິດໄສ",
+    "subtitle": "ນຳເຂົ້າລາຍງານການສະແກນລົດ ແລະ ຮັບການວິເຄາະການສະແກນແບບມືອາຊີບທີ່ມີໂຄງສ້າງ.",
+    "importVehicleScan": "ນຳເຂົ້າການສະແກນລົດ",
+    "noScansYet": "ທ່ານຍັງບໍ່ໄດ້ອັບໂຫລດລາຍງານການສະແກນເທື່ອ.",
+    "statusDraft": "ຮ່າງ",
+    "statusUploaded": "ອັບໂຫລດແລ້ວ",
+    "statusExtracting": "ກຳລັງແຍກຂໍ້ມູນ",
+    "statusExtractionReview": "ລໍຖ້າການກວດສອບ",
+    "statusReadyForAnalysis": "ພ້ອມສຳລັບການວິເຄາະ",
+    "statusAnalyzing": "ກຳລັງວິເຄາະ",
+    "statusCompleted": "ລາຍງານພ້ອມແລ້ວ",
+    "statusFailed": "ລົ້ມເຫລວ",
+    "untitledCase": "ກໍລະນີບໍ່ມີຊື່",
+    "openCase": "ເປີດກໍລະນີ: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "ໝົດອາຍຸໃນ {days} ວັນ",
+    "caseTitleLabel": "ຫົວຂໍ້ກໍລະນີ",
+    "renameCaseLabel": "ປ່ຽນຊື່ກໍລະນີ (ປັດຈຸບັນ \"{title}\")",
+    "allCases": "ທຸກກໍລະນີ"
+  },
   "preferences": {
     "title": "ການຕັ້ງຄ່າພາສາ ແລະ ພາກພື້ນ",
     "subtitle": "ເລືອກພາສາຂອງໜ້າຈໍ, ພາສາຂອງລາຍງານ AI, ແລະ ສະກຸນເງິນທີ່ສະແດງ.",

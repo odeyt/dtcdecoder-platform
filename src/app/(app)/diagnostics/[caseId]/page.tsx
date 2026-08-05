@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { redirect, notFound } from "next/navigation";
 import Link from "next/link";
 import { NextIntlClientProvider } from "next-intl";
+import { getTranslations } from "next-intl/server";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { createClient } from "@/lib/supabase/server";
 import { getEffectivePlan } from "@/lib/subscriptions";
@@ -18,7 +19,7 @@ import {
 } from "@/lib/scan-diagnostics/workbench";
 import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
 import { getActiveSingleReportUnlock } from "@/lib/ai-diagnostics/single-report-purchases";
-import { computeExpiryLabel } from "@/lib/scan-diagnostics/retention";
+import { computeExpiryDays } from "@/lib/scan-diagnostics/retention";
 import { getAllowedOutputLocales } from "@/lib/i18n/languages";
 import { ScanCaseActionBar } from "@/components/ScanCaseActionBar";
 import { ScanExtractionReviewForm } from "@/components/ScanExtractionReviewForm";
@@ -52,9 +53,9 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
   const reportAccess = await resolveReportAccess(user.id, user.email ?? null, detail);
   const feedback = scanCase.status === "completed" ? await getFeedbackForCase(user.id, caseId) : null;
   const singleReportUnlock = scanCase.status === "completed" ? await getActiveSingleReportUnlock(caseId) : null;
-  const expiryLabel =
+  const expiryDays =
     scanCase.status === "completed"
-      ? computeExpiryLabel({ plan, createdAt: scanCase.created_at, singleReportUnlockExpiresAt: singleReportUnlock?.expiresAt })
+      ? computeExpiryDays({ plan, createdAt: scanCase.created_at, singleReportUnlockExpiresAt: singleReportUnlock?.expiresAt })
       : null;
   const availableLocales =
     scanCase.status === "completed" && reportAccess?.accessLevel === "full" ? await getAllowedOutputLocales(plan) : [];
@@ -84,6 +85,7 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
 
   const locale = await resolveAppShellLocale();
   const messages = await getAppShellMessages(locale);
+  const t = await getTranslations({ locale, namespace: "scanCases" });
 
   return (
     <NextIntlClientProvider locale={locale} messages={messages} timeZone="UTC" now={new Date()} formats={{}}>
@@ -91,7 +93,7 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
         <div className="mx-auto max-w-3xl">
           <div className="print:hidden">
             <Link href="/diagnostics" className="text-sm text-[var(--text-muted)] hover:text-[var(--text-primary)]">
-              ← All cases
+              ← {t("allCases")}
             </Link>
           </div>
 
@@ -127,7 +129,9 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
 
           {scanCase.status === "completed" && reportAccess && (
             <div className="mt-6 flex flex-col gap-8">
-              {expiryLabel && <p className="text-xs text-[var(--text-muted)] print:hidden">{expiryLabel}</p>}
+              {expiryDays !== null && (
+                <p className="text-xs text-[var(--text-muted)] print:hidden">{t("expiresInDays", { days: expiryDays })}</p>
+              )}
               <div className="flex flex-wrap items-center justify-end gap-3 print:hidden">
                 {/* Gated on the report's actual resolved access level, not
                     the viewer's plan directly — a valid single-report

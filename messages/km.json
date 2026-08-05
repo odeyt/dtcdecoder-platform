@@ -173,6 +173,27 @@
     "passwordTooShort": "ពាក្យសម្ងាត់ត្រូវមានយ៉ាងហោចណាស់ ៨ តួអក្សរ។",
     "passwordsDontMatch": "ពាក្យសម្ងាត់មិនត្រូវគ្នា។"
   },
+  "scanCases": {
+    "title": "ករណីវិនិច្ឆ័យ",
+    "subtitle": "នាំចូលរបាយការណ៍ស្កេនរថយន្ត និងទទួលបានការវិភាគស្កេនវិជ្ជាជីវៈដែលមានរចនាសម្ព័ន្ធ។",
+    "importVehicleScan": "នាំចូលការស្កេនរថយន្ត",
+    "noScansYet": "អ្នកមិនទាន់បានផ្ទុកឡើងរបាយការណ៍ស្កេននៅឡើយទេ។",
+    "statusDraft": "សេចក្ដីព្រាង",
+    "statusUploaded": "បានផ្ទុកឡើង",
+    "statusExtracting": "កំពុងស្រង់ចេញ",
+    "statusExtractionReview": "កំពុងរង់ចាំការត្រួតពិនិត្យ",
+    "statusReadyForAnalysis": "ត្រៀមរួចសម្រាប់ការវិភាគ",
+    "statusAnalyzing": "កំពុងវិភាគ",
+    "statusCompleted": "របាយការណ៍រួចរាល់",
+    "statusFailed": "បរាជ័យ",
+    "untitledCase": "ករណីគ្មានចំណងជើង",
+    "openCase": "បើកករណី៖ {title}",
+    "vinPrefix": "VIN៖ {vin}",
+    "expiresInDays": "ផុតកំណត់ក្នុងរយៈពេល {days} ថ្ងៃ",
+    "caseTitleLabel": "ចំណងជើងករណី",
+    "renameCaseLabel": "ប្ដូរឈ្មោះករណី (បច្ចុប្បន្ន \"{title}\")",
+    "allCases": "ករណីទាំងអស់"
+  },
   "preferences": {
     "title": "ចំណូលចិត្តភាសា និងតំបន់",
     "subtitle": "ជ្រើសរើសភាសាចំណុចប្រទាក់ ភាសារបាយការណ៍ AI និងរូបិយប័ណ្ណបង្ហាញ។",

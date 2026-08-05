@@ -35,11 +35,17 @@ export function daysUntil(iso: string): number {
 // granting access here, so it's the more specific and more truthful
 // figure. Returns null when neither rule currently grants a bounded view
 // window (Free with no purchase — no badge at all — or already expired).
-export function computeExpiryLabel(params: {
+//
+// Returns the day count, not a pre-formatted English string — pluralizing
+// "day"/"days" in code would be wrong for the locales this app supports
+// (Thai/Lao/Vietnamese/Chinese/Japanese/Korean have no plural distinction
+// at all). Callers format the actual message via next-intl's
+// scanCases.expiresInDays ICU message.
+export function computeExpiryDays(params: {
   plan: string;
   createdAt: string;
   singleReportUnlockExpiresAt?: string;
-}): string | null {
+}): number | null {
   const expiresAt = params.singleReportUnlockExpiresAt
     ? params.singleReportUnlockExpiresAt
     : params.plan === "pro" || params.plan === "workshop"
@@ -48,7 +54,7 @@ export function computeExpiryLabel(params: {
   if (!expiresAt) return null;
   const days = daysUntil(expiresAt);
   if (days <= 0) return null;
-  return `Expires in ${days} day${days === 1 ? "" : "s"}`;
+  return days;
 }
 
 export interface RetentionSweepResult {

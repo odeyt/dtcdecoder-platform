@@ -173,6 +173,27 @@
     "passwordTooShort": "パスワードは8文字以上で入力してください。",
     "passwordsDontMatch": "パスワードが一致しません。"
   },
+  "scanCases": {
+    "title": "診断ケース",
+    "subtitle": "車両スキャンレポートをインポートして、構造化されたプロフェッショナルスキャン分析を取得します。",
+    "importVehicleScan": "車両スキャンをインポート",
+    "noScansYet": "まだスキャンレポートをアップロードしていません。",
+    "statusDraft": "下書き",
+    "statusUploaded": "アップロード済み",
+    "statusExtracting": "抽出中",
+    "statusExtractionReview": "確認待ち",
+    "statusReadyForAnalysis": "分析準備完了",
+    "statusAnalyzing": "分析中",
+    "statusCompleted": "レポート完成",
+    "statusFailed": "失敗",
+    "untitledCase": "無題のケース",
+    "openCase": "ケースを開く: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "あと{days}日で期限切れ",
+    "caseTitleLabel": "ケースのタイトル",
+    "renameCaseLabel": "ケース名を変更（現在「{title}」）",
+    "allCases": "すべてのケース"
+  },
   "preferences": {
     "title": "言語と地域の設定",
     "subtitle": "インターフェース言語、AI レポート言語、表示通貨を選択してください。",

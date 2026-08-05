@@ -173,6 +173,27 @@
     "passwordTooShort": "密码长度至少为 8 个字符。",
     "passwordsDontMatch": "两次输入的密码不一致。"
   },
+  "scanCases": {
+    "title": "诊断案例",
+    "subtitle": "导入车辆扫描报告，获取结构化的专业扫描分析。",
+    "importVehicleScan": "导入车辆扫描",
+    "noScansYet": "您尚未上传扫描报告。",
+    "statusDraft": "草稿",
+    "statusUploaded": "已上传",
+    "statusExtracting": "提取中",
+    "statusExtractionReview": "等待审核",
+    "statusReadyForAnalysis": "准备分析",
+    "statusAnalyzing": "分析中",
+    "statusCompleted": "报告已就绪",
+    "statusFailed": "失败",
+    "untitledCase": "未命名案例",
+    "openCase": "打开案例：{title}",
+    "vinPrefix": "车架号：{vin}",
+    "expiresInDays": "{days} 天后到期",
+    "caseTitleLabel": "案例标题",
+    "renameCaseLabel": "重命名案例（当前为 \"{title}\"）",
+    "allCases": "所有案例"
+  },
   "preferences": {
     "title": "语言与地区偏好",
     "subtitle": "选择您的界面语言、AI 报告语言和显示货币。",

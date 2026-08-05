@@ -173,6 +173,27 @@
     "passwordTooShort": "비밀번호는 8자 이상이어야 합니다.",
     "passwordsDontMatch": "비밀번호가 일치하지 않습니다."
   },
+  "scanCases": {
+    "title": "진단 사례",
+    "subtitle": "차량 스캔 리포트를 가져와 구조화된 전문 스캔 분석을 받아보세요.",
+    "importVehicleScan": "차량 스캔 가져오기",
+    "noScansYet": "아직 스캔 리포트를 업로드하지 않았습니다.",
+    "statusDraft": "초안",
+    "statusUploaded": "업로드됨",
+    "statusExtracting": "추출 중",
+    "statusExtractionReview": "검토 대기 중",
+    "statusReadyForAnalysis": "분석 준비 완료",
+    "statusAnalyzing": "분석 중",
+    "statusCompleted": "리포트 완료",
+    "statusFailed": "실패",
+    "untitledCase": "제목 없는 사례",
+    "openCase": "사례 열기: {title}",
+    "vinPrefix": "VIN: {vin}",
+    "expiresInDays": "{days}일 후 만료",
+    "caseTitleLabel": "사례 제목",
+    "renameCaseLabel": "사례 이름 변경 (현재 \"{title}\")",
+    "allCases": "모든 사례"
+  },
   "preferences": {
     "title": "언어 및 지역 설정",
     "subtitle": "인터페이스 언어, AI 리포트 언어, 표시 통화를 선택하세요.",

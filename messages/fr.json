@@ -173,6 +173,27 @@
     "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères.",
     "passwordsDontMatch": "Les mots de passe ne correspondent pas."
   },
+  "scanCases": {
+    "title": "Dossiers de diagnostic",
+    "subtitle": "Importez un rapport de scan du véhicule et obtenez une analyse de scan professionnelle structurée.",
+    "importVehicleScan": "Importer un scan du véhicule",
+    "noScansYet": "Vous n'avez pas encore importé de rapport de scan.",
+    "statusDraft": "Brouillon",
+    "statusUploaded": "Importé",
+    "statusExtracting": "Extraction en cours",
+    "statusExtractionReview": "En attente de vérification",
+    "statusReadyForAnalysis": "Prêt pour l'analyse",
+    "statusAnalyzing": "Analyse en cours",
+    "statusCompleted": "Rapport prêt",
+    "statusFailed": "Échec",
+    "untitledCase": "Dossier sans titre",
+    "openCase": "Ouvrir le dossier : {title}",
+    "vinPrefix": "VIN : {vin}",
+    "expiresInDays": "Expire dans {days, plural, one {# jour} other {# jours}}",
+    "caseTitleLabel": "Titre du dossier",
+    "renameCaseLabel": "Renommer le dossier (actuellement « {title} »)",
+    "allCases": "Tous les dossiers"
+  },
   "preferences": {
     "title": "Préférences de langue et de région",
     "subtitle": "Choisissez votre langue d'interface, la langue des rapports IA et la devise d'affichage.",

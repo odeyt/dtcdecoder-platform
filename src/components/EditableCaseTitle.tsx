@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 
 // Inline rename for a diagnostic case's custom title (scan_cases.title,
 // migration 0038) — separate from `complaint`, the actual diagnostic
@@ -19,6 +20,7 @@ export function EditableCaseTitle({
   initialTitle: string | null;
   fallback: string;
 }) {
+  const t = useTranslations("scanCases");
   const [editing, setEditing] = useState(false);
   const [saved, setSaved] = useState(initialTitle);
   const [value, setValue] = useState(initialTitle ?? "");
@@ -61,7 +63,7 @@ export function EditableCaseTitle({
         }}
         maxLength={120}
         placeholder={fallback}
-        aria-label="Case title"
+        aria-label={t("caseTitleLabel")}
         className="mt-1 w-full rounded-[var(--radius-sm)] border border-[var(--border-red)] bg-[var(--surface-1)] px-2 py-1 text-sm font-medium text-[var(--text-primary)] focus:outline-none"
       />
     );
@@ -73,7 +75,7 @@ export function EditableCaseTitle({
       onClick={() => setEditing(true)}
       disabled={saving}
       className="group mt-1 flex min-h-11 items-center gap-1.5 text-left disabled:opacity-60"
-      aria-label={`Rename case (currently "${saved || fallback}")`}
+      aria-label={t("renameCaseLabel", { title: saved || fallback })}
     >
       <span className="font-medium text-[var(--text-primary)]">{saved || fallback}</span>
       <svg

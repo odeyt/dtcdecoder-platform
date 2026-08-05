@@ -173,6 +173,27 @@
     "passwordTooShort": "Das Passwort muss mindestens 8 Zeichen lang sein.",
     "passwordsDontMatch": "Die Passwörter stimmen nicht überein."
   },
+  "scanCases": {
+    "title": "Diagnosefälle",
+    "subtitle": "Importieren Sie einen Fahrzeug-Scanbericht und erhalten Sie eine strukturierte professionelle Scananalyse.",
+    "importVehicleScan": "Fahrzeug-Scan importieren",
+    "noScansYet": "Sie haben noch keinen Scanbericht hochgeladen.",
+    "statusDraft": "Entwurf",
+    "statusUploaded": "Hochgeladen",
+    "statusExtracting": "Wird extrahiert",
+    "statusExtractionReview": "Wartet auf Überprüfung",
+    "statusReadyForAnalysis": "Bereit zur Analyse",
+    "statusAnalyzing": "Wird analysiert",
+    "statusCompleted": "Bericht fertig",
+    "statusFailed": "Fehlgeschlagen",
+    "untitledCase": "Unbenannter Fall",
+    "openCase": "Fall öffnen: {title}",
+    "vinPrefix": "FIN: {vin}",
+    "expiresInDays": "Läuft in {days, plural, one {# Tag} other {# Tagen}} ab",
+    "caseTitleLabel": "Falltitel",
+    "renameCaseLabel": "Fall umbenennen (derzeit \"{title}\")",
+    "allCases": "Alle Fälle"
+  },
   "preferences": {
     "title": "Sprach- & Regionseinstellungen",
     "subtitle": "Wählen Sie Ihre Oberflächensprache, die Sprache der KI-Berichte und die Anzeigewährung.",
