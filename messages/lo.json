@@ -719,7 +719,44 @@
     "stageConsulting": "ກຳລັງປຶກສາໂມເດວິນິດໄສ AI",
     "stageTranslating": "ກຳລັງແປຜົນວິນິດໄສເປັນ {language}",
     "freeLockedBody": "ຜູ້ຊ່ວຍວິນິດໄສ AI ບໍ່ໄດ້ລວມຢູ່ໃນແພັກເກັດຟຣີ. ອັບເກຣດເປັນ Pro Technician ຫຼື Workshop ເພື່ອຮັບການວິນິດໄສທີ່ສ້າງໂດຍ AI ຢ່າງເຕັມຮູບແບບແບບນີ້:",
-    "freeLockedCta": "ເບິ່ງແພັກເກັດ"
+    "freeLockedCta": "ເບິ່ງແພັກເກັດ",
+    "example1": "ຫຍັງເປັນສາເຫດຂອງ P0420?",
+    "example2": "BMW ຂອງຂ້ອຍມີຄວາມໄວຮອບເບົາບໍ່ຄົງທີ່ ແລະມີ P0171",
+    "example3": "Range Rover ມີ P2263 ແລະໂໝດປອດໄພ",
+    "example4": "Toyota ມີການຈູດຜິດພາດ P0300",
+    "example5": "ລົດບໍ່ສະຕາດ ແລະມີ U0101",
+    "resetsAt": "ຣີເຊັດ {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "ພາກສ່ວນການວິນິດໄສເຕັມສ່ວນຖືກລັອກ. ອັບເກຣດເປັນ Pro Technician ເພື່ອເບິ່ງມັນ.",
+    "availableWithPro": "ສາມາດໃຊ້ໄດ້ກັບ Pro Technician",
+    "upgrade": "ອັບເກຣດ",
+    "rootCauseRanking": "ການຈັດອັນດັບສາເຫດຫຼັກແບບຄົບຖ້ວນ",
+    "diagnosticPlan": "ຂັ້ນຕອນການວິນິດໄສສະເພາະລົດ",
+    "expectedReadings": "ຄ່າແຮງດັນ, ຄວາມຕ້ານທານ, ແລະຂໍ້ມູນສົດທີ່ຄາດໄວ້",
+    "independentSafetyReview": "ການທົບທວນຄວາມປອດໄພແບບເປັນອິດສະຫຼະ",
+    "programmingRequirements": "ການຂຽນໂປຣແກຣມ ແລະການປັບຄ່າ",
+    "laborGuidance": "ຄຳແນະນຳການເຮັດວຽກລະອຽດ",
+    "multilingualReport": "ບົດລາຍງານວິຊາຊີບຫຼາຍພາສາ",
+    "savedDiagnosticCase": "ຄະດີວິນິດໄສທີ່ຖືກບັນທຶກໄວ້",
+    "downloadableReport": "ການສົ່ງອອກ PDF"
+  },
+  "blog": {
+    "heading": "ບລັອກ",
+    "allCategories": "ທັງໝົດ",
+    "noPostsYet": "ຍັງບໍ່ມີບົດຄວາມທີ່ເຜີຍແຜ່."
+  },
+  "blogCategories": {
+    "dtc_guides": "ຄູ່ມື DTC",
+    "check_engine_light": "ໄຟກວດເຊັກເຄື່ອງຈັກ",
+    "limp_mode": "ໂໝດປອດໄພ",
+    "can_bus_diagnostics": "ການວິນິດໄສ CAN Bus",
+    "ev_diagnostics": "ການວິນິດໄສລົດໄຟຟ້າ",
+    "transmission_faults": "ບັນຫາເກຍ",
+    "immobilizer_problems": "ບັນຫາລະບົບປ້ອງກັນການລັກ",
+    "bmw_diagnostics": "ການວິນິດໄສ BMW",
+    "land_rover_diagnostics": "ການວິນິດໄສ Land Rover",
+    "toyota_diagnostics": "ການວິນິດໄສ Toyota"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

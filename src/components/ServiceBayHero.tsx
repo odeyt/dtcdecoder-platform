@@ -1097,6 +1097,11 @@ function ResultStep({
   onImportScan: () => void;
   onRestart: () => void;
 }) {
+  const tLocked = useTranslations("lockedSections");
+  const localizedLockedSections = LOCKED_SECTION_CATALOG.map((section) => ({
+    key: section.key,
+    title: tLocked(section.key),
+  }));
   const resolutionType = result.resolutionType;
   const showFullDefinition = resolutionType === "generic" || resolutionType === "manufacturer_exact";
   const isVehicleContextRequired = resolutionType === "vehicle_context_required";
@@ -1239,7 +1244,7 @@ function ResultStep({
         </button>
       </div>
 
-      <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+      <LockedResultPanel sections={localizedLockedSections} />
 
       <button type="button" onClick={onRestart} className="self-center text-sm text-[var(--text-muted)] underline-offset-2 hover:underline">
         {t("restart")}

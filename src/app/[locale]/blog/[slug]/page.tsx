@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { marked } from "marked";
-import { getPublishedBlogPost, BLOG_CATEGORY_LABELS } from "@/lib/blog";
+import { getTranslations } from "next-intl/server";
+import { getPublishedBlogPost } from "@/lib/blog";
 import { EmailSignupForm } from "@/components/EmailSignupForm";
 import { buildLocaleAlternates } from "@/lib/i18n/metadata";
 
@@ -24,15 +25,16 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function BlogPostPage({ params }: Props) {
-  const { slug } = await params;
+  const { locale, slug } = await params;
   const post = await getPublishedBlogPost(slug);
   if (!post) notFound();
 
   const html = await marked.parse(post.content);
+  const tCat = await getTranslations({ locale, namespace: "blogCategories" });
 
   return (
     <article className="mx-auto max-w-3xl px-6 py-16">
-      <p className="text-xs text-red-400">{BLOG_CATEGORY_LABELS[post.category]}</p>
+      <p className="text-xs text-red-400">{tCat(post.category)}</p>
       <h1 className="mt-1 text-3xl font-bold text-white">{post.title}</h1>
       <div className="blog-content mt-8" dangerouslySetInnerHTML={{ __html: html }} />
       <div className="mt-12">

@@ -719,7 +719,44 @@
     "stageConsulting": "Consultando o modelo de diagnóstico com IA",
     "stageTranslating": "Traduzindo o diagnóstico para {language}",
     "freeLockedBody": "O assistente de diagnóstico com IA não está incluído no plano gratuito. Faça upgrade para o Pro Technician ou Workshop para obter diagnósticos completos gerados por IA como estes:",
-    "freeLockedCta": "Ver planos"
+    "freeLockedCta": "Ver planos",
+    "example1": "O que causa o P0420?",
+    "example2": "Meu BMW está com marcha lenta irregular e P0171",
+    "example3": "Range Rover está com P2263 e modo de segurança",
+    "example4": "Toyota está com falha de ignição P0300",
+    "example5": "O carro não dá partida e está com U0101",
+    "resetsAt": "Reinicia {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "Seção de diagnóstico completa bloqueada. Faça upgrade para Pro Technician para visualizá-la.",
+    "availableWithPro": "Disponível com Pro Technician",
+    "upgrade": "Fazer upgrade",
+    "rootCauseRanking": "Classificação completa de causas raiz",
+    "diagnosticPlan": "Fluxo de diagnóstico específico do veículo",
+    "expectedReadings": "Valores esperados de tensão, resistência e dados em tempo real",
+    "independentSafetyReview": "Revisão independente de segurança",
+    "programmingRequirements": "Programação e calibração",
+    "laborGuidance": "Orientação detalhada de mão de obra",
+    "multilingualReport": "Relatório profissional multilíngue",
+    "savedDiagnosticCase": "Caso de diagnóstico salvo",
+    "downloadableReport": "Exportação em PDF"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "Todos",
+    "noPostsYet": "Ainda não há publicações."
+  },
+  "blogCategories": {
+    "dtc_guides": "Guias de códigos DTC",
+    "check_engine_light": "Luz de check engine",
+    "limp_mode": "Modo de segurança",
+    "can_bus_diagnostics": "Diagnóstico de barramento CAN",
+    "ev_diagnostics": "Diagnóstico de veículos elétricos",
+    "transmission_faults": "Falhas de transmissão",
+    "immobilizer_problems": "Problemas do imobilizador",
+    "bmw_diagnostics": "Diagnóstico BMW",
+    "land_rover_diagnostics": "Diagnóstico Land Rover",
+    "toyota_diagnostics": "Diagnóstico Toyota"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

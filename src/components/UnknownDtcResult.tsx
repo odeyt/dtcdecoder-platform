@@ -15,7 +15,12 @@ import type { DtcCode } from "@/lib/types";
 export function UnknownDtcResult({ code, relatedCodes }: { code: string; relatedCodes: DtcCode[] }) {
   const t = useTranslations("dtcUnknown");
   const tResult = useTranslations("dtcResult");
+  const tLocked = useTranslations("lockedSections");
   const structure = deriveDtcCodeStructure(code);
+  const localizedLockedSections = LOCKED_SECTION_CATALOG.map((section) => ({
+    key: section.key,
+    title: tLocked(section.key),
+  }));
   const fields = [
     t("fieldYear"),
     t("fieldMake"),
@@ -127,7 +132,7 @@ export function UnknownDtcResult({ code, relatedCodes }: { code: string; related
 
       <ResultSection title={t("unlockFullAiDiagnosisTitle")}>
         <p className="mb-4 text-sm text-[var(--text-secondary)]">{t("unlockFullAiDiagnosisBody")}</p>
-        <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+        <LockedResultPanel sections={localizedLockedSections} />
       </ResultSection>
     </div>
   );

@@ -719,7 +719,44 @@
     "stageConsulting": "Đang tham vấn mô hình chẩn đoán AI",
     "stageTranslating": "Đang dịch chẩn đoán sang {language}",
     "freeLockedBody": "Trợ lý chẩn đoán AI không được bao gồm trong gói Miễn phí. Nâng cấp lên Pro Technician hoặc Workshop để nhận chẩn đoán đầy đủ do AI tạo ra như thế này:",
-    "freeLockedCta": "Xem các gói"
+    "freeLockedCta": "Xem các gói",
+    "example1": "Điều gì gây ra mã P0420?",
+    "example2": "BMW của tôi chạy không tải không ổn định và có mã P0171",
+    "example3": "Range Rover có mã P2263 và chế độ an toàn",
+    "example4": "Toyota bị bỏ máy P0300",
+    "example5": "Xe không khởi động được và có mã U0101",
+    "resetsAt": "Đặt lại {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "Phần chẩn đoán đầy đủ đã bị khóa. Nâng cấp lên Pro Technician để xem.",
+    "availableWithPro": "Có sẵn với Pro Technician",
+    "upgrade": "Nâng cấp",
+    "rootCauseRanking": "Xếp hạng nguyên nhân gốc rễ đầy đủ",
+    "diagnosticPlan": "Quy trình chẩn đoán riêng cho xe",
+    "expectedReadings": "Giá trị điện áp, điện trở và dữ liệu trực tiếp dự kiến",
+    "independentSafetyReview": "Đánh giá an toàn độc lập",
+    "programmingRequirements": "Lập trình và hiệu chỉnh",
+    "laborGuidance": "Hướng dẫn công việc chi tiết",
+    "multilingualReport": "Báo cáo chuyên nghiệp đa ngôn ngữ",
+    "savedDiagnosticCase": "Hồ sơ chẩn đoán đã lưu",
+    "downloadableReport": "Xuất PDF"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "Tất cả",
+    "noPostsYet": "Chưa có bài viết nào được đăng."
+  },
+  "blogCategories": {
+    "dtc_guides": "Hướng dẫn mã DTC",
+    "check_engine_light": "Đèn check engine",
+    "limp_mode": "Chế độ an toàn",
+    "can_bus_diagnostics": "Chẩn đoán CAN Bus",
+    "ev_diagnostics": "Chẩn đoán xe điện",
+    "transmission_faults": "Lỗi hộp số",
+    "immobilizer_problems": "Sự cố hệ thống chống trộm",
+    "bmw_diagnostics": "Chẩn đoán BMW",
+    "land_rover_diagnostics": "Chẩn đoán Land Rover",
+    "toyota_diagnostics": "Chẩn đoán Toyota"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

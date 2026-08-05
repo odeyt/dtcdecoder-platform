@@ -640,7 +640,13 @@
     "stageConsulting": "Reviewing your diagnostic case",
     "stageTranslating": "Translating the diagnosis into {language}",
     "freeLockedBody": "Full Diagnostic Consultations aren't included on the Free plan. Upgrade to Pro Technician or Workshop for vehicle-specific diagnostic guidance like this:",
-    "freeLockedCta": "View plans"
+    "freeLockedCta": "View plans",
+    "example1": "What causes P0420?",
+    "example2": "My BMW has rough idle and P0171",
+    "example3": "Range Rover has P2263 and limp mode",
+    "example4": "Toyota has P0300 misfire",
+    "example5": "Car has no crank and U0101",
+    "resetsAt": "Resets {date}."
   },
   "history": {
     "title": "Consultation History",
@@ -649,6 +655,37 @@
     "decodeACode": "Decode a code",
     "lookup": "LOOKUP",
     "aiQuestion": "DTC TECHNICIAN"
+  },
+  "lockedSections": {
+    "srLockedText": "Full diagnostic section locked. Upgrade to Pro Technician to view it.",
+    "availableWithPro": "Available with Pro Technician",
+    "upgrade": "Upgrade",
+    "rootCauseRanking": "Complete Root-Cause Ranking",
+    "diagnosticPlan": "Vehicle-Specific Diagnostic Workflow",
+    "expectedReadings": "Expected Voltage, Resistance, and Live-Data Values",
+    "independentSafetyReview": "Independent Safety Review",
+    "programmingRequirements": "Programming and Calibration",
+    "laborGuidance": "Detailed Labor Guidance",
+    "multilingualReport": "Multilingual Professional Report",
+    "savedDiagnosticCase": "Saved Diagnostic Case",
+    "downloadableReport": "PDF Export"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "All",
+    "noPostsYet": "No posts published yet."
+  },
+  "blogCategories": {
+    "dtc_guides": "DTC Guides",
+    "check_engine_light": "Check Engine Light",
+    "limp_mode": "Limp Mode",
+    "can_bus_diagnostics": "CAN Bus Diagnostics",
+    "ev_diagnostics": "EV Diagnostics",
+    "transmission_faults": "Transmission Faults",
+    "immobilizer_problems": "Immobilizer Problems",
+    "bmw_diagnostics": "BMW Diagnostics",
+    "land_rover_diagnostics": "Land Rover Diagnostics",
+    "toyota_diagnostics": "Toyota Diagnostics"
   },
   "scanReport": {
     "eyebrow": "Professional Diagnostic Report",

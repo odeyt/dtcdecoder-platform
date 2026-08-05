@@ -719,7 +719,44 @@
     "stageConsulting": "កំពុងពិគ្រោះជាមួយម៉ូដែលវិនិច្ឆ័យ AI",
     "stageTranslating": "កំពុងបកប្រែការវិនិច្ឆ័យទៅជា {language}",
     "freeLockedBody": "ជំនួយការវិនិច្ឆ័យ AI មិនត្រូវបានរួមបញ្ចូលនៅក្នុងគម្រោងឥតគិតថ្លៃទេ។ ដំឡើងទៅ Pro Technician ឬ Workshop ដើម្បីទទួលបានការវិនិច្ឆ័យពេញលេញដែលបង្កើតដោយ AI ដូចជា:",
-    "freeLockedCta": "មើលគម្រោង"
+    "freeLockedCta": "មើលគម្រោង",
+    "example1": "តើអ្វីបណ្តាលឱ្យមានកូដ P0420?",
+    "example2": "រថយន្ត BMW របស់ខ្ញុំដំណើរការមិនរលូន និងមានកូដ P0171",
+    "example3": "Range Rover មានកូដ P2263 និងម៉ូដសុវត្ថិភាព",
+    "example4": "Toyota មានការឆេះខុសប្រក្រតី P0300",
+    "example5": "រថយន្តមិនស្តាតបាន និងមានកូដ U0101",
+    "resetsAt": "កំណត់ឡើងវិញ {date}។"
+  },
+  "lockedSections": {
+    "srLockedText": "ផ្នែកវិនិច្ឆ័យពេញលេញត្រូវបានចាក់សោ។ ដំឡើងកម្រិតទៅ Pro Technician ដើម្បីមើលវា។",
+    "availableWithPro": "អាចប្រើបានជាមួយ Pro Technician",
+    "upgrade": "ដំឡើងកម្រិត",
+    "rootCauseRanking": "ចំណាត់ថ្នាក់ពេញលេញនៃមូលហេតុដើម",
+    "diagnosticPlan": "លំហូរការវិនិច្ឆ័យជាក់លាក់តាមយានជំនិះ",
+    "expectedReadings": "តម្លៃវ៉ុល ភាពធន់ និងទិន្នន័យផ្ទាល់ដែលរំពឹងទុក",
+    "independentSafetyReview": "ការត្រួតពិនិត្យសុវត្ថិភាពដោយឯករាជ្យ",
+    "programmingRequirements": "ការសរសេរកម្មវិធី និងការក្រិតតាំង",
+    "laborGuidance": "ការណែនាំការងារលម្អិត",
+    "multilingualReport": "របាយការណ៍វិជ្ជាជីវៈពហុភាសា",
+    "savedDiagnosticCase": "ករណីវិនិច្ឆ័យដែលបានរក្សាទុក",
+    "downloadableReport": "ការនាំចេញ PDF"
+  },
+  "blog": {
+    "heading": "ប្លុក",
+    "allCategories": "ទាំងអស់",
+    "noPostsYet": "មិនទាន់មានអត្ថបទបានផ្សព្វផ្សាយនៅឡើយទេ។"
+  },
+  "blogCategories": {
+    "dtc_guides": "មគ្គុទ្ទេសក៍ DTC",
+    "check_engine_light": "ភ្លើងពិនិត្យម៉ាស៊ីន",
+    "limp_mode": "ម៉ូដសុវត្ថិភាព",
+    "can_bus_diagnostics": "ការវិនិច្ឆ័យ CAN Bus",
+    "ev_diagnostics": "ការវិនិច្ឆ័យរថយន្តអគ្គិសនី",
+    "transmission_faults": "បញ្ហាប្រអប់លេខ",
+    "immobilizer_problems": "បញ្ហាប្រព័ន្ធការពារចោរ",
+    "bmw_diagnostics": "ការវិនិច្ឆ័យ BMW",
+    "land_rover_diagnostics": "ការវិនិច្ឆ័យ Land Rover",
+    "toyota_diagnostics": "ការវិនិច្ឆ័យ Toyota"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

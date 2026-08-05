@@ -719,7 +719,44 @@
     "stageConsulting": "กำลังตรวจสอบเคสวินิจฉัยของคุณ",
     "stageTranslating": "กำลังแปลผลวินิจฉัยเป็น {language}",
     "freeLockedBody": "การปรึกษาวินิจฉัยแบบเต็มรูปแบบไม่รวมอยู่ในแพ็กเกจฟรี อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อรับคำแนะนำการวินิจฉัยเฉพาะรถของคุณแบบนี้:",
-    "freeLockedCta": "ดูแพ็กเกจ"
+    "freeLockedCta": "ดูแพ็กเกจ",
+    "example1": "อะไรเป็นสาเหตุของ P0420?",
+    "example2": "รถ BMW ของฉันรอบเดินเบาไม่เรียบและมีรหัส P0171",
+    "example3": "Range Rover มีรหัส P2263 และเข้าโหมดปลอดภัย",
+    "example4": "Toyota มีอาการเครื่องยนต์จุดระเบิดผิดพลาด P0300",
+    "example5": "รถสตาร์ทไม่ติดและมีรหัส U0101",
+    "resetsAt": "รีเซ็ต {date}"
+  },
+  "lockedSections": {
+    "srLockedText": "ส่วนการวินิจฉัยแบบเต็มถูกล็อกไว้ อัปเกรดเป็น Pro Technician เพื่อดู",
+    "availableWithPro": "ใช้งานได้กับ Pro Technician",
+    "upgrade": "อัปเกรด",
+    "rootCauseRanking": "การจัดอันดับสาเหตุหลักแบบครบถ้วน",
+    "diagnosticPlan": "ขั้นตอนการวินิจฉัยเฉพาะรถ",
+    "expectedReadings": "ค่าแรงดันไฟฟ้า ความต้านทาน และข้อมูลสดที่คาดไว้",
+    "independentSafetyReview": "การตรวจสอบความปลอดภัยโดยอิสระ",
+    "programmingRequirements": "การเขียนโปรแกรมและการปรับเทียบ",
+    "laborGuidance": "คำแนะนำงานซ่อมโดยละเอียด",
+    "multilingualReport": "รายงานระดับมืออาชีพหลายภาษา",
+    "savedDiagnosticCase": "เคสการวินิจฉัยที่บันทึกไว้",
+    "downloadableReport": "การส่งออก PDF"
+  },
+  "blog": {
+    "heading": "บล็อก",
+    "allCategories": "ทั้งหมด",
+    "noPostsYet": "ยังไม่มีบทความเผยแพร่"
+  },
+  "blogCategories": {
+    "dtc_guides": "คู่มือรหัส DTC",
+    "check_engine_light": "ไฟตรวจเช็กเครื่องยนต์",
+    "limp_mode": "โหมดปลอดภัย",
+    "can_bus_diagnostics": "การวินิจฉัย CAN Bus",
+    "ev_diagnostics": "การวินิจฉัยรถยนต์ไฟฟ้า",
+    "transmission_faults": "ปัญหาเกียร์",
+    "immobilizer_problems": "ปัญหาระบบกันขโมย",
+    "bmw_diagnostics": "การวินิจฉัย BMW",
+    "land_rover_diagnostics": "การวินิจฉัย Land Rover",
+    "toyota_diagnostics": "การวินิจฉัย Toyota"
   },
   "landingIntake": {
     "importScanCta": "นำเข้าผลสแกนรถ",

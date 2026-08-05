@@ -719,7 +719,44 @@
     "stageConsulting": "KI-Diagnosemodell wird konsultiert",
     "stageTranslating": "Diagnose wird ins {language} übersetzt",
     "freeLockedBody": "Der KI-Diagnoseassistent ist im kostenlosen Plan nicht enthalten. Upgraden Sie auf Pro Technician oder Workshop für vollständige KI-generierte Diagnosen wie diese:",
-    "freeLockedCta": "Pläne ansehen"
+    "freeLockedCta": "Pläne ansehen",
+    "example1": "Was verursacht P0420?",
+    "example2": "Mein BMW hat einen unruhigen Leerlauf und P0171",
+    "example3": "Range Rover hat P2263 und Notlaufmodus",
+    "example4": "Toyota hat P0300 Fehlzündung",
+    "example5": "Auto springt nicht an und hat U0101",
+    "resetsAt": "Wird zurückgesetzt {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "Vollständiger Diagnoseabschnitt gesperrt. Upgrade auf Pro Technician, um ihn anzuzeigen.",
+    "availableWithPro": "Verfügbar mit Pro Technician",
+    "upgrade": "Upgrade",
+    "rootCauseRanking": "Vollständige Ursachenrangfolge",
+    "diagnosticPlan": "Fahrzeugspezifischer Diagnoseablauf",
+    "expectedReadings": "Erwartete Spannungs-, Widerstands- und Live-Datenwerte",
+    "independentSafetyReview": "Unabhängige Sicherheitsprüfung",
+    "programmingRequirements": "Programmierung und Kalibrierung",
+    "laborGuidance": "Detaillierte Arbeitsanleitung",
+    "multilingualReport": "Mehrsprachiger professioneller Bericht",
+    "savedDiagnosticCase": "Gespeicherter Diagnosefall",
+    "downloadableReport": "PDF-Export"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "Alle",
+    "noPostsYet": "Noch keine Beiträge veröffentlicht."
+  },
+  "blogCategories": {
+    "dtc_guides": "DTC-Anleitungen",
+    "check_engine_light": "Motorkontrollleuchte",
+    "limp_mode": "Notlaufmodus",
+    "can_bus_diagnostics": "CAN-Bus-Diagnose",
+    "ev_diagnostics": "Elektrofahrzeug-Diagnose",
+    "transmission_faults": "Getriebefehler",
+    "immobilizer_problems": "Wegfahrsperren-Probleme",
+    "bmw_diagnostics": "BMW-Diagnose",
+    "land_rover_diagnostics": "Land-Rover-Diagnose",
+    "toyota_diagnostics": "Toyota-Diagnose"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

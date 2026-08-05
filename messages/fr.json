@@ -719,7 +719,44 @@
     "stageConsulting": "Consultation du modèle de diagnostic IA",
     "stageTranslating": "Traduction du diagnostic en {language}",
     "freeLockedBody": "L'assistant de diagnostic IA n'est pas inclus dans le forfait gratuit. Passez à Pro Technician ou Workshop pour des diagnostics complets générés par IA comme ceux-ci :",
-    "freeLockedCta": "Voir les forfaits"
+    "freeLockedCta": "Voir les forfaits",
+    "example1": "Qu'est-ce qui cause le P0420 ?",
+    "example2": "Ma BMW a un ralenti irrégulier et P0171",
+    "example3": "Range Rover a P2263 et mode dégradé",
+    "example4": "Toyota a un raté d'allumage P0300",
+    "example5": "La voiture ne démarre pas et a U0101",
+    "resetsAt": "Réinitialisation {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "Section de diagnostic complète verrouillée. Passez à Pro Technician pour la consulter.",
+    "availableWithPro": "Disponible avec Pro Technician",
+    "upgrade": "Mettre à niveau",
+    "rootCauseRanking": "Classement complet des causes profondes",
+    "diagnosticPlan": "Déroulé de diagnostic spécifique au véhicule",
+    "expectedReadings": "Valeurs attendues de tension, résistance et données en direct",
+    "independentSafetyReview": "Examen de sécurité indépendant",
+    "programmingRequirements": "Programmation et calibration",
+    "laborGuidance": "Guide de main-d'œuvre détaillé",
+    "multilingualReport": "Rapport professionnel multilingue",
+    "savedDiagnosticCase": "Dossier de diagnostic enregistré",
+    "downloadableReport": "Export PDF"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "Tous",
+    "noPostsYet": "Aucun article publié pour le moment."
+  },
+  "blogCategories": {
+    "dtc_guides": "Guides des codes DTC",
+    "check_engine_light": "Voyant moteur",
+    "limp_mode": "Mode dégradé",
+    "can_bus_diagnostics": "Diagnostic bus CAN",
+    "ev_diagnostics": "Diagnostic véhicules électriques",
+    "transmission_faults": "Pannes de transmission",
+    "immobilizer_problems": "Problèmes d'antidémarrage",
+    "bmw_diagnostics": "Diagnostic BMW",
+    "land_rover_diagnostics": "Diagnostic Land Rover",
+    "toyota_diagnostics": "Diagnostic Toyota"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

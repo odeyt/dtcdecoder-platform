@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 import type { LockedSectionRef } from "@/lib/ai-diagnostics/redaction";
 
 function LockIcon() {
@@ -15,6 +16,7 @@ function LockIcon() {
 // an upgrade CTA. No animation on the skeleton lines, so there's nothing
 // that needs gating behind prefers-reduced-motion in the first place.
 function LockedResultCard({ section }: { section: LockedSectionRef }) {
+  const t = useTranslations("lockedSections");
   return (
     <div className="glass-panel flex flex-col gap-3 rounded-[var(--radius-lg)] p-5">
       <div className="flex items-center gap-2 text-[var(--text-muted)]">
@@ -27,17 +29,17 @@ function LockedResultCard({ section }: { section: LockedSectionRef }) {
         <div className="h-2.5 w-4/5 max-w-full rounded-full bg-[var(--border-subtle)]" />
         <div className="h-2.5 w-3/5 max-w-full rounded-full bg-[var(--border-subtle)]" />
       </div>
-      <span className="sr-only">Full diagnostic section locked. Upgrade to Pro Technician to view it.</span>
+      <span className="sr-only">{t("srLockedText")}</span>
 
       <div className="flex flex-wrap items-center justify-between gap-3">
         <p className="text-xs font-semibold uppercase tracking-wide text-[var(--text-muted)]">
-          Available with Pro Technician
+          {t("availableWithPro")}
         </p>
         <Link
           href="/pricing"
           className="min-h-11 shrink-0 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-4 py-2 text-xs font-semibold text-white transition hover:brightness-110 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent-red)]"
         >
-          Upgrade
+          {t("upgrade")}
         </Link>
       </div>
     </div>

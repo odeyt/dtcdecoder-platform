@@ -640,7 +640,44 @@
     "stageConsulting": "Revisando tu caso de diagnóstico",
     "stageTranslating": "Traduciendo el diagnóstico al {language}",
     "freeLockedBody": "Las Consultas de Diagnóstico completas no están incluidas en el plan Gratis. Mejora a Pro o Taller para obtener orientación diagnóstica específica para tu vehículo como esta:",
-    "freeLockedCta": "Ver planes"
+    "freeLockedCta": "Ver planes",
+    "example1": "¿Qué causa el P0420?",
+    "example2": "Mi BMW tiene ralentí irregular y P0171",
+    "example3": "Range Rover tiene P2263 y modo de emergencia",
+    "example4": "Toyota tiene fallo de encendido P0300",
+    "example5": "El auto no arranca y tiene U0101",
+    "resetsAt": "Se reinicia {date}."
+  },
+  "lockedSections": {
+    "srLockedText": "Sección de diagnóstico completa bloqueada. Actualiza a Pro Technician para verla.",
+    "availableWithPro": "Disponible con Pro Technician",
+    "upgrade": "Actualizar",
+    "rootCauseRanking": "Clasificación completa de causas raíz",
+    "diagnosticPlan": "Flujo de diagnóstico específico del vehículo",
+    "expectedReadings": "Valores esperados de voltaje, resistencia y datos en vivo",
+    "independentSafetyReview": "Revisión independiente de seguridad",
+    "programmingRequirements": "Programación y calibración",
+    "laborGuidance": "Guía detallada de mano de obra",
+    "multilingualReport": "Informe profesional multilingüe",
+    "savedDiagnosticCase": "Caso de diagnóstico guardado",
+    "downloadableReport": "Exportación en PDF"
+  },
+  "blog": {
+    "heading": "Blog",
+    "allCategories": "Todos",
+    "noPostsYet": "Aún no hay publicaciones."
+  },
+  "blogCategories": {
+    "dtc_guides": "Guías de códigos DTC",
+    "check_engine_light": "Luz de check engine",
+    "limp_mode": "Modo de emergencia",
+    "can_bus_diagnostics": "Diagnóstico de bus CAN",
+    "ev_diagnostics": "Diagnóstico de vehículos eléctricos",
+    "transmission_faults": "Fallas de transmisión",
+    "immobilizer_problems": "Problemas del inmovilizador",
+    "bmw_diagnostics": "Diagnóstico BMW",
+    "land_rover_diagnostics": "Diagnóstico Land Rover",
+    "toyota_diagnostics": "Diagnóstico Toyota"
   },
   "history": {
     "title": "Historial de Consultas",

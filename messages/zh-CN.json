@@ -719,7 +719,44 @@
     "stageConsulting": "正在咨询 AI 诊断模型",
     "stageTranslating": "正在将诊断翻译为{language}",
     "freeLockedBody": "AI 诊断助手不包含在免费套餐中。升级到 Pro Technician 或 Workshop 即可获得完整的 AI 生成诊断，例如：",
-    "freeLockedCta": "查看套餐"
+    "freeLockedCta": "查看套餐",
+    "example1": "是什么导致了 P0420？",
+    "example2": "我的宝马怠速不稳并出现 P0171",
+    "example3": "揽胜出现 P2263 和跛行模式",
+    "example4": "丰田出现 P0300 失火",
+    "example5": "车辆无法启动并出现 U0101",
+    "resetsAt": "重置时间：{date}"
+  },
+  "lockedSections": {
+    "srLockedText": "完整诊断部分已锁定。升级到 Pro Technician 以查看。",
+    "availableWithPro": "Pro Technician 可用",
+    "upgrade": "升级",
+    "rootCauseRanking": "完整的根本原因排序",
+    "diagnosticPlan": "针对车辆的诊断流程",
+    "expectedReadings": "预期的电压、电阻和实时数据值",
+    "independentSafetyReview": "独立安全审查",
+    "programmingRequirements": "编程与校准",
+    "laborGuidance": "详细的工时指导",
+    "multilingualReport": "多语言专业报告",
+    "savedDiagnosticCase": "已保存的诊断案例",
+    "downloadableReport": "PDF 导出"
+  },
+  "blog": {
+    "heading": "博客",
+    "allCategories": "全部",
+    "noPostsYet": "尚无已发布的文章。"
+  },
+  "blogCategories": {
+    "dtc_guides": "DTC 指南",
+    "check_engine_light": "故障灯",
+    "limp_mode": "跛行模式",
+    "can_bus_diagnostics": "CAN 总线诊断",
+    "ev_diagnostics": "电动车诊断",
+    "transmission_faults": "变速箱故障",
+    "immobilizer_problems": "防盗器问题",
+    "bmw_diagnostics": "宝马诊断",
+    "land_rover_diagnostics": "路虎诊断",
+    "toyota_diagnostics": "丰田诊断"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",

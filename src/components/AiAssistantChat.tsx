@@ -13,14 +13,6 @@ interface ChatMessage {
   content: string;
 }
 
-const EXAMPLES = [
-  "What causes P0420?",
-  "My BMW has rough idle and P0171",
-  "Range Rover has P2263 and limp mode",
-  "Toyota has P0300 misfire",
-  "Car has no crank and U0101",
-];
-
 interface OutputLocaleOption {
   code: string;
   name: string;
@@ -36,6 +28,18 @@ export function AiAssistantChat({
   outputLocaleOptions?: OutputLocaleOption[];
 }) {
   const t = useTranslations("dtcTechnician");
+  const tLocked = useTranslations("lockedSections");
+  const EXAMPLES = [
+    t("example1"),
+    t("example2"),
+    t("example3"),
+    t("example4"),
+    t("example5"),
+  ];
+  const localizedLockedSections = LOCKED_SECTION_CATALOG.map((section) => ({
+    key: section.key,
+    title: tLocked(section.key),
+  }));
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");
@@ -176,7 +180,7 @@ export function AiAssistantChat({
             {t("freeLockedCta")}
           </Link>
         </div>
-        <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+        <LockedResultPanel sections={localizedLockedSections} />
       </div>
     );
   }
@@ -248,7 +252,7 @@ export function AiAssistantChat({
             <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>
             {resetAt && (
               <p className="mt-1 text-xs text-[var(--text-muted)]">
-                Resets {new Date(resetAt).toLocaleString()}.
+                {t("resetsAt", { date: new Date(resetAt).toLocaleString() })}
               </p>
             )}
           </div>

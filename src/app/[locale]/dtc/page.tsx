@@ -84,6 +84,11 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
   const query = q?.trim() ?? "";
   const t = await getTranslations({ locale, namespace: "dtcSearch" });
   const tCommon = await getTranslations({ locale, namespace: "common" });
+  const tLocked = await getTranslations({ locale, namespace: "lockedSections" });
+  const localizedLockedSections = LOCKED_SECTION_CATALOG.map((section) => ({
+    key: section.key,
+    title: tLocked(section.key),
+  }));
 
   const { identity, plan } = await resolveSearchIdentity();
 
@@ -176,7 +181,7 @@ export default async function DtcLookupPage({ params, searchParams }: Props) {
                 {tCommon("viewPlans")}
               </Link>
             </div>
-            <LockedResultPanel sections={LOCKED_SECTION_CATALOG} />
+            <LockedResultPanel sections={localizedLockedSections} />
           </div>
         ) : invalidFormat ? (
           <div className="mt-8">

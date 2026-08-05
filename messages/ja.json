@@ -719,7 +719,44 @@
     "stageConsulting": "AI 診断モデルに問い合わせ中",
     "stageTranslating": "診断を{language}に翻訳中",
     "freeLockedBody": "AI診断アシスタントは無料プランには含まれていません。次のような完全なAI生成診断を利用するには、Pro TechnicianまたはWorkshopにアップグレードしてください：",
-    "freeLockedCta": "プランを見る"
+    "freeLockedCta": "プランを見る",
+    "example1": "P0420の原因は何ですか？",
+    "example2": "私のBMWがアイドリング不調でP0171が出ています",
+    "example3": "Range RoverでP2263とリンプモードが出ています",
+    "example4": "ToyotaでP0300の失火が出ています",
+    "example5": "車がクランキングせずU0101が出ています",
+    "resetsAt": "リセット: {date}"
+  },
+  "lockedSections": {
+    "srLockedText": "完全な診断セクションはロックされています。表示するにはPro Technicianにアップグレードしてください。",
+    "availableWithPro": "Pro Technicianで利用可能",
+    "upgrade": "アップグレード",
+    "rootCauseRanking": "根本原因の完全なランキング",
+    "diagnosticPlan": "車両固有の診断ワークフロー",
+    "expectedReadings": "予想される電圧、抵抗、ライブデータ値",
+    "independentSafetyReview": "独立した安全性レビュー",
+    "programmingRequirements": "プログラミングとキャリブレーション",
+    "laborGuidance": "詳細な作業ガイダンス",
+    "multilingualReport": "多言語対応プロフェッショナルレポート",
+    "savedDiagnosticCase": "保存された診断ケース",
+    "downloadableReport": "PDFエクスポート"
+  },
+  "blog": {
+    "heading": "ブログ",
+    "allCategories": "すべて",
+    "noPostsYet": "まだ公開された記事はありません。"
+  },
+  "blogCategories": {
+    "dtc_guides": "DTCガイド",
+    "check_engine_light": "チェックエンジンランプ",
+    "limp_mode": "リンプモード",
+    "can_bus_diagnostics": "CANバス診断",
+    "ev_diagnostics": "EV診断",
+    "transmission_faults": "トランスミッション故障",
+    "immobilizer_problems": "イモビライザーの問題",
+    "bmw_diagnostics": "BMW診断",
+    "land_rover_diagnostics": "ランドローバー診断",
+    "toyota_diagnostics": "トヨタ診断"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",
