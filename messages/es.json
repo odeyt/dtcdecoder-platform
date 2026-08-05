@@ -264,6 +264,13 @@
     "viewPlans": "Ver planes",
     "upgradeToPro": "Actualizar a Pro"
   },
+  "usageMeter": {
+    "usageLabel": "Uso de IA de {plan}",
+    "unitPreviews": "vistas previas",
+    "unitReports": "informes",
+    "resetsDaily": "Se reinicia diariamente.",
+    "resetsMonthly": "Se reinicia al inicio del próximo mes."
+  },
   "auth": {
     "signInHeading": "Inicia sesión en tu cuenta",
     "signInSubtext": "Usa un enlace mágico — no necesitas contraseña — o inicia sesión con una contraseña si has configurado una.",

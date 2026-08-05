@@ -66,6 +66,13 @@
     "viewPlans": "요금제 보기",
     "upgradeToPro": "Pro로 업그레이드"
   },
+  "usageMeter": {
+    "usageLabel": "{plan} AI 사용량",
+    "unitPreviews": "미리보기",
+    "unitReports": "리포트",
+    "resetsDaily": "매일 초기화됩니다.",
+    "resetsMonthly": "다음 달 초에 초기화됩니다."
+  },
   "auth": {
     "signInHeading": "계정에 로그인",
     "signInSubtext": "매직 링크를 사용하면 비밀번호가 필요 없습니다 — 비밀번호를 설정하셨다면 비밀번호로 로그인할 수도 있습니다.",

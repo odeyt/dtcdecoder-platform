@@ -66,6 +66,13 @@
     "viewPlans": "Xem các gói",
     "upgradeToPro": "Nâng cấp lên Pro"
   },
+  "usageMeter": {
+    "usageLabel": "Mức sử dụng AI của {plan}",
+    "unitPreviews": "bản xem trước",
+    "unitReports": "báo cáo",
+    "resetsDaily": "Đặt lại hàng ngày.",
+    "resetsMonthly": "Đặt lại vào đầu tháng tiếp theo."
+  },
   "auth": {
     "signInHeading": "Đăng nhập vào tài khoản của bạn",
     "signInSubtext": "Sử dụng liên kết ma thuật — không cần mật khẩu — hoặc đăng nhập bằng mật khẩu nếu bạn đã thiết lập.",

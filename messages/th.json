@@ -66,6 +66,13 @@
     "viewPlans": "ดูแพ็กเกจ",
     "upgradeToPro": "อัปเกรดเป็น Pro"
   },
+  "usageMeter": {
+    "usageLabel": "การใช้งาน AI ของ {plan}",
+    "unitPreviews": "การแสดงตัวอย่าง",
+    "unitReports": "รายงาน",
+    "resetsDaily": "รีเซ็ตทุกวัน",
+    "resetsMonthly": "รีเซ็ตเมื่อเริ่มต้นเดือนถัดไป"
+  },
   "auth": {
     "signInHeading": "เข้าสู่ระบบบัญชีของคุณ",
     "signInSubtext": "ใช้ลิงก์วิเศษ — ไม่ต้องใช้รหัสผ่าน — หรือเข้าสู่ระบบด้วยรหัสผ่านหากคุณตั้งไว้แล้ว",

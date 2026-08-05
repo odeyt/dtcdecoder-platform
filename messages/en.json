@@ -264,6 +264,13 @@
     "viewPlans": "View plans",
     "upgradeToPro": "Upgrade to Pro"
   },
+  "usageMeter": {
+    "usageLabel": "{plan} AI usage",
+    "unitPreviews": "previews",
+    "unitReports": "reports",
+    "resetsDaily": "Resets daily.",
+    "resetsMonthly": "Resets at the start of next month."
+  },
   "auth": {
     "signInHeading": "Sign in to your account",
     "signInSubtext": "Use a magic link — no password needed — or sign in with a password if you've set one.",

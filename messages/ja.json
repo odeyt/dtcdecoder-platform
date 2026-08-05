@@ -66,6 +66,13 @@
     "viewPlans": "プランを見る",
     "upgradeToPro": "Pro にアップグレード"
   },
+  "usageMeter": {
+    "usageLabel": "{plan} AI利用状況",
+    "unitPreviews": "プレビュー",
+    "unitReports": "レポート",
+    "resetsDaily": "毎日リセットされます。",
+    "resetsMonthly": "来月の初めにリセットされます。"
+  },
   "auth": {
     "signInHeading": "アカウントにログイン",
     "signInSubtext": "マジックリンクを使用する場合はパスワード不要です。パスワードを設定済みの場合はパスワードでサインインすることもできます。",

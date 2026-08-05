@@ -66,6 +66,13 @@
     "viewPlans": "Tarife ansehen",
     "upgradeToPro": "Auf Pro upgraden"
   },
+  "usageMeter": {
+    "usageLabel": "{plan}-KI-Nutzung",
+    "unitPreviews": "Vorschauen",
+    "unitReports": "Berichte",
+    "resetsDaily": "Wird täglich zurückgesetzt.",
+    "resetsMonthly": "Wird zu Beginn des nächsten Monats zurückgesetzt."
+  },
   "auth": {
     "signInHeading": "Bei Ihrem Konto anmelden",
     "signInSubtext": "Nutzen Sie einen Magic Link — kein Passwort nötig — oder melden Sie sich mit einem Passwort an, falls Sie eines eingerichtet haben.",

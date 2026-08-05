@@ -66,6 +66,13 @@
     "viewPlans": "មើលគម្រោង",
     "upgradeToPro": "ដំឡើងទៅ Pro"
   },
+  "usageMeter": {
+    "usageLabel": "ការប្រើប្រាស់ AI របស់ {plan}",
+    "unitPreviews": "ការមើលជាមុន",
+    "unitReports": "របាយការណ៍",
+    "resetsDaily": "កំណត់ឡើងវិញរាល់ថ្ងៃ។",
+    "resetsMonthly": "កំណត់ឡើងវិញនៅដើមខែបន្ទាប់។"
+  },
   "auth": {
     "signInHeading": "ចូលទៅគណនីរបស់អ្នក",
     "signInSubtext": "ប្រើតំណវេទមន្ត — មិនត្រូវការពាក្យសម្ងាត់ — ឬចូលដោយប្រើពាក្យសម្ងាត់ប្រសិនបើអ្នកបានកំណត់វាហើយ។",

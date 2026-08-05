@@ -66,6 +66,13 @@
     "viewPlans": "Voir les forfaits",
     "upgradeToPro": "Passer à Pro"
   },
+  "usageMeter": {
+    "usageLabel": "Utilisation IA {plan}",
+    "unitPreviews": "aperçus",
+    "unitReports": "rapports",
+    "resetsDaily": "Réinitialisation quotidienne.",
+    "resetsMonthly": "Réinitialisation au début du mois prochain."
+  },
   "auth": {
     "signInHeading": "Connectez-vous à votre compte",
     "signInSubtext": "Utilisez un lien magique — aucun mot de passe requis — ou connectez-vous avec un mot de passe si vous en avez défini un.",

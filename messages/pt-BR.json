@@ -66,6 +66,13 @@
     "viewPlans": "Ver planos",
     "upgradeToPro": "Fazer upgrade para o Pro"
   },
+  "usageMeter": {
+    "usageLabel": "Uso de IA do {plan}",
+    "unitPreviews": "prévias",
+    "unitReports": "relatórios",
+    "resetsDaily": "Reinicia diariamente.",
+    "resetsMonthly": "Reinicia no início do próximo mês."
+  },
   "auth": {
     "signInHeading": "Entre na sua conta",
     "signInSubtext": "Use um link mágico — sem necessidade de senha — ou entre com uma senha se você já criou uma.",

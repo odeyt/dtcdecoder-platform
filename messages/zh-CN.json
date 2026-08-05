@@ -66,6 +66,13 @@
     "viewPlans": "查看套餐",
     "upgradeToPro": "升级到 Pro"
   },
+  "usageMeter": {
+    "usageLabel": "{plan} AI 使用情况",
+    "unitPreviews": "预览次数",
+    "unitReports": "报告次数",
+    "resetsDaily": "每天重置。",
+    "resetsMonthly": "将于下月初重置。"
+  },
   "auth": {
     "signInHeading": "登录您的账户",
     "signInSubtext": "使用魔法链接 — 无需密码 — 或者如果您已设置密码，可使用密码登录。",
