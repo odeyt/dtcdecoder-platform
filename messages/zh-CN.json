@@ -393,6 +393,18 @@
     "backHomeCta": "返回首页",
     "searchCta": "搜索诊断代码"
   },
+  "safetyAlert": {
+    "heading": "继续驾驶前请停车并评估情况",
+    "body": "此代码与可能导致严重车辆损坏或安全风险的状况相关。如果您现在正遇到此情况，请考虑在继续驾驶前对车辆进行检查。",
+    "overheating": "过热",
+    "oilPressureLoss": "机油压力不足",
+    "brakeFailure": "刹车失灵",
+    "fuelLeakage": "燃油泄漏",
+    "smokeOrFireRisk": "冒烟或起火风险",
+    "severeEngineKnocking": "发动机严重爆震",
+    "lossOfSteering": "转向失灵",
+    "flashingCheckEngineLight": "发动机故障灯闪烁"
+  },
   "emailSignup": {
     "heading": "获取免费的 DTC 速查表和诊断技巧。",
     "namePlaceholder": "姓名",

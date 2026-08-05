@@ -591,6 +591,18 @@
     "backHomeCta": "Back to home",
     "searchCta": "Search a diagnostic code"
   },
+  "safetyAlert": {
+    "heading": "Stop and assess before continuing to drive",
+    "body": "This code is associated with a condition that can cause serious vehicle damage or a safety risk. If you're experiencing this now, consider having the vehicle inspected before continuing to drive it.",
+    "overheating": "Overheating",
+    "oilPressureLoss": "Oil pressure loss",
+    "brakeFailure": "Brake failure",
+    "fuelLeakage": "Fuel leakage",
+    "smokeOrFireRisk": "Smoke or fire risk",
+    "severeEngineKnocking": "Severe engine knocking",
+    "lossOfSteering": "Loss of steering",
+    "flashingCheckEngineLight": "Flashing check-engine light"
+  },
   "emailSignup": {
     "heading": "Get free DTC cheat sheets and diagnostic tips.",
     "namePlaceholder": "Name",

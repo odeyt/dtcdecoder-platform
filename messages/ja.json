@@ -393,6 +393,18 @@
     "backHomeCta": "ホームに戻る",
     "searchCta": "診断コードを検索"
   },
+  "safetyAlert": {
+    "heading": "運転を続ける前に停止して状況を確認してください",
+    "body": "このコードは、車両の重大な損傷や安全上のリスクを引き起こす可能性のある状態に関連しています。現在この症状が出ている場合は、運転を続ける前に車両の点検を検討してください。",
+    "overheating": "オーバーヒート",
+    "oilPressureLoss": "油圧低下",
+    "brakeFailure": "ブレーキ故障",
+    "fuelLeakage": "燃料漏れ",
+    "smokeOrFireRisk": "発煙・火災の危険",
+    "severeEngineKnocking": "重度のエンジンノッキング",
+    "lossOfSteering": "ステアリング喪失",
+    "flashingCheckEngineLight": "チェックエンジンランプの点滅"
+  },
   "emailSignup": {
     "heading": "無料の DTC チートシートと診断のヒントを入手。",
     "namePlaceholder": "名前",

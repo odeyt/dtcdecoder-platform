@@ -393,6 +393,18 @@
     "backHomeCta": "Zurück zur Startseite",
     "searchCta": "Diagnosecode suchen"
   },
+  "safetyAlert": {
+    "heading": "Anhalten und prüfen, bevor Sie weiterfahren",
+    "body": "Dieser Code steht im Zusammenhang mit einem Zustand, der zu schweren Fahrzeugschäden oder einem Sicherheitsrisiko führen kann. Wenn dies gerade auftritt, lassen Sie das Fahrzeug prüfen, bevor Sie weiterfahren.",
+    "overheating": "Überhitzung",
+    "oilPressureLoss": "Öldruckverlust",
+    "brakeFailure": "Bremsausfall",
+    "fuelLeakage": "Kraftstoffleck",
+    "smokeOrFireRisk": "Rauch- oder Brandgefahr",
+    "severeEngineKnocking": "Starkes Motorklopfen",
+    "lossOfSteering": "Lenkungsverlust",
+    "flashingCheckEngineLight": "Blinkende Motorkontrollleuchte"
+  },
   "emailSignup": {
     "heading": "Erhalten Sie kostenlose DTC-Spickzettel und Diagnosetipps.",
     "namePlaceholder": "Name",

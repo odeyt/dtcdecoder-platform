@@ -393,6 +393,18 @@
     "backHomeCta": "Voltar para o início",
     "searchCta": "Buscar um código de diagnóstico"
   },
+  "safetyAlert": {
+    "heading": "Pare e avalie antes de continuar dirigindo",
+    "body": "Este código está associado a uma condição que pode causar danos graves ao veículo ou risco à segurança. Se você está enfrentando isso agora, considere levar o veículo para inspeção antes de continuar dirigindo.",
+    "overheating": "Superaquecimento",
+    "oilPressureLoss": "Perda de pressão do óleo",
+    "brakeFailure": "Falha nos freios",
+    "fuelLeakage": "Vazamento de combustível",
+    "smokeOrFireRisk": "Risco de fumaça ou incêndio",
+    "severeEngineKnocking": "Batida severa no motor",
+    "lossOfSteering": "Perda de direção",
+    "flashingCheckEngineLight": "Luz de check engine piscando"
+  },
   "emailSignup": {
     "heading": "Receba folhas de consulta de DTC e dicas de diagnóstico gratuitas.",
     "namePlaceholder": "Nome",

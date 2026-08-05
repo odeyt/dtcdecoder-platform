@@ -393,6 +393,18 @@
     "backHomeCta": "Retour à l'accueil",
     "searchCta": "Rechercher un code de diagnostic"
   },
+  "safetyAlert": {
+    "heading": "Arrêtez-vous et évaluez la situation avant de continuer à rouler",
+    "body": "Ce code est associé à une condition pouvant causer de graves dommages au véhicule ou un risque pour la sécurité. Si vous rencontrez ce problème actuellement, envisagez de faire inspecter le véhicule avant de continuer à rouler.",
+    "overheating": "Surchauffe",
+    "oilPressureLoss": "Perte de pression d'huile",
+    "brakeFailure": "Défaillance des freins",
+    "fuelLeakage": "Fuite de carburant",
+    "smokeOrFireRisk": "Risque de fumée ou d'incendie",
+    "severeEngineKnocking": "Cliquetis moteur sévère",
+    "lossOfSteering": "Perte de direction",
+    "flashingCheckEngineLight": "Voyant moteur clignotant"
+  },
   "emailSignup": {
     "heading": "Recevez des aide-mémoire DTC et des conseils de diagnostic gratuits.",
     "namePlaceholder": "Nom",

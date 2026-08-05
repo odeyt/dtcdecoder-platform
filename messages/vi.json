@@ -393,6 +393,18 @@
     "backHomeCta": "Về trang chủ",
     "searchCta": "Tìm mã chẩn đoán"
   },
+  "safetyAlert": {
+    "heading": "Dừng lại và kiểm tra trước khi tiếp tục lái xe",
+    "body": "Mã này liên quan đến tình trạng có thể gây hư hỏng nghiêm trọng cho xe hoặc rủi ro an toàn. Nếu bạn đang gặp phải tình trạng này ngay bây giờ, hãy cân nhắc đưa xe đi kiểm tra trước khi tiếp tục lái.",
+    "overheating": "Quá nhiệt",
+    "oilPressureLoss": "Mất áp suất dầu",
+    "brakeFailure": "Hỏng phanh",
+    "fuelLeakage": "Rò rỉ nhiên liệu",
+    "smokeOrFireRisk": "Nguy cơ khói hoặc cháy",
+    "severeEngineKnocking": "Động cơ gõ mạnh",
+    "lossOfSteering": "Mất lái",
+    "flashingCheckEngineLight": "Đèn check engine nhấp nháy"
+  },
   "emailSignup": {
     "heading": "Nhận bảng tra cứu DTC và mẹo chẩn đoán miễn phí.",
     "namePlaceholder": "Tên",
