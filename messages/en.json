@@ -603,6 +603,13 @@
     "lossOfSteering": "Loss of steering",
     "flashingCheckEngineLight": "Flashing check-engine light"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "You have used your {limit} free AI diagnostic previews for today.",
+    "dailyReportLimitReached": "You've used today's {limit}-report daily limit for your plan. It resets at midnight UTC.",
+    "monthlyReportLimitReached": "You've used this month's {limit}-report allowance and any add-on report credits on your account. It resets at the start of next month, or buy an add-on pack for more right away.",
+    "diagnosticEngineDailyLimitReached": "You've used today's {limit}-turn daily limit for this feature. It resets at midnight UTC.",
+    "diagnosticEngineMonthlyLimitReached": "You've used this month's {limit}-turn allowance for this feature. It resets at the start of next month."
+  },
   "emailSignup": {
     "heading": "Get free DTC cheat sheets and diagnostic tips.",
     "namePlaceholder": "Name",

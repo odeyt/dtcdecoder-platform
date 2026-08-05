@@ -405,6 +405,13 @@
     "lossOfSteering": "Perda de direção",
     "flashingCheckEngineLight": "Luz de check engine piscando"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "Você usou suas {limit} pré-visualizações gratuitas de diagnóstico por IA de hoje.",
+    "dailyReportLimitReached": "Você atingiu o limite diário de {limit} relatórios do seu plano. Ele é reiniciado à meia-noite UTC.",
+    "monthlyReportLimitReached": "Você usou sua cota de {limit} relatórios deste mês e quaisquer créditos de relatórios adicionais da sua conta. Ela é reiniciada no início do próximo mês, ou compre um pacote adicional para obter mais agora.",
+    "diagnosticEngineDailyLimitReached": "Você atingiu o limite diário de {limit} rodadas para este recurso. Ele é reiniciado à meia-noite UTC.",
+    "diagnosticEngineMonthlyLimitReached": "Você usou sua cota de {limit} rodadas deste mês para este recurso. Ela é reiniciada no início do próximo mês."
+  },
   "emailSignup": {
     "heading": "Receba folhas de consulta de DTC e dicas de diagnóstico gratuitas.",
     "namePlaceholder": "Nome",

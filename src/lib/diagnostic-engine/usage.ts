@@ -28,6 +28,7 @@ export class DiagnosticEngineLimitExceededError extends Error {
     message: string,
     readonly resetAt: string,
     upgradeRequired: boolean,
+    readonly limit: number,
   ) {
     super(message);
     this.name = "DiagnosticEngineLimitExceededError";
@@ -70,6 +71,7 @@ export async function recordDiagnosticEngineUsage(params: RecordDiagnosticEngine
       `You've used today's ${access.limits.dailyLimit}-turn daily limit for this feature. It resets at midnight UTC.`,
       nextUtcMidnightIso(),
       params.plan !== "workshop",
+      access.limits.dailyLimit ?? 0,
     );
   }
   if (data === "monthly_limit_exceeded") {
@@ -78,6 +80,7 @@ export async function recordDiagnosticEngineUsage(params: RecordDiagnosticEngine
       `You've used this month's ${access.limits.monthlyLimit}-turn allowance for this feature. It resets at the start of next month.`,
       nextUtcMonthStartIso(),
       params.plan !== "workshop",
+      access.limits.monthlyLimit ?? 0,
     );
   }
   // 'recorded' / 'already_recorded' both mean this call is granted.

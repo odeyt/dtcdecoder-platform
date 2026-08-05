@@ -17,6 +17,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { formatLimitErrorMessage } from "@/lib/i18n/limit-error-messages";
 import type { DiagnosticEngineTurnResult } from "@/lib/diagnostic-engine/orchestrator";
 
 interface GuidedDiagnosisPanelProps {
@@ -53,6 +54,7 @@ const SAFETY_BADGE_CLASS: Record<string, string> = {
 
 export function GuidedDiagnosisPanel({ initialCaseId, onCaseCreated }: GuidedDiagnosisPanelProps) {
   const t = useTranslations("dtcTechnicianShell");
+  const tLimit = useTranslations("usageLimitErrors");
   const [caseId, setCaseId] = useState<string | null>(initialCaseId);
   const [status, setStatus] = useState<PanelStatus>("idle");
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -107,7 +109,9 @@ export function GuidedDiagnosisPanel({ initialCaseId, onCaseCreated }: GuidedDia
       if (res.status === 429) {
         const data = await res.json().catch(() => null);
         setStatus("limit_reached");
-        setErrorMessage(data?.error?.message ?? t("guidedDiagnosisLimitReached"));
+        setErrorMessage(
+          data?.error ? formatLimitErrorMessage(data.error, tLimit) || t("guidedDiagnosisLimitReached") : t("guidedDiagnosisLimitReached"),
+        );
         return;
       }
       if (!res.ok) {

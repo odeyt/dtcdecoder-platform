@@ -162,11 +162,15 @@ export class DuplicateVinError extends Error {
 // /api/scan-diagnostics and /api/diagnostic-engine route funnels through —
 // never at the throw site, so callers never need locale access themselves.
 // Messages that carry caller-supplied, data-dependent text (Unsupported
-// FileError, InvalidCaseStatusError, InvalidReportIndexError, and the
-// AiDiagnosticLimitExceededError/DiagnosticEngineLimitExceededError family,
-// whose text embeds a numeric plan limit) are intentionally left as
-// err.message — translating those needs the underlying numeric/contextual
-// data threaded through as a separate field, not just a message swap.
+// FileError, InvalidCaseStatusError, InvalidReportIndexError) are
+// intentionally left as err.message — translating those needs the
+// underlying numeric/contextual data threaded through as a separate field,
+// not just a message swap. The AiDiagnosticLimitExceededError/
+// DiagnosticEngineLimitExceededError family now also carries a `limit`
+// field alongside `message`, so clients build a translated sentence from
+// `code` + `limit` (see formatLimitErrorMessage in
+// src/lib/i18n/limit-error-messages.ts) and fall back to the raw
+// `message` only for an unrecognized code.
 export async function toSafeErrorResponse(err: unknown, context: string): Promise<NextResponse> {
   console.error(`[scan-diagnostics] ${context} failed`, err);
 
@@ -183,7 +187,9 @@ export async function toSafeErrorResponse(err: unknown, context: string): Promis
     // Exact shape from the entitlement spec's "over-limit experience" —
     // basic DTC lookup always stays available even when the AI diagnostic
     // allowance is exhausted, which is why basicLookupAvailable is always
-    // true here rather than conditional.
+    // true here rather than conditional. `message` stays as a fallback for
+    // any caller not yet updated to build its own translated sentence from
+    // `code` + `limit`.
     return NextResponse.json(
       {
         success: false,
@@ -193,6 +199,7 @@ export async function toSafeErrorResponse(err: unknown, context: string): Promis
           basicLookupAvailable: err.basicLookupAvailable,
           upgradeRequired: err.upgradeRequired,
           resetAt: err.resetAt,
+          limit: err.limit,
         },
       },
       { status: 429 },
@@ -213,7 +220,16 @@ export async function toSafeErrorResponse(err: unknown, context: string): Promis
   }
   if (err instanceof DiagnosticEngineLimitExceededError) {
     return NextResponse.json(
-      { success: false, error: { code: err.code, message: err.message, resetAt: err.resetAt, upgradeRequired: err.upgradeRequired } },
+      {
+        success: false,
+        error: {
+          code: err.code,
+          message: err.message,
+          resetAt: err.resetAt,
+          upgradeRequired: err.upgradeRequired,
+          limit: err.limit,
+        },
+      },
       { status: 429 },
     );
   }

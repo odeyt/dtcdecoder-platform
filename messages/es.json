@@ -603,6 +603,13 @@
     "lossOfSteering": "Pérdida de dirección",
     "flashingCheckEngineLight": "Luz de check engine parpadeante"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "Has usado tus {limit} vistas previas gratuitas de diagnóstico con IA de hoy.",
+    "dailyReportLimitReached": "Has alcanzado el límite diario de {limit} informes de tu plan. Se restablece a medianoche UTC.",
+    "monthlyReportLimitReached": "Has usado tu asignación de {limit} informes de este mes y cualquier crédito de informes adicionales de tu cuenta. Se restablece al inicio del próximo mes, o compra un paquete adicional para obtener más de inmediato.",
+    "diagnosticEngineDailyLimitReached": "Has alcanzado el límite diario de {limit} turnos para esta función. Se restablece a medianoche UTC.",
+    "diagnosticEngineMonthlyLimitReached": "Has usado tu asignación de {limit} turnos de este mes para esta función. Se restablece al inicio del próximo mes."
+  },
   "emailSignup": {
     "heading": "Obtén hojas de referencia DTC y consejos de diagnóstico gratis.",
     "namePlaceholder": "Nombre",

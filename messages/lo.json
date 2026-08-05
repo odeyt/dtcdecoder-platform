@@ -405,6 +405,13 @@
     "lossOfSteering": "ການສູນເສຍການບັງຄັບເລ້ຍວ",
     "flashingCheckEngineLight": "ໄຟເຕືອນເຄື່ອງຍົນກະພິບ"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "ທ່ານໄດ້ໃຊ້ການເບິ່ງຕົວຢ່າງການວິນິດໄສດ້ວຍ AI ແບບຟຣີ {limit} ຄັ້ງຂອງມື້ນີ້ໝົດແລ້ວ.",
+    "dailyReportLimitReached": "ທ່ານໄດ້ຮອດຂີດຈຳກັດລາຍງານປະຈຳວັນ {limit} ລາຍງານຂອງແພັກເກັດແລ້ວ. ຈະຣີເຊັດຕອນທ່ຽງຄືນ UTC.",
+    "monthlyReportLimitReached": "ທ່ານໄດ້ໃຊ້ໂຄຕ້າລາຍງານປະຈຳເດືອນ {limit} ລາຍງານ ແລະ ເຄຣດິດລາຍງານເສີມໃນບັນຊີຂອງທ່ານໝົດແລ້ວ. ຈະຣີເຊັດຕອນຕົ້ນເດືອນໜ້າ ຫຼື ຊື້ແພັກເສີມເພື່ອຮັບເພີ່ມໄດ້ທັນທີ.",
+    "diagnosticEngineDailyLimitReached": "ທ່ານໄດ້ຮອດຂີດຈຳກັດປະຈຳວັນ {limit} ຄັ້ງສຳລັບຄຸນສົມບັດນີ້ແລ້ວ. ຈະຣີເຊັດຕອນທ່ຽງຄືນ UTC.",
+    "diagnosticEngineMonthlyLimitReached": "ທ່ານໄດ້ໃຊ້ໂຄຕ້າປະຈຳເດືອນ {limit} ຄັ້ງສຳລັບຄຸນສົມບັດນີ້ໝົດແລ້ວ. ຈະຣີເຊັດຕອນຕົ້ນເດືອນໜ້າ."
+  },
   "emailSignup": {
     "heading": "ຮັບໃບສະຫຼຸບລະຫັດ DTC ແລະ ເຄັດລັບການວິນິດໄສຟຣີ.",
     "namePlaceholder": "ຊື່",

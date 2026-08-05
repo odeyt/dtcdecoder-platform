@@ -405,6 +405,13 @@
     "lossOfSteering": "Perte de direction",
     "flashingCheckEngineLight": "Voyant moteur clignotant"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "Vous avez utilisé vos {limit} aperçus de diagnostic IA gratuits pour aujourd'hui.",
+    "dailyReportLimitReached": "Vous avez atteint la limite quotidienne de {limit} rapports de votre forfait. Elle se réinitialise à minuit UTC.",
+    "monthlyReportLimitReached": "Vous avez utilisé votre allocation de {limit} rapports de ce mois-ci ainsi que tout crédit de rapport supplémentaire sur votre compte. Elle se réinitialise au début du mois prochain, ou achetez un pack complémentaire pour en obtenir davantage immédiatement.",
+    "diagnosticEngineDailyLimitReached": "Vous avez atteint la limite quotidienne de {limit} tours pour cette fonctionnalité. Elle se réinitialise à minuit UTC.",
+    "diagnosticEngineMonthlyLimitReached": "Vous avez utilisé votre allocation de {limit} tours de ce mois-ci pour cette fonctionnalité. Elle se réinitialise au début du mois prochain."
+  },
   "emailSignup": {
     "heading": "Recevez des aide-mémoire DTC et des conseils de diagnostic gratuits.",
     "namePlaceholder": "Nom",

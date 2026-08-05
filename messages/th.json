@@ -405,6 +405,13 @@
     "lossOfSteering": "พวงมาลัยเสียการควบคุม",
     "flashingCheckEngineLight": "ไฟเช็คเครื่องยนต์กะพริบ"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "คุณใช้การพรีวิวการวินิจฉัยด้วย AI ฟรี {limit} ครั้งของวันนี้ครบแล้ว",
+    "dailyReportLimitReached": "คุณถึงขีดจำกัดรายงานรายวัน {limit} รายงานของแพ็กเกจแล้ว ระบบจะรีเซ็ตเวลาเที่ยงคืน UTC",
+    "monthlyReportLimitReached": "คุณใช้โควตารายงานประจำเดือน {limit} รายงาน และเครดิตรายงานเสริมในบัญชีของคุณครบแล้ว ระบบจะรีเซ็ตในช่วงต้นเดือนถัดไป หรือซื้อแพ็กเสริมเพื่อรับเพิ่มได้ทันที",
+    "diagnosticEngineDailyLimitReached": "คุณถึงขีดจำกัดรายวัน {limit} ครั้งสำหรับฟีเจอร์นี้แล้ว ระบบจะรีเซ็ตเวลาเที่ยงคืน UTC",
+    "diagnosticEngineMonthlyLimitReached": "คุณใช้โควตาประจำเดือน {limit} ครั้งสำหรับฟีเจอร์นี้ครบแล้ว ระบบจะรีเซ็ตในช่วงต้นเดือนถัดไป"
+  },
   "emailSignup": {
     "heading": "รับสรุปรหัส DTC และเคล็ดลับการวินิจฉัยฟรี",
     "namePlaceholder": "ชื่อ",

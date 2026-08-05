@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 import { UpgradeCard } from "@/components/UpgradeCard";
+import { formatLimitErrorMessage } from "@/lib/i18n/limit-error-messages";
 import type { ScanCaseStatus } from "@/lib/types";
 
 interface ExistingVinCase {
@@ -35,6 +36,7 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   const tVin = useTranslations("scanDuplicateVin");
   const tCommon = useTranslations("common");
   const tApiErrors = useTranslations("apiErrors");
+  const tLimit = useTranslations("usageLimitErrors");
   // scan_cases.error_message stores a stable code (e.g. "EXTRACTION_FAILED")
   // for any row written after this mapping was introduced — translated here
   // at render time so the same stored row reads correctly in every locale.
@@ -80,9 +82,13 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
         }
         // A 429 quota-exceeded response (AiDiagnosticLimitExceededError, see
         // toSafeErrorResponse) shapes `error` as an object, not a string —
-        // every other error shape here is a plain string. Extract .message
-        // so this never renders a raw object as a React child.
-        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? t("errorGeneric"));
+        // every other error shape here is a plain string.
+        const message =
+          typeof data.error === "string"
+            ? data.error
+            : data.error
+              ? formatLimitErrorMessage(data.error, tLimit) || t("errorGeneric")
+              : t("errorGeneric");
         setError(message);
         setRunning(null);
         return;

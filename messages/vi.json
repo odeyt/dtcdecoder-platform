@@ -405,6 +405,13 @@
     "lossOfSteering": "Mất lái",
     "flashingCheckEngineLight": "Đèn check engine nhấp nháy"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "Bạn đã dùng hết {limit} lượt xem trước chẩn đoán AI miễn phí cho hôm nay.",
+    "dailyReportLimitReached": "Bạn đã đạt giới hạn {limit} báo cáo mỗi ngày của gói. Giới hạn sẽ đặt lại vào lúc nửa đêm UTC.",
+    "monthlyReportLimitReached": "Bạn đã dùng hết hạn mức {limit} báo cáo trong tháng này và mọi tín dụng báo cáo bổ sung trong tài khoản. Hạn mức sẽ đặt lại vào đầu tháng sau, hoặc mua thêm gói bổ sung để có ngay bây giờ.",
+    "diagnosticEngineDailyLimitReached": "Bạn đã đạt giới hạn {limit} lượt mỗi ngày cho tính năng này. Giới hạn sẽ đặt lại vào lúc nửa đêm UTC.",
+    "diagnosticEngineMonthlyLimitReached": "Bạn đã dùng hết hạn mức {limit} lượt trong tháng này cho tính năng này. Hạn mức sẽ đặt lại vào đầu tháng sau."
+  },
   "emailSignup": {
     "heading": "Nhận bảng tra cứu DTC và mẹo chẩn đoán miễn phí.",
     "namePlaceholder": "Tên",

@@ -120,6 +120,9 @@ describe("recordAiDiagnosticUsage — free plan (zero AI diagnostic calls)", () 
       expect(typed.basicLookupAvailable).toBe(true);
       expect(typed.upgradeRequired).toBe(true);
       expect(typed.resetAt).toMatch(/^\d{4}-\d{2}-\d{2}T/);
+      // Carried separately from the English `message` so clients can build
+      // a translated sentence from code + limit instead of parsing text.
+      expect(typeof typed.limit).toBe("number");
     }
 
     expect(fake().dump("ai_diagnostic_usage")).toHaveLength(0);
@@ -178,7 +181,9 @@ describe("recordAiDiagnosticUsage — paid plans (full access)", () => {
       expect.unreachable("should have thrown");
     } catch (err) {
       expect(err).toBeInstanceOf(AiDiagnosticLimitExceededError);
-      expect((err as InstanceType<typeof AiDiagnosticLimitExceededError>).code).toBe("MONTHLY_REPORT_LIMIT_REACHED");
+      const typed = err as InstanceType<typeof AiDiagnosticLimitExceededError>;
+      expect(typed.code).toBe("MONTHLY_REPORT_LIMIT_REACHED");
+      expect(typed.limit).toBe(20);
     }
   });
 

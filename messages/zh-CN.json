@@ -405,6 +405,13 @@
     "lossOfSteering": "转向失灵",
     "flashingCheckEngineLight": "发动机故障灯闪烁"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "您今天的 {limit} 次免费 AI 诊断预览已用完。",
+    "dailyReportLimitReached": "您已达到套餐的每日 {limit} 份报告上限，将于 UTC 午夜重置。",
+    "monthlyReportLimitReached": "您本月的 {limit} 份报告额度以及账户中的所有附加报告点数均已用完，将于下月初重置；如需立即获得更多，请购买附加套餐。",
+    "diagnosticEngineDailyLimitReached": "您已达到此功能的每日 {limit} 轮上限，将于 UTC 午夜重置。",
+    "diagnosticEngineMonthlyLimitReached": "您本月此功能的 {limit} 轮额度已用完，将于下月初重置。"
+  },
   "emailSignup": {
     "heading": "获取免费的 DTC 速查表和诊断技巧。",
     "namePlaceholder": "姓名",

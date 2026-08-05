@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
+import { formatLimitErrorMessage } from "@/lib/i18n/limit-error-messages";
 
 interface Prefill {
   dtcCode: string;
@@ -43,6 +44,7 @@ export function QuickDiagnosticForm({
   const tStages = useTranslations("diagnosticStages");
   const tVin = useTranslations("scanDuplicateVin");
   const tCommon = useTranslations("common");
+  const tLimit = useTranslations("usageLimitErrors");
   const ANALYZE_STAGES = [
     tStages("validatingCaseDetails"),
     tStages("sendingToAi"),
@@ -104,7 +106,11 @@ export function QuickDiagnosticForm({
           return;
         }
         const message =
-          typeof data.error === "string" ? data.error : data.error?.message ?? tCommon("genericError");
+          typeof data.error === "string"
+            ? data.error
+            : data.error
+              ? formatLimitErrorMessage(data.error, tLimit) || tCommon("genericError")
+              : tCommon("genericError");
         setErrorMessage(message);
         setStatus("error");
         return;

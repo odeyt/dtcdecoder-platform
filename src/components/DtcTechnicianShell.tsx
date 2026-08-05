@@ -7,6 +7,7 @@ import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { recordClientEvent } from "@/lib/analytics/client";
 import { GuidedDiagnosisPanel } from "@/components/GuidedDiagnosisPanel";
+import { formatLimitErrorMessage } from "@/lib/i18n/limit-error-messages";
 import type { DtcTechnicianContext } from "@/lib/dtc-technician/context";
 
 // Persistent, page-agnostic consultation launcher — a floating trigger that
@@ -44,6 +45,7 @@ function isExcludedPath(pathname: string): boolean {
 
 export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext }) {
   const t = useTranslations("dtcTechnicianShell");
+  const tLimit = useTranslations("usageLimitErrors");
   const pathname = usePathname();
   const router = useRouter();
   const [open, setOpen] = useState(false);
@@ -165,7 +167,12 @@ export function DtcTechnicianShell({ context }: { context?: DtcTechnicianContext
 
       if (!res.ok || !res.body) {
         const data = await res.json().catch(() => ({}));
-        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? t("errorGeneric"));
+        const message =
+          typeof data.error === "string"
+            ? data.error
+            : data.error
+              ? formatLimitErrorMessage(data.error, tLimit) || t("errorGeneric")
+              : t("errorGeneric");
         setErrorMessage(message);
         setStatus("error");
         setMessages((prev) => prev.slice(0, -1));

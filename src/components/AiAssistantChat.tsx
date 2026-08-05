@@ -6,6 +6,7 @@ import { useTranslations } from "next-intl";
 import { DiagnosticProgress } from "@/components/DiagnosticProgress";
 import { LockedResultPanel } from "@/components/LockedResultCard";
 import { LOCKED_SECTION_CATALOG } from "@/lib/ai-diagnostics/redaction";
+import { formatLimitErrorMessage } from "@/lib/i18n/limit-error-messages";
 import type { SubscriptionPlan } from "@/lib/types";
 
 interface ChatMessage {
@@ -29,6 +30,7 @@ export function AiAssistantChat({
 }) {
   const t = useTranslations("dtcTechnician");
   const tLocked = useTranslations("lockedSections");
+  const tLimit = useTranslations("usageLimitErrors");
   const EXAMPLES = [
     t("example1"),
     t("example2"),
@@ -87,9 +89,14 @@ export function AiAssistantChat({
         const data = await res.json().catch(() => ({}));
         // Two possible shapes reach this branch: the plain `{error: string}`
         // used by auth/validation errors, and the structured
-        // `{success:false, error:{code,message,upgradeRequired,resetAt}}`
+        // `{success:false, error:{code,message,upgradeRequired,resetAt,limit}}`
         // used specifically for an exhausted AI diagnostic allowance.
-        const message = typeof data.error === "string" ? data.error : (data.error?.message ?? t("error"));
+        const message =
+          typeof data.error === "string"
+            ? data.error
+            : data.error
+              ? formatLimitErrorMessage(data.error, tLimit) || t("error")
+              : t("error");
         setErrorMessage(message);
         if (data.error && typeof data.error === "object" && data.error.resetAt) {
           setResetAt(data.error.resetAt);

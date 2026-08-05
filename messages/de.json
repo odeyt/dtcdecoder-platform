@@ -405,6 +405,13 @@
     "lossOfSteering": "Lenkungsverlust",
     "flashingCheckEngineLight": "Blinkende Motorkontrollleuchte"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "Du hast deine {limit} kostenlosen KI-Diagnose-Vorschauen für heute aufgebraucht.",
+    "dailyReportLimitReached": "Du hast das tägliche Limit von {limit} Berichten für deinen Plan erreicht. Es wird um Mitternacht UTC zurückgesetzt.",
+    "monthlyReportLimitReached": "Du hast dein monatliches Kontingent von {limit} Berichten sowie alle Zusatz-Berichtsguthaben auf deinem Konto aufgebraucht. Es wird zu Beginn des nächsten Monats zurückgesetzt, oder kaufe sofort ein Zusatzpaket für mehr.",
+    "diagnosticEngineDailyLimitReached": "Du hast das tägliche Limit von {limit} Durchgängen für diese Funktion erreicht. Es wird um Mitternacht UTC zurückgesetzt.",
+    "diagnosticEngineMonthlyLimitReached": "Du hast dein monatliches Kontingent von {limit} Durchgängen für diese Funktion aufgebraucht. Es wird zu Beginn des nächsten Monats zurückgesetzt."
+  },
   "emailSignup": {
     "heading": "Erhalten Sie kostenlose DTC-Spickzettel und Diagnosetipps.",
     "namePlaceholder": "Name",

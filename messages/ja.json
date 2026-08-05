@@ -405,6 +405,13 @@
     "lossOfSteering": "ステアリング喪失",
     "flashingCheckEngineLight": "チェックエンジンランプの点滅"
   },
+  "usageLimitErrors": {
+    "freeDailyAiLimitReached": "本日の無料AI診断プレビュー{limit}回をすべてご利用いただきました。",
+    "dailyReportLimitReached": "ご利用プランの1日あたりのレポート上限（{limit}件）に達しました。UTC深夜にリセットされます。",
+    "monthlyReportLimitReached": "今月分のレポート割り当て（{limit}件）およびアカウントの追加レポートクレジットをすべてご利用いただきました。来月初めにリセットされます。今すぐさらに利用するには追加パックをご購入ください。",
+    "diagnosticEngineDailyLimitReached": "この機能の1日あたりのターン数上限（{limit}回）に達しました。UTC深夜にリセットされます。",
+    "diagnosticEngineMonthlyLimitReached": "この機能の今月分のターン数割り当て（{limit}回）をすべてご利用いただきました。来月初めにリセットされます。"
+  },
   "emailSignup": {
     "heading": "無料の DTC チートシートと診断のヒントを入手。",
     "namePlaceholder": "名前",

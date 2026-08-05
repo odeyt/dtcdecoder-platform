@@ -31,8 +31,11 @@ function nextUtcMonthStartIso(): string {
 
 // Carries everything a route needs to build the spec's exact over-limit
 // response shape ({ success: false, error: { code, message,
-// basicLookupAvailable, upgradeRequired, resetAt } }) without the route
-// having to re-derive any of it.
+// basicLookupAvailable, upgradeRequired, resetAt, limit } }) without the
+// route having to re-derive any of it. `limit` is the same number already
+// embedded in `message` — carried separately so a translated client-side
+// template can be built from `code` + `limit` instead of relying on the
+// fixed-English `message`.
 export class AiDiagnosticLimitExceededError extends Error {
   readonly basicLookupAvailable = true;
 
@@ -41,6 +44,7 @@ export class AiDiagnosticLimitExceededError extends Error {
     message: string,
     readonly resetAt: string,
     readonly upgradeRequired: boolean,
+    readonly limit: number,
   ) {
     super(message);
     this.name = "AiDiagnosticLimitExceededError";
@@ -84,6 +88,7 @@ export async function recordAiDiagnosticUsage(params: {
         `You have used your ${dailyLimit} free AI diagnostic previews for today.`,
         nextUtcMidnightIso(),
         true,
+        dailyLimit ?? 0,
       );
     }
     throw new AiDiagnosticLimitExceededError(
@@ -91,6 +96,7 @@ export async function recordAiDiagnosticUsage(params: {
       `You've used today's ${dailyLimit}-report daily limit for your plan. It resets at midnight UTC.`,
       nextUtcMidnightIso(),
       plan !== "workshop",
+      dailyLimit ?? 0,
     );
   }
 
@@ -102,6 +108,7 @@ export async function recordAiDiagnosticUsage(params: {
       `You've used this month's ${monthlyLimit}-report allowance and any add-on report credits on your account. It resets at the start of next month, or buy an add-on pack for more right away.`,
       nextUtcMonthStartIso(),
       plan !== "workshop",
+      monthlyLimit ?? 0,
     );
   }
 

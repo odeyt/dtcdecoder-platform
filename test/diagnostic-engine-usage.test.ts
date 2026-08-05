@@ -76,15 +76,21 @@ describe("recordDiagnosticEngineUsage", () => {
         plan: "free",
       });
     }
-    await expect(
-      recordDiagnosticEngineUsage({
+    try {
+      await recordDiagnosticEngineUsage({
         userId: "user-1",
         email: "free@example.com",
         requestId: "req-over",
         feature: "diagnostic_engine_turn",
         plan: "free",
-      }),
-    ).rejects.toBeInstanceOf(DiagnosticEngineLimitExceededError);
+      });
+      expect.unreachable("should have thrown");
+    } catch (err) {
+      expect(err).toBeInstanceOf(DiagnosticEngineLimitExceededError);
+      // Carried separately from the English `message` so clients can build
+      // a translated sentence from code + limit instead of parsing text.
+      expect(typeof (err as InstanceType<typeof DiagnosticEngineLimitExceededError>).limit).toBe("number");
+    }
   });
 
   it("is idempotent — retrying the same requestId never consumes a second slot", async () => {
