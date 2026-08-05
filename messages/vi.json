@@ -386,6 +386,13 @@
     "body": "Lỗi từ phía chúng tôi, không phải xe của bạn. Vui lòng thử lại sau giây lát.",
     "retry": "Thử lại"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "Không tìm thấy trang",
+    "body": "Chúng tôi không tìm thấy trang bạn đang tìm kiếm. Trang có thể đã được di chuyển hoặc liên kết không chính xác.",
+    "backHomeCta": "Về trang chủ",
+    "searchCta": "Tìm mã chẩn đoán"
+  },
   "emailSignup": {
     "heading": "Nhận bảng tra cứu DTC và mẹo chẩn đoán miễn phí.",
     "namePlaceholder": "Tên",

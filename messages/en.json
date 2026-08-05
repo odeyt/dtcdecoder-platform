@@ -584,6 +584,13 @@
     "body": "This is on our end, not your vehicle. Try again in a moment.",
     "retry": "Retry"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "Page not found",
+    "body": "We couldn't find the page you were looking for. It may have been moved, or the link might be incorrect.",
+    "backHomeCta": "Back to home",
+    "searchCta": "Search a diagnostic code"
+  },
   "emailSignup": {
     "heading": "Get free DTC cheat sheets and diagnostic tips.",
     "namePlaceholder": "Name",

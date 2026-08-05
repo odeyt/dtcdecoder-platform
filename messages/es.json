@@ -584,6 +584,13 @@
     "body": "Esto es de nuestro lado, no de tu vehículo. Inténtalo de nuevo en un momento.",
     "retry": "Reintentar"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "Página no encontrada",
+    "body": "No pudimos encontrar la página que buscabas. Puede que se haya movido o que el enlace sea incorrecto.",
+    "backHomeCta": "Volver al inicio",
+    "searchCta": "Buscar un código de diagnóstico"
+  },
   "emailSignup": {
     "heading": "Obtén hojas de referencia DTC y consejos de diagnóstico gratis.",
     "namePlaceholder": "Nombre",

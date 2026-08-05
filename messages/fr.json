@@ -386,6 +386,13 @@
     "body": "Le problème vient de chez nous, pas de votre véhicule. Réessayez dans un instant.",
     "retry": "Réessayer"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "Page introuvable",
+    "body": "Nous n'avons pas trouvé la page que vous recherchiez. Elle a peut-être été déplacée, ou le lien est incorrect.",
+    "backHomeCta": "Retour à l'accueil",
+    "searchCta": "Rechercher un code de diagnostic"
+  },
   "emailSignup": {
     "heading": "Recevez des aide-mémoire DTC et des conseils de diagnostic gratuits.",
     "namePlaceholder": "Nom",

@@ -386,6 +386,13 @@
     "body": "이는 고객님의 차량이 아니라 저희 측의 문제입니다. 잠시 후 다시 시도해 주세요.",
     "retry": "다시 시도"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "페이지를 찾을 수 없습니다",
+    "body": "찾으시는 페이지를 찾을 수 없습니다. 페이지가 이동되었거나 링크가 잘못되었을 수 있습니다.",
+    "backHomeCta": "홈으로 돌아가기",
+    "searchCta": "진단 코드 검색"
+  },
   "emailSignup": {
     "heading": "무료 DTC 치트 시트와 진단 팁을 받아보세요.",
     "namePlaceholder": "이름",

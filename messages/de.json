@@ -386,6 +386,13 @@
     "body": "Das liegt an uns, nicht an Ihrem Fahrzeug. Bitte versuchen Sie es gleich noch einmal.",
     "retry": "Erneut versuchen"
   },
+  "notFoundPage": {
+    "eyebrow": "404",
+    "heading": "Seite nicht gefunden",
+    "body": "Wir konnten die gesuchte Seite nicht finden. Sie wurde möglicherweise verschoben, oder der Link ist fehlerhaft.",
+    "backHomeCta": "Zurück zur Startseite",
+    "searchCta": "Diagnosecode suchen"
+  },
   "emailSignup": {
     "heading": "Erhalten Sie kostenlose DTC-Spickzettel und Diagnosetipps.",
     "namePlaceholder": "Name",
