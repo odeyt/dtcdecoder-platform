@@ -229,7 +229,10 @@
     "expiresInDays": "ໝົດອາຍຸໃນ {days} ວັນ",
     "caseTitleLabel": "ຫົວຂໍ້ກໍລະນີ",
     "renameCaseLabel": "ປ່ຽນຊື່ກໍລະນີ (ປັດຈຸບັນ \"{title}\")",
-    "allCases": "ທຸກກໍລະນີ"
+    "allCases": "ທຸກກໍລະນີ",
+    "draftNoUpload": "ຄະດີນີ້ຍັງບໍ່ມີໄຟລ໌ທີ່ອັບໂຫຼດ.",
+    "startNewUpload": "ເລີ່ມການອັບໂຫຼດໃໝ່",
+    "upgradeExportReason": "ອັບເກຣດເປັນ Pro ຫຼື Workshop ເພື່ອສົ່ງອອກ ແລະພິມບົດລາຍງານການວິນິດໄສຂອງທ່ານ."
   },
   "preferences": {
     "title": "ການຕັ້ງຄ່າພາສາ ແລະ ພາກພື້ນ",

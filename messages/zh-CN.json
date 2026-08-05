@@ -229,7 +229,10 @@
     "expiresInDays": "{days} 天后到期",
     "caseTitleLabel": "案例标题",
     "renameCaseLabel": "重命名案例（当前为 \"{title}\"）",
-    "allCases": "所有案例"
+    "allCases": "所有案例",
+    "draftNoUpload": "此案例尚未上传文件。",
+    "startNewUpload": "开始新的上传",
+    "upgradeExportReason": "升级到 Pro Technician 或 Workshop 以导出并打印您的诊断报告。"
   },
   "preferences": {
     "title": "语言与地区偏好",

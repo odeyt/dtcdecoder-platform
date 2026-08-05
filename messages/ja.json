@@ -229,7 +229,10 @@
     "expiresInDays": "あと{days}日で期限切れ",
     "caseTitleLabel": "ケースのタイトル",
     "renameCaseLabel": "ケース名を変更（現在「{title}」）",
-    "allCases": "すべてのケース"
+    "allCases": "すべてのケース",
+    "draftNoUpload": "このケースにはまだアップロードされたファイルがありません。",
+    "startNewUpload": "新しいアップロードを開始",
+    "upgradeExportReason": "診断レポートをエクスポート・印刷するには、Pro TechnicianまたはWorkshopにアップグレードしてください。"
   },
   "preferences": {
     "title": "言語と地域の設定",

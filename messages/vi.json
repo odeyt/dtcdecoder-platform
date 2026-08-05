@@ -229,7 +229,10 @@
     "expiresInDays": "Hết hạn sau {days} ngày",
     "caseTitleLabel": "Tiêu đề ca",
     "renameCaseLabel": "Đổi tên ca (hiện tại \"{title}\")",
-    "allCases": "Tất cả các ca"
+    "allCases": "Tất cả các ca",
+    "draftNoUpload": "Hồ sơ này chưa có tệp được tải lên.",
+    "startNewUpload": "Bắt đầu tải lên mới",
+    "upgradeExportReason": "Nâng cấp lên Pro Technician hoặc Workshop để xuất và in báo cáo chẩn đoán của bạn."
   },
   "preferences": {
     "title": "Tùy chọn ngôn ngữ và khu vực",

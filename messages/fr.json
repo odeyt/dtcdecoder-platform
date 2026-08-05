@@ -229,7 +229,10 @@
     "expiresInDays": "Expire dans {days, plural, one {# jour} other {# jours}}",
     "caseTitleLabel": "Titre du dossier",
     "renameCaseLabel": "Renommer le dossier (actuellement « {title} »)",
-    "allCases": "Tous les dossiers"
+    "allCases": "Tous les dossiers",
+    "draftNoUpload": "Ce dossier n'a pas encore de fichier téléversé.",
+    "startNewUpload": "Démarrer un nouveau téléversement",
+    "upgradeExportReason": "Passez à Pro ou Workshop pour exporter et imprimer votre rapport de diagnostic."
   },
   "preferences": {
     "title": "Préférences de langue et de région",

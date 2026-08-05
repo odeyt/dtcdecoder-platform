@@ -229,7 +229,10 @@
     "expiresInDays": "ផុតកំណត់ក្នុងរយៈពេល {days} ថ្ងៃ",
     "caseTitleLabel": "ចំណងជើងករណី",
     "renameCaseLabel": "ប្ដូរឈ្មោះករណី (បច្ចុប្បន្ន \"{title}\")",
-    "allCases": "ករណីទាំងអស់"
+    "allCases": "ករណីទាំងអស់",
+    "draftNoUpload": "ករណីនេះមិនទាន់មានឯកសារបានផ្ទុកឡើងនៅឡើយទេ។",
+    "startNewUpload": "ចាប់ផ្តើមការផ្ទុកឡើងថ្មី",
+    "upgradeExportReason": "ដំឡើងកម្រិតទៅ Pro ឬ Workshop ដើម្បីនាំចេញ និងបោះពុម្ពរបាយការណ៍វិនិច្ឆ័យរបស់អ្នក។"
   },
   "preferences": {
     "title": "ចំណូលចិត្តភាសា និងតំបន់",

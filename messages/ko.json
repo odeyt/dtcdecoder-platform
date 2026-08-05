@@ -229,7 +229,10 @@
     "expiresInDays": "{days}일 후 만료",
     "caseTitleLabel": "사례 제목",
     "renameCaseLabel": "사례 이름 변경 (현재 \"{title}\")",
-    "allCases": "모든 사례"
+    "allCases": "모든 사례",
+    "draftNoUpload": "이 케이스에는 아직 업로드된 파일이 없습니다.",
+    "startNewUpload": "새 업로드 시작",
+    "upgradeExportReason": "진단 리포트를 내보내고 인쇄하려면 Pro Technician 또는 Workshop으로 업그레이드하세요."
   },
   "preferences": {
     "title": "언어 및 지역 설정",

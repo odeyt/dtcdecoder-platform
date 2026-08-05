@@ -99,12 +99,12 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
 
           {scanCase.status === "draft" && (
             <div className="glass-panel mt-6 rounded-[var(--radius-xl)] p-8 text-center">
-              <p className="text-[var(--text-secondary)]">This case doesn&apos;t have an uploaded file yet.</p>
+              <p className="text-[var(--text-secondary)]">{t("draftNoUpload")}</p>
               <Link
                 href="/diagnostics/upload"
                 className="mt-4 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white"
               >
-                Start a new upload
+                {t("startNewUpload")}
               </Link>
             </div>
           )}
@@ -149,7 +149,7 @@ export default async function DiagnosticsCasePage({ params }: PageProps) {
                     <ScanPrintButton />
                   </>
                 ) : (
-                  <UpgradeCard reason="Upgrade to Pro or Workshop to export and print your diagnostic report." />
+                  <UpgradeCard reason={t("upgradeExportReason")} />
                 )}
               </div>
               <ScanReportView

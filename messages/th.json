@@ -229,7 +229,10 @@
     "expiresInDays": "หมดอายุใน {days} วัน",
     "caseTitleLabel": "ชื่อเคส",
     "renameCaseLabel": "เปลี่ยนชื่อเคส (ปัจจุบัน \"{title}\")",
-    "allCases": "เคสทั้งหมด"
+    "allCases": "เคสทั้งหมด",
+    "draftNoUpload": "เคสนี้ยังไม่มีไฟล์ที่อัปโหลด",
+    "startNewUpload": "เริ่มการอัปโหลดใหม่",
+    "upgradeExportReason": "อัปเกรดเป็น Pro Technician หรือ Workshop เพื่อส่งออกและพิมพ์รายงานการวินิจฉัยของคุณ"
   },
   "preferences": {
     "title": "การตั้งค่าภาษาและภูมิภาค",

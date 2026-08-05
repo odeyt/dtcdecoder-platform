@@ -229,7 +229,10 @@
     "expiresInDays": "Expira em {days, plural, one {# dia} other {# dias}}",
     "caseTitleLabel": "Título do caso",
     "renameCaseLabel": "Renomear caso (atualmente \"{title}\")",
-    "allCases": "Todos os casos"
+    "allCases": "Todos os casos",
+    "draftNoUpload": "Este caso ainda não tem um arquivo enviado.",
+    "startNewUpload": "Iniciar um novo envio",
+    "upgradeExportReason": "Faça upgrade para Pro ou Workshop para exportar e imprimir seu relatório de diagnóstico."
   },
   "preferences": {
     "title": "Preferências de idioma e região",
