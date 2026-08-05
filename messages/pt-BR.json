@@ -162,7 +162,16 @@
     "startReport": "Iniciar relatório de diagnóstico",
     "paymentProcessing": "Pagamento recebido. Seu crédito de relatório aparecerá em breve.",
     "paymentProcessingDelayed": "Ainda estamos confirmando seu pagamento — isso pode levar um minuto. Atualize esta página em breve se o seu crédito não aparecer.",
-    "paymentReceived": "Pagamento recebido. Seu crédito de relatório aparecerá em breve."
+    "paymentReceived": "Pagamento recebido. Seu crédito de relatório aparecerá em breve.",
+    "passwordSectionTitle": "Senha",
+    "passwordSectionDescription": "Defina uma senha para poder entrar sem esperar por um e-mail com link mágico.",
+    "newPasswordPlaceholder": "Nova senha",
+    "confirmPasswordPlaceholder": "Confirmar nova senha",
+    "settingPassword": "Salvando…",
+    "setPassword": "Definir senha",
+    "passwordUpdated": "Senha atualizada.",
+    "passwordTooShort": "A senha deve ter pelo menos 8 caracteres.",
+    "passwordsDontMatch": "As senhas não coincidem."
   },
   "preferences": {
     "title": "Preferências de idioma e região",

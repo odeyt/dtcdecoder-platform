@@ -162,7 +162,16 @@
     "startReport": "診断レポートを開始",
     "paymentProcessing": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。",
     "paymentProcessingDelayed": "お支払いを確認中です — 1分ほどかかる場合があります。クレジットが表示されない場合は、まもなくこのページを更新してください。",
-    "paymentReceived": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。"
+    "paymentReceived": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。",
+    "passwordSectionTitle": "パスワード",
+    "passwordSectionDescription": "パスワードを設定すると、マジックリンクのメールを待たずにサインインできます。",
+    "newPasswordPlaceholder": "新しいパスワード",
+    "confirmPasswordPlaceholder": "新しいパスワード（確認）",
+    "settingPassword": "保存中…",
+    "setPassword": "パスワードを設定",
+    "passwordUpdated": "パスワードを更新しました。",
+    "passwordTooShort": "パスワードは8文字以上で入力してください。",
+    "passwordsDontMatch": "パスワードが一致しません。"
   },
   "preferences": {
     "title": "言語と地域の設定",

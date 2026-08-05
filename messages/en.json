@@ -360,7 +360,16 @@
     "startReport": "Start diagnostic report",
     "paymentProcessing": "Payment received. Your report credit will appear shortly.",
     "paymentProcessingDelayed": "Still confirming your payment — this can take a minute. Refresh this page shortly if your credit hasn't appeared.",
-    "paymentReceived": "Payment received. Your report credit will appear shortly."
+    "paymentReceived": "Payment received. Your report credit will appear shortly.",
+    "passwordSectionTitle": "Password",
+    "passwordSectionDescription": "Set a password so you can sign in without waiting for a magic-link email.",
+    "newPasswordPlaceholder": "New password",
+    "confirmPasswordPlaceholder": "Confirm new password",
+    "settingPassword": "Saving…",
+    "setPassword": "Set password",
+    "passwordUpdated": "Password updated.",
+    "passwordTooShort": "Password must be at least 8 characters.",
+    "passwordsDontMatch": "Passwords don't match."
   },
   "preferences": {
     "title": "Language & Region Preferences",

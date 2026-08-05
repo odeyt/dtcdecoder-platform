@@ -162,7 +162,16 @@
     "startReport": "Démarrer un rapport de diagnostic",
     "paymentProcessing": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu.",
     "paymentProcessingDelayed": "Nous confirmons encore votre paiement — cela peut prendre une minute. Actualisez cette page sous peu si votre crédit n'est pas apparu.",
-    "paymentReceived": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu."
+    "paymentReceived": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu.",
+    "passwordSectionTitle": "Mot de passe",
+    "passwordSectionDescription": "Définissez un mot de passe pour vous connecter sans attendre un e-mail avec lien magique.",
+    "newPasswordPlaceholder": "Nouveau mot de passe",
+    "confirmPasswordPlaceholder": "Confirmer le nouveau mot de passe",
+    "settingPassword": "Enregistrement…",
+    "setPassword": "Définir le mot de passe",
+    "passwordUpdated": "Mot de passe mis à jour.",
+    "passwordTooShort": "Le mot de passe doit comporter au moins 8 caractères.",
+    "passwordsDontMatch": "Les mots de passe ne correspondent pas."
   },
   "preferences": {
     "title": "Préférences de langue et de région",

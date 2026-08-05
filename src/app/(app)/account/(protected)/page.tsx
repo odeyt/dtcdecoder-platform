@@ -114,10 +114,8 @@ export default async function AccountPage() {
         </div>
 
         <div className="glass-panel rounded-[var(--radius-xl)] p-6">
-          <p className="text-sm font-semibold text-[var(--text-primary)]">Password</p>
-          <p className="mt-1 text-sm text-[var(--text-secondary)]">
-            Set a password so you can sign in without waiting for a magic-link email.
-          </p>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{t("passwordSectionTitle")}</p>
+          <p className="mt-1 text-sm text-[var(--text-secondary)]">{t("passwordSectionDescription")}</p>
           <div className="mt-4">
             <ChangePasswordForm />
           </div>

@@ -162,7 +162,16 @@
     "startReport": "开始诊断报告",
     "paymentProcessing": "已收到付款。您的报告额度将很快显示。",
     "paymentProcessingDelayed": "我们仍在确认您的付款——这可能需要一分钟。如果您的额度尚未显示,请稍后刷新此页面。",
-    "paymentReceived": "已收到付款。您的报告额度将很快显示。"
+    "paymentReceived": "已收到付款。您的报告额度将很快显示。",
+    "passwordSectionTitle": "密码",
+    "passwordSectionDescription": "设置密码后，您无需等待魔法链接邮件即可登录。",
+    "newPasswordPlaceholder": "新密码",
+    "confirmPasswordPlaceholder": "确认新密码",
+    "settingPassword": "保存中…",
+    "setPassword": "设置密码",
+    "passwordUpdated": "密码已更新。",
+    "passwordTooShort": "密码长度至少为 8 个字符。",
+    "passwordsDontMatch": "两次输入的密码不一致。"
   },
   "preferences": {
     "title": "语言与地区偏好",

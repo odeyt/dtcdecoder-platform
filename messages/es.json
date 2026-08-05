@@ -360,7 +360,16 @@
     "startReport": "Iniciar informe de diagnóstico",
     "paymentProcessing": "Pago recibido. Tu crédito de informe aparecerá en breve.",
     "paymentProcessingDelayed": "Todavía estamos confirmando tu pago — esto puede tardar un minuto. Actualiza esta página en breve si tu crédito no ha aparecido.",
-    "paymentReceived": "Pago recibido. Tu crédito de informe aparecerá en breve."
+    "paymentReceived": "Pago recibido. Tu crédito de informe aparecerá en breve.",
+    "passwordSectionTitle": "Contraseña",
+    "passwordSectionDescription": "Configura una contraseña para poder iniciar sesión sin esperar un correo con enlace mágico.",
+    "newPasswordPlaceholder": "Nueva contraseña",
+    "confirmPasswordPlaceholder": "Confirmar nueva contraseña",
+    "settingPassword": "Guardando…",
+    "setPassword": "Establecer contraseña",
+    "passwordUpdated": "Contraseña actualizada.",
+    "passwordTooShort": "La contraseña debe tener al menos 8 caracteres.",
+    "passwordsDontMatch": "Las contraseñas no coinciden."
   },
   "preferences": {
     "title": "Preferencias de Idioma y Región",

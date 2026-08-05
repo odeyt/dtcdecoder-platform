@@ -162,7 +162,16 @@
     "startReport": "Bắt đầu báo cáo chẩn đoán",
     "paymentProcessing": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
     "paymentProcessingDelayed": "Chúng tôi vẫn đang xác nhận thanh toán của bạn — việc này có thể mất một phút. Hãy làm mới trang này sau ít phút nếu tín dụng của bạn chưa xuất hiện.",
-    "paymentReceived": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát."
+    "paymentReceived": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
+    "passwordSectionTitle": "Mật khẩu",
+    "passwordSectionDescription": "Đặt mật khẩu để bạn có thể đăng nhập mà không cần chờ email liên kết ma thuật.",
+    "newPasswordPlaceholder": "Mật khẩu mới",
+    "confirmPasswordPlaceholder": "Xác nhận mật khẩu mới",
+    "settingPassword": "Đang lưu…",
+    "setPassword": "Đặt mật khẩu",
+    "passwordUpdated": "Đã cập nhật mật khẩu.",
+    "passwordTooShort": "Mật khẩu phải có ít nhất 8 ký tự.",
+    "passwordsDontMatch": "Mật khẩu không khớp."
   },
   "preferences": {
     "title": "Tùy chọn ngôn ngữ và khu vực",

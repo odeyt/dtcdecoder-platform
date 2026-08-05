@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 
 // Lets an already-authenticated user set a password for the first time
@@ -8,10 +9,9 @@ import { createClient } from "@/lib/supabase/client";
 // existing one. No current-password confirmation is required — Supabase's
 // updateUser() call is authorized by the live session itself, the same
 // trust boundary every other authenticated action in this app already
-// relies on. Hardcoded English (not run through next-intl) — same scoping
-// precedent as LockedResultCard/UnknownDtcResult: this is one small block
-// on an otherwise-localized page, not worth a 12-locale translation pass.
+// relies on.
 export function ChangePasswordForm() {
+  const t = useTranslations("account");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
@@ -22,12 +22,12 @@ export function ChangePasswordForm() {
     setErrorMessage(null);
 
     if (password.length < 8) {
-      setErrorMessage("Password must be at least 8 characters.");
+      setErrorMessage(t("passwordTooShort"));
       setStatus("error");
       return;
     }
     if (password !== confirmPassword) {
-      setErrorMessage("Passwords don't match.");
+      setErrorMessage(t("passwordsDontMatch"));
       setStatus("error");
       return;
     }
@@ -54,7 +54,7 @@ export function ChangePasswordForm() {
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="New password"
+        placeholder={t("newPasswordPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)]"
       />
       <input
@@ -62,7 +62,7 @@ export function ChangePasswordForm() {
         required
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        placeholder="Confirm new password"
+        placeholder={t("confirmPasswordPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)]"
       />
       <button
@@ -70,10 +70,10 @@ export function ChangePasswordForm() {
         disabled={status === "loading"}
         className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 text-sm font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
       >
-        {status === "loading" ? "Saving…" : "Set password"}
+        {status === "loading" ? t("settingPassword") : t("setPassword")}
       </button>
       {status === "success" && (
-        <p className="text-sm text-[var(--text-secondary)]">Password updated.</p>
+        <p className="text-sm text-[var(--text-secondary)]">{t("passwordUpdated")}</p>
       )}
       {status === "error" && errorMessage && (
         <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>

@@ -162,7 +162,16 @@
     "startReport": "진단 리포트 시작",
     "paymentProcessing": "결제가 완료되었습니다. 리포트 크레딧이 곧 표시됩니다.",
     "paymentProcessingDelayed": "결제를 확인하는 중입니다 — 1분 정도 걸릴 수 있습니다. 크레딧이 표시되지 않으면 잠시 후 이 페이지를 새로고침하세요.",
-    "paymentReceived": "결제가 완료되었습니다. 리포트 크레딧이 곧 표시됩니다."
+    "paymentReceived": "결제가 완료되었습니다. 리포트 크레딧이 곧 표시됩니다.",
+    "passwordSectionTitle": "비밀번호",
+    "passwordSectionDescription": "비밀번호를 설정하면 매직 링크 이메일을 기다리지 않고 로그인할 수 있습니다.",
+    "newPasswordPlaceholder": "새 비밀번호",
+    "confirmPasswordPlaceholder": "새 비밀번호 확인",
+    "settingPassword": "저장 중…",
+    "setPassword": "비밀번호 설정",
+    "passwordUpdated": "비밀번호가 업데이트되었습니다.",
+    "passwordTooShort": "비밀번호는 8자 이상이어야 합니다.",
+    "passwordsDontMatch": "비밀번호가 일치하지 않습니다."
   },
   "preferences": {
     "title": "언어 및 지역 설정",
