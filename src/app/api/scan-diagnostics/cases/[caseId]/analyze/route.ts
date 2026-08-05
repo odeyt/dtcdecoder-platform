@@ -6,6 +6,7 @@ import { runScanAnalysis } from "@/lib/scan-diagnostics/analyze";
 import { getCaseForOwner, findExistingCasesForVin, getVinForCase } from "@/lib/scan-diagnostics/cases";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { DuplicateVinError, FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -23,7 +24,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to run diagnostic analysis." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToRunAnalysis }, { status: 401 });
     }
 
     await getCaseForOwner(user.id, caseId);

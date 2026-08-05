@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { getCompletionSummary, markCaseComplete } from "@/lib/scan-diagnostics/workbench";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { recordEvent } from "@/lib/analytics/events";
 
 interface RouteParams {
@@ -22,7 +23,11 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
     const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Sign in to view completion status." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToViewCompletionStatus }, { status: 401 });
+    }
 
     const summary = await getCompletionSummary(user.id, caseId);
     return NextResponse.json({ summary });
@@ -42,7 +47,11 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
     const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Sign in to complete this case." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToCompleteCase }, { status: 401 });
+    }
 
     const scanCase = await markCaseComplete(user.id, caseId);
     await recordEvent("diagnostic_report_completed", { userId: user.id });

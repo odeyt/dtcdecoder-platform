@@ -9,6 +9,7 @@ import {
   ScanCaseNotFoundError,
   toSafeErrorResponse,
 } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string; fileId: string }>;
@@ -30,7 +31,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to download this file." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToDownloadFile }, { status: 401 });
     }
 
     await getCaseForOwner(user.id, caseId);

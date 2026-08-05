@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { submitFeedback, getFeedbackForCase } from "@/lib/scan-diagnostics/feedback";
 import { FeedbackInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -25,7 +26,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
 
     const user = await requireUser();
     if (!user) {
-      return NextResponse.json({ error: "Sign in to submit feedback." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToSubmitFeedback }, { status: 401 });
     }
 
     let body: unknown;
@@ -55,7 +58,9 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
 
     const user = await requireUser();
     if (!user) {
-      return NextResponse.json({ error: "Sign in to view feedback." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToViewFeedback }, { status: 401 });
     }
 
     const feedback = await getFeedbackForCase(user.id, caseId);

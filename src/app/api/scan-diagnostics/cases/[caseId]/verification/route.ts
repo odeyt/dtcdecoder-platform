@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { getVerification, upsertVerification } from "@/lib/scan-diagnostics/workbench";
 import { VerificationInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -22,7 +23,11 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
     const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Sign in to view the verification checklist." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToViewVerificationChecklist }, { status: 401 });
+    }
 
     const verification = await getVerification(user.id, caseId);
     return NextResponse.json({ verification });
@@ -36,7 +41,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
     const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Sign in to update the verification checklist." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToUpdateVerificationChecklist }, { status: 401 });
+    }
 
     let body: unknown;
     try {

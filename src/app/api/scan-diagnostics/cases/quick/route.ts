@@ -8,6 +8,7 @@ import { runScanAnalysis } from "@/lib/scan-diagnostics/analyze";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { QuickDiagnosticCaseInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { DuplicateVinError, FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 // "Run Full AI Diagnosis" entry point reachable from DTC search results —
 // create a case from typed details (no file) and analyze it in one
@@ -26,7 +27,9 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to run an AI diagnostic report." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToRunQuickReport }, { status: 401 });
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);

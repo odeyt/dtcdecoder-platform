@@ -7,6 +7,7 @@ import { QuickDiagnosticCaseInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { IntakeSchema } from "@/lib/landing-intake/schema";
 import { recordEvent } from "@/lib/analytics/events";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 // Authenticated handoff from the anonymous landing intake
 // (ServiceBayHero) into a real diagnostic case. Deliberately calls
@@ -30,7 +31,9 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to continue your diagnostic case." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToContinueCase }, { status: 401 });
     }
 
     let body: unknown;

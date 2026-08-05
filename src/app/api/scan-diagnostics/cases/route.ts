@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { createCase } from "@/lib/scan-diagnostics/cases";
 import { CaseInfoInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { resolveDefaultReportLanguage } from "@/lib/i18n/ai-language-server";
 
 export async function POST(request: NextRequest) {
@@ -16,7 +17,9 @@ export async function POST(request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to start a diagnostic case." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToStartCase }, { status: 401 });
     }
 
     let body: unknown;

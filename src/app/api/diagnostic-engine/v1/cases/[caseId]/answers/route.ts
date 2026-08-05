@@ -11,6 +11,7 @@ import { DIAGNOSTIC_ENGINE_FLAGS } from "@/lib/diagnostic-engine/feature-flags";
 import { recordAnswer } from "@/lib/diagnostic-engine/question";
 import { insertEvidence, evidenceFromAnswer } from "@/lib/diagnostic-engine/evidence";
 import { toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -36,7 +37,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       data: { user },
     } = await supabase.auth.getUser();
     if (!user) {
-      return NextResponse.json({ error: "Sign in to answer diagnostic questions." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToAnswerQuestions }, { status: 401 });
     }
 
     await getCaseForOwner(user.id, caseId);

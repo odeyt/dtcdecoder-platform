@@ -5,6 +5,7 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { canViewScanFeedbackHistory } from "@/lib/scan-diagnostics/entitlements";
 import { listFeedbackHistory } from "@/lib/scan-diagnostics/feedback";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 // Workshop-plan-only aggregated history view — submitting feedback on an
 // individual case (POST .../cases/[caseId]/feedback) is available on every
@@ -19,7 +20,9 @@ export async function GET(_request: NextRequest) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to view feedback history." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToViewFeedbackHistory }, { status: 401 });
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);

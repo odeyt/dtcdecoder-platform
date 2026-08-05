@@ -10,6 +10,12 @@ vi.mock("@/lib/supabase/server", () => ({
     auth: { getUser: async () => ({ data: { user: currentUser } }) },
   }),
 }));
+// The unauthenticated branch now resolves the caller's locale (Supabase
+// auth + the interface-locale cookie) for a translated error message —
+// next/headers's cookies() throws outside a real request scope.
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+}));
 vi.mock("@/lib/scan-diagnostics/cases", () => ({
   createQuickDiagnosticCase: (...args: unknown[]) => createQuickDiagnosticCaseMock(...args),
 }));

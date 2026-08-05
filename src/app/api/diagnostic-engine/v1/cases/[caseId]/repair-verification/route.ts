@@ -12,6 +12,7 @@ import { getCaseForOwner } from "@/lib/scan-diagnostics/cases";
 import { DIAGNOSTIC_ENGINE_FLAGS } from "@/lib/diagnostic-engine/feature-flags";
 import { createRepairVerification, getLatestRepairVerification, updateRepairVerificationItem } from "@/lib/diagnostic-engine/repair-verification";
 import { toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -30,7 +31,11 @@ export async function GET(_request: NextRequest, { params }: RouteParams) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Sign in to view repair verification." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToViewRepairVerification }, { status: 401 });
+    }
 
     await getCaseForOwner(user.id, caseId);
     const verification = await getLatestRepairVerification(caseId);
@@ -49,7 +54,11 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Sign in to generate a repair verification checklist." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToGenerateRepairVerification }, { status: 401 });
+    }
 
     await getCaseForOwner(user.id, caseId);
     const verification = await createRepairVerification(caseId);
@@ -74,7 +83,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    if (!user) return NextResponse.json({ error: "Sign in to update repair verification." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToUpdateRepairVerification }, { status: 401 });
+    }
 
     await getCaseForOwner(user.id, caseId);
 

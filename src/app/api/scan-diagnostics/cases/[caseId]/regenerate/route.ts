@@ -5,6 +5,7 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { regenerateScanAnalysis } from "@/lib/scan-diagnostics/analyze";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 interface RouteParams {
   params: Promise<{ caseId: string }>;
@@ -27,7 +28,9 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to regenerate this report." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToRegenerateReport }, { status: 401 });
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);

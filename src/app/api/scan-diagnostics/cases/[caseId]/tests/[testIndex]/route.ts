@@ -4,6 +4,7 @@ import { env } from "@/lib/env";
 import { upsertTestProgress } from "@/lib/scan-diagnostics/workbench";
 import { TestProgressInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { recordEvent } from "@/lib/analytics/events";
 
 interface RouteParams {
@@ -29,7 +30,11 @@ export async function PATCH(request: NextRequest, { params }: RouteParams) {
     }
 
     const user = await requireUser();
-    if (!user) return NextResponse.json({ error: "Sign in to update test progress." }, { status: 401 });
+    if (!user) {
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToUpdateTestProgress }, { status: 401 });
+    }
 
     let body: unknown;
     try {

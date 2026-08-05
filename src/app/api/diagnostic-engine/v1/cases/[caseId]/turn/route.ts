@@ -24,6 +24,7 @@ import { DIAGNOSTIC_ENGINE_FLAGS, diagnosticEngineRolloutTier, isDiagnosticEngin
 import { runDiagnosticEngineTurn } from "@/lib/diagnostic-engine/orchestrator";
 import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { getOrCreateLocalizedTurn } from "@/lib/diagnostic-engine/turn-localization";
 
 interface RouteParams {
@@ -52,7 +53,9 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to use the diagnostic engine." }, { status: 401 });
+      const locale = await resolveAppShellLocale();
+      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+      return NextResponse.json({ error: t.signInToUseDiagnosticEngine }, { status: 401 });
     }
 
     const isAdmin = isAllowedAdminEmail(user.email);
