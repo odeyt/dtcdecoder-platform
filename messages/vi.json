@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "Tra cứu DTC",
-    "aiDiagnostic": "Trợ lý DTC",
+    "aiDiagnostic": "Hỏi DTC Technician",
     "scanDiagnostics": "Phân tích báo cáo quét",
     "repairLibrary": "Thư viện sửa chữa",
     "history": "Lịch sử",
@@ -749,7 +749,7 @@
     "blogDescription": "Hướng dẫn chẩn đoán, phân tích mã DTC và tình huống sửa chữa thực tế."
   },
   "dtcTechnician": {
-    "title": "Trợ lý AI cho DTC",
+    "title": "Hỏi DTC Technician",
     "subtitle": "Giải mã mã lỗi tức thì, hiểu triệu chứng, tìm nguyên nhân phổ biến và làm theo các bước chẩn đoán chuyên nghiệp trước khi thay phụ tùng.",
     "signInPrompt": "Đăng nhập để sử dụng Trợ lý AI cho DTC.",
     "signInSubtext": "Tài khoản miễn phí được 5 câu hỏi AI mỗi ngày — Pro và Workshop có hạn mức hàng tháng lớn hơn nhiều.",
@@ -758,7 +758,18 @@
     "describeLabel": "Mô tả sự cố của xe bạn",
     "ask": "Hỏi",
     "thinking": "Đang suy nghĩ…",
-    "emptyState": "Mô tả một mã lỗi, triệu chứng hoặc sự cố của xe và nhận chẩn đoán theo phong cách kỹ thuật viên.",
+    "continue": "Tiếp tục",
+    "back": "Quay lại",
+    "vinPrompt": "Số VIN của bạn là gì?",
+    "vinInputLabel": "Số nhận dạng xe",
+    "vinPlaceholder": "VIN gồm 17 ký tự",
+    "vinSkip": "Tôi không có số VIN",
+    "vehiclePrompt": "Hãng và dòng xe là gì?",
+    "vehicleMakeLabel": "Hãng xe",
+    "vehicleMakePlaceholder": "vd: Toyota",
+    "vehicleModelLabel": "Dòng xe",
+    "vehicleModelPlaceholder": "vd: Camry",
+    "vehicleMessageLabel": "Xe",
     "answerIn": "Trả lời bằng:",
     "english": "Tiếng Anh",
     "error": "Đã xảy ra lỗi. Vui lòng thử lại.",

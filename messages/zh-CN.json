@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "DTC 查询",
-    "aiDiagnostic": "DTC 助手",
+    "aiDiagnostic": "咨询 DTC Technician",
     "scanDiagnostics": "扫描报告分析",
     "repairLibrary": "维修资料库",
     "history": "历史记录",
@@ -749,7 +749,7 @@
     "blogDescription": "诊断指南、DTC 解析和维修案例研究。"
   },
   "dtcTechnician": {
-    "title": "DTC AI 助手",
+    "title": "咨询 DTC Technician",
     "subtitle": "即时解读故障码，了解症状，找到常见原因，并在更换零件之前遵循专业诊断步骤。",
     "signInPrompt": "登录即可使用 DTC AI 助手。",
     "signInSubtext": "免费账户每天有 5 个 AI 问题——Pro 和 Workshop 拥有大得多的每月额度。",
@@ -758,7 +758,18 @@
     "describeLabel": "描述您的车辆问题",
     "ask": "提问",
     "thinking": "正在思考…",
-    "emptyState": "描述一个代码、症状或车辆问题，即可获得技师风格的诊断。",
+    "continue": "继续",
+    "back": "返回",
+    "vinPrompt": "您的车架号（VIN）是什么？",
+    "vinInputLabel": "车辆识别代码",
+    "vinPlaceholder": "17 位 VIN",
+    "vinSkip": "我没有 VIN",
+    "vehiclePrompt": "品牌和型号是什么？",
+    "vehicleMakeLabel": "品牌",
+    "vehicleMakePlaceholder": "例如：丰田",
+    "vehicleModelLabel": "型号",
+    "vehicleModelPlaceholder": "例如：凯美瑞",
+    "vehicleMessageLabel": "车辆",
     "answerIn": "回答语言：",
     "english": "英语",
     "error": "出了点问题。请重试。",

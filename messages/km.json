@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "ស្វែងរកកូដ DTC",
-    "aiDiagnostic": "ជំនួយការ DTC",
+    "aiDiagnostic": "សួរ DTC Technician",
     "scanDiagnostics": "វិភាគរបាយការណ៍ស្កេន",
     "repairLibrary": "បណ្ណាល័យជួសជុល",
     "history": "ប្រវត្តិ",
@@ -749,7 +749,7 @@
     "blogDescription": "មគ្គុទ្ទេសក៍វិនិច្ឆ័យ ការពន្យល់កូដ DTC និងករណីសិក្សាជួសជុល។"
   },
   "dtcTechnician": {
-    "title": "ជំនួយការ AI សម្រាប់ DTC",
+    "title": "សួរ DTC Technician",
     "subtitle": "ឌិកូដកូដបញ្ហាភ្លាមៗ យល់រោគសញ្ញា ស្វែងរកមូលហេតុទូទៅ និងអនុវត្តតាមជំហានវិនិច្ឆ័យអាជីពមុនពេលប្តូរគ្រឿងបន្លាស់។",
     "signInPrompt": "ចូលគណនីដើម្បីប្រើជំនួយការ AI សម្រាប់ DTC។",
     "signInSubtext": "គណនីឥតគិតថ្លៃទទួលបានសំណួរ AI ៥ ក្នុងមួយថ្ងៃ — Pro និង Workshop ទទួលបានកូតាប្រចាំខែធំជាងច្រើន។",
@@ -758,7 +758,18 @@
     "describeLabel": "ពិពណ៌នាបញ្ហារថយន្តរបស់អ្នក",
     "ask": "សួរ",
     "thinking": "កំពុងគិត…",
-    "emptyState": "ពិពណ៌នាកូដ រោគសញ្ញា ឬបញ្ហារថយន្ត ហើយទទួលការវិនិច្ឆ័យបែបជាងអាជីព។",
+    "continue": "បន្ត",
+    "back": "ថយក្រោយ",
+    "vinPrompt": "តើលេខ VIN របស់អ្នកជាអ្វី?",
+    "vinInputLabel": "លេខសម្គាល់រថយន្ត",
+    "vinPlaceholder": "VIN ចំនួន ១៧ តួអក្សរ",
+    "vinSkip": "ខ្ញុំមិនមានលេខ VIN ទេ",
+    "vehiclePrompt": "តើម៉ាក និងម៉ូដែលអ្វី?",
+    "vehicleMakeLabel": "ម៉ាក",
+    "vehicleMakePlaceholder": "ឧ. Toyota",
+    "vehicleModelLabel": "ម៉ូដែល",
+    "vehicleModelPlaceholder": "ឧ. Camry",
+    "vehicleMessageLabel": "រថយន្ត",
     "answerIn": "ឆ្លើយជា៖",
     "english": "អង់គ្លេស",
     "error": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។",

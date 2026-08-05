@@ -36,9 +36,9 @@ describe("Phase 1 branding — dtcTechnician namespace (Slice 1)", () => {
     expect(es).not.toHaveProperty("aiAssistant");
   });
 
-  it("a 'dtcTechnician' namespace exists in English and Spanish with the brand name", () => {
-    expect(en).toHaveProperty("dtcTechnician.title", "DTC Technician™");
-    expect(es).toHaveProperty("dtcTechnician.title", "DTC Technician™");
+  it("a 'dtcTechnician' namespace exists in English and Spanish with an action-oriented title", () => {
+    expect(en).toHaveProperty("dtcTechnician.title", "Ask DTC Technician");
+    expect(es).toHaveProperty("dtcTechnician.title", "Preguntar a DTC Technician");
   });
 
   it("the dtcTechnician namespace contains no prohibited customer-facing terms", () => {
@@ -76,9 +76,9 @@ describe("Phase 1 branding — global terminology rollout (Slice 6)", () => {
     assertNoProhibitedTerms((es as Record<string, unknown>)[ns] as Record<string, unknown>, `es.${ns}`);
   });
 
-  it("nav uses the approved terminology (Quick Code Lookup, DTC Technician™, Professional Scan Analysis)", () => {
+  it("nav uses the approved terminology (Quick Code Lookup, Ask DTC Technician, Professional Scan Analysis)", () => {
     expect(en).toHaveProperty("nav.dtcLookup", "Quick Code Lookup");
-    expect(en).toHaveProperty("nav.aiDiagnostic", "DTC Technician™");
+    expect(en).toHaveProperty("nav.aiDiagnostic", "Ask DTC Technician");
     expect(en).toHaveProperty("nav.scanDiagnostics", "Professional Scan Analysis");
   });
 

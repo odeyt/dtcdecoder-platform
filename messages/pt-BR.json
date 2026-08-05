@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "Consulta de DTC",
-    "aiDiagnostic": "Assistente DTC",
+    "aiDiagnostic": "Perguntar ao DTC Technician",
     "scanDiagnostics": "Análise de relatório de scanner",
     "repairLibrary": "Biblioteca de reparos",
     "history": "Histórico",
@@ -749,7 +749,7 @@
     "blogDescription": "Guias de diagnóstico, análises de DTC e estudos de caso de reparo."
   },
   "dtcTechnician": {
-    "title": "Assistente de IA para DTC",
+    "title": "Perguntar ao DTC Technician",
     "subtitle": "Decodifique códigos de falha instantaneamente, entenda os sintomas, encontre causas comuns e siga etapas de diagnóstico profissionais antes de trocar peças.",
     "signInPrompt": "Entre para usar o Assistente de IA para DTC.",
     "signInSubtext": "Contas gratuitas têm 5 perguntas de IA por dia — Pro e Workshop têm uma cota mensal muito maior.",
@@ -758,7 +758,18 @@
     "describeLabel": "Descreva o problema do seu veículo",
     "ask": "Perguntar",
     "thinking": "Pensando…",
-    "emptyState": "Descreva um código, sintoma ou problema do veículo e receba um diagnóstico no estilo de um técnico.",
+    "continue": "Continuar",
+    "back": "Voltar",
+    "vinPrompt": "Qual é o seu VIN?",
+    "vinInputLabel": "Número de Identificação do Veículo",
+    "vinPlaceholder": "VIN de 17 caracteres",
+    "vinSkip": "Não tenho meu VIN",
+    "vehiclePrompt": "Qual é a marca e o modelo?",
+    "vehicleMakeLabel": "Marca",
+    "vehicleMakePlaceholder": "ex.: Toyota",
+    "vehicleModelLabel": "Modelo",
+    "vehicleModelPlaceholder": "ex.: Camry",
+    "vehicleMessageLabel": "Veículo",
     "answerIn": "Responder em:",
     "english": "Inglês",
     "error": "Algo deu errado. Tente novamente.",

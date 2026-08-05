@@ -19,6 +19,13 @@ interface OutputLocaleOption {
   name: string;
 }
 
+// A real tech asks what's wrong, then the VIN (or make/model if none), before
+// diagnosing anything — this mirrors that with a fixed, client-known 3-step
+// sequence. Every user (free or paid) walks the same intake; the plan only
+// changes what renders once it's complete (locked panel vs. a real answer),
+// never whether vehicle context is collected.
+type Stage = "issue" | "vin" | "vehicle" | "chat";
+
 export function AiAssistantChat({
   signedIn,
   plan,
@@ -42,6 +49,14 @@ export function AiAssistantChat({
     key: section.key,
     title: tLocked(section.key),
   }));
+  const isFreePlan = plan === "free";
+
+  const [stage, setStage] = useState<Stage>("issue");
+  const [issueInput, setIssueInput] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [makeInput, setMakeInput] = useState("");
+  const [modelInput, setModelInput] = useState("");
+
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
   const [status, setStatus] = useState<"idle" | "waiting" | "streaming" | "error">("idle");
@@ -49,7 +64,6 @@ export function AiAssistantChat({
   const [resetAt, setResetAt] = useState<string | null>(null);
   const [outputLocale, setOutputLocale] = useState("en");
   const abortRef = useRef<AbortController | null>(null);
-  const isFreePlan = plan === "free";
 
   const baseStages = [t("stageValidating"), t("stageSearching"), t("stageConsulting")];
   const selectedLocaleName = outputLocaleOptions.find((o) => o.code === outputLocale)?.name;
@@ -141,6 +155,49 @@ export function AiAssistantChat({
     abortRef.current?.abort();
   }
 
+  function composeIntakeMessage(vin: string, make: string, model: string): string {
+    const lines = [issueInput.trim()];
+    const trimmedVin = vin.trim();
+    const vehicle = [make.trim(), model.trim()].filter(Boolean).join(" ");
+    if (trimmedVin) {
+      lines.push(`VIN: ${trimmedVin.toUpperCase()}`);
+    } else if (vehicle) {
+      lines.push(`${t("vehicleMessageLabel")}: ${vehicle}`);
+    }
+    return lines.join("\n");
+  }
+
+  function submitIssue(text: string) {
+    const trimmed = text.trim();
+    if (!trimmed) return;
+    setIssueInput(trimmed);
+    setStage("vin");
+  }
+
+  // Free-plan users complete the same intake as everyone else (the "real
+  // tech" experience the questions are meant to create), but the collected
+  // answers are never sent to the AI — there is no free-tier generation
+  // (see AI_DIAGNOSTIC_ENTITLEMENTS.free in src/lib/pricing.ts). Landing on
+  // "chat" for a free plan renders the static locked panel below instead.
+  async function completeIntake(vin: string, make: string, model: string) {
+    setStage("chat");
+    if (isFreePlan) return;
+    await sendMessage(composeIntakeMessage(vin, make, model));
+  }
+
+  function submitVin() {
+    if (!vinInput.trim()) return;
+    void completeIntake(vinInput, "", "");
+  }
+
+  function skipVin() {
+    setStage("vehicle");
+  }
+
+  function submitVehicle() {
+    void completeIntake("", makeInput, modelInput);
+  }
+
   if (!signedIn) {
     return (
       <div className="glass-panel rounded-[var(--radius-xl)] p-10 text-center">
@@ -156,30 +213,189 @@ export function AiAssistantChat({
     );
   }
 
-  const isPendingFirstToken =
-    status === "waiting" && messages[messages.length - 1]?.content === "";
+  const outputLocaleSelector = outputLocaleOptions.length > 0 && (
+    <div className="flex items-center justify-end gap-2 text-sm text-[var(--text-secondary)]">
+      <label htmlFor="ai-output-locale">{t("answerIn")}</label>
+      <select
+        id="ai-output-locale"
+        value={outputLocale}
+        onChange={(e) => setOutputLocale(e.target.value)}
+        disabled={status === "waiting" || status === "streaming"}
+        className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
+      >
+        <option value="en">{t("english")}</option>
+        {outputLocaleOptions.map((option) => (
+          <option key={option.code} value={option.code}>
+            {option.name}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
 
-  // The Free plan gets zero AI diagnostic generations (see
-  // src/lib/pricing.ts) — every request from a free-plan user would be
-  // rejected server-side before any AI call happens. Rather than let a
-  // free user submit and hit a 429, show the locked state up front: static
-  // example questions (never real generated answers) and the same locked-
-  // sections catalog used elsewhere, with a clear upgrade path.
+  if (stage === "issue") {
+    return (
+      <div className="flex flex-col gap-4">
+        {outputLocaleSelector}
+        <div className="flex flex-wrap gap-2">
+          {EXAMPLES.map((example) => (
+            <button
+              key={example}
+              onClick={() => submitIssue(example)}
+              className="min-h-11 rounded-full border border-[var(--border-subtle)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-white/5 hover:text-[var(--text-primary)]"
+            >
+              {example}
+            </button>
+          ))}
+        </div>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            submitIssue(issueInput);
+          }}
+          className="glass-panel flex flex-col gap-3 rounded-[var(--radius-xl)] p-6"
+        >
+          <label htmlFor="dtc-technician-issue" className="text-sm font-semibold text-[var(--text-primary)]">
+            {t("describeLabel")}
+          </label>
+          <input
+            id="dtc-technician-issue"
+            type="text"
+            value={issueInput}
+            onChange={(e) => setIssueInput(e.target.value)}
+            placeholder={t("describePlaceholder")}
+            className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+          />
+          <button
+            type="submit"
+            disabled={!issueInput.trim()}
+            className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+          >
+            {t("continue")}
+          </button>
+        </form>
+      </div>
+    );
+  }
+
+  if (stage === "vin") {
+    return (
+      <div className="flex flex-col gap-4">
+        {outputLocaleSelector}
+        <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-xl)] p-6">
+          <button
+            type="button"
+            onClick={() => setStage("issue")}
+            className="self-start text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+          >
+            ← {t("back")}
+          </button>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{t("vinPrompt")}</p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitVin();
+            }}
+            className="flex flex-col gap-3 sm:flex-row"
+          >
+            <label htmlFor="dtc-technician-vin" className="sr-only">
+              {t("vinInputLabel")}
+            </label>
+            <input
+              id="dtc-technician-vin"
+              type="text"
+              value={vinInput}
+              onChange={(e) => setVinInput(e.target.value)}
+              maxLength={17}
+              placeholder={t("vinPlaceholder")}
+              className="min-h-11 flex-1 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+            />
+            <button
+              type="submit"
+              disabled={!vinInput.trim()}
+              className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
+            >
+              {t("ask")}
+            </button>
+          </form>
+          <button
+            type="button"
+            onClick={skipVin}
+            className="self-start text-sm text-[var(--text-secondary)] underline transition hover:text-[var(--text-primary)]"
+          >
+            {t("vinSkip")}
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "vehicle") {
+    return (
+      <div className="flex flex-col gap-4">
+        {outputLocaleSelector}
+        <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-xl)] p-6">
+          <button
+            type="button"
+            onClick={() => setStage("vin")}
+            className="self-start text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+          >
+            ← {t("back")}
+          </button>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{t("vehiclePrompt")}</p>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              submitVehicle();
+            }}
+            className="flex flex-col gap-3"
+          >
+            <div className="flex flex-col gap-3 sm:flex-row">
+              <div className="flex-1">
+                <label htmlFor="dtc-technician-make" className="sr-only">
+                  {t("vehicleMakeLabel")}
+                </label>
+                <input
+                  id="dtc-technician-make"
+                  type="text"
+                  value={makeInput}
+                  onChange={(e) => setMakeInput(e.target.value)}
+                  placeholder={t("vehicleMakePlaceholder")}
+                  className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+                />
+              </div>
+              <div className="flex-1">
+                <label htmlFor="dtc-technician-model" className="sr-only">
+                  {t("vehicleModelLabel")}
+                </label>
+                <input
+                  id="dtc-technician-model"
+                  type="text"
+                  value={modelInput}
+                  onChange={(e) => setModelInput(e.target.value)}
+                  placeholder={t("vehicleModelPlaceholder")}
+                  className="min-h-11 w-full rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-3 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
+                />
+              </div>
+            </div>
+            <button
+              type="submit"
+              className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
+            >
+              {t("ask")}
+            </button>
+          </form>
+        </div>
+      </div>
+    );
+  }
+
+  // stage === "chat"
   if (isFreePlan) {
     return (
       <div className="flex flex-col gap-6">
         <div className="glass-panel rounded-[var(--radius-xl)] p-6">
           <p className="text-sm text-[var(--text-secondary)]">{t("freeLockedBody")}</p>
-          <div className="mt-4 flex flex-wrap gap-2">
-            {EXAMPLES.map((example) => (
-              <span
-                key={example}
-                className="rounded-full border border-[var(--border-subtle)] px-4 py-2 text-sm text-[var(--text-muted)]"
-              >
-                {example}
-              </span>
-            ))}
-          </div>
           <Link
             href="/pricing"
             className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
@@ -192,46 +408,13 @@ export function AiAssistantChat({
     );
   }
 
+  const isPendingFirstToken = status === "waiting" && messages[messages.length - 1]?.content === "";
+
   return (
     <div className="flex flex-col gap-4">
-      {outputLocaleOptions.length > 0 && (
-        <div className="flex items-center justify-end gap-2 text-sm text-[var(--text-secondary)]">
-          <label htmlFor="ai-output-locale">{t("answerIn")}</label>
-          <select
-            id="ai-output-locale"
-            value={outputLocale}
-            onChange={(e) => setOutputLocale(e.target.value)}
-            disabled={status === "waiting" || status === "streaming"}
-            className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 text-[var(--text-primary)]"
-          >
-            <option value="en">{t("english")}</option>
-            {outputLocaleOptions.map((option) => (
-              <option key={option.code} value={option.code}>
-                {option.name}
-              </option>
-            ))}
-          </select>
-        </div>
-      )}
-
-      {messages.length === 0 && (
-        <div className="flex flex-wrap gap-2">
-          {EXAMPLES.map((example) => (
-            <button
-              key={example}
-              onClick={() => sendMessage(example)}
-              className="min-h-11 rounded-full border border-[var(--border-subtle)] px-4 py-2 text-sm text-[var(--text-secondary)] transition hover:bg-white/5 hover:text-[var(--text-primary)]"
-            >
-              {example}
-            </button>
-          ))}
-        </div>
-      )}
+      {outputLocaleSelector}
 
       <div className="glass-panel min-h-[200px] space-y-4 rounded-[var(--radius-xl)] p-6">
-        {messages.length === 0 && (
-          <p className="text-sm text-[var(--text-muted)]">{t("emptyState")}</p>
-        )}
         {messages.map((m, i) => {
           const isPendingAssistantBubble =
             m.role === "assistant" && i === messages.length - 1 && isPendingFirstToken;

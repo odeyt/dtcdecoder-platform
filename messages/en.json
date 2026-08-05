@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "Quick Code Lookup",
-    "aiDiagnostic": "DTC Technician™",
+    "aiDiagnostic": "Ask DTC Technician",
     "scanDiagnostics": "Professional Scan Analysis",
     "repairLibrary": "Repair Library",
     "history": "History",
@@ -670,7 +670,7 @@
     "guidedDiagnosisRequiredQualificationLabel": "Required"
   },
   "dtcTechnician": {
-    "title": "DTC Technician™",
+    "title": "Ask DTC Technician",
     "subtitle": "Professional Diagnostic Copilot — instantly decode fault codes, understand symptoms, find common causes, and follow professional diagnostic steps before replacing parts.",
     "signInPrompt": "Sign in to start a Diagnostic Consultation with DTC Technician™.",
     "signInSubtext": "Full Diagnostic Consultations are available on Pro Technician and Workshop plans.",
@@ -679,7 +679,18 @@
     "describeLabel": "Describe your vehicle issue",
     "ask": "Ask DTC Technician",
     "thinking": "DTC Technician is reviewing your diagnostic case…",
-    "emptyState": "Describe a code, symptom, or vehicle issue to start a Diagnostic Consultation.",
+    "continue": "Continue",
+    "back": "Back",
+    "vinPrompt": "What's your VIN?",
+    "vinInputLabel": "Vehicle Identification Number",
+    "vinPlaceholder": "17-character VIN",
+    "vinSkip": "I don't have my VIN",
+    "vehiclePrompt": "What's the make and model?",
+    "vehicleMakeLabel": "Make",
+    "vehicleMakePlaceholder": "e.g. Toyota",
+    "vehicleModelLabel": "Model",
+    "vehicleModelPlaceholder": "e.g. Camry",
+    "vehicleMessageLabel": "Vehicle",
     "answerIn": "Answer in:",
     "english": "English",
     "error": "Something went wrong. Try again.",

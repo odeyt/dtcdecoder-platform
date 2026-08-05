@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "ค้นหารหัสด่วน",
-    "aiDiagnostic": "DTC Technician™",
+    "aiDiagnostic": "ถาม DTC Technician",
     "scanDiagnostics": "วิเคราะห์สแกนระดับมืออาชีพ",
     "repairLibrary": "คลังข้อมูลการซ่อม",
     "history": "ประวัติ",
@@ -749,7 +749,7 @@
     "blogDescription": "คู่มือการวินิจฉัย การอธิบายรหัส DTC และกรณีศึกษาการซ่อม"
   },
   "dtcTechnician": {
-    "title": "DTC Technician™",
+    "title": "ถาม DTC Technician",
     "subtitle": "ผู้ช่วยวินิจฉัยมืออาชีพ — ถอดรหัสปัญหาได้ทันที เข้าใจอาการ ค้นหาสาเหตุที่พบบ่อย และทำตามขั้นตอนการวินิจฉัยระดับมืออาชีพก่อนเปลี่ยนอะไหล่",
     "signInPrompt": "เข้าสู่ระบบเพื่อเริ่มการปรึกษาวินิจฉัยกับ DTC Technician™",
     "signInSubtext": "การปรึกษาวินิจฉัยแบบเต็มรูปแบบใช้ได้ในแพ็กเกจ Pro และ Workshop",
@@ -758,7 +758,18 @@
     "describeLabel": "อธิบายปัญหาของรถคุณ",
     "ask": "ถาม DTC Technician",
     "thinking": "DTC Technician กำลังตรวจสอบเคสวินิจฉัยของคุณ…",
-    "emptyState": "อธิบายรหัส อาการ หรือปัญหาของรถ เพื่อเริ่มการปรึกษาวินิจฉัย",
+    "continue": "ดำเนินการต่อ",
+    "back": "ย้อนกลับ",
+    "vinPrompt": "หมายเลข VIN ของคุณคืออะไร?",
+    "vinInputLabel": "หมายเลขประจำตัวรถ",
+    "vinPlaceholder": "VIN 17 ตัวอักษร",
+    "vinSkip": "ฉันไม่มีหมายเลข VIN",
+    "vehiclePrompt": "ยี่ห้อและรุ่นคืออะไร?",
+    "vehicleMakeLabel": "ยี่ห้อ",
+    "vehicleMakePlaceholder": "เช่น Toyota",
+    "vehicleModelLabel": "รุ่น",
+    "vehicleModelPlaceholder": "เช่น Camry",
+    "vehicleMessageLabel": "รถยนต์",
     "answerIn": "ตอบเป็น:",
     "english": "อังกฤษ",
     "error": "เกิดข้อผิดพลาด กรุณาลองใหม่",

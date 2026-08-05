@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "DTC 검색",
-    "aiDiagnostic": "DTC 어시스턴트",
+    "aiDiagnostic": "DTC Technician에게 질문",
     "scanDiagnostics": "스캔 리포트 분석",
     "repairLibrary": "수리 라이브러리",
     "history": "기록",
@@ -749,7 +749,7 @@
     "blogDescription": "진단 가이드, DTC 분석, 수리 사례 연구."
   },
   "dtcTechnician": {
-    "title": "DTC AI 어시스턴트",
+    "title": "DTC Technician에게 질문",
     "subtitle": "고장 코드를 즉시 해독하고, 증상을 이해하며, 일반적인 원인을 찾고, 부품을 교체하기 전에 전문 진단 단계를 따르세요.",
     "signInPrompt": "DTC AI 어시스턴트를 사용하려면 로그인하세요.",
     "signInSubtext": "무료 계정은 하루 5개의 AI 질문을 제공합니다 — Pro와 Workshop은 훨씬 큰 월간 사용량을 제공합니다.",
@@ -758,7 +758,18 @@
     "describeLabel": "차량 문제를 설명하세요",
     "ask": "질문",
     "thinking": "생각 중…",
-    "emptyState": "코드, 증상 또는 차량 문제를 설명하면 정비사 스타일의 진단을 받을 수 있습니다.",
+    "continue": "계속",
+    "back": "뒤로",
+    "vinPrompt": "차대번호(VIN)가 무엇인가요?",
+    "vinInputLabel": "차량 식별 번호",
+    "vinPlaceholder": "17자리 VIN",
+    "vinSkip": "VIN이 없습니다",
+    "vehiclePrompt": "제조사와 모델이 무엇인가요?",
+    "vehicleMakeLabel": "제조사",
+    "vehicleMakePlaceholder": "예: Toyota",
+    "vehicleModelLabel": "모델",
+    "vehicleModelPlaceholder": "예: Camry",
+    "vehicleMessageLabel": "차량",
     "answerIn": "답변 언어:",
     "english": "영어",
     "error": "문제가 발생했습니다. 다시 시도하세요.",

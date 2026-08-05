@@ -1,7 +1,7 @@
 {
   "nav": {
     "dtcLookup": "DTC 検索",
-    "aiDiagnostic": "DTC アシスタント",
+    "aiDiagnostic": "DTC Technicianに質問",
     "scanDiagnostics": "スキャンレポート解析",
     "repairLibrary": "修理ライブラリ",
     "history": "履歴",
@@ -749,7 +749,7 @@
     "blogDescription": "診断ガイド、DTC の解説、修理のケーススタディ。"
   },
   "dtcTechnician": {
-    "title": "DTC AI アシスタント",
+    "title": "DTC Technicianに質問",
     "subtitle": "故障コードを即座に解読し、症状を理解し、一般的な原因を見つけ、部品を交換する前にプロの診断手順に従いましょう。",
     "signInPrompt": "DTC AI アシスタントを使うにはログインしてください。",
     "signInSubtext": "無料アカウントは 1 日 5 件の AI 質問 — Pro と Workshop ははるかに大きな月間枠が利用できます。",
@@ -758,7 +758,18 @@
     "describeLabel": "車両の問題を説明してください",
     "ask": "質問",
     "thinking": "考え中…",
-    "emptyState": "コード、症状、または車両の問題を説明すると、技術者スタイルの診断が得られます。",
+    "continue": "次へ",
+    "back": "戻る",
+    "vinPrompt": "車台番号（VIN）を教えてください",
+    "vinInputLabel": "車両識別番号",
+    "vinPlaceholder": "17桁のVIN",
+    "vinSkip": "VINがわかりません",
+    "vehiclePrompt": "メーカーと車種を教えてください",
+    "vehicleMakeLabel": "メーカー",
+    "vehicleMakePlaceholder": "例：トヨタ",
+    "vehicleModelLabel": "車種",
+    "vehicleModelPlaceholder": "例：カムリ",
+    "vehicleMessageLabel": "車両",
     "answerIn": "回答する言語：",
     "english": "英語",
     "error": "問題が発生しました。もう一度お試しください。",
