@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "전문 리포트 크레딧",
     "oneTimeCreditsAvailable": "{count}개 사용 가능",
     "startReport": "진단 리포트 시작",
-    "paymentProcessing": "결제가 완료되었습니다. 리포트 크레딧이 곧 표시됩니다.",
+    "paymentProcessing": "결제를 확인하고 있습니다 — 리포트 크레딧이 곧 표시됩니다.",
     "paymentProcessingDelayed": "결제를 확인하는 중입니다 — 1분 정도 걸릴 수 있습니다. 크레딧이 표시되지 않으면 잠시 후 이 페이지를 새로고침하세요.",
     "paymentReceived": "결제가 완료되었습니다. 리포트 크레딧이 곧 표시됩니다.",
     "passwordSectionTitle": "비밀번호",

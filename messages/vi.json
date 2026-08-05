@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "Tín dụng báo cáo chuyên nghiệp",
     "oneTimeCreditsAvailable": "Còn {count}",
     "startReport": "Bắt đầu báo cáo chẩn đoán",
-    "paymentProcessing": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
+    "paymentProcessing": "Đang xác nhận thanh toán của bạn — tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
     "paymentProcessingDelayed": "Chúng tôi vẫn đang xác nhận thanh toán của bạn — việc này có thể mất một phút. Hãy làm mới trang này sau ít phút nếu tín dụng của bạn chưa xuất hiện.",
     "paymentReceived": "Đã nhận thanh toán. Tín dụng báo cáo của bạn sẽ xuất hiện trong giây lát.",
     "passwordSectionTitle": "Mật khẩu",

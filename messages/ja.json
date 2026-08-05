@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "プロフェッショナルレポート クレジット",
     "oneTimeCreditsAvailable": "{count} 件利用可能",
     "startReport": "診断レポートを開始",
-    "paymentProcessing": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。",
+    "paymentProcessing": "お支払いを確認しています — レポートのクレジットはまもなく表示されます。",
     "paymentProcessingDelayed": "お支払いを確認中です — 1分ほどかかる場合があります。クレジットが表示されない場合は、まもなくこのページを更新してください。",
     "paymentReceived": "お支払いを受け付けました。レポートのクレジットはまもなく表示されます。",
     "passwordSectionTitle": "パスワード",

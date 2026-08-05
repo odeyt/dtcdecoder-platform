@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "专业报告额度",
     "oneTimeCreditsAvailable": "剩余 {count} 份",
     "startReport": "开始诊断报告",
-    "paymentProcessing": "已收到付款。您的报告额度将很快显示。",
+    "paymentProcessing": "正在确认您的付款 — 您的报告额度将很快显示。",
     "paymentProcessingDelayed": "我们仍在确认您的付款——这可能需要一分钟。如果您的额度尚未显示,请稍后刷新此页面。",
     "paymentReceived": "已收到付款。您的报告额度将很快显示。",
     "passwordSectionTitle": "密码",

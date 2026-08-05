@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "Crédits de rapport professionnel",
     "oneTimeCreditsAvailable": "{count} disponible(s)",
     "startReport": "Démarrer un rapport de diagnostic",
-    "paymentProcessing": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu.",
+    "paymentProcessing": "Confirmation de votre paiement en cours — votre crédit de rapport apparaîtra sous peu.",
     "paymentProcessingDelayed": "Nous confirmons encore votre paiement — cela peut prendre une minute. Actualisez cette page sous peu si votre crédit n'est pas apparu.",
     "paymentReceived": "Paiement reçu. Votre crédit de rapport apparaîtra sous peu.",
     "passwordSectionTitle": "Mot de passe",

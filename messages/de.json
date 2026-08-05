@@ -197,7 +197,7 @@
     "oneTimeCreditsTitle": "Guthaben für professionelle Berichte",
     "oneTimeCreditsAvailable": "{count} verfügbar",
     "startReport": "Diagnosebericht starten",
-    "paymentProcessing": "Zahlung erhalten. Ihr Berichtsguthaben wird in Kürze angezeigt.",
+    "paymentProcessing": "Deine Zahlung wird bestätigt — dein Berichtsguthaben wird in Kürze angezeigt.",
     "paymentProcessingDelayed": "Ihre Zahlung wird noch bestätigt — dies kann eine Minute dauern. Aktualisieren Sie diese Seite in Kürze, falls Ihr Guthaben nicht erscheint.",
     "paymentReceived": "Zahlung erhalten. Ihr Berichtsguthaben wird in Kürze angezeigt.",
     "passwordSectionTitle": "Passwort",

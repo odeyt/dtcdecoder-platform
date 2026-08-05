@@ -395,7 +395,7 @@
     "oneTimeCreditsTitle": "Professional report credits",
     "oneTimeCreditsAvailable": "{count} available",
     "startReport": "Start diagnostic report",
-    "paymentProcessing": "Payment received. Your report credit will appear shortly.",
+    "paymentProcessing": "Confirming your payment — your report credit will appear shortly.",
     "paymentProcessingDelayed": "Still confirming your payment — this can take a minute. Refresh this page shortly if your credit hasn't appeared.",
     "paymentReceived": "Payment received. Your report credit will appear shortly.",
     "passwordSectionTitle": "Password",
