@@ -458,7 +458,39 @@
     "contentNotLocalizedNote": "This code's reference content (meaning, causes, steps) is shown in its original English — only the surrounding labels are localized.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
-    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough",
+    "categoryStructureTitle": "Category (inferred from code structure)",
+    "categoryLabel": "Category",
+    "typeLabel": "Type",
+    "likelySystemLabel": "Likely system"
+  },
+  "dtcUnknown": {
+    "heading": "This code is not currently available in the basic DTC database.",
+    "body": "We haven't published a detailed entry for {code} yet. Here's what we can tell you from the code itself, and how to get a full, vehicle-specific diagnosis.",
+    "codeStructureTitle": "Code structure (inferred, not vehicle-verified)",
+    "codeStructureNote": "The fields below are derived from the code's own format (a public automotive standard), not from our verified database — they describe the general code family, not this specific vehicle.",
+    "manufacturerSpecificWarning": "This code's digit pattern indicates a manufacturer-specific definition — its exact meaning varies by make and sometimes by model/year. Add your vehicle's make and model below for an accurate, vehicle-specific diagnosis instead of a generic guess.",
+    "accurateAnswerTitle": "Get an accurate answer for your vehicle",
+    "accurateAnswerBody": "Add a few details and an AI diagnostic report can analyze this exact code for your specific vehicle:",
+    "fieldYear": "Year",
+    "fieldMake": "Make",
+    "fieldModel": "Model",
+    "fieldEngine": "Engine",
+    "fieldModule": "Module",
+    "fieldSymptoms": "Symptoms",
+    "runFullAiDiagnosis": "Run Full AI Diagnosis",
+    "relatedCodesTitle": "Related codes in the same family",
+    "beforeYouDriveTitle": "Before you drive",
+    "beforeYouDriveBody": "Any stored trouble code can indicate a condition that affects safe operation. If your vehicle is showing other warning signs (loss of power, unusual noises, warning lights beyond the check engine light, overheating, or handling changes), have it inspected before continuing to drive.",
+    "browseRepairPdfs": "Browse repair PDFs",
+    "browseRepairVideos": "Browse repair videos",
+    "unlockFullAiDiagnosisTitle": "Unlock Full AI Diagnosis",
+    "unlockFullAiDiagnosisBody": "Add your vehicle details and symptoms to receive a professional diagnostic workflow."
+  },
+  "dtcInvalid": {
+    "heading": "That doesn't look like a valid DTC code",
+    "body": "A diagnostic trouble code starts with P, B, C, or U followed by 3 or 4 digits — for example P0420, B1600, C0035, or U0101. Double-check the code and try again.",
+    "searchAgain": "Search again"
   },
   "dtcSearch": {
     "title": "Quick Code Lookup",

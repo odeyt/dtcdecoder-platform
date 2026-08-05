@@ -94,19 +94,19 @@ export function DtcCodeResult({
       {/* Category/system — derived from the code's own structure (a public
           standard), not a verified database field, so labeled as such. */}
       {structure.isDerivable && (
-        <ResultSection title="Category (inferred from code structure)">
+        <ResultSection title={t("categoryStructureTitle")}>
           <dl className="grid grid-cols-2 gap-x-6 gap-y-3 text-sm sm:grid-cols-3">
             <div>
-              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Category</dt>
+              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">{t("categoryLabel")}</dt>
               <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.category}</dd>
             </div>
             <div>
-              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Type</dt>
+              <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">{t("typeLabel")}</dt>
               <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.type}</dd>
             </div>
             {structure.system && (
               <div>
-                <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">Likely system</dt>
+                <dt className="text-xs uppercase tracking-wide text-[var(--text-muted)]">{t("likelySystemLabel")}</dt>
                 <dd className="mt-1 font-semibold text-[var(--text-primary)]">{structure.system}</dd>
               </div>
             )}

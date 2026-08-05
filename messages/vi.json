@@ -260,7 +260,39 @@
     "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
-    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough",
+    "categoryStructureTitle": "Danh mục (suy ra từ cấu trúc mã)",
+    "categoryLabel": "Danh mục",
+    "typeLabel": "Loại",
+    "likelySystemLabel": "Hệ thống có khả năng"
+  },
+  "dtcUnknown": {
+    "heading": "Mã này hiện chưa có trong cơ sở dữ liệu DTC cơ bản.",
+    "body": "Chúng tôi chưa công bố thông tin chi tiết cho {code}. Đây là những gì chúng tôi có thể cho bạn biết từ chính mã này, và cách nhận chẩn đoán đầy đủ, riêng cho xe của bạn.",
+    "codeStructureTitle": "Cấu trúc mã (suy luận, chưa được xác minh trên xe)",
+    "codeStructureNote": "Các trường bên dưới được suy ra từ định dạng của chính mã (một tiêu chuẩn ô tô công khai), không phải từ cơ sở dữ liệu đã xác minh của chúng tôi — chúng mô tả nhóm mã chung, không phải riêng chiếc xe này.",
+    "manufacturerSpecificWarning": "Mẫu chữ số của mã này cho thấy đây là định nghĩa riêng của nhà sản xuất — ý nghĩa chính xác sẽ khác nhau tùy theo hãng và đôi khi tùy theo dòng xe/năm sản xuất. Hãy thêm hãng và dòng xe của bạn bên dưới để nhận chẩn đoán chính xác, riêng cho xe thay vì phỏng đoán chung chung.",
+    "accurateAnswerTitle": "Nhận câu trả lời chính xác cho xe của bạn",
+    "accurateAnswerBody": "Thêm một vài chi tiết và báo cáo chẩn đoán AI có thể phân tích chính xác mã này cho chiếc xe cụ thể của bạn:",
+    "fieldYear": "Năm sản xuất",
+    "fieldMake": "Hãng xe",
+    "fieldModel": "Dòng xe",
+    "fieldEngine": "Động cơ",
+    "fieldModule": "Mô-đun",
+    "fieldSymptoms": "Triệu chứng",
+    "runFullAiDiagnosis": "Chạy chẩn đoán AI đầy đủ",
+    "relatedCodesTitle": "Các mã liên quan trong cùng nhóm",
+    "beforeYouDriveTitle": "Trước khi lái xe",
+    "beforeYouDriveBody": "Bất kỳ mã lỗi nào được lưu trữ đều có thể cho thấy tình trạng ảnh hưởng đến an toàn vận hành. Nếu xe của bạn có các dấu hiệu cảnh báo khác (mất công suất, tiếng ồn bất thường, đèn cảnh báo ngoài đèn kiểm tra động cơ, quá nhiệt, hoặc thay đổi trong khả năng điều khiển), hãy đưa xe đi kiểm tra trước khi tiếp tục lái.",
+    "browseRepairPdfs": "Xem PDF sửa chữa",
+    "browseRepairVideos": "Xem video sửa chữa",
+    "unlockFullAiDiagnosisTitle": "Mở khóa chẩn đoán AI đầy đủ",
+    "unlockFullAiDiagnosisBody": "Thêm thông tin xe và triệu chứng của bạn để nhận quy trình chẩn đoán chuyên nghiệp."
+  },
+  "dtcInvalid": {
+    "heading": "Có vẻ đây không phải là mã DTC hợp lệ",
+    "body": "Mã chẩn đoán lỗi bắt đầu bằng P, B, C hoặc U theo sau là 3 hoặc 4 chữ số — ví dụ P0420, B1600, C0035, hoặc U0101. Kiểm tra lại mã và thử lại.",
+    "searchAgain": "Tìm kiếm lại"
   },
   "dtcSearch": {
     "title": "Tra cứu DTC",

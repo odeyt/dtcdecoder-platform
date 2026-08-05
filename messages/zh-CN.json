@@ -260,7 +260,39 @@
     "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
-    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough",
+    "categoryStructureTitle": "类别（根据代码结构推断）",
+    "categoryLabel": "类别",
+    "typeLabel": "类型",
+    "likelySystemLabel": "可能涉及的系统"
+  },
+  "dtcUnknown": {
+    "heading": "此代码目前尚未收录在基础 DTC 数据库中。",
+    "body": "我们尚未发布 {code} 的详细说明。以下是我们能从代码本身告诉您的信息，以及如何获得针对您车辆的完整诊断。",
+    "codeStructureTitle": "代码结构（推断得出，未经车辆验证）",
+    "codeStructureNote": "以下字段是根据代码本身的格式（一项公开的汽车行业标准）推断得出的，并非来自我们已验证的数据库——它们描述的是代码所属的大类，而非这辆具体车辆。",
+    "manufacturerSpecificWarning": "该代码的数字模式表明这是厂商专属定义——确切含义会因品牌、有时还因车型/年款而异。请在下方添加您车辆的品牌和车型，以获得准确的、针对具体车辆的诊断，而非笼统的猜测。",
+    "accurateAnswerTitle": "获取针对您车辆的准确答案",
+    "accurateAnswerBody": "添加一些详细信息，AI 诊断报告即可针对您的具体车辆分析这一代码：",
+    "fieldYear": "年款",
+    "fieldMake": "品牌",
+    "fieldModel": "车型",
+    "fieldEngine": "发动机",
+    "fieldModule": "模块",
+    "fieldSymptoms": "症状",
+    "runFullAiDiagnosis": "运行完整 AI 诊断",
+    "relatedCodesTitle": "同系列的相关代码",
+    "beforeYouDriveTitle": "驾驶前须知",
+    "beforeYouDriveBody": "任何已存储的故障代码都可能表明存在影响安全行驶的状况。如果您的车辆出现其他警示迹象（动力下降、异响、除发动机故障灯外的其他警示灯亮起、过热或操控变化），请在继续驾驶前进行检查。",
+    "browseRepairPdfs": "浏览维修 PDF",
+    "browseRepairVideos": "浏览维修视频",
+    "unlockFullAiDiagnosisTitle": "解锁完整 AI 诊断",
+    "unlockFullAiDiagnosisBody": "添加您的车辆详情和症状，即可获得专业的诊断流程。"
+  },
+  "dtcInvalid": {
+    "heading": "这看起来不是有效的 DTC 代码",
+    "body": "故障诊断代码以 P、B、C 或 U 开头，后接 3 或 4 位数字——例如 P0420、B1600、C0035 或 U0101。请检查代码后重试。",
+    "searchAgain": "重新搜索"
   },
   "dtcSearch": {
     "title": "DTC 查询",

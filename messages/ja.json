@@ -260,7 +260,39 @@
     "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
-    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough",
+    "categoryStructureTitle": "カテゴリー（コード構造からの推定）",
+    "categoryLabel": "カテゴリー",
+    "typeLabel": "タイプ",
+    "likelySystemLabel": "推定システム"
+  },
+  "dtcUnknown": {
+    "heading": "このコードは現在、基本DTCデータベースには登録されていません。",
+    "body": "{code} の詳細な情報はまだ公開されていません。コード自体からわかる内容と、車両に特化した完全な診断を受ける方法をご案内します。",
+    "codeStructureTitle": "コード構造(推定であり、車両で検証されたものではありません)",
+    "codeStructureNote": "以下の項目はコード自体の書式(自動車業界の公開規格)から推定したものであり、検証済みデータベースによるものではありません。この特定の車両ではなく、コードの一般的な系統を示しています。",
+    "manufacturerSpecificWarning": "このコードの数字パターンはメーカー固有の定義であることを示しています。正確な意味はメーカー、場合によってはモデルや年式によって異なります。一般的な推測ではなく、正確で車両specificな診断を受けるために、以下に車両のメーカーとモデルを追加してください。",
+    "accurateAnswerTitle": "お使いの車両に合った正確な回答を得る",
+    "accurateAnswerBody": "いくつかの詳細情報を追加すると、AI診断レポートがこのコードをお使いの車両に合わせて分析できます:",
+    "fieldYear": "年式",
+    "fieldMake": "メーカー",
+    "fieldModel": "モデル",
+    "fieldEngine": "エンジン",
+    "fieldModule": "モジュール",
+    "fieldSymptoms": "症状",
+    "runFullAiDiagnosis": "AIによる完全診断を実行",
+    "relatedCodesTitle": "同じ系統の関連コード",
+    "beforeYouDriveTitle": "運転前に",
+    "beforeYouDriveBody": "保存されている故障コードはすべて、安全な走行に影響する状態を示している可能性があります。出力低下、異音、チェックエンジンランプ以外の警告灯、オーバーヒート、走行フィーリングの変化など、他の警告サインが見られる場合は、走行を続ける前に点検を受けてください。",
+    "browseRepairPdfs": "修理用PDFを見る",
+    "browseRepairVideos": "修理動画を見る",
+    "unlockFullAiDiagnosisTitle": "AIによる完全診断のロックを解除",
+    "unlockFullAiDiagnosisBody": "車両の詳細と症状を追加すると、プロフェッショナルな診断フローを受けられます。"
+  },
+  "dtcInvalid": {
+    "heading": "有効なDTCコードではないようです",
+    "body": "故障診断コードはP、B、C、Uのいずれかで始まり、3〜4桁の数字が続きます(例:P0420、B1600、C0035、U0101)。コードを確認して、もう一度お試しください。",
+    "searchAgain": "再検索"
   },
   "dtcSearch": {
     "title": "DTC 検索",

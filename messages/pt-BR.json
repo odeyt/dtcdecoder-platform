@@ -260,7 +260,39 @@
     "contentNotLocalizedNote": "O conteúdo de referência deste código (significado, causas, etapas) é exibido no inglês original — apenas os rótulos ao redor são localizados.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
-    "repairResourcesLocked": "Repair PDF / Video Walkthrough"
+    "repairResourcesLocked": "Repair PDF / Video Walkthrough",
+    "categoryStructureTitle": "Categoria (inferida da estrutura do código)",
+    "categoryLabel": "Categoria",
+    "typeLabel": "Tipo",
+    "likelySystemLabel": "Sistema provável"
+  },
+  "dtcUnknown": {
+    "heading": "Este código ainda não está disponível no banco de dados básico de DTC.",
+    "body": "Ainda não publicamos uma entrada detalhada para {code}. Aqui está o que podemos dizer com base no próprio código, e como obter um diagnóstico completo e específico para o seu veículo.",
+    "codeStructureTitle": "Estrutura do código (inferida, não verificada no veículo)",
+    "codeStructureNote": "Os campos abaixo são derivados do próprio formato do código (um padrão automotivo público), não do nosso banco de dados verificado — eles descrevem a família geral do código, não este veículo específico.",
+    "manufacturerSpecificWarning": "O padrão de dígitos deste código indica uma definição específica do fabricante — o significado exato varia conforme a marca e, às vezes, o modelo/ano. Adicione a marca e o modelo do seu veículo abaixo para obter um diagnóstico preciso e específico, em vez de um palpite genérico.",
+    "accurateAnswerTitle": "Obtenha uma resposta precisa para o seu veículo",
+    "accurateAnswerBody": "Adicione alguns detalhes e um relatório de diagnóstico com IA poderá analisar exatamente este código para o seu veículo específico:",
+    "fieldYear": "Ano",
+    "fieldMake": "Marca",
+    "fieldModel": "Modelo",
+    "fieldEngine": "Motor",
+    "fieldModule": "Módulo",
+    "fieldSymptoms": "Sintomas",
+    "runFullAiDiagnosis": "Executar diagnóstico completo com IA",
+    "relatedCodesTitle": "Códigos relacionados da mesma família",
+    "beforeYouDriveTitle": "Antes de dirigir",
+    "beforeYouDriveBody": "Qualquer código de falha armazenado pode indicar uma condição que afeta a segurança na condução. Se o seu veículo apresentar outros sinais de alerta (perda de potência, ruídos incomuns, luzes de aviso além da luz de check engine, superaquecimento ou mudanças na direção), leve-o para inspeção antes de continuar dirigindo.",
+    "browseRepairPdfs": "Ver PDFs de reparo",
+    "browseRepairVideos": "Ver vídeos de reparo",
+    "unlockFullAiDiagnosisTitle": "Desbloquear diagnóstico completo com IA",
+    "unlockFullAiDiagnosisBody": "Adicione os detalhes do seu veículo e os sintomas para receber um fluxo de diagnóstico profissional."
+  },
+  "dtcInvalid": {
+    "heading": "Isso não parece um código DTC válido",
+    "body": "Um código de diagnóstico de falha começa com P, B, C ou U seguido de 3 ou 4 dígitos — por exemplo, P0420, B1600, C0035 ou U0101. Verifique o código e tente novamente.",
+    "searchAgain": "Buscar novamente"
   },
   "dtcSearch": {
     "title": "Consulta de DTC",
