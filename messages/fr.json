@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "Connectez-vous à votre compte",
-    "signInSubtext": "Aucun mot de passe requis — nous vous enverrons un lien de connexion par e-mail."
+    "signInSubtext": "Utilisez un lien magique — aucun mot de passe requis — ou connectez-vous avec un mot de passe si vous en avez défini un.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Mot de passe",
+    "emailMeLoginLink": "M'envoyer un lien de connexion",
+    "sendingLoginLink": "Envoi en cours…",
+    "checkEmailForLink": "Consultez {email} pour le lien de connexion.",
+    "magicLinkError": "Une erreur s'est produite. Réessayez.",
+    "useMagicLinkInstead": "Utiliser un lien magique à la place",
+    "signInWithPasswordInstead": "Se connecter avec un mot de passe à la place",
+    "signIn": "Se connecter",
+    "signingIn": "Connexion en cours…",
+    "incorrectCredentials": "E-mail ou mot de passe incorrect.",
+    "forgotPassword": "Mot de passe oublié ?"
+  },
+  "repairPdfs": {
+    "title": "PDF de réparation",
+    "subtitle": "Guides PDF de diagnostic principal avec vérifications du câblage, données de l'outil de diagnostic et orientation de réparation.",
+    "masterPdfTitle": "PDF de diagnostic principal",
+    "masterPdfDescription": "Le flux de travail de réparation professionnel complet, couvrant les vérifications du câblage, les données de l'outil de diagnostic, les étapes de test et l'orientation de réparation.",
+    "getRepairPdf": "Obtenir le PDF de réparation"
   },
   "pricing": {
     "title": "Tarifs",

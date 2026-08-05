@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "Bei Ihrem Konto anmelden",
-    "signInSubtext": "Kein Passwort nötig — wir senden Ihnen einen Anmeldelink per E-Mail."
+    "signInSubtext": "Nutzen Sie einen Magic Link — kein Passwort nötig — oder melden Sie sich mit einem Passwort an, falls Sie eines eingerichtet haben.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Passwort",
+    "emailMeLoginLink": "Anmeldelink per E-Mail senden",
+    "sendingLoginLink": "Wird gesendet…",
+    "checkEmailForLink": "Prüfen Sie {email} auf den Anmeldelink.",
+    "magicLinkError": "Etwas ist schiefgelaufen. Bitte erneut versuchen.",
+    "useMagicLinkInstead": "Stattdessen Magic Link verwenden",
+    "signInWithPasswordInstead": "Stattdessen mit Passwort anmelden",
+    "signIn": "Anmelden",
+    "signingIn": "Anmeldung läuft…",
+    "incorrectCredentials": "Falsche E-Mail-Adresse oder falsches Passwort.",
+    "forgotPassword": "Passwort vergessen?"
+  },
+  "repairPdfs": {
+    "title": "Reparatur-PDFs",
+    "subtitle": "Master-Diagnose-PDF-Anleitungen mit Verkabelungsprüfungen, Scan-Tool-Daten und Reparaturanweisungen.",
+    "masterPdfTitle": "Master-Diagnose-PDF",
+    "masterPdfDescription": "Der vollständige professionelle Reparaturablauf mit Verkabelungsprüfungen, Scan-Tool-Daten, Testschritten und Reparaturanweisungen.",
+    "getRepairPdf": "Reparatur-PDF erhalten"
   },
   "pricing": {
     "title": "Preise",

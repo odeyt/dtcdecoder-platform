@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "Entre na sua conta",
-    "signInSubtext": "Sem senha — enviaremos um link de login para o seu e-mail."
+    "signInSubtext": "Use um link mágico — sem necessidade de senha — ou entre com uma senha se você já criou uma.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Senha",
+    "emailMeLoginLink": "Enviar link de login por e-mail",
+    "sendingLoginLink": "Enviando…",
+    "checkEmailForLink": "Verifique {email} para o link de login.",
+    "magicLinkError": "Algo deu errado. Tente novamente.",
+    "useMagicLinkInstead": "Usar link mágico em vez disso",
+    "signInWithPasswordInstead": "Entrar com senha em vez disso",
+    "signIn": "Entrar",
+    "signingIn": "Entrando…",
+    "incorrectCredentials": "E-mail ou senha incorretos.",
+    "forgotPassword": "Esqueceu a senha?"
+  },
+  "repairPdfs": {
+    "title": "PDFs de Reparo",
+    "subtitle": "Guias em PDF de diagnóstico mestre com verificações de fiação, dados do scanner e direção de reparo.",
+    "masterPdfTitle": "PDF de Diagnóstico Mestre",
+    "masterPdfDescription": "O fluxo de trabalho de reparo profissional completo, cobrindo verificações de fiação, dados do scanner, etapas de teste e direção de reparo.",
+    "getRepairPdf": "Obter PDF de Reparo"
   },
   "pricing": {
     "title": "Preços",

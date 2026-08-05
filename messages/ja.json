@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "アカウントにログイン",
-    "signInSubtext": "パスワードは不要です — ログインリンクをメールでお送りします。"
+    "signInSubtext": "マジックリンクを使用する場合はパスワード不要です。パスワードを設定済みの場合はパスワードでサインインすることもできます。",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "パスワード",
+    "emailMeLoginLink": "ログインリンクをメールで受け取る",
+    "sendingLoginLink": "送信中…",
+    "checkEmailForLink": "{email} を確認してログインリンクをご覧ください。",
+    "magicLinkError": "問題が発生しました。もう一度お試しください。",
+    "useMagicLinkInstead": "代わりにマジックリンクを使用する",
+    "signInWithPasswordInstead": "代わりにパスワードでサインインする",
+    "signIn": "サインイン",
+    "signingIn": "サインイン中…",
+    "incorrectCredentials": "メールアドレスまたはパスワードが正しくありません。",
+    "forgotPassword": "パスワードをお忘れですか？"
+  },
+  "repairPdfs": {
+    "title": "修理用PDF",
+    "subtitle": "配線チェック、スキャンツールデータ、修理方針を含むマスター診断PDFガイド。",
+    "masterPdfTitle": "マスター診断PDF",
+    "masterPdfDescription": "配線チェック、スキャンツールデータ、テスト手順、修理方針を網羅した完全なプロフェッショナル修理ワークフロー。",
+    "getRepairPdf": "修理用PDFを取得"
   },
   "pricing": {
     "title": "料金",

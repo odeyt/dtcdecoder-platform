@@ -266,7 +266,26 @@
   },
   "auth": {
     "signInHeading": "Inicia sesión en tu cuenta",
-    "signInSubtext": "No necesitas contraseña — te enviaremos un enlace de acceso por correo."
+    "signInSubtext": "Usa un enlace mágico — no necesitas contraseña — o inicia sesión con una contraseña si has configurado una.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Contraseña",
+    "emailMeLoginLink": "Enviarme un enlace de acceso",
+    "sendingLoginLink": "Enviando…",
+    "checkEmailForLink": "Revisa {email} para ver el enlace de acceso.",
+    "magicLinkError": "Algo salió mal. Inténtalo de nuevo.",
+    "useMagicLinkInstead": "Usar un enlace mágico en su lugar",
+    "signInWithPasswordInstead": "Iniciar sesión con contraseña en su lugar",
+    "signIn": "Iniciar sesión",
+    "signingIn": "Iniciando sesión…",
+    "incorrectCredentials": "Correo electrónico o contraseña incorrectos.",
+    "forgotPassword": "¿Olvidaste tu contraseña?"
+  },
+  "repairPdfs": {
+    "title": "PDFs de reparación",
+    "subtitle": "Guías en PDF de diagnóstico maestro con comprobaciones de cableado, datos del escáner y orientación de reparación.",
+    "masterPdfTitle": "PDF de diagnóstico maestro",
+    "masterPdfDescription": "El flujo de trabajo de reparación profesional completo, que cubre comprobaciones de cableado, datos del escáner, pasos de prueba y orientación de reparación.",
+    "getRepairPdf": "Obtener PDF de reparación"
   },
   "pricing": {
     "title": "Precios",

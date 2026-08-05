@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "เข้าสู่ระบบบัญชีของคุณ",
-    "signInSubtext": "ไม่ต้องใช้รหัสผ่าน — เราจะส่งลิงก์เข้าสู่ระบบไปที่อีเมลของคุณ"
+    "signInSubtext": "ใช้ลิงก์วิเศษ — ไม่ต้องใช้รหัสผ่าน — หรือเข้าสู่ระบบด้วยรหัสผ่านหากคุณตั้งไว้แล้ว",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "รหัสผ่าน",
+    "emailMeLoginLink": "ส่งลิงก์เข้าสู่ระบบให้ฉัน",
+    "sendingLoginLink": "กำลังส่ง…",
+    "checkEmailForLink": "ตรวจสอบ {email} เพื่อรับลิงก์เข้าสู่ระบบ",
+    "magicLinkError": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    "useMagicLinkInstead": "ใช้ลิงก์วิเศษแทน",
+    "signInWithPasswordInstead": "เข้าสู่ระบบด้วยรหัสผ่านแทน",
+    "signIn": "เข้าสู่ระบบ",
+    "signingIn": "กำลังเข้าสู่ระบบ…",
+    "incorrectCredentials": "อีเมลหรือรหัสผ่านไม่ถูกต้อง",
+    "forgotPassword": "ลืมรหัสผ่านใช่ไหม?"
+  },
+  "repairPdfs": {
+    "title": "PDF การซ่อม",
+    "subtitle": "คู่มือ PDF การวินิจฉัยหลักพร้อมการตรวจสอบสายไฟ ข้อมูลเครื่องมือสแกน และแนวทางการซ่อม",
+    "masterPdfTitle": "PDF การวินิจฉัยหลัก",
+    "masterPdfDescription": "ขั้นตอนการซ่อมระดับมืออาชีพแบบครบถ้วน ครอบคลุมการตรวจสอบสายไฟ ข้อมูลเครื่องมือสแกน ขั้นตอนการทดสอบ และแนวทางการซ่อม",
+    "getRepairPdf": "รับ PDF การซ่อม"
   },
   "pricing": {
     "title": "ราคา",

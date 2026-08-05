@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { safeRedirectPath } from "@/lib/safe-redirect";
 
@@ -12,6 +13,7 @@ import { safeRedirectPath } from "@/lib/safe-redirect";
 // unaffected: buyers still never need a password to purchase, this only
 // covers signing in to an existing account.
 export function PasswordLoginForm({ next }: { next?: string }) {
+  const t = useTranslations("auth");
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -28,9 +30,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
 
     if (error) {
       setErrorMessage(
-        error.message === "Invalid login credentials"
-          ? "Incorrect email or password."
-          : error.message,
+        error.message === "Invalid login credentials" ? t("incorrectCredentials") : error.message,
       );
       setStatus("error");
       return;
@@ -50,7 +50,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         required
         value={email}
         onChange={(e) => setEmail(e.target.value)}
-        placeholder="you@example.com"
+        placeholder={t("emailPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <input
@@ -58,7 +58,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         required
         value={password}
         onChange={(e) => setPassword(e.target.value)}
-        placeholder="Password"
+        placeholder={t("passwordPlaceholder")}
         className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-4 py-2.5 text-[var(--text-primary)] placeholder:text-[var(--text-muted)]"
       />
       <button
@@ -67,7 +67,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         className="min-h-11 self-start rounded-[var(--radius-md)] bg-[var(--accent-red)] px-5 py-2 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
         style={{ boxShadow: "var(--shadow-accent)" }}
       >
-        {status === "loading" ? "Signing in…" : "Sign in"}
+        {status === "loading" ? t("signingIn") : t("signIn")}
       </button>
       {status === "error" && errorMessage && (
         <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>
@@ -76,7 +76,7 @@ export function PasswordLoginForm({ next }: { next?: string }) {
         href="/account/forgot-password"
         className="text-sm text-[var(--text-secondary)] underline hover:text-[var(--text-primary)]"
       >
-        Forgot password?
+        {t("forgotPassword")}
       </Link>
     </form>
   );

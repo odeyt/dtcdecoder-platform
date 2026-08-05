@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "Đăng nhập vào tài khoản của bạn",
-    "signInSubtext": "Không cần mật khẩu — chúng tôi sẽ gửi email liên kết đăng nhập cho bạn."
+    "signInSubtext": "Sử dụng liên kết ma thuật — không cần mật khẩu — hoặc đăng nhập bằng mật khẩu nếu bạn đã thiết lập.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Mật khẩu",
+    "emailMeLoginLink": "Gửi liên kết đăng nhập qua email",
+    "sendingLoginLink": "Đang gửi…",
+    "checkEmailForLink": "Kiểm tra {email} để nhận liên kết đăng nhập.",
+    "magicLinkError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "useMagicLinkInstead": "Sử dụng liên kết ma thuật thay thế",
+    "signInWithPasswordInstead": "Đăng nhập bằng mật khẩu thay thế",
+    "signIn": "Đăng nhập",
+    "signingIn": "Đang đăng nhập…",
+    "incorrectCredentials": "Email hoặc mật khẩu không đúng.",
+    "forgotPassword": "Quên mật khẩu?"
+  },
+  "repairPdfs": {
+    "title": "PDF Sửa Chữa",
+    "subtitle": "Hướng dẫn PDF chẩn đoán chính với kiểm tra hệ thống dây điện, dữ liệu công cụ quét và hướng dẫn sửa chữa.",
+    "masterPdfTitle": "PDF Chẩn Đoán Chính",
+    "masterPdfDescription": "Quy trình sửa chữa chuyên nghiệp đầy đủ, bao gồm kiểm tra hệ thống dây điện, dữ liệu công cụ quét, các bước kiểm tra và hướng dẫn sửa chữa.",
+    "getRepairPdf": "Nhận PDF Sửa Chữa"
   },
   "pricing": {
     "title": "Bảng giá",

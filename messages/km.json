@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "ចូលទៅគណនីរបស់អ្នក",
-    "signInSubtext": "មិនត្រូវការពាក្យសម្ងាត់ — យើងនឹងផ្ញើតំណចូលទៅអ៊ីមែលរបស់អ្នក។"
+    "signInSubtext": "ប្រើតំណវេទមន្ត — មិនត្រូវការពាក្យសម្ងាត់ — ឬចូលដោយប្រើពាក្យសម្ងាត់ប្រសិនបើអ្នកបានកំណត់វាហើយ។",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "ពាក្យសម្ងាត់",
+    "emailMeLoginLink": "ផ្ញើតំណចូលមកខ្ញុំ",
+    "sendingLoginLink": "កំពុងផ្ញើ…",
+    "checkEmailForLink": "ពិនិត្យមើល {email} សម្រាប់តំណចូល។",
+    "magicLinkError": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។",
+    "useMagicLinkInstead": "ប្រើតំណវេទមន្តជំនួសវិញ",
+    "signInWithPasswordInstead": "ចូលដោយប្រើពាក្យសម្ងាត់ជំនួសវិញ",
+    "signIn": "ចូល",
+    "signingIn": "កំពុងចូល…",
+    "incorrectCredentials": "អ៊ីមែល ឬពាក្យសម្ងាត់មិនត្រឹមត្រូវ។",
+    "forgotPassword": "ភ្លេចពាក្យសម្ងាត់?"
+  },
+  "repairPdfs": {
+    "title": "ឯកសារ PDF ជួសជុល",
+    "subtitle": "មគ្គុទ្ទេសក៍ PDF វិនិច្ឆ័យសំខាន់ជាមួយការត្រួតពិនិត្យខ្សែភ្លើង ទិន្នន័យឧបករណ៍ស្កេន និងទិសដៅជួសជុល។",
+    "masterPdfTitle": "PDF វិនិច្ឆ័យសំខាន់",
+    "masterPdfDescription": "លំហូរការងារជួសជុលវិជ្ជាជីវៈពេញលេញ គ្របដណ្តប់ការត្រួតពិនិត្យខ្សែភ្លើង ទិន្នន័យឧបករណ៍ស្កេន ជំហានសាកល្បង និងទិសដៅជួសជុល។",
+    "getRepairPdf": "ទទួលបាន PDF ជួសជុល"
   },
   "pricing": {
     "title": "តម្លៃ",

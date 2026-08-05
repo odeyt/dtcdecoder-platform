@@ -68,7 +68,26 @@
   },
   "auth": {
     "signInHeading": "登录您的账户",
-    "signInSubtext": "无需密码——我们会通过电子邮件向您发送登录链接。"
+    "signInSubtext": "使用魔法链接 — 无需密码 — 或者如果您已设置密码，可使用密码登录。",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "密码",
+    "emailMeLoginLink": "通过电子邮件发送登录链接",
+    "sendingLoginLink": "发送中…",
+    "checkEmailForLink": "请查看 {email} 获取登录链接。",
+    "magicLinkError": "出现问题，请重试。",
+    "useMagicLinkInstead": "改用魔法链接",
+    "signInWithPasswordInstead": "改用密码登录",
+    "signIn": "登录",
+    "signingIn": "正在登录…",
+    "incorrectCredentials": "电子邮件或密码不正确。",
+    "forgotPassword": "忘记密码？"
+  },
+  "repairPdfs": {
+    "title": "维修 PDF",
+    "subtitle": "主诊断 PDF 指南，包含线路检查、扫描工具数据和维修方向。",
+    "masterPdfTitle": "主诊断 PDF",
+    "masterPdfDescription": "完整的专业维修工作流程，涵盖线路检查、扫描工具数据、测试步骤和维修方向。",
+    "getRepairPdf": "获取维修 PDF"
   },
   "pricing": {
     "title": "价格",

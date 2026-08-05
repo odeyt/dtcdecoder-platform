@@ -266,7 +266,26 @@
   },
   "auth": {
     "signInHeading": "Sign in to your account",
-    "signInSubtext": "No password needed — we'll email you a login link."
+    "signInSubtext": "Use a magic link — no password needed — or sign in with a password if you've set one.",
+    "emailPlaceholder": "you@example.com",
+    "passwordPlaceholder": "Password",
+    "emailMeLoginLink": "Email me a login link",
+    "sendingLoginLink": "Sending…",
+    "checkEmailForLink": "Check {email} for a login link.",
+    "magicLinkError": "Something went wrong. Try again.",
+    "useMagicLinkInstead": "Use a magic link instead",
+    "signInWithPasswordInstead": "Sign in with a password instead",
+    "signIn": "Sign in",
+    "signingIn": "Signing in…",
+    "incorrectCredentials": "Incorrect email or password.",
+    "forgotPassword": "Forgot password?"
+  },
+  "repairPdfs": {
+    "title": "Repair PDFs",
+    "subtitle": "Master Diagnostic PDF guides with wiring checks, scan tool data, and repair direction.",
+    "masterPdfTitle": "Master Diagnostic PDF",
+    "masterPdfDescription": "The complete professional repair workflow, covering wiring checks, scan tool data, testing steps, and repair direction.",
+    "getRepairPdf": "Get Repair PDF"
   },
   "pricing": {
     "title": "Pricing",
