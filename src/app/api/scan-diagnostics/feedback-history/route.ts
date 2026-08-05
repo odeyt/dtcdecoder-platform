@@ -19,18 +19,16 @@ export async function GET(_request: NextRequest) {
       data: { user },
     } = await supabase.auth.getUser();
 
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
     if (!user) {
-      const locale = await resolveAppShellLocale();
-      const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
       return NextResponse.json({ error: t.signInToViewFeedbackHistory }, { status: 401 });
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);
     if (!canViewScanFeedbackHistory(plan)) {
-      return NextResponse.json(
-        { error: "Feedback history is available on the Workshop plan. Upgrade to unlock it." },
-        { status: 403 },
-      );
+      return NextResponse.json({ error: t.workshopPlanRequiredFeedbackHistory }, { status: 403 });
     }
 
     const history = await listFeedbackHistory(user.id);

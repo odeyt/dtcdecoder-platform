@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { isRecognizedLocaleCode } from "@/lib/i18n/locale-codes";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 const signupSchema = z.object({
   name: z.string().trim().max(200).optional().default(""),
@@ -10,16 +11,19 @@ const signupSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
   let body: unknown;
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
   }
 
   const parsed = signupSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequest }, { status: 400 });
   }
 
   // Informational only — an unrecognized/missing locale never blocks the
@@ -43,7 +47,7 @@ export async function POST(request: NextRequest) {
 
   if (error) {
     console.error("Email signup failed", error);
-    return NextResponse.json({ error: "Unable to sign up right now" }, { status: 500 });
+    return NextResponse.json({ error: t.emailSignupFailed }, { status: 500 });
   }
 
   return NextResponse.json({ ok: true });

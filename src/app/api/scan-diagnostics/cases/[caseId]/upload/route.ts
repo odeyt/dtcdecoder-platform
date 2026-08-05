@@ -51,7 +51,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     const buffer = Buffer.from(await file.arrayBuffer());
-    const validation = await validateScanFile(buffer, file.name, file.type);
+    const validation = await validateScanFile(buffer, file.name, file.type, t);
     if (!validation.ok) {
       throw new UnsupportedFileError(validation.reason);
     }
@@ -74,9 +74,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       const existingIsImage = isImageScanFileFormat(existingFiles[0].detected_format as ScanFileFormat | null);
       if (existingIsImage !== isImage) {
         throw new UnsupportedFileError(
-          existingIsImage
-            ? "This case already has photo(s) uploaded — please start a new case for a non-photo scan report file."
-            : "This case already has a scan report file uploaded — please start a new case to upload photos instead.",
+          existingIsImage ? t.caseAlreadyHasPhotos : t.caseAlreadyHasDocument,
         );
       }
     }
@@ -86,14 +84,14 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
       const existingImageCount = existingFiles?.length ?? 0;
       const maxCount = env.scanImageMaxCount();
       if (existingImageCount + 1 > maxCount) {
-        throw new UnsupportedFileError(`This case already has the maximum of ${maxCount} photos.`);
+        throw new UnsupportedFileError(t.maxPhotosReached.replace("{maxCount}", String(maxCount)));
       }
 
       const existingTotalBytes = (existingFiles ?? []).reduce((sum, f) => sum + (f.file_size_bytes as number), 0);
       const maxTotalBytes = env.scanImageMaxTotalSizeBytes();
       if (existingTotalBytes + buffer.length > maxTotalBytes) {
         throw new UnsupportedFileError(
-          `Adding this photo would exceed the ${Math.floor(maxTotalBytes / (1024 * 1024))} MB combined limit for one case's photos.`,
+          t.photoSizeLimitExceeded.replace("{maxMb}", String(Math.floor(maxTotalBytes / (1024 * 1024)))),
         );
       }
 

@@ -18,6 +18,16 @@ export function ResetPasswordForm() {
   const router = useRouter();
   const t = useTranslations("auth");
   const tAccount = useTranslations("account");
+  // Maps the stable Supabase Auth error .code (not .message, which is raw
+  // English) to a translated string — mirrors ChangePasswordForm.tsx's
+  // pattern for the same updateUser() call.
+  const ERROR_CODE_LABEL: Record<string, string> = {
+    weak_password: tAccount("passwordUpdateWeakPassword"),
+    same_password: tAccount("passwordUpdateSamePassword"),
+    over_request_rate_limit: tAccount("passwordUpdateRateLimited"),
+    session_expired: tAccount("passwordUpdateSessionExpired"),
+    user_not_found: tAccount("passwordUpdateSessionExpired"),
+  };
   const [ready, setReady] = useState(false);
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -58,7 +68,7 @@ export function ResetPasswordForm() {
     const { error } = await supabase.auth.updateUser({ password });
 
     if (error) {
-      setErrorMessage(error.message);
+      setErrorMessage((error.code && ERROR_CODE_LABEL[error.code]) ?? tAccount("passwordUpdateGenericError"));
       setStatus("error");
       return;
     }

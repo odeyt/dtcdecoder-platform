@@ -176,9 +176,10 @@ export async function validateScanFile(
   buffer: Buffer,
   filename: string,
   declaredMimeType: string,
+  t: Record<string, string>,
 ): Promise<FileValidationResult> {
   if (buffer.length === 0) {
-    return { ok: false, reason: "The uploaded file is empty." };
+    return { ok: false, reason: t.fileEmpty };
   }
 
   const extension = extensionOf(filename);
@@ -188,20 +189,16 @@ export async function validateScanFile(
   if (buffer.length > maxBytes) {
     return {
       ok: false,
-      reason: `The file exceeds the ${Math.floor(maxBytes / (1024 * 1024))} MB upload limit.`,
+      reason: t.fileTooLargeLimit.replace("{maxMb}", String(Math.floor(maxBytes / (1024 * 1024)))),
     };
   }
 
   if (!extension || BLOCKED_EXTENSIONS.has(extension) || !ALLOWED_EXTENSIONS.has(extension)) {
-    return {
-      ok: false,
-      reason:
-        "Unsupported file type. Supported formats: PDF, TXT, CSV, JSON, XML, HTML, JPG, PNG, WEBP, GIF, HEIC.",
-    };
+    return { ok: false, reason: t.unsupportedFileType };
   }
 
   if (declaredMimeType && !ALLOWED_MIME_TYPES.has(declaredMimeType.toLowerCase())) {
-    return { ok: false, reason: "Unsupported file type reported by the browser." };
+    return { ok: false, reason: t.unsupportedMimeType };
   }
 
   const signature = sniffSignature(buffer);
@@ -209,9 +206,7 @@ export async function validateScanFile(
   if (!compatible.includes(signature)) {
     return {
       ok: false,
-      reason: isImage
-        ? "This doesn't look like a valid image file. Please upload the original photo, unedited."
-        : "The file's contents don't match its extension. Please upload the original, unmodified scan report export.",
+      reason: isImage ? t.invalidImageFile : t.fileContentsMismatch,
     };
   }
 
@@ -222,16 +217,18 @@ export async function validateScanFile(
     try {
       const metadata = await sharp(buffer).metadata();
       if (!metadata.width || !metadata.height) {
-        return { ok: false, reason: "Could not read this image. Please try a different photo." };
+        return { ok: false, reason: t.imageUnreadable };
       }
       if (metadata.width > maxDimension || metadata.height > maxDimension) {
         return {
           ok: false,
-          reason: `This image's resolution (${metadata.width}×${metadata.height}) is larger than this app supports. Please use a standard camera photo, not a raw/uncompressed export.`,
+          reason: t.imageResolutionTooLarge
+            .replace("{width}", String(metadata.width))
+            .replace("{height}", String(metadata.height)),
         };
       }
     } catch {
-      return { ok: false, reason: "This image file appears to be corrupted or is not a supported format." };
+      return { ok: false, reason: t.imageCorrupted };
     }
   }
 

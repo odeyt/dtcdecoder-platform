@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { getUnusedSingleReportPurchaseCount } from "@/lib/ai-diagnostics/single-report-purchases";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
 // Lightweight, read-only credit-count check — used only by the account
 // page's bounded post-checkout poll (CreditGrantPoller) to detect when the
@@ -14,7 +15,9 @@ export async function GET() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return NextResponse.json({ error: "Sign in required." }, { status: 401 });
+    const locale = await resolveAppShellLocale();
+    const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+    return NextResponse.json({ error: t.signInRequired }, { status: 401 });
   }
 
   const count = await getUnusedSingleReportPurchaseCount(user.id);

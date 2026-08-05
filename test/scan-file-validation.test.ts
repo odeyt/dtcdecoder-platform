@@ -1,62 +1,65 @@
 import { describe, expect, it, vi } from "vitest";
 import sharp from "sharp";
 import { validateScanFile } from "@/lib/scan-diagnostics/file-validation";
+import en from "../messages/en.json";
+
+const T: Record<string, string> = en.apiErrors;
 
 describe("validateScanFile", () => {
   it("accepts a valid PDF by signature", async () => {
     const buffer = Buffer.concat([Buffer.from("%PDF-1.4\n"), Buffer.from("fake pdf body")]);
-    const result = await validateScanFile(buffer, "report.pdf", "application/pdf");
+    const result = await validateScanFile(buffer, "report.pdf", "application/pdf", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("pdf");
   });
 
   it("accepts a valid JSON export", async () => {
     const buffer = Buffer.from(JSON.stringify({ vin: "1FTFW1ET1EFA00001", dtcs: [] }));
-    const result = await validateScanFile(buffer, "scan.json", "application/json");
+    const result = await validateScanFile(buffer, "scan.json", "application/json", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("json");
   });
 
   it("accepts a plain-text scan export", async () => {
     const buffer = Buffer.from("VIN: 1FTFW1ET1EFA00001\nDTC: P0300 - Random Misfire Detected\n");
-    const result = await validateScanFile(buffer, "scan.txt", "text/plain");
+    const result = await validateScanFile(buffer, "scan.txt", "text/plain", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("txt");
   });
 
   it("rejects a text file renamed to .pdf (signature mismatch)", async () => {
     const buffer = Buffer.from("this is not actually a pdf");
-    const result = await validateScanFile(buffer, "fake.pdf", "application/pdf");
+    const result = await validateScanFile(buffer, "fake.pdf", "application/pdf", T);
     expect(result.ok).toBe(false);
   });
 
   it("rejects a file over the size limit", async () => {
     const oversized = Buffer.alloc(20 * 1024 * 1024, 0x41); // 20MB, default max is 15MB
-    const result = await validateScanFile(oversized, "big.txt", "text/plain");
+    const result = await validateScanFile(oversized, "big.txt", "text/plain", T);
     expect(result.ok).toBe(false);
     if (!result.ok) expect(result.reason).toMatch(/exceeds/i);
   });
 
   it("rejects an empty file", async () => {
-    const result = await validateScanFile(Buffer.alloc(0), "empty.txt", "text/plain");
+    const result = await validateScanFile(Buffer.alloc(0), "empty.txt", "text/plain", T);
     expect(result.ok).toBe(false);
   });
 
   it("rejects a zip file disguised as .xml", async () => {
     const zipMagic = Buffer.from([0x50, 0x4b, 0x03, 0x04, 0x00, 0x00]);
-    const result = await validateScanFile(zipMagic, "scan.xml", "application/xml");
+    const result = await validateScanFile(zipMagic, "scan.xml", "application/xml", T);
     expect(result.ok).toBe(false);
   });
 
   it("rejects an executable extension outright", async () => {
     const buffer = Buffer.from("MZ fake exe header");
-    const result = await validateScanFile(buffer, "report.exe", "application/octet-stream");
+    const result = await validateScanFile(buffer, "report.exe", "application/octet-stream", T);
     expect(result.ok).toBe(false);
   });
 
   it("rejects an unsupported extension", async () => {
     const buffer = Buffer.from("some data");
-    const result = await validateScanFile(buffer, "report.docx", "application/octet-stream");
+    const result = await validateScanFile(buffer, "report.docx", "application/octet-stream", T);
     expect(result.ok).toBe(false);
   });
 });
@@ -68,7 +71,7 @@ describe("validateScanFile — image formats", () => {
     })
       .jpeg()
       .toBuffer();
-    const result = await validateScanFile(buffer, "photo.jpg", "image/jpeg");
+    const result = await validateScanFile(buffer, "photo.jpg", "image/jpeg", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("jpg");
   });
@@ -79,7 +82,7 @@ describe("validateScanFile — image formats", () => {
     })
       .png()
       .toBuffer();
-    const result = await validateScanFile(buffer, "screenshot.png", "image/png");
+    const result = await validateScanFile(buffer, "screenshot.png", "image/png", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("png");
   });
@@ -90,7 +93,7 @@ describe("validateScanFile — image formats", () => {
     })
       .webp()
       .toBuffer();
-    const result = await validateScanFile(buffer, "photo.webp", "image/webp");
+    const result = await validateScanFile(buffer, "photo.webp", "image/webp", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("webp");
   });
@@ -101,7 +104,7 @@ describe("validateScanFile — image formats", () => {
     })
       .gif()
       .toBuffer();
-    const result = await validateScanFile(buffer, "photo.gif", "image/gif");
+    const result = await validateScanFile(buffer, "photo.gif", "image/gif", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("gif");
   });
@@ -117,7 +120,7 @@ describe("validateScanFile — image formats", () => {
       Buffer.from([0x00, 0x00, 0x00, 0x00]), // minor version
       Buffer.from("mif1heic", "latin1"), // compatible brands
     ]);
-    const result = await validateScanFile(buffer, "photo.heic", "image/heic");
+    const result = await validateScanFile(buffer, "photo.heic", "image/heic", T);
     expect(result.ok).toBe(true);
     if (result.ok) expect(result.formatHint).toBe("heic");
   });
@@ -130,13 +133,13 @@ describe("validateScanFile — image formats", () => {
       Buffer.from([0x00, 0x00, 0x00, 0x00]),
       Buffer.from("mif1avif", "latin1"),
     ]);
-    const result = await validateScanFile(buffer, "photo.heic", "image/heic");
+    const result = await validateScanFile(buffer, "photo.heic", "image/heic", T);
     expect(result.ok).toBe(false);
   });
 
   it("rejects a non-image file renamed to a photo extension", async () => {
     const buffer = Buffer.from("this is plain text, not a jpeg");
-    const result = await validateScanFile(buffer, "fake.jpg", "image/jpeg");
+    const result = await validateScanFile(buffer, "fake.jpg", "image/jpeg", T);
     expect(result.ok).toBe(false);
   });
 
@@ -148,7 +151,7 @@ describe("validateScanFile — image formats", () => {
       })
         .jpeg()
         .toBuffer();
-      const result = await validateScanFile(buffer, "huge.jpg", "image/jpeg");
+      const result = await validateScanFile(buffer, "huge.jpg", "image/jpeg", T);
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.reason).toMatch(/resolution/i);
     } finally {
@@ -165,7 +168,7 @@ describe("validateScanFile — image formats", () => {
         .jpeg()
         .toBuffer();
       expect(buffer.length).toBeGreaterThan(100);
-      const result = await validateScanFile(buffer, "big-photo.jpg", "image/jpeg");
+      const result = await validateScanFile(buffer, "big-photo.jpg", "image/jpeg", T);
       expect(result.ok).toBe(false);
       if (!result.ok) expect(result.reason).toMatch(/exceeds/i);
     } finally {
