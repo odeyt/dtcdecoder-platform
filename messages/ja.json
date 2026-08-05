@@ -143,6 +143,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "年間 — ${amount} 節約",
+    "subscriptionSectionHeading": "または、継続利用にはサブスクリプションを：",
     "billingIntervalLabel": "Billing interval",
     "monthly": "月間",
     "freeTitle": "無料",

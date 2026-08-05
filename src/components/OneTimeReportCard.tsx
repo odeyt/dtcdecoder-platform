@@ -9,11 +9,12 @@ import { formatPrice } from "@/lib/format";
 import { PROFESSIONAL_REPORT_ONE_TIME } from "@/lib/pricing";
 
 // The "Professional Diagnostic Report" one-time purchase — a standalone,
-// no-subscription entry point shown alongside (not nested inside) the
-// subscription grid in PricingPlans.tsx. Deliberately rendered as a
-// direct sibling of the grid, at the same outer width as
-// `.container-app` provides — no independent max-w-* / mx-auto wrapper —
-// so its left/right edges line up with the grid above it. See
+// no-subscription entry point rendered in PricingPlans.tsx BEFORE the
+// subscription grid, not nested inside it. A single $6.99 purchase is a
+// lower-commitment first ask than a recurring plan, so it leads the page;
+// the subscription grid follows as the "or subscribe" option. Shares the
+// grid's own outer width (no independent max-w-* / mx-auto wrapper) so its
+// left/right edges line up with the grid below it. See
 // docs/billing/ONE_TIME_PROFESSIONAL_REPORT.md.
 //
 // Checkout intent survives a sign-in round trip: an anonymous visitor is
@@ -87,7 +88,7 @@ export function OneTimeReportCard({ signedIn }: { signedIn: boolean }) {
   return (
     <div
       data-testid="one-time-report-card"
-      className="glass-panel mt-10 rounded-[var(--radius-xl)] border p-6 sm:p-8 md:grid md:grid-cols-[1.3fr_1fr] md:items-center md:gap-10"
+      className="glass-panel rounded-[var(--radius-xl)] border p-6 sm:p-8 md:grid md:grid-cols-[1.3fr_1fr] md:items-center md:gap-10"
       style={{ borderColor: "var(--border-subtle)", boxShadow: "var(--shadow-ambient)" }}
     >
       <div>

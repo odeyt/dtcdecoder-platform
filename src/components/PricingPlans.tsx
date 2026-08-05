@@ -54,10 +54,20 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
 
   return (
     <div data-testid="pricing-page">
+      {/* One-time report leads the page — a $6.99 single purchase is a much
+          lower-commitment first ask than a recurring subscription, so it's
+          shown before the plans grid rather than after it. See
+          docs/billing/ONE_TIME_PROFESSIONAL_REPORT.md. */}
+      <OneTimeReportCard signedIn={signedIn} />
+
+      <p className="mt-10 text-center text-sm font-semibold text-[var(--text-secondary)]">
+        {t("subscriptionSectionHeading")}
+      </p>
+
       <div
         role="group"
         aria-label={t("billingIntervalLabel")}
-        className="mx-auto flex w-fit rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-1"
+        className="mx-auto mt-4 flex w-fit rounded-[var(--radius-md)] border border-[var(--border-subtle)] p-1"
       >
         <button
           type="button"
@@ -131,14 +141,6 @@ export function PricingPlans({ signedIn }: { signedIn: boolean }) {
       </div>
 
       <p className="mt-6 text-center text-xs text-[var(--text-muted)]">{t("fairUseNote")}</p>
-
-      {/* Standalone pay-per-report entry point — unlike the plans above,
-          reachable by anyone including an anonymous or Free-tier visitor,
-          not tied to a subscription. Shares the grid's own outer width
-          (no independent max-width or centered wrapper) so its edges line
-          up with the grid above. See PROFESSIONAL_REPORT_ONE_TIME in
-          src/lib/pricing.ts and single_report_purchases (migration 0037). */}
-      <OneTimeReportCard signedIn={signedIn} />
     </div>
   );
 }

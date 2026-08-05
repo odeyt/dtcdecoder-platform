@@ -143,6 +143,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "年付——省 ${amount}",
+    "subscriptionSectionHeading": "或订阅以获得持续使用权限：",
     "billingIntervalLabel": "Billing interval",
     "monthly": "月付",
     "freeTitle": "免费",

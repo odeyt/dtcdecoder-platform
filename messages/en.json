@@ -341,6 +341,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "Yearly — Save up to ${amount}",
+    "subscriptionSectionHeading": "Or subscribe for ongoing access:",
     "billingIntervalLabel": "Billing interval",
     "monthly": "Monthly",
     "freeTitle": "Free",

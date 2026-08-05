@@ -143,6 +143,7 @@
     "planPro": "Pro Technician",
     "planWorkshop": "Workshop",
     "yearlySave": "รายปี — ประหยัด ${amount}",
+    "subscriptionSectionHeading": "หรือสมัครสมาชิกเพื่อการเข้าถึงต่อเนื่อง:",
     "billingIntervalLabel": "Billing interval",
     "monthly": "รายเดือน",
     "freeTitle": "ฟรี",
