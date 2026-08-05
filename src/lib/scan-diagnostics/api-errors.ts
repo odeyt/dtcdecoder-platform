@@ -4,6 +4,7 @@
 // the client only ever sees the safe, typed message below.
 import "server-only";
 import { NextResponse } from "next/server";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { AiDiagnosticLimitExceededError } from "@/lib/ai-diagnostics/usage";
 import { CostCeilingExceededError } from "@/lib/ai-diagnostics/cost";
 import { DiagnosticEngineLimitExceededError } from "@/lib/diagnostic-engine/usage";
@@ -106,9 +107,16 @@ export class InvalidReportIndexError extends Error {
 // regeneration is already used. The existing report is never touched when
 // this is thrown — see analyze.ts's ordering (consume-then-transition).
 export class RegenerationLimitExceededError extends Error {
-  constructor(message = "This report has already been regenerated once. Regeneration is limited to one per purchased report.") {
-    super(message);
+  readonly reasonCode: "no_active_unlock" | "already_regenerated";
+
+  constructor(reasonCode: "no_active_unlock" | "already_regenerated" = "already_regenerated") {
+    super(
+      reasonCode === "no_active_unlock"
+        ? "Report regeneration is only available for a purchased Professional Diagnostic Report."
+        : "This report has already been regenerated once. Regeneration is limited to one per purchased report.",
+    );
     this.name = "RegenerationLimitExceededError";
+    this.reasonCode = reasonCode;
   }
 }
 
@@ -149,11 +157,24 @@ export class DuplicateVinError extends Error {
   }
 }
 
-export function toSafeErrorResponse(err: unknown, context: string): NextResponse {
+// Locale-aware: every STATIC (non-data-dependent) error message returned
+// to the client is translated here, at the single point every
+// /api/scan-diagnostics and /api/diagnostic-engine route funnels through —
+// never at the throw site, so callers never need locale access themselves.
+// Messages that carry caller-supplied, data-dependent text (Unsupported
+// FileError, InvalidCaseStatusError, InvalidReportIndexError, and the
+// AiDiagnosticLimitExceededError/DiagnosticEngineLimitExceededError family,
+// whose text embeds a numeric plan limit) are intentionally left as
+// err.message — translating those needs the underlying numeric/contextual
+// data threaded through as a separate field, not just a message swap.
+export async function toSafeErrorResponse(err: unknown, context: string): Promise<NextResponse> {
   console.error(`[scan-diagnostics] ${context} failed`, err);
 
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
   if (err instanceof ScanCaseNotFoundError) {
-    return NextResponse.json({ error: err.message }, { status: 404 });
+    return NextResponse.json({ error: t.caseNotFound }, { status: 404 });
   }
   if (err instanceof UnsupportedFileError) {
     return NextResponse.json({ error: err.message }, { status: 400 });
@@ -184,11 +205,11 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
     return NextResponse.json({ error: err.message, retryable: true }, { status: 409 });
   }
   if (err instanceof DiagnosticEngineBudgetExceededError || err instanceof DiagnosticEngineKillSwitchError) {
-    // err.message is already the safe, generic BUDGET_EXHAUSTED_USER_MESSAGE
-    // — never the underlying $ figures or which dimension blocked the call
+    // Never the underlying $ figures or which dimension blocked the call
     // (those are in err.reasons/err.blockedScope, logged server-side above,
-    // never serialized into this response).
-    return NextResponse.json({ error: err.message, retryable: true }, { status: 503 });
+    // never serialized into this response) — just the safe, generic,
+    // translated budget-exhausted message.
+    return NextResponse.json({ error: t.budgetExhausted, retryable: true }, { status: 503 });
   }
   if (err instanceof DiagnosticEngineLimitExceededError) {
     return NextResponse.json(
@@ -197,26 +218,27 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
     );
   }
   if (err instanceof CostCeilingExceededError) {
-    return NextResponse.json(
-      { error: "This case is too large to analyze right now. Try a smaller scan report or fewer symptoms." },
-      { status: 413 },
-    );
+    return NextResponse.json({ error: t.caseTooLarge }, { status: 413 });
   }
   if (err instanceof InvalidCaseStatusError) {
     return NextResponse.json({ error: err.message }, { status: 409 });
   }
   if (err instanceof FeatureDisabledError) {
-    return NextResponse.json({ error: err.message }, { status: 404 });
+    return NextResponse.json({ error: t.featureDisabled }, { status: 404 });
   }
   if (err instanceof InvalidReportIndexError) {
     return NextResponse.json({ error: err.message }, { status: 400 });
   }
-  if (err instanceof RegenerationLimitExceededError || err instanceof FollowUpLimitExceededError) {
-    return NextResponse.json({ error: err.message, code: err.name, retryable: false }, { status: 409 });
+  if (err instanceof RegenerationLimitExceededError) {
+    const message = err.reasonCode === "no_active_unlock" ? t.regenerationRequiresPurchase : t.regenerationAlreadyUsed;
+    return NextResponse.json({ error: message, code: err.name, retryable: false }, { status: 409 });
+  }
+  if (err instanceof FollowUpLimitExceededError) {
+    return NextResponse.json({ error: t.followUpLimitReached, code: err.name, retryable: false }, { status: 409 });
   }
   if (err instanceof DuplicateVinError) {
     return NextResponse.json(
-      { error: err.message, code: "DUPLICATE_VIN", vin: err.vin, existingCases: err.existingCases },
+      { error: t.duplicateVin, code: "DUPLICATE_VIN", vin: err.vin, existingCases: err.existingCases },
       { status: 409 },
     );
   }
@@ -225,19 +247,16 @@ export function toSafeErrorResponse(err: unknown, context: string): NextResponse
     // existing frontend caller reads; `code`/`retryable` are additive so
     // nothing that only reads `.error` breaks.
     return NextResponse.json(
-      { case: err.scanCase, error: err.message, code: err.code, retryable: err.retryable },
+      { case: err.scanCase, error: t.analysisFailedRetry, code: err.code, retryable: err.retryable },
       { status: 502 },
     );
   }
   if (err instanceof AiResponseValidationError) {
     return NextResponse.json(
-      { error: "The diagnostic response could not be validated.", code: err.code, retryable: err.retryable },
+      { error: t.responseValidationFailed, code: err.code, retryable: err.retryable },
       { status: 502 },
     );
   }
 
-  return NextResponse.json(
-    { error: "Something went wrong processing your request. Please try again.", retryable: false },
-    { status: 500 },
-  );
+  return NextResponse.json({ error: t.genericError, retryable: false }, { status: 500 });
 }

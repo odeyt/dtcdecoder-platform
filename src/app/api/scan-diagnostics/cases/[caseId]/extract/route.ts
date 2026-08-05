@@ -10,6 +10,7 @@ import { runExtraction } from "@/lib/scan-diagnostics/parsers/registry";
 import { extractFromImages, SCAN_IMAGE_EXTRACTION_MODEL_ID } from "@/lib/scan-diagnostics/ai/vision-extraction";
 import { persistExtraction } from "@/lib/scan-diagnostics/extraction";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { isImageScanFileFormat } from "@/lib/types";
 import type { ScanFileFormat } from "@/lib/types";
 
@@ -19,6 +20,8 @@ interface RouteParams {
 
 export async function POST(_request: NextRequest, { params }: RouteParams) {
   const { caseId } = await params;
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
 
   try {
     if (!env.scanDiagnosticsEnabled()) throw new FeatureDisabledError();
@@ -29,7 +32,7 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
     } = await supabase.auth.getUser();
 
     if (!user) {
-      return NextResponse.json({ error: "Sign in to run extraction." }, { status: 401 });
+      return NextResponse.json({ error: t.signInRequiredExtraction }, { status: 401 });
     }
 
     await getCaseForOwner(user.id, caseId);
@@ -51,9 +54,9 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
 
     if (!fileRows || fileRows.length === 0) {
       await transitionCaseStatus(caseId, "uploaded", "failed", {
-        error_message: "No uploaded file found for this case.",
+        error_message: "NO_UPLOADED_FILE",
       }).catch(() => undefined);
-      return NextResponse.json({ error: "No uploaded file found for this case." }, { status: 400 });
+      return NextResponse.json({ error: t.noUploadedFile }, { status: 400 });
     }
 
     const isPhotoUpload = fileRows.every((f) => isImageScanFileFormat(f.detected_format as ScanFileFormat | null));
@@ -73,7 +76,7 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
             success: false,
             error: {
               code: "UPGRADE_REQUIRED",
-              message: "Photo/screenshot upload is available on Pro Technician and Workshop plans.",
+              message: t.photoUploadUpgradeRequired,
               upgradeRequired: true,
             },
           },
@@ -127,9 +130,9 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
     } catch (err) {
       console.error("[scan-diagnostics] extraction failed", err);
       const scanCase = await transitionCaseStatus(caseId, "extracting", "failed", {
-        error_message: "Extraction failed. Please try again or contact support.",
+        error_message: "EXTRACTION_FAILED",
       });
-      return NextResponse.json({ case: scanCase, error: "Extraction failed." }, { status: 502 });
+      return NextResponse.json({ case: scanCase, error: t.extractionFailed }, { status: 502 });
     }
   } catch (err) {
     return toSafeErrorResponse(err, "extract case");

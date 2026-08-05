@@ -18,6 +18,14 @@ vi.mock("@/lib/supabase/server", () => ({
   }),
 }));
 
+// toSafeErrorResponse resolves the caller's locale (Supabase auth + the
+// interface-locale cookie) before picking a translated error message —
+// next/headers's cookies() throws outside a real request scope, so it needs
+// a mock here same as every other route test that can hit an error path.
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+}));
+
 vi.mock("@/lib/supabase/admin", async () => {
   const { createFakeSupabase } = await import("./mocks/fake-supabase");
   const fake = createFakeSupabase();

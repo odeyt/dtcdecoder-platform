@@ -1,10 +1,24 @@
-import { describe, expect, it } from "vitest";
-import {
+import { describe, expect, it, vi } from "vitest";
+import type { ScanCase } from "@/lib/types";
+
+// toSafeErrorResponse resolves the caller's locale via resolveAppShellLocale
+// (Supabase auth + the interface-locale cookie) before picking a translated
+// message — signed-out, no cookie, so it resolves to DEFAULT_LOCALE ("en"),
+// letting these tests assert the same English strings as before that change.
+vi.mock("@/lib/supabase/server", () => ({
+  createClient: async () => ({
+    auth: { getUser: async () => ({ data: { user: null } }) },
+  }),
+}));
+vi.mock("next/headers", () => ({
+  cookies: async () => ({ get: () => undefined }),
+}));
+
+const {
   AiResponseValidationError,
   ScanAnalysisFailedError,
   toSafeErrorResponse,
-} from "@/lib/scan-diagnostics/api-errors";
-import type { ScanCase } from "@/lib/types";
+} = await import("@/lib/scan-diagnostics/api-errors");
 
 const FAKE_CASE = { id: "case-1", status: "failed" } as ScanCase;
 
@@ -13,7 +27,7 @@ describe("toSafeErrorResponse — controlled error objects", () => {
     const err = new AiResponseValidationError(
       "Anthropic diagnostic provider returned an invalid structured output: <internal zod error detail>",
     );
-    const res = toSafeErrorResponse(err, "test context");
+    const res = await toSafeErrorResponse(err, "test context");
     expect(res.status).toBe(502);
 
     const body = await res.json();
@@ -27,7 +41,7 @@ describe("toSafeErrorResponse — controlled error objects", () => {
 
   it("maps ScanAnalysisFailedError to a 502 carrying the failed case and default retryable code", async () => {
     const err = new ScanAnalysisFailedError(FAKE_CASE);
-    const res = toSafeErrorResponse(err, "test context");
+    const res = await toSafeErrorResponse(err, "test context");
     expect(res.status).toBe(502);
 
     const body = await res.json();
@@ -41,14 +55,14 @@ describe("toSafeErrorResponse — controlled error objects", () => {
 
   it("forwards AiResponseValidationError's code/retryable through ScanAnalysisFailedError when explicitly passed", async () => {
     const err = new ScanAnalysisFailedError(FAKE_CASE, { code: "AI_RESPONSE_VALIDATION_FAILED", retryable: true });
-    const res = toSafeErrorResponse(err, "test context");
+    const res = await toSafeErrorResponse(err, "test context");
     const body = await res.json();
     expect(body.code).toBe("AI_RESPONSE_VALIDATION_FAILED");
   });
 
   it("never leaks a raw unexpected error's message or stack to the client", async () => {
     const err = new Error("Postgres connection string: postgres://user:secret@host/db");
-    const res = toSafeErrorResponse(err, "test context");
+    const res = await toSafeErrorResponse(err, "test context");
     expect(res.status).toBe(500);
 
     const body = await res.json();

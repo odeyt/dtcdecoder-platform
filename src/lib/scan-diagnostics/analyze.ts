@@ -270,9 +270,7 @@ export async function runScanAnalysis(
     // website offline" requirement, this only ever fails THIS case's AI
     // generation, never the app itself.
     const failedCase = await transitionCaseStatus(caseId, "analyzing", "failed", {
-      error_message: isBudgetHardStop
-        ? "AI diagnostic generation is temporarily paused. Basic DTC lookup remains available."
-        : "AI analysis failed. Please try again.",
+      error_message: isBudgetHardStop ? "AI_BUDGET_PAUSED" : "AI_ANALYSIS_FAILED",
     });
 
     throw new ScanAnalysisFailedError(
@@ -371,9 +369,7 @@ export async function regenerateScanAnalysis(
 ): Promise<ScanAnalysisResult> {
   const unlock = await getActiveSingleReportUnlock(caseId);
   if (!unlock) {
-    throw new RegenerationLimitExceededError(
-      "Report regeneration is only available for a purchased Professional Diagnostic Report.",
-    );
+    throw new RegenerationLimitExceededError("no_active_unlock");
   }
 
   const consumed = await consumeReportRegeneration(caseId);

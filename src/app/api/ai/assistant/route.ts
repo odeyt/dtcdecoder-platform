@@ -1,6 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { findGroundingDtcCodes } from "@/lib/ai/grounding";
 import { recordSearchHistory, updateSearchHistoryAiResponse } from "@/lib/search-history";
@@ -45,6 +46,9 @@ const requestSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
   const supabase = await createClient();
   const {
     data: { user },
@@ -52,7 +56,7 @@ export async function POST(request: NextRequest) {
 
   if (!user) {
     return NextResponse.json(
-      { error: "Sign in to use the AI diagnostic assistant" },
+      { error: t.signInRequiredAiAssistant },
       { status: 401 },
     );
   }
@@ -61,12 +65,12 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
   }
 
   const parsed = requestSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequest }, { status: 400 });
   }
 
   const plan = await getEffectivePlan(user.id, user.email ?? null);
@@ -81,7 +85,7 @@ export async function POST(request: NextRequest) {
     try {
       await getCaseForOwner(user.id, parsed.data.caseId);
     } catch {
-      return NextResponse.json({ error: "Case not found." }, { status: 404 });
+      return NextResponse.json({ error: t.caseNotFound }, { status: 404 });
     }
     const unlock = await getActiveSingleReportUnlock(parsed.data.caseId);
     if (unlock) {
@@ -90,7 +94,7 @@ export async function POST(request: NextRequest) {
         await recordEvent("one_time_report_followup_limit_reached", { userId: user.id });
         return NextResponse.json(
           {
-            error: "You've used all 5 included follow-up questions for this report.",
+            error: t.followUpLimitReached,
             code: "FollowUpLimitExceededError",
           },
           { status: 409 },
@@ -134,14 +138,14 @@ export async function POST(request: NextRequest) {
   if (requestedLocale && requestedLocale !== "en") {
     if (!canSelectAiReportLanguage(plan)) {
       return NextResponse.json(
-        { error: "Upgrade to Pro or Workshop to get AI answers in another language." },
+        { error: t.aiAssistantLanguageUpgradeRequired },
         { status: 403 },
       );
     }
     const enabled = await isAiOutputEnabledLocale(requestedLocale);
     if (!enabled) {
       return NextResponse.json(
-        { error: "That language isn't available for AI answers yet." },
+        { error: t.aiAssistantLanguageUnavailable },
         { status: 400 },
       );
     }
@@ -194,7 +198,7 @@ export async function POST(request: NextRequest) {
         estimatedTotalCostMicros: costEstimate.totalCostMicros,
       });
       return NextResponse.json(
-        { error: "This request is too large to process right now. Try a shorter question." },
+        { error: t.aiAssistantRequestTooLarge },
         { status: 413 },
       );
     }

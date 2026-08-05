@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
 import { createSubscriptionCheckout } from "@/lib/payments/creem";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { env } from "@/lib/env";
 
 // Guest checkout, no password accounts (per CLAUDE.md): a signed-in user
@@ -18,9 +19,12 @@ const subscribeSchema = z.object({
 });
 
 export async function POST(request: NextRequest) {
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
   if (!env.billingEnabled()) {
     return NextResponse.json(
-      { error: "Subscriptions are not available yet" },
+      { error: t.subscriptionsNotAvailable },
       { status: 503 },
     );
   }
@@ -34,12 +38,12 @@ export async function POST(request: NextRequest) {
   try {
     body = await request.json();
   } catch {
-    return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequestBody }, { status: 400 });
   }
 
   const parsed = subscribeSchema.safeParse(body);
   if (!parsed.success) {
-    return NextResponse.json({ error: "Invalid request" }, { status: 400 });
+    return NextResponse.json({ error: t.invalidRequest }, { status: 400 });
   }
 
   // Signed-in session's email always wins over a client-supplied one (never
@@ -47,7 +51,7 @@ export async function POST(request: NextRequest) {
   // for a genuinely signed-out guest checkout.
   const email = user?.email ?? parsed.data.email;
   if (!email) {
-    return NextResponse.json({ error: "Enter your email to continue." }, { status: 400 });
+    return NextResponse.json({ error: t.enterEmailToContinue }, { status: 400 });
   }
 
   try {
@@ -61,7 +65,7 @@ export async function POST(request: NextRequest) {
   } catch (err) {
     console.error("Subscription checkout creation failed", err);
     return NextResponse.json(
-      { error: "Unable to start checkout right now" },
+      { error: t.unableToStartCheckout },
       { status: 500 },
     );
   }

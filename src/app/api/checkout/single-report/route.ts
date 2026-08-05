@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createSingleReportCheckout, isSingleReportCheckoutConfigured } from "@/lib/payments/creem";
+import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { env } from "@/lib/env";
 import { recordEvent } from "@/lib/analytics/events";
 
@@ -16,8 +17,11 @@ import { recordEvent } from "@/lib/analytics/events";
 // server-side from the trusted product key baked into this route, never
 // from anything the client could submit.
 export async function POST() {
+  const locale = await resolveAppShellLocale();
+  const t: Record<string, string> = (await getAppShellMessages(locale)).apiErrors;
+
   if (!env.billingEnabled()) {
-    return NextResponse.json({ error: "Checkout is not available yet" }, { status: 503 });
+    return NextResponse.json({ error: t.checkoutNotAvailable }, { status: 503 });
   }
 
   const supabase = await createClient();
@@ -26,7 +30,7 @@ export async function POST() {
   } = await supabase.auth.getUser();
 
   if (!user?.email) {
-    return NextResponse.json({ error: "Sign in to buy a professional report." }, { status: 401 });
+    return NextResponse.json({ error: t.signInRequiredSingleReport }, { status: 401 });
   }
 
   // Explicit "not available yet" rather than letting the request fail deep
@@ -34,7 +38,7 @@ export async function POST() {
   if (!isSingleReportCheckoutConfigured()) {
     console.error("Professional Diagnostic Report checkout requested but CREEM_PROFESSIONAL_REPORT_PRODUCT_ID is not configured");
     return NextResponse.json(
-      { error: "One-time checkout is temporarily unavailable. Please try again shortly." },
+      { error: t.singleReportCheckoutUnavailable },
       { status: 503 },
     );
   }
@@ -50,7 +54,7 @@ export async function POST() {
     console.error("Professional Diagnostic Report checkout creation failed", err);
     await recordEvent("one_time_report_checkout_failed", { userId: user.id });
     return NextResponse.json(
-      { error: "One-time checkout is temporarily unavailable. Please try again shortly." },
+      { error: t.singleReportCheckoutUnavailable },
       { status: 500 },
     );
   }

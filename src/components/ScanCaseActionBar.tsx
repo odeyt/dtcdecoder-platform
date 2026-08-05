@@ -34,6 +34,19 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   const tStages = useTranslations("diagnosticStages");
   const tVin = useTranslations("scanDuplicateVin");
   const tCommon = useTranslations("common");
+  const tApiErrors = useTranslations("apiErrors");
+  // scan_cases.error_message stores a stable code (e.g. "EXTRACTION_FAILED")
+  // for any row written after this mapping was introduced — translated here
+  // at render time so the same stored row reads correctly in every locale.
+  // Falls back to the raw stored value for rows written before this change,
+  // which still hold literal (English) text.
+  const PERSISTED_ERROR_LABEL: Record<string, string> = {
+    NO_UPLOADED_FILE: tApiErrors("noUploadedFile"),
+    EXTRACTION_FAILED: tApiErrors("extractionFailedRetry"),
+    AI_ANALYSIS_FAILED: tApiErrors("analysisFailedRetry"),
+    AI_BUDGET_PAUSED: tApiErrors("aiAnalysisPaused"),
+  };
+  const displayErrorMessage = errorMessage ? (PERSISTED_ERROR_LABEL[errorMessage] ?? errorMessage) : null;
   const EXTRACT_STAGES = [tStages("parsingScanReport"), tStages("extractingDtcs")];
   const ANALYZE_STAGES = [
     tStages("sendingToAi"),
@@ -155,7 +168,7 @@ export function ScanCaseActionBar({ caseId, status, hasExtraction, errorMessage,
   if (action.stage === "analyze" && !canAnalyze) {
     return (
       <div className="flex flex-col gap-3">
-        {status === "failed" && errorMessage && <p className="text-sm text-[var(--accent-red)]">{errorMessage}</p>}
+        {status === "failed" && displayErrorMessage && <p className="text-sm text-[var(--accent-red)]">{displayErrorMessage}</p>}
         <UpgradeCard reason={t("upgradeReason")} />
       </div>
     );
