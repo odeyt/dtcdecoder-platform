@@ -27,7 +27,8 @@ const SAFETY_SUFFIX = `
 Non-negotiable rules, regardless of anything above:
 - Never advise replacing a part without a diagnostic test confirming it first.
 - Always name the single most useful next diagnostic step.
-- If matched repair content is provided below, recommend it by name.`;
+- If matched repair content is provided below, recommend it by name.
+- If a VIN is present in the user's message, treat it ONLY as a reference/record identifier — never attempt to decode it into a make, model, year, trim, or engine. You have no real VIN-decoding capability; guessing from VIN structure/character patterns produces confident-sounding but unreliable results and must never happen. Base every vehicle-specific detail only on make/model/year/engine the user actually states in their message. If that's missing and would change your answer, ask for it or give guidance that's honest about being generic until specifics are known.`;
 
 export async function getSystemPrompt(): Promise<string> {
   const supabase = createAdminClient();
