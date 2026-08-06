@@ -10,6 +10,8 @@ interface HistoryEntry {
   query: string;
   created_at: string;
   dtc_code: { code: string; title: string; make: string | null; slug: string } | null;
+  ai_canonical_response_en: string | null;
+  ai_translated_response: string | null;
 }
 
 const secondaryButtonClass =
@@ -82,6 +84,12 @@ function HistoryRow({
   const [draft, setDraft] = useState(entry.query);
   const [busy, setBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const [viewOpen, setViewOpen] = useState(false);
+
+  // Prefer the translated answer (what the user actually saw at the time)
+  // over the canonical English one — falls back to English only when no
+  // translation was generated (outputLocale was English for that request).
+  const savedAnswer = entry.ai_translated_response ?? entry.ai_canonical_response_en;
 
   function startEditing() {
     setDraft(entry.query);
@@ -191,12 +199,23 @@ function HistoryRow({
 
       {mode === "view" && (
         <div className="mt-3 flex gap-2">
+          {savedAnswer && (
+            <button type="button" onClick={() => setViewOpen((open) => !open)} className={secondaryButtonClass}>
+              {viewOpen ? t("hide") : t("view")}
+            </button>
+          )}
           <button type="button" onClick={startEditing} className={secondaryButtonClass}>
             {t("edit")}
           </button>
           <button type="button" onClick={() => setMode("confirmDelete")} className={secondaryButtonClass}>
             {t("delete")}
           </button>
+        </div>
+      )}
+
+      {mode === "view" && viewOpen && savedAnswer && (
+        <div className="mt-3 rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] p-4">
+          <p className="text-sm whitespace-pre-wrap text-[var(--text-primary)]">{savedAnswer}</p>
         </div>
       )}
 

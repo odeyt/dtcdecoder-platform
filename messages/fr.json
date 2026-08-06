@@ -439,7 +439,9 @@
     "deleting": "Suppression…",
     "updateFailed": "Impossible d'enregistrer vos modifications. Réessayez.",
     "deleteFailed": "Impossible de supprimer cette entrée. Réessayez.",
-    "queryRequired": "Saisissez du texte avant d'enregistrer."
+    "queryRequired": "Saisissez du texte avant d'enregistrer.",
+    "view": "Voir",
+    "hide": "Masquer"
   },
   "scanReport": {
     "eyebrow": "Rapport de Diagnostic Professionnel",

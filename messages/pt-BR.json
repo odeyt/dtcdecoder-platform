@@ -439,7 +439,9 @@
     "deleting": "Excluindo…",
     "updateFailed": "Não foi possível salvar suas alterações. Tente novamente.",
     "deleteFailed": "Não foi possível excluir este item. Tente novamente.",
-    "queryRequired": "Digite algum texto antes de salvar."
+    "queryRequired": "Digite algum texto antes de salvar.",
+    "view": "Ver",
+    "hide": "Ocultar"
   },
   "scanReport": {
     "eyebrow": "Relatório de Diagnóstico Profissional",

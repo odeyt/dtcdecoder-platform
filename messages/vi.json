@@ -439,7 +439,9 @@
     "deleting": "Đang xóa…",
     "updateFailed": "Không thể lưu thay đổi của bạn. Hãy thử lại.",
     "deleteFailed": "Không thể xóa mục này. Hãy thử lại.",
-    "queryRequired": "Nhập nội dung trước khi lưu."
+    "queryRequired": "Nhập nội dung trước khi lưu.",
+    "view": "Xem",
+    "hide": "Ẩn"
   },
   "scanReport": {
     "eyebrow": "Báo cáo Chẩn đoán Chuyên nghiệp",

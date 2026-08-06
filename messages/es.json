@@ -763,7 +763,9 @@
     "deleting": "Eliminando…",
     "updateFailed": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
     "deleteFailed": "No se pudo eliminar esta entrada. Inténtalo de nuevo.",
-    "queryRequired": "Escribe algo de texto antes de guardar."
+    "queryRequired": "Escribe algo de texto antes de guardar.",
+    "view": "Ver",
+    "hide": "Ocultar"
   },
   "scanReport": {
     "eyebrow": "Informe de Diagnóstico Profesional",

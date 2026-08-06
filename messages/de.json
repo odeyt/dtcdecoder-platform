@@ -439,7 +439,9 @@
     "deleting": "Wird gelöscht…",
     "updateFailed": "Änderungen konnten nicht gespeichert werden. Versuche es erneut.",
     "deleteFailed": "Dieser Eintrag konnte nicht gelöscht werden. Versuche es erneut.",
-    "queryRequired": "Gib einen Text ein, bevor du speicherst."
+    "queryRequired": "Gib einen Text ein, bevor du speicherst.",
+    "view": "Ansehen",
+    "hide": "Ausblenden"
   },
   "scanReport": {
     "eyebrow": "Professioneller Diagnosebericht",

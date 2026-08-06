@@ -439,7 +439,9 @@
     "deleting": "正在删除…",
     "updateFailed": "无法保存您的更改,请重试。",
     "deleteFailed": "无法删除此记录,请重试。",
-    "queryRequired": "请先输入文本再保存。"
+    "queryRequired": "请先输入文本再保存。",
+    "view": "查看",
+    "hide": "隐藏"
   },
   "scanReport": {
     "eyebrow": "专业诊断报告",

@@ -732,7 +732,9 @@
     "deleting": "Deleting…",
     "updateFailed": "Couldn't save your changes. Try again.",
     "deleteFailed": "Couldn't delete this entry. Try again.",
-    "queryRequired": "Enter some text before saving."
+    "queryRequired": "Enter some text before saving.",
+    "view": "View",
+    "hide": "Hide"
   },
   "lockedSections": {
     "srLockedText": "Full diagnostic section locked. Upgrade to Pro Technician to view it.",
