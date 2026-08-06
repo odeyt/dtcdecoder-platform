@@ -428,7 +428,18 @@
     "empty": "まだ何もありません — コードを解読するか AI アシスタントに質問すると、検索がここに表示されます。",
     "decodeACode": "コードを解読",
     "lookup": "検索",
-    "aiQuestion": "AI 質問"
+    "aiQuestion": "AI 質問",
+    "edit": "編集",
+    "save": "保存",
+    "cancel": "キャンセル",
+    "delete": "削除",
+    "deleteConfirmPrompt": "この項目を削除しますか?元に戻せません。",
+    "deleteConfirm": "削除",
+    "saving": "保存しています…",
+    "deleting": "削除しています…",
+    "updateFailed": "変更を保存できませんでした。もう一度お試しください。",
+    "deleteFailed": "この項目を削除できませんでした。もう一度お試しください。",
+    "queryRequired": "保存する前にテキストを入力してください。"
   },
   "scanReport": {
     "eyebrow": "プロフェッショナル診断レポート",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "診断コードを特定できませんでした。代わりに「車両スキャンをインポート」をお試しください。",
     "signInRequiredVinDecode": "VINをデコードするにはサインインしてください。",
     "invalidVinFormat": "有効な17桁のVINを入力してください(英数字のみ、I、O、Qは使用不可)。",
-    "vinDecodeFailed": "現在このVINを確認できませんでした。"
+    "vinDecodeFailed": "現在このVINを確認できませんでした。",
+    "historyEntryNotFound": "履歴の項目が見つかりませんでした。"
   }
 }

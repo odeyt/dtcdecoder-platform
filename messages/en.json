@@ -721,7 +721,18 @@
     "empty": "Nothing here yet — your searches will appear once you decode a code or ask DTC Technician.",
     "decodeACode": "Decode a code",
     "lookup": "LOOKUP",
-    "aiQuestion": "DTC TECHNICIAN"
+    "aiQuestion": "DTC TECHNICIAN",
+    "edit": "Edit",
+    "save": "Save",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "deleteConfirmPrompt": "Delete this entry? This can't be undone.",
+    "deleteConfirm": "Delete",
+    "saving": "Saving…",
+    "deleting": "Deleting…",
+    "updateFailed": "Couldn't save your changes. Try again.",
+    "deleteFailed": "Couldn't delete this entry. Try again.",
+    "queryRequired": "Enter some text before saving."
   },
   "lockedSections": {
     "srLockedText": "Full diagnostic section locked. Upgrade to Pro Technician to view it.",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "No diagnostic code was identified. Try Import Vehicle Scan instead.",
     "signInRequiredVinDecode": "Sign in to decode a VIN.",
     "invalidVinFormat": "Enter a valid 17-character VIN (letters and numbers only, no I, O, or Q).",
-    "vinDecodeFailed": "Couldn't verify that VIN right now."
+    "vinDecodeFailed": "Couldn't verify that VIN right now.",
+    "historyEntryNotFound": "History entry not found."
   }
 }

@@ -752,7 +752,18 @@
     "empty": "Aún no hay nada aquí — tus búsquedas aparecerán cuando decodifiques un código o le preguntes a DTC Technician.",
     "decodeACode": "Decodificar un código",
     "lookup": "BÚSQUEDA",
-    "aiQuestion": "DTC TECHNICIAN"
+    "aiQuestion": "DTC TECHNICIAN",
+    "edit": "Editar",
+    "save": "Guardar",
+    "cancel": "Cancelar",
+    "delete": "Eliminar",
+    "deleteConfirmPrompt": "¿Eliminar esta entrada? Esta acción no se puede deshacer.",
+    "deleteConfirm": "Eliminar",
+    "saving": "Guardando…",
+    "deleting": "Eliminando…",
+    "updateFailed": "No se pudieron guardar los cambios. Inténtalo de nuevo.",
+    "deleteFailed": "No se pudo eliminar esta entrada. Inténtalo de nuevo.",
+    "queryRequired": "Escribe algo de texto antes de guardar."
   },
   "scanReport": {
     "eyebrow": "Informe de Diagnóstico Profesional",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "No se identificó ningún código de diagnóstico. Prueba con Importar escaneo del vehículo en su lugar.",
     "signInRequiredVinDecode": "Inicia sesión para decodificar un VIN.",
     "invalidVinFormat": "Ingresa un VIN válido de 17 caracteres (solo letras y números, sin I, O ni Q).",
-    "vinDecodeFailed": "No se pudo verificar ese VIN en este momento."
+    "vinDecodeFailed": "No se pudo verificar ese VIN en este momento.",
+    "historyEntryNotFound": "No se encontró la entrada del historial."
   }
 }

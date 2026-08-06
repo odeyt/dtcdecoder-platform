@@ -428,7 +428,18 @@
     "empty": "ยังไม่มีอะไรที่นี่ — การค้นหาของคุณจะปรากฏเมื่อคุณถอดรหัสหรือถาม DTC Technician",
     "decodeACode": "ถอดรหัส",
     "lookup": "ค้นหา",
-    "aiQuestion": "DTC TECHNICIAN"
+    "aiQuestion": "DTC TECHNICIAN",
+    "edit": "แก้ไข",
+    "save": "บันทึก",
+    "cancel": "ยกเลิก",
+    "delete": "ลบ",
+    "deleteConfirmPrompt": "ลบรายการนี้ใช่ไหม? การกระทำนี้ไม่สามารถย้อนกลับได้",
+    "deleteConfirm": "ลบ",
+    "saving": "กำลังบันทึก…",
+    "deleting": "กำลังลบ…",
+    "updateFailed": "ไม่สามารถบันทึกการเปลี่ยนแปลงได้ กรุณาลองอีกครั้ง",
+    "deleteFailed": "ไม่สามารถลบรายการนี้ได้ กรุณาลองอีกครั้ง",
+    "queryRequired": "กรุณากรอกข้อความก่อนบันทึก"
   },
   "scanReport": {
     "eyebrow": "รายงานการวินิจฉัยระดับมืออาชีพ",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "ไม่พบรหัสวินิจฉัยที่ระบุได้ ลองใช้การนำเข้าผลสแกนรถยนต์แทน",
     "signInRequiredVinDecode": "กรุณาเข้าสู่ระบบเพื่อถอดรหัส VIN",
     "invalidVinFormat": "กรุณากรอกหมายเลข VIN ที่ถูกต้อง 17 หลัก (ตัวอักษรและตัวเลขเท่านั้น ไม่มี I, O หรือ Q)",
-    "vinDecodeFailed": "ไม่สามารถตรวจสอบหมายเลข VIN นี้ได้ในขณะนี้"
+    "vinDecodeFailed": "ไม่สามารถตรวจสอบหมายเลข VIN นี้ได้ในขณะนี้",
+    "historyEntryNotFound": "ไม่พบรายการประวัตินี้"
   }
 }

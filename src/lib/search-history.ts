@@ -48,6 +48,50 @@ export async function updateSearchHistoryAiResponse(
   if (error) throw error;
 }
 
+// Thrown when an id doesn't match any row owned by userId — either it
+// never existed or belongs to someone else. Deliberately the same outcome
+// for both (never leaks whether an id belongs to another user).
+export class SearchHistoryNotFoundError extends Error {
+  constructor() {
+    super("History entry not found.");
+    this.name = "SearchHistoryNotFoundError";
+  }
+}
+
+// Renames only the short query label shown in the list — never touches
+// kind/dtc_code_id/ai_canonical_response_en/ai_translated_response, which
+// stay an accurate record of what was actually asked/answered.
+export async function updateSearchHistoryQuery(
+  userId: string,
+  id: string,
+  query: string,
+): Promise<SearchHistoryEntry> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("search_history")
+    .update({ query: query.slice(0, 500) })
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("*")
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new SearchHistoryNotFoundError();
+  return data as SearchHistoryEntry;
+}
+
+export async function deleteSearchHistoryEntry(userId: string, id: string): Promise<void> {
+  const supabase = createAdminClient();
+  const { data, error } = await supabase
+    .from("search_history")
+    .delete()
+    .eq("id", id)
+    .eq("user_id", userId)
+    .select("id")
+    .maybeSingle();
+  if (error) throw error;
+  if (!data) throw new SearchHistoryNotFoundError();
+}
+
 export async function listSearchHistory(
   userId: string,
   limit = 50,

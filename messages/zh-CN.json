@@ -428,7 +428,18 @@
     "empty": "这里还没有内容——当您解读代码或询问 AI 助手后，您的搜索将显示在这里。",
     "decodeACode": "解读故障码",
     "lookup": "查询",
-    "aiQuestion": "AI 提问"
+    "aiQuestion": "AI 提问",
+    "edit": "编辑",
+    "save": "保存",
+    "cancel": "取消",
+    "delete": "删除",
+    "deleteConfirmPrompt": "删除此记录?此操作无法撤销。",
+    "deleteConfirm": "删除",
+    "saving": "正在保存…",
+    "deleting": "正在删除…",
+    "updateFailed": "无法保存您的更改,请重试。",
+    "deleteFailed": "无法删除此记录,请重试。",
+    "queryRequired": "请先输入文本再保存。"
   },
   "scanReport": {
     "eyebrow": "专业诊断报告",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "未能识别诊断代码。请改为尝试导入车辆扫描。",
     "signInRequiredVinDecode": "请登录以解码 VIN。",
     "invalidVinFormat": "请输入有效的17位VIN(仅限字母和数字,不含 I、O 或 Q)。",
-    "vinDecodeFailed": "目前无法验证该 VIN。"
+    "vinDecodeFailed": "目前无法验证该 VIN。",
+    "historyEntryNotFound": "未找到该历史记录。"
   }
 }

@@ -428,7 +428,18 @@
     "empty": "Rien ici pour l'instant — vos recherches apparaîtront dès que vous décoderez un code ou interrogerez l'assistant IA.",
     "decodeACode": "Décoder un code",
     "lookup": "RECHERCHE",
-    "aiQuestion": "QUESTION IA"
+    "aiQuestion": "QUESTION IA",
+    "edit": "Modifier",
+    "save": "Enregistrer",
+    "cancel": "Annuler",
+    "delete": "Supprimer",
+    "deleteConfirmPrompt": "Supprimer cette entrée ? Cette action est irréversible.",
+    "deleteConfirm": "Supprimer",
+    "saving": "Enregistrement…",
+    "deleting": "Suppression…",
+    "updateFailed": "Impossible d'enregistrer vos modifications. Réessayez.",
+    "deleteFailed": "Impossible de supprimer cette entrée. Réessayez.",
+    "queryRequired": "Saisissez du texte avant d'enregistrer."
   },
   "scanReport": {
     "eyebrow": "Rapport de Diagnostic Professionnel",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "Aucun code de diagnostic identifié. Essayez plutôt d'importer un scan du véhicule.",
     "signInRequiredVinDecode": "Connectez-vous pour décoder un VIN.",
     "invalidVinFormat": "Saisissez un VIN valide de 17 caractères (lettres et chiffres uniquement, sans I, O ni Q).",
-    "vinDecodeFailed": "Impossible de vérifier ce VIN pour le moment."
+    "vinDecodeFailed": "Impossible de vérifier ce VIN pour le moment.",
+    "historyEntryNotFound": "Entrée d'historique introuvable."
   }
 }

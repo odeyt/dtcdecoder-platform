@@ -428,7 +428,18 @@
     "empty": "Chưa có gì ở đây — các tìm kiếm của bạn sẽ xuất hiện khi bạn giải mã một mã lỗi hoặc hỏi trợ lý AI.",
     "decodeACode": "Giải mã lỗi",
     "lookup": "TRA CỨU",
-    "aiQuestion": "CÂU HỎI AI"
+    "aiQuestion": "CÂU HỎI AI",
+    "edit": "Chỉnh sửa",
+    "save": "Lưu",
+    "cancel": "Hủy",
+    "delete": "Xóa",
+    "deleteConfirmPrompt": "Xóa mục này? Không thể hoàn tác.",
+    "deleteConfirm": "Xóa",
+    "saving": "Đang lưu…",
+    "deleting": "Đang xóa…",
+    "updateFailed": "Không thể lưu thay đổi của bạn. Hãy thử lại.",
+    "deleteFailed": "Không thể xóa mục này. Hãy thử lại.",
+    "queryRequired": "Nhập nội dung trước khi lưu."
   },
   "scanReport": {
     "eyebrow": "Báo cáo Chẩn đoán Chuyên nghiệp",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "Không xác định được mã chẩn đoán. Hãy thử dùng Nhập bản quét xe thay thế.",
     "signInRequiredVinDecode": "Đăng nhập để giải mã số VIN.",
     "invalidVinFormat": "Nhập số VIN hợp lệ gồm 17 ký tự (chỉ chữ cái và số, không có I, O hoặc Q).",
-    "vinDecodeFailed": "Không thể xác minh số VIN này ngay bây giờ."
+    "vinDecodeFailed": "Không thể xác minh số VIN này ngay bây giờ.",
+    "historyEntryNotFound": "Không tìm thấy mục lịch sử này."
   }
 }

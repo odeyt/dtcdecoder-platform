@@ -428,7 +428,18 @@
     "empty": "Hier ist noch nichts — Ihre Suchen erscheinen, sobald Sie einen Code entschlüsseln oder den KI-Assistenten fragen.",
     "decodeACode": "Code entschlüsseln",
     "lookup": "SUCHE",
-    "aiQuestion": "KI-FRAGE"
+    "aiQuestion": "KI-FRAGE",
+    "edit": "Bearbeiten",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
+    "deleteConfirmPrompt": "Diesen Eintrag löschen? Das kann nicht rückgängig gemacht werden.",
+    "deleteConfirm": "Löschen",
+    "saving": "Wird gespeichert…",
+    "deleting": "Wird gelöscht…",
+    "updateFailed": "Änderungen konnten nicht gespeichert werden. Versuche es erneut.",
+    "deleteFailed": "Dieser Eintrag konnte nicht gelöscht werden. Versuche es erneut.",
+    "queryRequired": "Gib einen Text ein, bevor du speicherst."
   },
   "scanReport": {
     "eyebrow": "Professioneller Diagnosebericht",
@@ -1171,6 +1182,7 @@
     "noDtcCodeIdentified": "Es wurde kein Diagnosecode erkannt. Versuche stattdessen „Fahrzeug-Scan importieren“.",
     "signInRequiredVinDecode": "Melde dich an, um eine VIN zu decodieren.",
     "invalidVinFormat": "Gib eine gültige 17-stellige VIN ein (nur Buchstaben und Zahlen, kein I, O oder Q).",
-    "vinDecodeFailed": "Diese VIN konnte gerade nicht überprüft werden."
+    "vinDecodeFailed": "Diese VIN konnte gerade nicht überprüft werden.",
+    "historyEntryNotFound": "Verlaufseintrag nicht gefunden."
   }
 }
