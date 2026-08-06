@@ -55,7 +55,7 @@
     "videoBody": "모든 주요 고장 코드에 대해 분해부터 수리까지의 전체 동영상을 제공합니다.",
     "watchOnYoutube": "YouTube에서 보기",
     "pricingHeading": "무료로 시작하세요. 필요할 때 훨씬 더 많이.",
-    "pricingBody": "Pro Technician 및 Workshop 요금제는 훨씬 큰 월간 AI 사용량을 잠금 해제합니다 — 연간 요금제에서 $30 절약.",
+    "pricingBody": "Pro Technician 및 Workshop 요금제는 전체 전문 진단 리포트를 제공합니다 — 연간 요금제로 절약하세요.",
     "seePricing": "요금제 보기"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "DTC Technician에게 질문",
     "subtitle": "고장 코드를 즉시 해독하고, 증상을 이해하며, 일반적인 원인을 찾고, 부품을 교체하기 전에 전문 진단 단계를 따르세요.",
     "signInPrompt": "DTC AI 어시스턴트를 사용하려면 로그인하세요.",
-    "signInSubtext": "무료 계정은 하루 5개의 AI 질문을 제공합니다 — Pro와 Workshop은 훨씬 큰 월간 사용량을 제공합니다.",
+    "signInSubtext": "전체 진단 상담은 Pro Technician 및 Workshop 요금제에서 이용할 수 있습니다.",
     "signIn": "로그인",
     "describePlaceholder": "문제를 설명하세요…",
     "describeLabel": "차량 문제를 설명하세요",

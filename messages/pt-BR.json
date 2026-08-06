@@ -55,7 +55,7 @@
     "videoBody": "Vídeos completos, da desmontagem ao reparo, para cada código de falha importante.",
     "watchOnYoutube": "Assistir no YouTube",
     "pricingHeading": "Comece de graça. Muito mais quando você precisar.",
-    "pricingBody": "Os planos Pro Technician e Workshop liberam uma cota mensal de IA muito maior — economize US$ 30 no plano anual.",
+    "pricingBody": "Os planos Pro Technician e Workshop liberam Relatórios de Diagnóstico Profissional completos — economize com o plano anual.",
     "seePricing": "Ver preços"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "Perguntar ao DTC Technician",
     "subtitle": "Decodifique códigos de falha instantaneamente, entenda os sintomas, encontre causas comuns e siga etapas de diagnóstico profissionais antes de trocar peças.",
     "signInPrompt": "Entre para usar o Assistente de IA para DTC.",
-    "signInSubtext": "Contas gratuitas têm 5 perguntas de IA por dia — Pro e Workshop têm uma cota mensal muito maior.",
+    "signInSubtext": "Consultas de Diagnóstico completas estão disponíveis nos planos Pro Technician e Workshop.",
     "signIn": "Entrar",
     "describePlaceholder": "Descreva seu problema…",
     "describeLabel": "Descreva o problema do seu veículo",

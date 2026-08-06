@@ -55,7 +55,7 @@
     "videoBody": "Video đầy đủ từ tháo rời đến sửa chữa cho mọi mã lỗi chính.",
     "watchOnYoutube": "Xem trên YouTube",
     "pricingHeading": "Bắt đầu miễn phí. Nhiều hơn nữa khi bạn cần.",
-    "pricingBody": "Gói Pro Technician và Workshop mở khóa hạn mức AI hàng tháng lớn hơn nhiều — tiết kiệm $30 với gói năm.",
+    "pricingBody": "Gói Pro Technician và Workshop mở khóa Báo cáo Chẩn đoán Chuyên nghiệp đầy đủ — tiết kiệm với gói năm.",
     "seePricing": "Xem bảng giá"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "Hỏi DTC Technician",
     "subtitle": "Giải mã mã lỗi tức thì, hiểu triệu chứng, tìm nguyên nhân phổ biến và làm theo các bước chẩn đoán chuyên nghiệp trước khi thay phụ tùng.",
     "signInPrompt": "Đăng nhập để sử dụng Trợ lý AI cho DTC.",
-    "signInSubtext": "Tài khoản miễn phí được 5 câu hỏi AI mỗi ngày — Pro và Workshop có hạn mức hàng tháng lớn hơn nhiều.",
+    "signInSubtext": "Các buổi Tư vấn Chẩn đoán đầy đủ khả dụng trên gói Pro Technician và Workshop.",
     "signIn": "Đăng nhập",
     "describePlaceholder": "Mô tả sự cố của bạn…",
     "describeLabel": "Mô tả sự cố của xe bạn",

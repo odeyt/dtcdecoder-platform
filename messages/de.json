@@ -55,7 +55,7 @@
     "videoBody": "Vollständige Videos von der Demontage bis zur Reparatur für jeden wichtigen Fehlercode.",
     "watchOnYoutube": "Auf YouTube ansehen",
     "pricingHeading": "Kostenlos starten. Deutlich mehr, wenn Sie es brauchen.",
-    "pricingBody": "Die Tarife Pro Technician und Workshop schalten ein deutlich größeres monatliches KI-Kontingent frei — sparen Sie 30 $ im Jahrestarif.",
+    "pricingBody": "Die Tarife Pro Technician und Workshop schalten vollständige Professional Diagnostic Reports frei — spare mit dem Jahrestarif.",
     "seePricing": "Preise ansehen"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "DTC Technician fragen",
     "subtitle": "Entschlüsseln Sie Fehlercodes sofort, verstehen Sie Symptome, finden Sie häufige Ursachen und folgen Sie professionellen Diagnoseschritten, bevor Sie Teile ersetzen.",
     "signInPrompt": "Melden Sie sich an, um den DTC-KI-Assistenten zu nutzen.",
-    "signInSubtext": "Kostenlose Konten erhalten 5 KI-Fragen pro Tag — Pro und Workshop erhalten ein deutlich größeres Monatskontingent.",
+    "signInSubtext": "Vollständige Diagnostic Consultations sind in den Tarifen Pro Technician und Workshop verfügbar.",
     "signIn": "Anmelden",
     "describePlaceholder": "Beschreiben Sie Ihr Problem…",
     "describeLabel": "Beschreiben Sie Ihr Fahrzeugproblem",

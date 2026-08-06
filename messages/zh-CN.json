@@ -55,7 +55,7 @@
     "videoBody": "针对每个主要故障码，提供从拆解到维修的完整视频。",
     "watchOnYoutube": "在 YouTube 上观看",
     "pricingHeading": "免费开始。需要时获得更多。",
-    "pricingBody": "Pro Technician 和 Workshop 套餐可解锁大得多的每月 AI 额度——年付套餐可省 $30。",
+    "pricingBody": "Pro Technician 和 Workshop 套餐可解锁完整的专业诊断报告——选择年付套餐更划算。",
     "seePricing": "查看价格"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "咨询 DTC Technician",
     "subtitle": "即时解读故障码，了解症状，找到常见原因，并在更换零件之前遵循专业诊断步骤。",
     "signInPrompt": "登录即可使用 DTC AI 助手。",
-    "signInSubtext": "免费账户每天有 5 个 AI 问题——Pro 和 Workshop 拥有大得多的每月额度。",
+    "signInSubtext": "完整的诊断咨询仅限 Pro Technician 和 Workshop 套餐使用。",
     "signIn": "登录",
     "describePlaceholder": "描述您的问题…",
     "describeLabel": "描述您的车辆问题",

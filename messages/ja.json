@@ -55,7 +55,7 @@
     "videoBody": "主要な故障コードごとに、分解から修理までの完全な動画をご用意しています。",
     "watchOnYoutube": "YouTube で見る",
     "pricingHeading": "無料で開始。必要なときにさらに多く。",
-    "pricingBody": "Pro Technician と Workshop プランでは、はるかに大きな月間 AI 枠が利用可能 — 年間プランで $30 節約。",
+    "pricingBody": "Pro Technician と Workshop プランでは、フルのProfessional Diagnostic Reportをご利用いただけます — 年間プランでお得に。",
     "seePricing": "料金を見る"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "DTC Technicianに質問",
     "subtitle": "故障コードを即座に解読し、症状を理解し、一般的な原因を見つけ、部品を交換する前にプロの診断手順に従いましょう。",
     "signInPrompt": "DTC AI アシスタントを使うにはログインしてください。",
-    "signInSubtext": "無料アカウントは 1 日 5 件の AI 質問 — Pro と Workshop ははるかに大きな月間枠が利用できます。",
+    "signInSubtext": "フルのDiagnostic ConsultationはPro TechnicianおよびWorkshopプランでご利用いただけます。",
     "signIn": "ログイン",
     "describePlaceholder": "問題を説明してください…",
     "describeLabel": "車両の問題を説明してください",

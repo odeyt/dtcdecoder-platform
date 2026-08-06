@@ -55,7 +55,7 @@
     "videoBody": "Des vidéos complètes, du démontage à la réparation, pour chaque code défaut majeur.",
     "watchOnYoutube": "Regarder sur YouTube",
     "pricingHeading": "Gratuit pour commencer. Bien plus quand vous en avez besoin.",
-    "pricingBody": "Les forfaits Pro Technicien et Atelier débloquent une allocation d'IA mensuelle bien plus importante — économisez 30 $ sur le forfait annuel.",
+    "pricingBody": "Les forfaits Pro Technicien et Atelier débloquent des rapports de diagnostic professionnels complets — économisez avec le forfait annuel.",
     "seePricing": "Voir les tarifs"
   },
   "common": {
@@ -753,7 +753,7 @@
     "title": "Demander à DTC Technician",
     "subtitle": "Décodez instantanément les codes défaut, comprenez les symptômes, trouvez les causes courantes et suivez des étapes de diagnostic professionnelles avant de remplacer des pièces.",
     "signInPrompt": "Connectez-vous pour utiliser l'assistant IA DTC.",
-    "signInSubtext": "Les comptes gratuits bénéficient de 5 questions IA par jour — Pro et Atelier bénéficient d'une allocation mensuelle bien plus importante.",
+    "signInSubtext": "Les Consultations de Diagnostic complètes sont disponibles avec les forfaits Pro Technicien et Atelier.",
     "signIn": "Se connecter",
     "describePlaceholder": "Décrivez votre problème…",
     "describeLabel": "Décrivez le problème de votre véhicule",
