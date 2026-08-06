@@ -327,7 +327,7 @@
     "difficultyModerate": "Trung bình — một số dụng cụ chẩn đoán sẽ hữu ích",
     "difficultyHard": "Khó — nên dùng máy quét và có kinh nghiệm",
     "difficultyProfessional": "Chuyên nghiệp — đưa đến gara là lựa chọn an toàn hơn",
-    "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa.",
+    "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "Cảnh báo",
     "printExport": "In / Xuất",
     "reportLanguageSrLabel": "Ngôn ngữ báo cáo",
-    "unableToChangeLanguage": "Không thể thay đổi ngôn ngữ báo cáo.",
-    "copied": "Đã sao chép",
-    "copyReport": "Sao chép báo cáo"
+    "unableToChangeLanguage": "Không thể thay đổi ngôn ngữ báo cáo."
   },
   "diagnosticProgress": {
     "systemEngine": "Động cơ",
@@ -785,7 +783,14 @@
     "example3": "Range Rover có mã P2263 và chế độ an toàn",
     "example4": "Toyota bị bỏ máy P0300",
     "example5": "Xe không khởi động được và có mã U0101",
-    "resetsAt": "Đặt lại {date}."
+    "resetsAt": "Đặt lại {date}.",
+    "vinVerifying": "Đang xác minh VIN…",
+    "vinInvalidFormat": "Đây có vẻ không phải là số VIN hợp lệ gồm 17 ký tự.",
+    "vinNotRecognized": "Chúng tôi không thể xác minh số VIN này. Hãy nhập hãng và dòng xe của bạn thay thế.",
+    "vinDecodeFailed": "Không thể kết nối với dịch vụ tra cứu VIN ngay bây giờ. Hãy nhập hãng và dòng xe của bạn thay thế.",
+    "vinConfirmPrompt": "Đây có phải là xe của bạn không?",
+    "vinConfirmYes": "Đúng vậy",
+    "vinConfirmNo": "Không, tôi sẽ tự nhập"
   },
   "lockedSections": {
     "srLockedText": "Phần chẩn đoán đầy đủ đã bị khóa. Nâng cấp lên Pro Technician để xem.",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "Xác minh sửa chữa chưa khả dụng.",
     "invalidChecklistUpdatePayload": "Dữ liệu cập nhật danh sách kiểm tra không hợp lệ.",
     "invalidDiagnosticIntakeData": "Dữ liệu tiếp nhận chẩn đoán không hợp lệ.",
-    "noDtcCodeIdentified": "Không xác định được mã chẩn đoán. Hãy thử dùng Nhập bản quét xe thay thế."
+    "noDtcCodeIdentified": "Không xác định được mã chẩn đoán. Hãy thử dùng Nhập bản quét xe thay thế.",
+    "signInRequiredVinDecode": "Đăng nhập để giải mã số VIN.",
+    "invalidVinFormat": "Nhập số VIN hợp lệ gồm 17 ký tự (chỉ chữ cái và số, không có I, O hoặc Q).",
+    "vinDecodeFailed": "Không thể xác minh số VIN này ngay bây giờ."
   }
 }

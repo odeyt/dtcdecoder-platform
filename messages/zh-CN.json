@@ -327,7 +327,7 @@
     "difficultyModerate": "中等——一些诊断工具会有帮助",
     "difficultyHard": "困难——建议使用扫描仪并具备经验",
     "difficultyProfessional": "专业——送往车间是更安全的选择",
-    "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。",
+    "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "警告",
     "printExport": "打印 / 导出",
     "reportLanguageSrLabel": "报告语言",
-    "unableToChangeLanguage": "无法更改报告语言。",
-    "copied": "已复制",
-    "copyReport": "复制报告"
+    "unableToChangeLanguage": "无法更改报告语言。"
   },
   "diagnosticProgress": {
     "systemEngine": "发动机",
@@ -785,7 +783,14 @@
     "example3": "揽胜出现 P2263 和跛行模式",
     "example4": "丰田出现 P0300 失火",
     "example5": "车辆无法启动并出现 U0101",
-    "resetsAt": "重置时间：{date}"
+    "resetsAt": "重置时间：{date}",
+    "vinVerifying": "正在验证 VIN…",
+    "vinInvalidFormat": "这看起来不是有效的17位VIN。",
+    "vinNotRecognized": "我们无法验证该 VIN。请改为输入您车辆的品牌和型号。",
+    "vinDecodeFailed": "目前无法连接 VIN 查询服务。请改为输入您车辆的品牌和型号。",
+    "vinConfirmPrompt": "这是您的车辆吗?",
+    "vinConfirmYes": "是的,没错",
+    "vinConfirmNo": "不,我要手动输入"
   },
   "lockedSections": {
     "srLockedText": "完整诊断部分已锁定。升级到 Pro Technician 以查看。",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "维修验证功能暂未开放。",
     "invalidChecklistUpdatePayload": "清单更新数据无效。",
     "invalidDiagnosticIntakeData": "诊断接入数据无效。",
-    "noDtcCodeIdentified": "未能识别诊断代码。请改为尝试导入车辆扫描。"
+    "noDtcCodeIdentified": "未能识别诊断代码。请改为尝试导入车辆扫描。",
+    "signInRequiredVinDecode": "请登录以解码 VIN。",
+    "invalidVinFormat": "请输入有效的17位VIN(仅限字母和数字,不含 I、O 或 Q)。",
+    "vinDecodeFailed": "目前无法验证该 VIN。"
   }
 }

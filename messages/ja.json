@@ -327,7 +327,7 @@
     "difficultyModerate": "中程度 — 一部の診断ツールがあると役立ちます",
     "difficultyHard": "難しい — スキャンツールと経験が推奨されます",
     "difficultyProfessional": "プロ向け — 工場に持ち込むのがより安全な方法です",
-    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
+    "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "警告",
     "printExport": "印刷 / エクスポート",
     "reportLanguageSrLabel": "レポートの言語",
-    "unableToChangeLanguage": "レポートの言語を変更できませんでした。",
-    "copied": "コピーしました",
-    "copyReport": "レポートをコピー"
+    "unableToChangeLanguage": "レポートの言語を変更できませんでした。"
   },
   "diagnosticProgress": {
     "systemEngine": "エンジン",
@@ -785,7 +783,14 @@
     "example3": "Range RoverでP2263とリンプモードが出ています",
     "example4": "ToyotaでP0300の失火が出ています",
     "example5": "車がクランキングせずU0101が出ています",
-    "resetsAt": "リセット: {date}"
+    "resetsAt": "リセット: {date}",
+    "vinVerifying": "VINを確認しています…",
+    "vinInvalidFormat": "有効な17桁のVINではないようです。",
+    "vinNotRecognized": "このVINを確認できませんでした。代わりに車両のメーカーとモデルを入力してください。",
+    "vinDecodeFailed": "現在VIN検索サービスに接続できません。代わりに車両のメーカーとモデルを入力してください。",
+    "vinConfirmPrompt": "こちらのお車で間違いありませんか?",
+    "vinConfirmYes": "はい、正しいです",
+    "vinConfirmNo": "いいえ、手動で入力します"
   },
   "lockedSections": {
     "srLockedText": "完全な診断セクションはロックされています。表示するにはPro Technicianにアップグレードしてください。",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "修理検証はまだご利用いただけません。",
     "invalidChecklistUpdatePayload": "チェックリスト更新のデータが無効です。",
     "invalidDiagnosticIntakeData": "診断受付データが無効です。",
-    "noDtcCodeIdentified": "診断コードを特定できませんでした。代わりに「車両スキャンをインポート」をお試しください。"
+    "noDtcCodeIdentified": "診断コードを特定できませんでした。代わりに「車両スキャンをインポート」をお試しください。",
+    "signInRequiredVinDecode": "VINをデコードするにはサインインしてください。",
+    "invalidVinFormat": "有効な17桁のVINを入力してください(英数字のみ、I、O、Qは使用不可)。",
+    "vinDecodeFailed": "現在このVINを確認できませんでした。"
   }
 }

@@ -327,7 +327,7 @@
     "difficultyModerate": "ปานกลาง — มีเครื่องมือวินิจฉัยบางอย่างจะช่วยได้",
     "difficultyHard": "ยาก — แนะนำให้ใช้เครื่องสแกนและมีประสบการณ์",
     "difficultyProfessional": "ระดับมืออาชีพ — การนำเข้าอู่เป็นทางที่ปลอดภัยกว่า",
-    "contentNotLocalizedNote": "เนื้อหาอ้างอิงของรหัสนี้ (ความหมาย สาเหตุ ขั้นตอน) แสดงเป็นภาษาอังกฤษต้นฉบับ — มีเพียงป้ายกำกับโดยรอบเท่านั้นที่แปลเป็นภาษาท้องถิ่น",
+    "contentNotLocalizedNote": "เนื้อหาอ้างอิงของรหัสนี้ (ความหมาย สาเหตุ ขั้นตอน) แสดงเป็นภาษาอังกฤษต้นฉบับ — มีเพียงป้ายกำกับโดยรอบเท่านั้นที่แปลเป็นภาษาท้องถิ่น",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "คำเตือน",
     "printExport": "พิมพ์ / ส่งออก",
     "reportLanguageSrLabel": "ภาษารายงาน",
-    "unableToChangeLanguage": "ไม่สามารถเปลี่ยนภาษารายงานได้",
-    "copied": "คัดลอกแล้ว",
-    "copyReport": "คัดลอกรายงาน"
+    "unableToChangeLanguage": "ไม่สามารถเปลี่ยนภาษารายงานได้"
   },
   "diagnosticProgress": {
     "systemEngine": "เครื่องยนต์",
@@ -785,7 +783,14 @@
     "example3": "Range Rover มีรหัส P2263 และเข้าโหมดปลอดภัย",
     "example4": "Toyota มีอาการเครื่องยนต์จุดระเบิดผิดพลาด P0300",
     "example5": "รถสตาร์ทไม่ติดและมีรหัส U0101",
-    "resetsAt": "รีเซ็ต {date}"
+    "resetsAt": "รีเซ็ต {date}",
+    "vinVerifying": "กำลังตรวจสอบ VIN…",
+    "vinInvalidFormat": "ดูเหมือนจะไม่ใช่หมายเลข VIN ที่ถูกต้อง 17 หลัก",
+    "vinNotRecognized": "เราไม่สามารถตรวจสอบหมายเลข VIN นี้ได้ กรุณากรอกยี่ห้อและรุ่นรถของคุณแทน",
+    "vinDecodeFailed": "ไม่สามารถเชื่อมต่อบริการค้นหา VIN ได้ในขณะนี้ กรุณากรอกยี่ห้อและรุ่นรถของคุณแทน",
+    "vinConfirmPrompt": "นี่คือรถของคุณใช่ไหม?",
+    "vinConfirmYes": "ใช่ ถูกต้อง",
+    "vinConfirmNo": "ไม่ใช่ ฉันจะกรอกเอง"
   },
   "lockedSections": {
     "srLockedText": "ส่วนการวินิจฉัยแบบเต็มถูกล็อกไว้ อัปเกรดเป็น Pro Technician เพื่อดู",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "การตรวจสอบการซ่อมยังไม่พร้อมใช้งาน",
     "invalidChecklistUpdatePayload": "ข้อมูลการอัปเดตรายการตรวจสอบไม่ถูกต้อง",
     "invalidDiagnosticIntakeData": "ข้อมูลการรับเรื่องวินิจฉัยไม่ถูกต้อง",
-    "noDtcCodeIdentified": "ไม่พบรหัสวินิจฉัยที่ระบุได้ ลองใช้การนำเข้าผลสแกนรถยนต์แทน"
+    "noDtcCodeIdentified": "ไม่พบรหัสวินิจฉัยที่ระบุได้ ลองใช้การนำเข้าผลสแกนรถยนต์แทน",
+    "signInRequiredVinDecode": "กรุณาเข้าสู่ระบบเพื่อถอดรหัส VIN",
+    "invalidVinFormat": "กรุณากรอกหมายเลข VIN ที่ถูกต้อง 17 หลัก (ตัวอักษรและตัวเลขเท่านั้น ไม่มี I, O หรือ Q)",
+    "vinDecodeFailed": "ไม่สามารถตรวจสอบหมายเลข VIN นี้ได้ในขณะนี้"
   }
 }

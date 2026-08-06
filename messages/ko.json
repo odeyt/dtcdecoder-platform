@@ -327,7 +327,7 @@
     "difficultyModerate": "보통 — 일부 진단 도구가 있으면 유용합니다",
     "difficultyHard": "어려움 — 스캔 도구와 경험이 권장됩니다",
     "difficultyProfessional": "전문가용 — 정비소 방문이 더 안전한 방법입니다",
-    "contentNotLocalizedNote": "이 코드의 참조 내용(의미, 원인, 단계)은 원본 영어로 표시됩니다 — 주변 라벨만 현지화됩니다.",
+    "contentNotLocalizedNote": "이 코드의 참조 내용(의미, 원인, 단계)은 원본 영어로 표시됩니다 — 주변 라벨만 현지화됩니다.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -570,7 +570,7 @@
     "copying": "복사 중…",
     "copied": "복사됨",
     "copyFailed": "복사 실패",
-    "copyReport": "보고서 복사",
+    "copyReport": "리포트 복사",
     "saving": "저장 중…",
     "savedAt": "{time}에 저장됨",
     "saveFailed": "저장 실패 — {message}",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "경고",
     "printExport": "인쇄 / 내보내기",
     "reportLanguageSrLabel": "리포트 언어",
-    "unableToChangeLanguage": "리포트 언어를 변경할 수 없습니다.",
-    "copied": "복사됨",
-    "copyReport": "리포트 복사"
+    "unableToChangeLanguage": "리포트 언어를 변경할 수 없습니다."
   },
   "diagnosticProgress": {
     "systemEngine": "엔진",
@@ -785,7 +783,14 @@
     "example3": "Range Rover에 P2263과 림프 모드가 있습니다",
     "example4": "Toyota에 P0300 실화가 있습니다",
     "example5": "차가 크랭킹이 안 되고 U0101이 있습니다",
-    "resetsAt": "초기화: {date}"
+    "resetsAt": "초기화: {date}",
+    "vinVerifying": "VIN 확인 중…",
+    "vinInvalidFormat": "유효한 17자리 VIN이 아닌 것 같습니다.",
+    "vinNotRecognized": "해당 VIN을 확인할 수 없습니다. 대신 차량의 제조사와 모델을 입력하세요.",
+    "vinDecodeFailed": "지금은 VIN 조회 서비스에 연결할 수 없습니다. 대신 차량의 제조사와 모델을 입력하세요.",
+    "vinConfirmPrompt": "이 차량이 맞습니까?",
+    "vinConfirmYes": "예, 맞습니다",
+    "vinConfirmNo": "아니요, 직접 입력하겠습니다"
   },
   "lockedSections": {
     "srLockedText": "전체 진단 섹션이 잠겨 있습니다. 보려면 Pro Technician으로 업그레이드하세요.",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "수리 검증은 아직 이용할 수 없습니다.",
     "invalidChecklistUpdatePayload": "체크리스트 업데이트 데이터가 유효하지 않습니다.",
     "invalidDiagnosticIntakeData": "진단 접수 데이터가 유효하지 않습니다.",
-    "noDtcCodeIdentified": "진단 코드를 식별할 수 없습니다. 대신 차량 스캔 가져오기를 이용해 보세요."
+    "noDtcCodeIdentified": "진단 코드를 식별할 수 없습니다. 대신 차량 스캔 가져오기를 이용해 보세요.",
+    "signInRequiredVinDecode": "VIN을 해독하려면 로그인하세요.",
+    "invalidVinFormat": "유효한 17자리 VIN을 입력하세요 (영문자와 숫자만 가능, I, O, Q는 사용 불가).",
+    "vinDecodeFailed": "지금은 해당 VIN을 확인할 수 없습니다."
   }
 }

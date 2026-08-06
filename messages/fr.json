@@ -327,7 +327,7 @@
     "difficultyModerate": "Modéré — quelques outils de diagnostic sont utiles",
     "difficultyHard": "Difficile — outil de scan et expérience recommandés",
     "difficultyProfessional": "Professionnel — une visite en atelier est la voie la plus sûre",
-    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées.",
+    "contentNotLocalizedNote": "Le contenu de référence de ce code (signification, causes, étapes) est affiché dans sa version originale en anglais — seules les étiquettes environnantes sont localisées.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "Avertissement",
     "printExport": "Imprimer / Exporter",
     "reportLanguageSrLabel": "Langue du rapport",
-    "unableToChangeLanguage": "Impossible de changer la langue du rapport.",
-    "copied": "Copié",
-    "copyReport": "Copier le rapport"
+    "unableToChangeLanguage": "Impossible de changer la langue du rapport."
   },
   "diagnosticProgress": {
     "systemEngine": "Moteur",
@@ -785,7 +783,14 @@
     "example3": "Range Rover a P2263 et mode dégradé",
     "example4": "Toyota a un raté d'allumage P0300",
     "example5": "La voiture ne démarre pas et a U0101",
-    "resetsAt": "Réinitialisation {date}."
+    "resetsAt": "Réinitialisation {date}.",
+    "vinVerifying": "Vérification du VIN…",
+    "vinInvalidFormat": "Cela ne ressemble pas à un VIN valide de 17 caractères.",
+    "vinNotRecognized": "Nous n'avons pas pu vérifier ce VIN. Saisissez plutôt la marque et le modèle de votre véhicule.",
+    "vinDecodeFailed": "Impossible de joindre le service de vérification VIN pour le moment. Saisissez plutôt la marque et le modèle de votre véhicule.",
+    "vinConfirmPrompt": "Est-ce votre véhicule ?",
+    "vinConfirmYes": "Oui, c'est exact",
+    "vinConfirmNo": "Non, je vais le saisir manuellement"
   },
   "lockedSections": {
     "srLockedText": "Section de diagnostic complète verrouillée. Passez à Pro Technician pour la consulter.",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "La vérification de réparation n'est pas encore disponible.",
     "invalidChecklistUpdatePayload": "Données de mise à jour de la liste de vérification non valides.",
     "invalidDiagnosticIntakeData": "Données d'admission de diagnostic non valides.",
-    "noDtcCodeIdentified": "Aucun code de diagnostic identifié. Essayez plutôt d'importer un scan du véhicule."
+    "noDtcCodeIdentified": "Aucun code de diagnostic identifié. Essayez plutôt d'importer un scan du véhicule.",
+    "signInRequiredVinDecode": "Connectez-vous pour décoder un VIN.",
+    "invalidVinFormat": "Saisissez un VIN valide de 17 caractères (lettres et chiffres uniquement, sans I, O ni Q).",
+    "vinDecodeFailed": "Impossible de vérifier ce VIN pour le moment."
   }
 }

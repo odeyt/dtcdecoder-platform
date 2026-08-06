@@ -327,7 +327,7 @@
     "difficultyModerate": "ປານກາງ — ມີເຄື່ອງມືວິນິດໄສບາງຢ່າງຈະຊ່ວຍໄດ້",
     "difficultyHard": "ຍາກ — ແນະນຳໃຫ້ໃຊ້ເຄື່ອງສະແກນ ແລະ ມີປະສົບການ",
     "difficultyProfessional": "ລະດັບມືອາຊີບ — ການນຳໄປອູ່ເປັນທາງທີ່ປອດໄພກວ່າ",
-    "contentNotLocalizedNote": "ເນື້ອຫາອ້າງອີງຂອງລະຫັດນີ້ (ຄວາມໝາຍ, ສາເຫດ, ຂັ້ນຕອນ) ສະແດງເປັນພາສາອັງກິດຕົ້ນສະບັບ — ມີພຽງປ້າຍກຳກັບອ້ອມຂ້າງເທົ່ານັ້ນທີ່ຖືກແປ.",
+    "contentNotLocalizedNote": "ເນື້ອຫາອ້າງອີງຂອງລະຫັດນີ້ (ຄວາມໝາຍ, ສາເຫດ, ຂັ້ນຕອນ) ສະແດງເປັນພາສາອັງກິດຕົ້ນສະບັບ — ມີພຽງປ້າຍກຳກັບອ້ອມຂ້າງເທົ່ານັ້ນທີ່ຖືກແປ.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -568,9 +568,9 @@
     "notReadyNote": "ການທົດສອບ, ສາເຫດ, ຫຼື ລາຍການກວດສອບບາງອັນຍັງເປີດຢູ່. ທ່ານຍັງສາມາດໝາຍກໍລະນີນີ້ວ່າສຳເລັດໄດ້ ຖ້າທ່ານມີເຫດຜົນທີ່ຈະຂ້າມພວກມັນ.",
     "markCaseCompleteButton": "ໝາຍກໍລະນີວ່າສຳເລັດແລ້ວ",
     "copying": "ກຳລັງສຳເນົາ…",
-    "copied": "ສຳເນົາແລ້ວ",
+    "copied": "ຄັດລອກແລ້ວ",
     "copyFailed": "ການສຳເນົາລົ້ມເຫຼວ",
-    "copyReport": "ສຳເນົາບົດລາຍງານ",
+    "copyReport": "ຄັດລອກລາຍງານ",
     "saving": "ກຳລັງບັນທຶກ…",
     "savedAt": "ບັນທຶກແລ້ວເມື່ອ {time}",
     "saveFailed": "ການບັນທຶກລົ້ມເຫຼວ — {message}",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "ຄຳເຕືອນ",
     "printExport": "ພິມ / ສົ່ງອອກ",
     "reportLanguageSrLabel": "ພາສາລາຍງານ",
-    "unableToChangeLanguage": "ບໍ່ສາມາດປ່ຽນພາສາລາຍງານໄດ້.",
-    "copied": "ຄັດລອກແລ້ວ",
-    "copyReport": "ຄັດລອກລາຍງານ"
+    "unableToChangeLanguage": "ບໍ່ສາມາດປ່ຽນພາສາລາຍງານໄດ້."
   },
   "diagnosticProgress": {
     "systemEngine": "ເຄື່ອງຈັກ",
@@ -785,7 +783,14 @@
     "example3": "Range Rover ມີ P2263 ແລະໂໝດປອດໄພ",
     "example4": "Toyota ມີການຈູດຜິດພາດ P0300",
     "example5": "ລົດບໍ່ສະຕາດ ແລະມີ U0101",
-    "resetsAt": "ຣີເຊັດ {date}."
+    "resetsAt": "ຣີເຊັດ {date}.",
+    "vinVerifying": "ກຳລັງກວດສອບ VIN…",
+    "vinInvalidFormat": "ນີ້ບໍ່ຄືກັບເລກ VIN ທີ່ຖືກຕ້ອງ 17 ຕົວອັກສອນ.",
+    "vinNotRecognized": "ພວກເຮົາບໍ່ສາມາດຢັ້ງຢືນເລກ VIN ນີ້ໄດ້. ກະລຸນາໃສ່ຍີ່ຫໍ້ ແລະ ຮຸ່ນຂອງລົດທ່ານແທນ.",
+    "vinDecodeFailed": "ບໍ່ສາມາດເຊື່ອມຕໍ່ກັບການຄົ້ນຫາ VIN ໄດ້ໃນຕອນນີ້. ກະລຸນາໃສ່ຍີ່ຫໍ້ ແລະ ຮຸ່ນຂອງລົດທ່ານແທນ.",
+    "vinConfirmPrompt": "ນີ້ແມ່ນລົດຂອງທ່ານບໍ?",
+    "vinConfirmYes": "ແມ່ນ, ຖືກຕ້ອງ",
+    "vinConfirmNo": "ບໍ່, ຂ້ອຍຈະໃສ່ເອງ"
   },
   "lockedSections": {
     "srLockedText": "ພາກສ່ວນການວິນິດໄສເຕັມສ່ວນຖືກລັອກ. ອັບເກຣດເປັນ Pro Technician ເພື່ອເບິ່ງມັນ.",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "ການຢັ້ງຢືນການສ້ອມແປງຍັງບໍ່ສາມາດໃຊ້ໄດ້.",
     "invalidChecklistUpdatePayload": "ຂໍ້ມູນການອັບເດດລາຍການກວດສອບບໍ່ຖືກຕ້ອງ.",
     "invalidDiagnosticIntakeData": "ຂໍ້ມູນການຮັບເຂົ້າວິນິດໄສບໍ່ຖືກຕ້ອງ.",
-    "noDtcCodeIdentified": "ບໍ່ພົບລະຫັດວິນິດໄສທີ່ລະບຸໄດ້. ລອງໃຊ້ການນຳເຂົ້າຂໍ້ມູນສະແກນລົດແທນ."
+    "noDtcCodeIdentified": "ບໍ່ພົບລະຫັດວິນິດໄສທີ່ລະບຸໄດ້. ລອງໃຊ້ການນຳເຂົ້າຂໍ້ມູນສະແກນລົດແທນ.",
+    "signInRequiredVinDecode": "ກະລຸນາເຂົ້າສູ່ລະບົບເພື່ອຖອດລະຫັດ VIN.",
+    "invalidVinFormat": "ກະລຸນາໃສ່ເລກ VIN ທີ່ຖືກຕ້ອງ 17 ຕົວອັກສອນ (ໂຕອັກສອນ ແລະ ຕົວເລກເທົ່ານັ້ນ, ບໍ່ມີ I, O ຫຼື Q).",
+    "vinDecodeFailed": "ບໍ່ສາມາດຢັ້ງຢືນເລກ VIN ນີ້ໄດ້ໃນຕອນນີ້."
   }
 }

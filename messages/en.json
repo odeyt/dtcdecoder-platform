@@ -706,7 +706,14 @@
     "example3": "Range Rover has P2263 and limp mode",
     "example4": "Toyota has P0300 misfire",
     "example5": "Car has no crank and U0101",
-    "resetsAt": "Resets {date}."
+    "resetsAt": "Resets {date}.",
+    "vinVerifying": "Verifying VIN…",
+    "vinInvalidFormat": "That doesn't look like a valid 17-character VIN.",
+    "vinNotRecognized": "We couldn't verify that VIN. Enter your vehicle's make and model instead.",
+    "vinDecodeFailed": "Couldn't reach the VIN lookup right now. Enter your vehicle's make and model instead.",
+    "vinConfirmPrompt": "Is this your vehicle?",
+    "vinConfirmYes": "Yes, that's right",
+    "vinConfirmNo": "No, let me enter it manually"
   },
   "history": {
     "title": "Consultation History",
@@ -905,9 +912,7 @@
     "ruleSeverityWarn": "Warning",
     "printExport": "Print / Export",
     "reportLanguageSrLabel": "Report language",
-    "unableToChangeLanguage": "Unable to change the report language.",
-    "copied": "Copied",
-    "copyReport": "Copy report"
+    "unableToChangeLanguage": "Unable to change the report language."
   },
   "diagnosticProgress": {
     "systemEngine": "Engine",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "Repair verification is not available yet.",
     "invalidChecklistUpdatePayload": "Invalid checklist update payload.",
     "invalidDiagnosticIntakeData": "Invalid diagnostic intake data.",
-    "noDtcCodeIdentified": "No diagnostic code was identified. Try Import Vehicle Scan instead."
+    "noDtcCodeIdentified": "No diagnostic code was identified. Try Import Vehicle Scan instead.",
+    "signInRequiredVinDecode": "Sign in to decode a VIN.",
+    "invalidVinFormat": "Enter a valid 17-character VIN (letters and numbers only, no I, O, or Q).",
+    "vinDecodeFailed": "Couldn't verify that VIN right now."
   }
 }

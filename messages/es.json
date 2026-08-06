@@ -706,7 +706,14 @@
     "example3": "Range Rover tiene P2263 y modo de emergencia",
     "example4": "Toyota tiene fallo de encendido P0300",
     "example5": "El auto no arranca y tiene U0101",
-    "resetsAt": "Se reinicia {date}."
+    "resetsAt": "Se reinicia {date}.",
+    "vinVerifying": "Verificando VIN…",
+    "vinInvalidFormat": "Eso no parece un VIN válido de 17 caracteres.",
+    "vinNotRecognized": "No pudimos verificar ese VIN. Ingresa la marca y el modelo de tu vehículo.",
+    "vinDecodeFailed": "No se pudo conectar con la búsqueda de VIN en este momento. Ingresa la marca y el modelo de tu vehículo.",
+    "vinConfirmPrompt": "¿Es este tu vehículo?",
+    "vinConfirmYes": "Sí, es correcto",
+    "vinConfirmNo": "No, lo ingresaré manualmente"
   },
   "lockedSections": {
     "srLockedText": "Sección de diagnóstico completa bloqueada. Actualiza a Pro Technician para verla.",
@@ -905,9 +912,7 @@
     "ruleSeverityWarn": "Advertencia",
     "printExport": "Imprimir / Exportar",
     "reportLanguageSrLabel": "Idioma del informe",
-    "unableToChangeLanguage": "No se pudo cambiar el idioma del informe.",
-    "copied": "Copiado",
-    "copyReport": "Copiar informe"
+    "unableToChangeLanguage": "No se pudo cambiar el idioma del informe."
   },
   "diagnosticProgress": {
     "systemEngine": "Motor",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "La verificación de reparación aún no está disponible.",
     "invalidChecklistUpdatePayload": "Datos de actualización de la lista de verificación no válidos.",
     "invalidDiagnosticIntakeData": "Datos de admisión de diagnóstico no válidos.",
-    "noDtcCodeIdentified": "No se identificó ningún código de diagnóstico. Prueba con Importar escaneo del vehículo en su lugar."
+    "noDtcCodeIdentified": "No se identificó ningún código de diagnóstico. Prueba con Importar escaneo del vehículo en su lugar.",
+    "signInRequiredVinDecode": "Inicia sesión para decodificar un VIN.",
+    "invalidVinFormat": "Ingresa un VIN válido de 17 caracteres (solo letras y números, sin I, O ni Q).",
+    "vinDecodeFailed": "No se pudo verificar ese VIN en este momento."
   }
 }

@@ -327,7 +327,7 @@
     "difficultyModerate": "Mittel — einige Diagnosewerkzeuge sind hilfreich",
     "difficultyHard": "Schwer — Scan-Tool und Erfahrung empfohlen",
     "difficultyProfessional": "Professionell — ein Werkstattbesuch ist der sicherere Weg",
-    "contentNotLocalizedNote": "Der Referenzinhalt dieses Codes (Bedeutung, Ursachen, Schritte) wird im englischen Original angezeigt — nur die umgebenden Beschriftungen sind lokalisiert.",
+    "contentNotLocalizedNote": "Der Referenzinhalt dieses Codes (Bedeutung, Ursachen, Schritte) wird im englischen Original angezeigt — nur die umgebenden Beschriftungen sind lokalisiert.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
     "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
@@ -588,9 +588,7 @@
     "ruleSeverityWarn": "Warnung",
     "printExport": "Drucken / Exportieren",
     "reportLanguageSrLabel": "Berichtsprache",
-    "unableToChangeLanguage": "Die Berichtsprache konnte nicht geändert werden.",
-    "copied": "Kopiert",
-    "copyReport": "Bericht kopieren"
+    "unableToChangeLanguage": "Die Berichtsprache konnte nicht geändert werden."
   },
   "diagnosticProgress": {
     "systemEngine": "Motor",
@@ -785,7 +783,14 @@
     "example3": "Range Rover hat P2263 und Notlaufmodus",
     "example4": "Toyota hat P0300 Fehlzündung",
     "example5": "Auto springt nicht an und hat U0101",
-    "resetsAt": "Wird zurückgesetzt {date}."
+    "resetsAt": "Wird zurückgesetzt {date}.",
+    "vinVerifying": "VIN wird überprüft…",
+    "vinInvalidFormat": "Das sieht nicht nach einer gültigen 17-stelligen VIN aus.",
+    "vinNotRecognized": "Wir konnten diese VIN nicht überprüfen. Gib stattdessen Marke und Modell deines Fahrzeugs ein.",
+    "vinDecodeFailed": "Die VIN-Abfrage ist gerade nicht erreichbar. Gib stattdessen Marke und Modell deines Fahrzeugs ein.",
+    "vinConfirmPrompt": "Ist das dein Fahrzeug?",
+    "vinConfirmYes": "Ja, das stimmt",
+    "vinConfirmNo": "Nein, ich gebe es manuell ein"
   },
   "lockedSections": {
     "srLockedText": "Vollständiger Diagnoseabschnitt gesperrt. Upgrade auf Pro Technician, um ihn anzuzeigen.",
@@ -1163,6 +1168,9 @@
     "repairVerificationNotAvailable": "Die Reparaturüberprüfung ist noch nicht verfügbar.",
     "invalidChecklistUpdatePayload": "Ungültige Aktualisierungsdaten für die Prüfliste.",
     "invalidDiagnosticIntakeData": "Ungültige Diagnose-Aufnahmedaten.",
-    "noDtcCodeIdentified": "Es wurde kein Diagnosecode erkannt. Versuche stattdessen „Fahrzeug-Scan importieren“."
+    "noDtcCodeIdentified": "Es wurde kein Diagnosecode erkannt. Versuche stattdessen „Fahrzeug-Scan importieren“.",
+    "signInRequiredVinDecode": "Melde dich an, um eine VIN zu decodieren.",
+    "invalidVinFormat": "Gib eine gültige 17-stellige VIN ein (nur Buchstaben und Zahlen, kein I, O oder Q).",
+    "vinDecodeFailed": "Diese VIN konnte gerade nicht überprüft werden."
   }
 }

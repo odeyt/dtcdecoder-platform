@@ -20,11 +20,34 @@ interface OutputLocaleOption {
 }
 
 // A real tech asks what's wrong, then the VIN (or make/model if none), before
-// diagnosing anything — this mirrors that with a fixed, client-known 3-step
+// diagnosing anything — this mirrors that with a fixed, client-known
 // sequence. Every user (free or paid) walks the same intake; the plan only
 // changes what renders once it's complete (locked panel vs. a real answer),
-// never whether vehicle context is collected.
-type Stage = "issue" | "vin" | "vehicle" | "chat";
+// never whether vehicle context is collected. "vinConfirm" is only reached
+// after a real NHTSA decode succeeds — nothing from that decode reaches the
+// AI prompt until the user explicitly confirms it here (see
+// completeIntake/composeIntakeMessage below and the SAFETY_SUFFIX rule in
+// src/lib/ai/assistant.ts, which this confirmation step keeps compatible
+// with).
+type Stage = "issue" | "vin" | "vinConfirm" | "vehicle" | "chat";
+
+interface IntakeVehicleDetails {
+  vin: string;
+  make: string;
+  model: string;
+  year: string;
+  trim?: string;
+  engineSummary?: string;
+}
+
+interface DecodedVehicle {
+  vin: string;
+  year: string;
+  make: string;
+  model: string;
+  trim: string;
+  engineSummary: string;
+}
 
 export function AiAssistantChat({
   signedIn,
@@ -56,6 +79,12 @@ export function AiAssistantChat({
   const [vinInput, setVinInput] = useState("");
   const [makeInput, setMakeInput] = useState("");
   const [modelInput, setModelInput] = useState("");
+  const [vinDecodeStatus, setVinDecodeStatus] = useState<"idle" | "loading">("idle");
+  // Shown on the `vehicle` stage after a decode came back invalid/failed or
+  // the user rejected a confirmed decode — cleared whenever a fresh VIN
+  // submit is attempted.
+  const [vinDecodeNotice, setVinDecodeNotice] = useState<string | null>(null);
+  const [decodedVehicle, setDecodedVehicle] = useState<DecodedVehicle | null>(null);
 
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState("");
@@ -155,14 +184,26 @@ export function AiAssistantChat({
     abortRef.current?.abort();
   }
 
-  function composeIntakeMessage(vin: string, make: string, model: string): string {
+  // Vehicle fields are only ever included when they've reached this function
+  // via a user-confirmed decode (vinConfirm's "Yes") or manual entry
+  // (submitVehicle) — never from a raw, unconfirmed VIN. The VIN itself is
+  // always sent as a bare record line, never phrased as "decoded from", so
+  // the model has no basis to treat it as something to interpret (see
+  // SAFETY_SUFFIX in src/lib/ai/assistant.ts).
+  function composeIntakeMessage(details: IntakeVehicleDetails): string {
     const lines = [issueInput.trim()];
-    const trimmedVin = vin.trim();
-    const vehicle = [make.trim(), model.trim()].filter(Boolean).join(" ");
+    const vehicleParts = [details.year, details.make, details.model, details.trim]
+      .map((part) => part?.trim())
+      .filter(Boolean);
+    if (vehicleParts.length > 0) {
+      lines.push(`${t("vehicleMessageLabel")}: ${vehicleParts.join(" ")}`);
+    }
+    if (details.engineSummary?.trim()) {
+      lines.push(`Engine: ${details.engineSummary.trim()}`);
+    }
+    const trimmedVin = details.vin.trim();
     if (trimmedVin) {
       lines.push(`VIN: ${trimmedVin.toUpperCase()}`);
-    } else if (vehicle) {
-      lines.push(`${t("vehicleMessageLabel")}: ${vehicle}`);
     }
     return lines.join("\n");
   }
@@ -179,23 +220,70 @@ export function AiAssistantChat({
   // answers are never sent to the AI — there is no free-tier generation
   // (see AI_DIAGNOSTIC_ENTITLEMENTS.free in src/lib/pricing.ts). Landing on
   // "chat" for a free plan renders the static locked panel below instead.
-  async function completeIntake(vin: string, make: string, model: string) {
+  async function completeIntake(details: IntakeVehicleDetails) {
     setStage("chat");
     if (isFreePlan) return;
-    await sendMessage(composeIntakeMessage(vin, make, model));
+    await sendMessage(composeIntakeMessage(details));
   }
 
-  function submitVin() {
-    if (!vinInput.trim()) return;
-    void completeIntake(vinInput, "", "");
+  async function submitVin() {
+    const vin = vinInput.trim().toUpperCase();
+    if (!vin) return;
+    setVinDecodeNotice(null);
+
+    if (!/^[A-HJ-NPR-Z0-9]{17}$/.test(vin)) {
+      setVinDecodeNotice(t("vinInvalidFormat"));
+      return;
+    }
+
+    setVinDecodeStatus("loading");
+    try {
+      const res = await fetch("/api/vin/decode", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ vin }),
+      });
+      const data = await res.json().catch(() => null);
+
+      if (res.ok && data?.valid) {
+        setDecodedVehicle({
+          vin,
+          year: data.year ?? "",
+          make: data.make ?? "",
+          model: data.model ?? "",
+          trim: data.trim ?? "",
+          engineSummary: data.engineSummary ?? "",
+        });
+        setStage("vinConfirm");
+      } else {
+        setVinDecodeNotice(t("vinNotRecognized"));
+        setStage("vehicle");
+      }
+    } catch {
+      setVinDecodeNotice(t("vinDecodeFailed"));
+      setStage("vehicle");
+    } finally {
+      setVinDecodeStatus("idle");
+    }
   }
 
   function skipVin() {
+    setVinDecodeNotice(null);
+    setStage("vehicle");
+  }
+
+  function confirmDecodedVehicle() {
+    if (!decodedVehicle) return;
+    void completeIntake(decodedVehicle);
+  }
+
+  function rejectDecodedVehicle() {
+    setDecodedVehicle(null);
     setStage("vehicle");
   }
 
   function submitVehicle() {
-    void completeIntake("", makeInput, modelInput);
+    void completeIntake({ vin: vinInput, make: makeInput, model: modelInput, year: "" });
   }
 
   if (!signedIn) {
@@ -312,12 +400,13 @@ export function AiAssistantChat({
             />
             <button
               type="submit"
-              disabled={!vinInput.trim()}
+              disabled={!vinInput.trim() || vinDecodeStatus === "loading"}
               className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110 disabled:opacity-60"
             >
-              {t("ask")}
+              {vinDecodeStatus === "loading" ? t("vinVerifying") : t("ask")}
             </button>
           </form>
+          {vinDecodeNotice && <p className="text-sm text-[var(--accent-red)]">{vinDecodeNotice}</p>}
           <button
             type="button"
             onClick={skipVin}
@@ -325,6 +414,44 @@ export function AiAssistantChat({
           >
             {t("vinSkip")}
           </button>
+        </div>
+      </div>
+    );
+  }
+
+  if (stage === "vinConfirm" && decodedVehicle) {
+    const vehicleLine = [decodedVehicle.year, decodedVehicle.make, decodedVehicle.model, decodedVehicle.trim]
+      .filter(Boolean)
+      .join(" ");
+    return (
+      <div className="flex flex-col gap-4">
+        {outputLocaleSelector}
+        <div className="glass-panel flex flex-col gap-4 rounded-[var(--radius-xl)] p-6">
+          <button
+            type="button"
+            onClick={rejectDecodedVehicle}
+            className="self-start text-sm text-[var(--text-secondary)] transition hover:text-[var(--text-primary)]"
+          >
+            ← {t("back")}
+          </button>
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{t("vinConfirmPrompt")}</p>
+          <p className="text-lg text-[var(--text-primary)]">{vehicleLine}</p>
+          <div className="flex flex-wrap gap-3">
+            <button
+              type="button"
+              onClick={confirmDecodedVehicle}
+              className="min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-3 font-semibold text-white transition hover:brightness-110"
+            >
+              {t("vinConfirmYes")}
+            </button>
+            <button
+              type="button"
+              onClick={rejectDecodedVehicle}
+              className="min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-3 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
+            >
+              {t("vinConfirmNo")}
+            </button>
+          </div>
         </div>
       </div>
     );
@@ -343,6 +470,7 @@ export function AiAssistantChat({
             ← {t("back")}
           </button>
           <p className="text-sm font-semibold text-[var(--text-primary)]">{t("vehiclePrompt")}</p>
+          {vinDecodeNotice && <p className="text-sm text-[var(--accent-red)]">{vinDecodeNotice}</p>}
           <form
             onSubmit={(e) => {
               e.preventDefault();
