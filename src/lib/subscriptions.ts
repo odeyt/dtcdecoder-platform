@@ -46,13 +46,18 @@ function bestValid(rows: Subscription[], now: number): Subscription | null {
   });
 }
 
-// Resolves a user's effective plan. Looks up by user_id first (the normal
-// case once signed in), falling back to email — covers the same guest-then-
-// magic-link timing gap the old order flow handled via linkOrdersToUser.
-export async function getEffectivePlan(
+// Shared resolution: the single "active, still within its paid period"
+// subscription row for a user, checked by user_id first then by email
+// (see upsertSubscriptionFromWebhook's comment on why the email fallback
+// is still necessary even for a signed-in user). getEffectivePlan and
+// getOwnSubscription both call this so they always agree on which row is
+// current — a customer whose billing email differs from their login email
+// must see the same subscription in both the plan label and the billing
+// controls, not "Pro" in one place and "nothing to manage" in the other.
+async function bestActiveSubscriptionRow(
   userId: string,
   email: string | null,
-): Promise<SubscriptionPlan> {
+): Promise<Subscription | null> {
   const supabase = createAdminClient();
   const now = Date.now();
 
@@ -64,7 +69,7 @@ export async function getEffectivePlan(
 
   if (byUserError) throw byUserError;
   const userMatch = bestValid((byUser ?? []) as Subscription[], now);
-  if (userMatch) return userMatch.plan;
+  if (userMatch) return userMatch;
 
   if (email) {
     const { data: byEmail, error: byEmailError } = await supabase
@@ -75,10 +80,33 @@ export async function getEffectivePlan(
 
     if (byEmailError) throw byEmailError;
     const emailMatch = bestValid((byEmail ?? []) as Subscription[], now);
-    if (emailMatch) return emailMatch.plan;
+    if (emailMatch) return emailMatch;
   }
 
-  return "free";
+  return null;
+}
+
+// Resolves a user's effective plan. Looks up by user_id first (the normal
+// case once signed in), falling back to email — covers the same guest-then-
+// magic-link timing gap the old order flow handled via linkOrdersToUser.
+export async function getEffectivePlan(
+  userId: string,
+  email: string | null,
+): Promise<SubscriptionPlan> {
+  const row = await bestActiveSubscriptionRow(userId, email);
+  return row?.plan ?? "free";
+}
+
+// Returns the full row backing the signed-in user's "Your plan" card and
+// billing controls (creem_subscription_id, is_comp, cancel_at_period_end,
+// current_period_end) — same resolution as getEffectivePlan, but callers
+// here need the whole row, not just the plan name. Returns null for a
+// Free user, exactly where getEffectivePlan would return "free".
+export async function getOwnSubscription(
+  userId: string,
+  email: string | null,
+): Promise<Subscription | null> {
+  return bestActiveSubscriptionRow(userId, email);
 }
 
 export async function getSubscriptionByCreemId(
@@ -104,6 +132,14 @@ export interface WebhookSubscriptionUpdate {
   interval: BillingInterval;
   status: "active" | "past_due" | "canceled";
   currentPeriodEnd: string | null;
+  // Explicit true/false from an event that actually says something about a
+  // pending scheduled cancellation (subscription.active/paid clears it,
+  // subscription.scheduled_cancel sets it, subscription.canceled clears
+  // it). Omitted for events that carry no signal either way
+  // (subscription.past_due) — the existing stored value is preserved
+  // rather than guessed, the same principle this function already applies
+  // to userId below.
+  cancelAtPeriodEnd?: boolean;
 }
 
 // Forward-only state transitions: webhook delivery order isn't guaranteed,
@@ -168,6 +204,7 @@ export async function upsertSubscriptionFromWebhook(
       billing_interval: update.interval,
       status: update.status,
       current_period_end: update.currentPeriodEnd,
+      cancel_at_period_end: update.cancelAtPeriodEnd ?? existing?.cancel_at_period_end ?? false,
     },
     { onConflict: "creem_subscription_id" },
   );

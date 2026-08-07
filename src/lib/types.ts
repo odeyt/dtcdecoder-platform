@@ -151,6 +151,11 @@ export interface Subscription {
   // exactly like a paid subscription; excluded from revenue estimates.
   is_comp: boolean;
   comp_reason: string | null;
+  // True while a Creem scheduled cancellation is pending (migration 0051)
+  // — status stays 'active' (full access continues) until
+  // current_period_end, then a later subscription.canceled webhook flips
+  // status to 'canceled'.
+  cancel_at_period_end: boolean;
   created_at: string;
   updated_at: string;
 }

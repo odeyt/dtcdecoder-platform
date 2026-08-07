@@ -76,6 +76,64 @@ export async function createSubscriptionCheckout(
   return { checkoutUrl: data.checkout_url, checkoutId: data.id };
 }
 
+interface CreemCancelSubscriptionResponse {
+  id: string;
+  status?: string;
+  canceled_at?: string | null;
+  current_period_end_date?: string | null;
+}
+
+// Schedules cancellation at the end of the current billing period — the
+// ONLY mode this app offers (mode: "scheduled"). Creem also supports
+// mode: "immediate", but nothing in this app's copy (FAQ/Terms/Refund/
+// Subscription & Billing Policy) promises immediate cancellation, and
+// calling it would revoke access mid-period with no policy language
+// covering that behavior — so it's never called here.
+// Reference: https://docs.creem.io/api-reference/endpoint/cancel-subscription
+export async function cancelSubscription(
+  creemSubscriptionId: string,
+): Promise<CreemCancelSubscriptionResponse> {
+  const res = await fetch(`${env.creemApiBaseUrl()}/subscriptions/${creemSubscriptionId}/cancel`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.creemApiKey(),
+    },
+    body: JSON.stringify({ mode: "scheduled" }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Creem subscription cancel failed (${res.status}): ${errText}`);
+  }
+
+  return (await res.json()) as CreemCancelSubscriptionResponse;
+}
+
+// Reverses a pending scheduled cancellation, back to active. Callers
+// (billing-actions.ts) resolve creemSubscriptionId from the signed-in
+// user's own subscription row server-side — never from a client-supplied
+// id — the same discipline cancelSubscription relies on.
+// Reference: https://docs.creem.io/api-reference/endpoint/resume-subscription
+export async function resumeSubscription(
+  creemSubscriptionId: string,
+): Promise<CreemCancelSubscriptionResponse> {
+  const res = await fetch(`${env.creemApiBaseUrl()}/subscriptions/${creemSubscriptionId}/resume`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.creemApiKey(),
+    },
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Creem subscription resume failed (${res.status}): ${errText}`);
+  }
+
+  return (await res.json()) as CreemCancelSubscriptionResponse;
+}
+
 interface CreateAddOnCheckoutInput {
   packId: string;
   email: string;

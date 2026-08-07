@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "Escolha uma senha mais forte.",
     "passwordUpdateSamePassword": "A nova senha deve ser diferente da sua senha atual.",
     "passwordUpdateRateLimited": "Muitas tentativas. Tente novamente em alguns minutos.",
-    "passwordUpdateSessionExpired": "Sua sessão expirou. Entre novamente e tente de novo."
+    "passwordUpdateSessionExpired": "Sua sessão expirou. Entre novamente e tente de novo.",
+    "billingRenewsOn": "Renova em {date}",
+    "billingCancelButton": "Cancelar assinatura",
+    "billingCancelConfirmPrompt": "Cancelar sua assinatura? Você manterá acesso completo até {date}, depois ela não será renovada.",
+    "billingCancelConfirmButton": "Sim, cancelar no fim do período",
+    "billingKeepPlanButton": "Manter meu plano",
+    "billingCanceling": "Cancelando…",
+    "billingCancelFailed": "Algo deu errado ao cancelar sua assinatura. Tente novamente ou entre em contato com o suporte.",
+    "billingEndsOn": "Seu plano termina em {date} — você não será cobrado novamente",
+    "billingResumeButton": "Retomar assinatura",
+    "billingResuming": "Retomando…",
+    "billingResumeFailed": "Algo deu errado ao retomar sua assinatura. Tente novamente ou entre em contato com o suporte.",
+    "billingCompNotice": "Este plano foi concedido à sua conta e não é cobrado através da Creem. Entre em contato com o suporte para fazer alterações.",
+    "billingNoActiveSubscription": "Nenhuma assinatura ativa encontrada para gerenciar.",
+    "billingSignInRequired": "É necessário fazer login."
   },
   "scanCases": {
     "title": "Casos de diagnóstico",

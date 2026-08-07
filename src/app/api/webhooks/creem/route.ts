@@ -123,20 +123,32 @@ export async function POST(request: NextRequest) {
     switch (event.eventType) {
       case "subscription.active":
       case "subscription.paid":
-        await upsertSubscriptionFromWebhook({ ...base, status: "active" });
+        // A renewal or a resumed scheduled-cancel both land here — either
+        // way there's no pending cancellation anymore.
+        await upsertSubscriptionFromWebhook({ ...base, status: "active", cancelAtPeriodEnd: false });
         break;
 
       case "subscription.past_due":
+        // No signal either way about a pending cancellation — omit
+        // cancelAtPeriodEnd so upsertSubscriptionFromWebhook preserves
+        // whatever is already stored.
         await upsertSubscriptionFromWebhook({ ...base, status: "past_due" });
         break;
 
+      case "subscription.scheduled_cancel":
+        // Full access continues until current_period_end — status stays
+        // "active"; only the intent flag changes. See migration 0051's
+        // header comment for why this isn't a 4th status value.
+        await upsertSubscriptionFromWebhook({ ...base, status: "active", cancelAtPeriodEnd: true });
+        break;
+
       case "subscription.canceled":
-        await upsertSubscriptionFromWebhook({ ...base, status: "canceled" });
+        await upsertSubscriptionFromWebhook({ ...base, status: "canceled", cancelAtPeriodEnd: false });
         break;
 
       default:
-        // trialing / paused / update / scheduled_cancel — acknowledged, no
-        // state transition applied for these in v1.
+        // trialing / paused / update — acknowledged, no state transition
+        // applied for these in v1.
         break;
     }
   } catch (err) {

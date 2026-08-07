@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "더 안전한 비밀번호를 선택하세요.",
     "passwordUpdateSamePassword": "새 비밀번호는 현재 비밀번호와 달라야 합니다.",
     "passwordUpdateRateLimited": "시도 횟수가 너무 많습니다. 몇 분 후에 다시 시도해 주세요.",
-    "passwordUpdateSessionExpired": "세션이 만료되었습니다. 다시 로그인한 후 시도해 주세요."
+    "passwordUpdateSessionExpired": "세션이 만료되었습니다. 다시 로그인한 후 시도해 주세요.",
+    "billingRenewsOn": "{date}에 갱신됩니다",
+    "billingCancelButton": "구독 취소",
+    "billingCancelConfirmPrompt": "구독을 취소하시겠습니까? {date}까지는 전체 이용이 가능하며, 이후 갱신되지 않습니다.",
+    "billingCancelConfirmButton": "예, 결제 기간 종료 시 취소합니다",
+    "billingKeepPlanButton": "플랜 유지하기",
+    "billingCanceling": "취소 중…",
+    "billingCancelFailed": "구독 취소 중 문제가 발생했습니다. 다시 시도하거나 고객 지원에 문의하세요.",
+    "billingEndsOn": "플랜이 {date}에 종료됩니다 — 더 이상 청구되지 않습니다",
+    "billingResumeButton": "구독 재개",
+    "billingResuming": "재개 중…",
+    "billingResumeFailed": "구독 재개 중 문제가 발생했습니다. 다시 시도하거나 고객 지원에 문의하세요.",
+    "billingCompNotice": "이 플랜은 계정에 제공된 것으로 Creem을 통해 청구되지 않습니다. 변경하려면 고객 지원에 문의하세요.",
+    "billingNoActiveSubscription": "관리할 활성 구독을 찾을 수 없습니다.",
+    "billingSignInRequired": "로그인이 필요합니다."
   },
   "scanCases": {
     "title": "진단 사례",

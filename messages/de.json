@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "Wähle ein sichereres Passwort.",
     "passwordUpdateSamePassword": "Das neue Passwort muss sich von deinem aktuellen Passwort unterscheiden.",
     "passwordUpdateRateLimited": "Zu viele Versuche. Bitte versuche es in ein paar Minuten erneut.",
-    "passwordUpdateSessionExpired": "Deine Sitzung ist abgelaufen. Melde dich erneut an und versuche es noch einmal."
+    "passwordUpdateSessionExpired": "Deine Sitzung ist abgelaufen. Melde dich erneut an und versuche es noch einmal.",
+    "billingRenewsOn": "Verlängert sich am {date}",
+    "billingCancelButton": "Abonnement kündigen",
+    "billingCancelConfirmPrompt": "Abonnement kündigen? Du behältst vollen Zugriff bis zum {date}, danach wird es nicht verlängert.",
+    "billingCancelConfirmButton": "Ja, zum Periodenende kündigen",
+    "billingKeepPlanButton": "Meinen Plan behalten",
+    "billingCanceling": "Wird gekündigt…",
+    "billingCancelFailed": "Beim Kündigen deines Abonnements ist etwas schiefgelaufen. Versuche es erneut oder kontaktiere den Support.",
+    "billingEndsOn": "Dein Plan endet am {date} — du wirst nicht erneut belastet",
+    "billingResumeButton": "Abonnement fortsetzen",
+    "billingResuming": "Wird fortgesetzt…",
+    "billingResumeFailed": "Beim Fortsetzen deines Abonnements ist etwas schiefgelaufen. Versuche es erneut oder kontaktiere den Support.",
+    "billingCompNotice": "Dieser Plan wurde deinem Konto gewährt und wird nicht über Creem abgerechnet. Kontaktiere den Support für Änderungen.",
+    "billingNoActiveSubscription": "Kein aktives Abonnement zum Verwalten gefunden.",
+    "billingSignInRequired": "Anmeldung erforderlich."
   },
   "scanCases": {
     "title": "Diagnosefälle",

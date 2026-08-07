@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "より安全なパスワードを選択してください。",
     "passwordUpdateSamePassword": "新しいパスワードは現在のパスワードと異なるものにしてください。",
     "passwordUpdateRateLimited": "試行回数が多すぎます。しばらくしてからもう一度お試しください。",
-    "passwordUpdateSessionExpired": "セッションの有効期限が切れました。再度サインインしてお試しください。"
+    "passwordUpdateSessionExpired": "セッションの有効期限が切れました。再度サインインしてお試しください。",
+    "billingRenewsOn": "{date}に更新されます",
+    "billingCancelButton": "サブスクリプションを解約",
+    "billingCancelConfirmPrompt": "サブスクリプションを解約しますか?{date}まで引き続きご利用いただけます。その後は更新されません。",
+    "billingCancelConfirmButton": "はい、期間終了時に解約します",
+    "billingKeepPlanButton": "プランを継続する",
+    "billingCanceling": "解約しています…",
+    "billingCancelFailed": "サブスクリプションの解約中に問題が発生しました。もう一度お試しいただくか、サポートにお問い合わせください。",
+    "billingEndsOn": "プランは{date}に終了します — 再度課金されることはありません",
+    "billingResumeButton": "サブスクリプションを再開",
+    "billingResuming": "再開しています…",
+    "billingResumeFailed": "サブスクリプションの再開中に問題が発生しました。もう一度お試しいただくか、サポートにお問い合わせください。",
+    "billingCompNotice": "このプランはアカウントに付与されたもので、Creem経由の請求ではありません。変更についてはサポートにお問い合わせください。",
+    "billingNoActiveSubscription": "管理できるアクティブなサブスクリプションが見つかりません。",
+    "billingSignInRequired": "サインインが必要です。"
   },
   "scanCases": {
     "title": "診断ケース",

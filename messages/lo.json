@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "ກະລຸນາເລືອກລະຫັດຜ່ານທີ່ປອດໄພກວ່ານີ້.",
     "passwordUpdateSamePassword": "ລະຫັດຜ່ານໃໝ່ຕ້ອງແຕກຕ່າງຈາກລະຫັດຜ່ານປັດຈຸບັນຂອງທ່ານ.",
     "passwordUpdateRateLimited": "ພະຍາຍາມຫຼາຍເທື່ອເກີນໄປ. ກະລຸນາລອງໃໝ່ອີກຄັ້ງໃນອີກສອງສາມນາທີ.",
-    "passwordUpdateSessionExpired": "ເຊດຊັນຂອງທ່ານໝົດອາຍຸແລ້ວ. ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່ແລ້ວລອງອີກຄັ້ງ."
+    "passwordUpdateSessionExpired": "ເຊດຊັນຂອງທ່ານໝົດອາຍຸແລ້ວ. ກະລຸນາເຂົ້າສູ່ລະບົບໃໝ່ແລ້ວລອງອີກຄັ້ງ.",
+    "billingRenewsOn": "ຕໍ່ອາຍຸໃນວັນທີ {date}",
+    "billingCancelButton": "ຍົກເລີກການສະໝັກ",
+    "billingCancelConfirmPrompt": "ຍົກເລີກການສະໝັກຂອງທ່ານບໍ? ທ່ານຈະຍັງສາມາດໃຊ້ງານໄດ້ເຕັມທີ່ຈົນເຖິງວັນທີ {date} ຫຼັງຈາກນັ້ນມັນຈະບໍ່ຕໍ່ອາຍຸ.",
+    "billingCancelConfirmButton": "ແມ່ນ, ຍົກເລີກເມື່ອສິ້ນສຸດໄລຍະ",
+    "billingKeepPlanButton": "ຮັກສາແຜນຂອງຂ້ອຍ",
+    "billingCanceling": "ກຳລັງຍົກເລີກ…",
+    "billingCancelFailed": "ມີບາງຢ່າງຜິດພາດໃນການຍົກເລີກການສະໝັກຂອງທ່ານ. ກະລຸນາລອງໃໝ່ ຫຼື ຕິດຕໍ່ຝ່າຍສະໜັບສະໜູນ.",
+    "billingEndsOn": "ແຜນຂອງທ່ານຈະສິ້ນສຸດໃນວັນທີ {date} — ທ່ານຈະບໍ່ຖືກຮຽກເກັບເງິນອີກ",
+    "billingResumeButton": "ສືບຕໍ່ການສະໝັກ",
+    "billingResuming": "ກຳລັງສືບຕໍ່…",
+    "billingResumeFailed": "ມີບາງຢ່າງຜິດພາດໃນການສືບຕໍ່ການສະໝັກຂອງທ່ານ. ກະລຸນາລອງໃໝ່ ຫຼື ຕິດຕໍ່ຝ່າຍສະໜັບສະໜູນ.",
+    "billingCompNotice": "ແຜນນີ້ຖືກມອບໃຫ້ບັນຊີຂອງທ່ານ ແລະ ບໍ່ໄດ້ຖືກຮຽກເກັບເງິນຜ່ານ Creem. ກະລຸນາຕິດຕໍ່ຝ່າຍສະໜັບສະໜູນເພື່ອປ່ຽນແປງ.",
+    "billingNoActiveSubscription": "ບໍ່ພົບການສະໝັກທີ່ໃຊ້ງານຢູ່ເພື່ອຈັດການ.",
+    "billingSignInRequired": "ຕ້ອງການເຂົ້າສູ່ລະບົບ."
   },
   "scanCases": {
     "title": "ກໍລະນີການວິນິດໄສ",

@@ -410,7 +410,21 @@
     "passwordUpdateWeakPassword": "Choose a stronger password.",
     "passwordUpdateSamePassword": "New password must be different from your current password.",
     "passwordUpdateRateLimited": "Too many attempts. Try again in a few minutes.",
-    "passwordUpdateSessionExpired": "Your session has expired. Sign in again and retry."
+    "passwordUpdateSessionExpired": "Your session has expired. Sign in again and retry.",
+    "billingRenewsOn": "Renews {date}",
+    "billingCancelButton": "Cancel subscription",
+    "billingCancelConfirmPrompt": "Cancel your subscription? You'll keep full access until {date}, then it won't renew.",
+    "billingCancelConfirmButton": "Yes, cancel at period end",
+    "billingKeepPlanButton": "Keep my plan",
+    "billingCanceling": "Canceling…",
+    "billingCancelFailed": "Something went wrong canceling your subscription. Please try again or contact support.",
+    "billingEndsOn": "Your plan ends {date} — you won't be charged again",
+    "billingResumeButton": "Resume subscription",
+    "billingResuming": "Resuming…",
+    "billingResumeFailed": "Something went wrong resuming your subscription. Please try again or contact support.",
+    "billingCompNotice": "This plan was granted to your account and isn't billed through Creem. Contact support to make changes.",
+    "billingNoActiveSubscription": "No active subscription found to manage.",
+    "billingSignInRequired": "Sign in required."
   },
   "scanCases": {
     "title": "Diagnostic Cases",

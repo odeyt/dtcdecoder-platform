@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "请选择更安全的密码。",
     "passwordUpdateSamePassword": "新密码必须与当前密码不同。",
     "passwordUpdateRateLimited": "尝试次数过多，请几分钟后再试。",
-    "passwordUpdateSessionExpired": "您的会话已过期，请重新登录后再试。"
+    "passwordUpdateSessionExpired": "您的会话已过期，请重新登录后再试。",
+    "billingRenewsOn": "将于{date}续订",
+    "billingCancelButton": "取消订阅",
+    "billingCancelConfirmPrompt": "确定要取消订阅吗?您将在{date}之前保留完整访问权限,之后将不再续订。",
+    "billingCancelConfirmButton": "是的,在计费周期结束时取消",
+    "billingKeepPlanButton": "保留我的套餐",
+    "billingCanceling": "正在取消…",
+    "billingCancelFailed": "取消订阅时出了点问题。请重试或联系客服。",
+    "billingEndsOn": "您的套餐将于{date}结束 — 不会再向您收费",
+    "billingResumeButton": "恢复订阅",
+    "billingResuming": "正在恢复…",
+    "billingResumeFailed": "恢复订阅时出了点问题。请重试或联系客服。",
+    "billingCompNotice": "此套餐是赠送给您账户的,不通过 Creem 计费。如需更改,请联系客服。",
+    "billingNoActiveSubscription": "未找到可管理的有效订阅。",
+    "billingSignInRequired": "需要登录。"
   },
   "scanCases": {
     "title": "诊断案例",

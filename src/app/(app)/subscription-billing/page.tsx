@@ -44,8 +44,8 @@ export default function SubscriptionBillingPage() {
 
       <h2>Cancellation</h2>
       <p>
-        You may cancel at any time from your account&apos;s Billing section or through the Creem
-        customer billing portal. Cancellation stops future renewals; you retain access to paid
+        You may cancel at any time from your Account page using the Cancel subscription option
+        under your plan. Cancellation stops future renewals; you retain access to paid
         features until the end of the period already paid for.
       </p>
 

@@ -30,8 +30,9 @@ const faqsEn: Faq[] = [
     question: "How do I cancel?",
     answer: (
       <>
-        Log into your account and select <strong>Billing</strong>, or use the
-        customer billing portal provided by Creem. Cancellation stops future renewals.
+        Go to your <strong>Account</strong> page and use the Cancel subscription
+        option under your plan. You&apos;ll keep access until the end of the period
+        you already paid for.
       </>
     ),
   },
@@ -109,9 +110,9 @@ const faqsEs: Faq[] = [
     question: "¿Cómo cancelo?",
     answer: (
       <>
-        Inicia sesión en tu cuenta y selecciona <strong>Facturación</strong>, o
-        usa el portal de facturación para clientes proporcionado por Creem. La cancelación detiene las
-        renovaciones futuras.
+        Ve a tu página de <strong>Cuenta</strong> y usa la opción Cancelar
+        suscripción debajo de tu plan. Conservarás el acceso hasta el final del
+        período que ya pagaste.
       </>
     ),
   },

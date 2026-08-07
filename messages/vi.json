@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "Hãy chọn một mật khẩu mạnh hơn.",
     "passwordUpdateSamePassword": "Mật khẩu mới phải khác với mật khẩu hiện tại của bạn.",
     "passwordUpdateRateLimited": "Quá nhiều lần thử. Vui lòng thử lại sau vài phút.",
-    "passwordUpdateSessionExpired": "Phiên của bạn đã hết hạn. Hãy đăng nhập lại và thử lại."
+    "passwordUpdateSessionExpired": "Phiên của bạn đã hết hạn. Hãy đăng nhập lại và thử lại.",
+    "billingRenewsOn": "Gia hạn vào {date}",
+    "billingCancelButton": "Hủy đăng ký",
+    "billingCancelConfirmPrompt": "Hủy đăng ký của bạn? Bạn sẽ vẫn có toàn quyền truy cập cho đến {date}, sau đó sẽ không được gia hạn.",
+    "billingCancelConfirmButton": "Có, hủy vào cuối kỳ thanh toán",
+    "billingKeepPlanButton": "Giữ gói của tôi",
+    "billingCanceling": "Đang hủy…",
+    "billingCancelFailed": "Đã xảy ra lỗi khi hủy đăng ký của bạn. Vui lòng thử lại hoặc liên hệ hỗ trợ.",
+    "billingEndsOn": "Gói của bạn kết thúc vào {date} — bạn sẽ không bị tính phí nữa",
+    "billingResumeButton": "Tiếp tục đăng ký",
+    "billingResuming": "Đang tiếp tục…",
+    "billingResumeFailed": "Đã xảy ra lỗi khi tiếp tục đăng ký của bạn. Vui lòng thử lại hoặc liên hệ hỗ trợ.",
+    "billingCompNotice": "Gói này được cấp cho tài khoản của bạn và không được tính phí qua Creem. Liên hệ hỗ trợ để thực hiện thay đổi.",
+    "billingNoActiveSubscription": "Không tìm thấy đăng ký đang hoạt động để quản lý.",
+    "billingSignInRequired": "Yêu cầu đăng nhập."
   },
   "scanCases": {
     "title": "Ca chẩn đoán",

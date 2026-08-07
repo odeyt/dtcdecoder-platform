@@ -212,7 +212,21 @@
     "passwordUpdateWeakPassword": "Choisissez un mot de passe plus sécurisé.",
     "passwordUpdateSamePassword": "Le nouveau mot de passe doit être différent de votre mot de passe actuel.",
     "passwordUpdateRateLimited": "Trop de tentatives. Veuillez réessayer dans quelques minutes.",
-    "passwordUpdateSessionExpired": "Votre session a expiré. Reconnectez-vous et réessayez."
+    "passwordUpdateSessionExpired": "Votre session a expiré. Reconnectez-vous et réessayez.",
+    "billingRenewsOn": "Se renouvelle le {date}",
+    "billingCancelButton": "Annuler l'abonnement",
+    "billingCancelConfirmPrompt": "Annuler votre abonnement ? Vous conserverez un accès complet jusqu'au {date}, puis il ne sera pas renouvelé.",
+    "billingCancelConfirmButton": "Oui, annuler en fin de période",
+    "billingKeepPlanButton": "Conserver mon forfait",
+    "billingCanceling": "Annulation…",
+    "billingCancelFailed": "Une erreur s'est produite lors de l'annulation de votre abonnement. Réessayez ou contactez le support.",
+    "billingEndsOn": "Votre forfait se termine le {date} — vous ne serez plus facturé",
+    "billingResumeButton": "Reprendre l'abonnement",
+    "billingResuming": "Reprise en cours…",
+    "billingResumeFailed": "Une erreur s'est produite lors de la reprise de votre abonnement. Réessayez ou contactez le support.",
+    "billingCompNotice": "Ce forfait a été offert à votre compte et n'est pas facturé via Creem. Contactez le support pour effectuer des modifications.",
+    "billingNoActiveSubscription": "Aucun abonnement actif trouvé à gérer.",
+    "billingSignInRequired": "Connexion requise."
   },
   "scanCases": {
     "title": "Dossiers de diagnostic",
