@@ -12,7 +12,8 @@
     "closeMenu": "메뉴 닫기",
     "primaryNav": "주요",
     "mobileNav": "모바일",
-    "language": "언어"
+    "language": "언어",
+    "account": "계정"
   },
   "footer": {
     "tagline": "AI 지원 차량 진단 인텔리전스 — 자격을 갖춘 정비사의 대면 진단을 대체하지 않습니다.",

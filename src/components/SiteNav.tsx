@@ -18,16 +18,11 @@ export function SiteNav() {
   const t = useTranslations("nav");
   const locale = useLocale();
   const href = (path: string) => localizeContentHref(path, locale);
-  const NAV_LINKS = [
-    { href: "/ai-assistant", label: t("aiDiagnostic") },
-    ...(env.scanDiagnosticsEnabled() ? [{ href: "/diagnostics", label: t("scanDiagnostics") }] : []),
-    { href: "/history", label: t("history") },
-    { href: "/pricing", label: t("pricing") },
-  ];
   const pathname = usePathname();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [userEmail, setUserEmail] = useState<string | null>(null);
+  const [plan, setPlan] = useState<"free" | "pro" | "workshop" | null>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -37,6 +32,38 @@ export function SiteNav() {
     });
     return () => sub.subscription.unsubscribe();
   }, []);
+
+  // Only fetches once signed in — nothing to gate a paid-only nav swap on
+  // otherwise. Deliberately never resets `plan` state here on sign-out;
+  // `isPaidSubscriber` below already factors in `userEmail`, so a stale
+  // `plan` value can never leak into the signed-out nav even before this
+  // effect's next run catches up.
+  useEffect(() => {
+    if (!userEmail) return;
+    let cancelled = false;
+    fetch("/api/account/plan")
+      .then((res) => (res.ok ? res.json() : null))
+      .then((data) => {
+        if (!cancelled) setPlan(data?.plan ?? null);
+      })
+      .catch(() => {
+        if (!cancelled) setPlan(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [userEmail]);
+
+  const isPaidSubscriber = Boolean(userEmail) && (plan === "pro" || plan === "workshop");
+  const NAV_LINKS = [
+    { href: "/ai-assistant", label: t("aiDiagnostic") },
+    ...(env.scanDiagnosticsEnabled() ? [{ href: "/diagnostics", label: t("scanDiagnostics") }] : []),
+    { href: "/history", label: t("history") },
+    // Pro/Workshop subscribers see "Account" here instead of "Pricing" —
+    // they've already converted, so quick access to manage their existing
+    // plan is more useful than a repeat pitch for tiers they're on/above.
+    isPaidSubscriber ? { href: "/account", label: t("account") } : { href: "/pricing", label: t("pricing") },
+  ];
 
   useEffect(() => {
     function onScroll() {

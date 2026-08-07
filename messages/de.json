@@ -12,7 +12,8 @@
     "closeMenu": "Menü schließen",
     "primaryNav": "Primär",
     "mobileNav": "Mobil",
-    "language": "Sprache"
+    "language": "Sprache",
+    "account": "Konto"
   },
   "footer": {
     "tagline": "KI-gestützte Fahrzeugdiagnose — kein Ersatz für die persönliche Diagnose durch eine qualifizierte Fachkraft.",

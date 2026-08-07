@@ -12,7 +12,8 @@
     "closeMenu": "Close menu",
     "primaryNav": "Primary",
     "mobileNav": "Mobile",
-    "language": "Language"
+    "language": "Language",
+    "account": "Account"
   },
   "footer": {
     "tagline": "Evidence-based automotive diagnostic intelligence — not a substitute for a qualified technician's in-person diagnosis.",

@@ -12,7 +12,8 @@
     "closeMenu": "关闭菜单",
     "primaryNav": "主要",
     "mobileNav": "移动",
-    "language": "语言"
+    "language": "语言",
+    "account": "账户"
   },
   "footer": {
     "tagline": "AI 辅助的汽车诊断智能——不能替代合格技师的现场诊断。",

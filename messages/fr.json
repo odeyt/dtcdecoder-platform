@@ -12,7 +12,8 @@
     "closeMenu": "Fermer le menu",
     "primaryNav": "Principal",
     "mobileNav": "Mobile",
-    "language": "Langue"
+    "language": "Langue",
+    "account": "Compte"
   },
   "footer": {
     "tagline": "Intelligence de diagnostic automobile assistée par IA — ne remplace pas le diagnostic en personne d'un technicien qualifié.",

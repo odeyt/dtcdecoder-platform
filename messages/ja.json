@@ -12,7 +12,8 @@
     "closeMenu": "メニューを閉じる",
     "primaryNav": "メイン",
     "mobileNav": "モバイル",
-    "language": "言語"
+    "language": "言語",
+    "account": "アカウント"
   },
   "footer": {
     "tagline": "AI 支援による自動車診断インテリジェンス — 有資格技術者による対面診断の代わりにはなりません。",

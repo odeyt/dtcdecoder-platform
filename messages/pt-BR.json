@@ -12,7 +12,8 @@
     "closeMenu": "Fechar menu",
     "primaryNav": "Principal",
     "mobileNav": "Móvel",
-    "language": "Idioma"
+    "language": "Idioma",
+    "account": "Conta"
   },
   "footer": {
     "tagline": "Inteligência de diagnóstico automotivo assistida por IA — não substitui o diagnóstico presencial de um técnico qualificado.",
