@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach, afterEach } from "vitest";
-import { cancelSubscription, resumeSubscription } from "@/lib/payments/creem";
+import { cancelSubscription, resumeSubscription, createCustomerPortalLink } from "@/lib/payments/creem";
 
 // cancelSubscription/resumeSubscription are the first functions in this
 // file to hit the network — mock global.fetch directly rather than the
@@ -85,6 +85,39 @@ describe("resumeSubscription", () => {
 
     await expect(resumeSubscription("sub_123")).rejects.toThrow(
       "Creem subscription resume failed (400): nothing to resume",
+    );
+  });
+});
+
+describe("createCustomerPortalLink", () => {
+  it("posts to /customers/billing with the customer_id body and the x-api-key header, returns the unwrapped link", async () => {
+    (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: true,
+      json: async () => ({ customer_portal_link: "https://creem.io/my-orders/login/xxx" }),
+    });
+
+    const result = await createCustomerPortalLink("cust_123");
+
+    expect(fetch).toHaveBeenCalledWith(
+      "https://test-api.creem.io/v1/customers/billing",
+      expect.objectContaining({
+        method: "POST",
+        headers: expect.objectContaining({ "x-api-key": "test-key" }),
+        body: JSON.stringify({ customer_id: "cust_123" }),
+      }),
+    );
+    expect(result).toBe("https://creem.io/my-orders/login/xxx");
+  });
+
+  it("throws with the established error-message format on a non-ok response", async () => {
+    (fetch as ReturnType<typeof vi.fn>).mockResolvedValue({
+      ok: false,
+      status: 404,
+      text: async () => "customer not found",
+    });
+
+    await expect(createCustomerPortalLink("cust_missing")).rejects.toThrow(
+      "Creem customer portal link creation failed (404): customer not found",
     );
   });
 });

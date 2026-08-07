@@ -226,7 +226,10 @@
     "billingResumeFailed": "Une erreur s'est produite lors de la reprise de votre abonnement. Réessayez ou contactez le support.",
     "billingCompNotice": "Ce forfait a été offert à votre compte et n'est pas facturé via Creem. Contactez le support pour effectuer des modifications.",
     "billingNoActiveSubscription": "Aucun abonnement actif trouvé à gérer.",
-    "billingSignInRequired": "Connexion requise."
+    "billingSignInRequired": "Connexion requise.",
+    "billingManagePaymentButton": "Gérer le moyen de paiement",
+    "billingPortalRedirecting": "Redirection…",
+    "billingPortalFailed": "Une erreur s'est produite lors de l'ouverture du portail de facturation. Réessayez ou contactez le support."
   },
   "scanCases": {
     "title": "Dossiers de diagnostic",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "Connectez-vous pour décoder un VIN.",
     "invalidVinFormat": "Saisissez un VIN valide de 17 caractères (lettres et chiffres uniquement, sans I, O ni Q).",
     "vinDecodeFailed": "Impossible de vérifier ce VIN pour le moment.",
-    "historyEntryNotFound": "Entrée d'historique introuvable."
+    "historyEntryNotFound": "Entrée d'historique introuvable.",
+    "billingPortalNoSubscription": "Aucun abonnement actif trouvé à gérer.",
+    "billingPortalCompNotice": "Ce forfait a été offert à votre compte et n'est pas facturé via Creem. Contactez le support pour effectuer des modifications.",
+    "billingPortalNoCustomerId": "Aucun compte de facturation n'est enregistré pour cet abonnement. Contactez le support.",
+    "unableToOpenBillingPortal": "Impossible d'ouvrir le portail de facturation pour le moment"
   }
 }

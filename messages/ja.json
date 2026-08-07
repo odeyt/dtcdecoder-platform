@@ -226,7 +226,10 @@
     "billingResumeFailed": "サブスクリプションの再開中に問題が発生しました。もう一度お試しいただくか、サポートにお問い合わせください。",
     "billingCompNotice": "このプランはアカウントに付与されたもので、Creem経由の請求ではありません。変更についてはサポートにお問い合わせください。",
     "billingNoActiveSubscription": "管理できるアクティブなサブスクリプションが見つかりません。",
-    "billingSignInRequired": "サインインが必要です。"
+    "billingSignInRequired": "サインインが必要です。",
+    "billingManagePaymentButton": "支払い方法を管理",
+    "billingPortalRedirecting": "リダイレクトしています…",
+    "billingPortalFailed": "請求ポータルを開く際に問題が発生しました。もう一度お試しいただくか、サポートにお問い合わせください。"
   },
   "scanCases": {
     "title": "診断ケース",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "VINをデコードするにはサインインしてください。",
     "invalidVinFormat": "有効な17桁のVINを入力してください(英数字のみ、I、O、Qは使用不可)。",
     "vinDecodeFailed": "現在このVINを確認できませんでした。",
-    "historyEntryNotFound": "履歴の項目が見つかりませんでした。"
+    "historyEntryNotFound": "履歴の項目が見つかりませんでした。",
+    "billingPortalNoSubscription": "管理できるアクティブなサブスクリプションが見つかりません。",
+    "billingPortalCompNotice": "このプランはアカウントに付与されたもので、Creem経由の請求ではありません。変更についてはサポートにお問い合わせください。",
+    "billingPortalNoCustomerId": "このサブスクリプションに登録された請求先アカウントがありません。サポートにお問い合わせください。",
+    "unableToOpenBillingPortal": "現在、請求ポータルを開けません"
   }
 }

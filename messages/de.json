@@ -226,7 +226,10 @@
     "billingResumeFailed": "Beim Fortsetzen deines Abonnements ist etwas schiefgelaufen. Versuche es erneut oder kontaktiere den Support.",
     "billingCompNotice": "Dieser Plan wurde deinem Konto gewährt und wird nicht über Creem abgerechnet. Kontaktiere den Support für Änderungen.",
     "billingNoActiveSubscription": "Kein aktives Abonnement zum Verwalten gefunden.",
-    "billingSignInRequired": "Anmeldung erforderlich."
+    "billingSignInRequired": "Anmeldung erforderlich.",
+    "billingManagePaymentButton": "Zahlungsmethode verwalten",
+    "billingPortalRedirecting": "Wird weitergeleitet…",
+    "billingPortalFailed": "Beim Öffnen des Rechnungsportals ist etwas schiefgelaufen. Versuche es erneut oder kontaktiere den Support."
   },
   "scanCases": {
     "title": "Diagnosefälle",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "Melde dich an, um eine VIN zu decodieren.",
     "invalidVinFormat": "Gib eine gültige 17-stellige VIN ein (nur Buchstaben und Zahlen, kein I, O oder Q).",
     "vinDecodeFailed": "Diese VIN konnte gerade nicht überprüft werden.",
-    "historyEntryNotFound": "Verlaufseintrag nicht gefunden."
+    "historyEntryNotFound": "Verlaufseintrag nicht gefunden.",
+    "billingPortalNoSubscription": "Kein aktives Abonnement zum Verwalten gefunden.",
+    "billingPortalCompNotice": "Dieser Plan wurde deinem Konto gewährt und wird nicht über Creem abgerechnet. Kontaktiere den Support für Änderungen.",
+    "billingPortalNoCustomerId": "Für dieses Abonnement ist kein Rechnungskonto hinterlegt. Kontaktiere den Support.",
+    "unableToOpenBillingPortal": "Das Rechnungsportal kann gerade nicht geöffnet werden"
   }
 }

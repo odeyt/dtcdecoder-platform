@@ -424,7 +424,10 @@
     "billingResumeFailed": "Algo salió mal al reanudar tu suscripción. Inténtalo de nuevo o contacta con soporte.",
     "billingCompNotice": "Este plan fue otorgado a tu cuenta y no se factura a través de Creem. Contacta con soporte para hacer cambios.",
     "billingNoActiveSubscription": "No se encontró ninguna suscripción activa para administrar.",
-    "billingSignInRequired": "Se requiere iniciar sesión."
+    "billingSignInRequired": "Se requiere iniciar sesión.",
+    "billingManagePaymentButton": "Administrar método de pago",
+    "billingPortalRedirecting": "Redirigiendo…",
+    "billingPortalFailed": "Algo salió mal al abrir el portal de facturación. Inténtalo de nuevo o contacta con soporte."
   },
   "scanCases": {
     "title": "Casos de diagnóstico",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "Inicia sesión para decodificar un VIN.",
     "invalidVinFormat": "Ingresa un VIN válido de 17 caracteres (solo letras y números, sin I, O ni Q).",
     "vinDecodeFailed": "No se pudo verificar ese VIN en este momento.",
-    "historyEntryNotFound": "No se encontró la entrada del historial."
+    "historyEntryNotFound": "No se encontró la entrada del historial.",
+    "billingPortalNoSubscription": "No se encontró ninguna suscripción activa para administrar.",
+    "billingPortalCompNotice": "Este plan fue otorgado a tu cuenta y no se factura a través de Creem. Contacta con soporte para hacer cambios.",
+    "billingPortalNoCustomerId": "No hay ninguna cuenta de facturación registrada para esta suscripción. Contacta con soporte.",
+    "unableToOpenBillingPortal": "No se pudo abrir el portal de facturación en este momento"
   }
 }

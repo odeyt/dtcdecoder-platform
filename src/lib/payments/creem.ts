@@ -134,6 +134,37 @@ export async function resumeSubscription(
   return (await res.json()) as CreemCancelSubscriptionResponse;
 }
 
+interface CreemCustomerPortalResponse {
+  customer_portal_link: string;
+}
+
+// Returns a Creem-hosted page where the customer updates their payment
+// method and views invoices/receipts. Unlike checkout, there's no separate
+// Creem *product* involved, so no isXConfigured() gate — the caller (the
+// billing-portal route) is responsible for resolving a real
+// creem_customer_id from the signed-in user's own subscription row before
+// calling this, the same discipline cancelSubscription/resumeSubscription
+// already apply to creem_subscription_id.
+// Reference: https://docs.creem.io/api-reference/endpoint/create-customer-billing-portal
+export async function createCustomerPortalLink(creemCustomerId: string): Promise<string> {
+  const res = await fetch(`${env.creemApiBaseUrl()}/customers/billing`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": env.creemApiKey(),
+    },
+    body: JSON.stringify({ customer_id: creemCustomerId }),
+  });
+
+  if (!res.ok) {
+    const errText = await res.text();
+    throw new Error(`Creem customer portal link creation failed (${res.status}): ${errText}`);
+  }
+
+  const data = (await res.json()) as CreemCustomerPortalResponse;
+  return data.customer_portal_link;
+}
+
 interface CreateAddOnCheckoutInput {
   packId: string;
   email: string;

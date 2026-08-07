@@ -424,7 +424,10 @@
     "billingResumeFailed": "Something went wrong resuming your subscription. Please try again or contact support.",
     "billingCompNotice": "This plan was granted to your account and isn't billed through Creem. Contact support to make changes.",
     "billingNoActiveSubscription": "No active subscription found to manage.",
-    "billingSignInRequired": "Sign in required."
+    "billingSignInRequired": "Sign in required.",
+    "billingManagePaymentButton": "Manage payment method",
+    "billingPortalRedirecting": "Redirecting…",
+    "billingPortalFailed": "Something went wrong opening the billing portal. Please try again or contact support."
   },
   "scanCases": {
     "title": "Diagnostic Cases",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "Sign in to decode a VIN.",
     "invalidVinFormat": "Enter a valid 17-character VIN (letters and numbers only, no I, O, or Q).",
     "vinDecodeFailed": "Couldn't verify that VIN right now.",
-    "historyEntryNotFound": "History entry not found."
+    "historyEntryNotFound": "History entry not found.",
+    "billingPortalNoSubscription": "No active subscription found to manage.",
+    "billingPortalCompNotice": "This plan was granted to your account and isn't billed through Creem. Contact support to make changes.",
+    "billingPortalNoCustomerId": "No billing account is on file for this subscription. Contact support.",
+    "unableToOpenBillingPortal": "Unable to open the billing portal right now"
   }
 }

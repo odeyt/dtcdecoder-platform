@@ -226,7 +226,10 @@
     "billingResumeFailed": "恢复订阅时出了点问题。请重试或联系客服。",
     "billingCompNotice": "此套餐是赠送给您账户的,不通过 Creem 计费。如需更改,请联系客服。",
     "billingNoActiveSubscription": "未找到可管理的有效订阅。",
-    "billingSignInRequired": "需要登录。"
+    "billingSignInRequired": "需要登录。",
+    "billingManagePaymentButton": "管理付款方式",
+    "billingPortalRedirecting": "正在跳转…",
+    "billingPortalFailed": "打开账单门户时出了点问题。请重试或联系客服。"
   },
   "scanCases": {
     "title": "诊断案例",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "请登录以解码 VIN。",
     "invalidVinFormat": "请输入有效的17位VIN(仅限字母和数字,不含 I、O 或 Q)。",
     "vinDecodeFailed": "目前无法验证该 VIN。",
-    "historyEntryNotFound": "未找到该历史记录。"
+    "historyEntryNotFound": "未找到该历史记录。",
+    "billingPortalNoSubscription": "未找到可管理的有效订阅。",
+    "billingPortalCompNotice": "此套餐是赠送给您账户的,不通过 Creem 计费。如需更改,请联系客服。",
+    "billingPortalNoCustomerId": "此订阅没有登记的账单账户。请联系客服。",
+    "unableToOpenBillingPortal": "目前无法打开账单门户"
   }
 }

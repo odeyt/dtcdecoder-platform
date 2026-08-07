@@ -226,7 +226,10 @@
     "billingResumeFailed": "Đã xảy ra lỗi khi tiếp tục đăng ký của bạn. Vui lòng thử lại hoặc liên hệ hỗ trợ.",
     "billingCompNotice": "Gói này được cấp cho tài khoản của bạn và không được tính phí qua Creem. Liên hệ hỗ trợ để thực hiện thay đổi.",
     "billingNoActiveSubscription": "Không tìm thấy đăng ký đang hoạt động để quản lý.",
-    "billingSignInRequired": "Yêu cầu đăng nhập."
+    "billingSignInRequired": "Yêu cầu đăng nhập.",
+    "billingManagePaymentButton": "Quản lý phương thức thanh toán",
+    "billingPortalRedirecting": "Đang chuyển hướng…",
+    "billingPortalFailed": "Đã xảy ra lỗi khi mở cổng thanh toán. Vui lòng thử lại hoặc liên hệ hỗ trợ."
   },
   "scanCases": {
     "title": "Ca chẩn đoán",
@@ -1187,6 +1190,10 @@
     "signInRequiredVinDecode": "Đăng nhập để giải mã số VIN.",
     "invalidVinFormat": "Nhập số VIN hợp lệ gồm 17 ký tự (chỉ chữ cái và số, không có I, O hoặc Q).",
     "vinDecodeFailed": "Không thể xác minh số VIN này ngay bây giờ.",
-    "historyEntryNotFound": "Không tìm thấy mục lịch sử này."
+    "historyEntryNotFound": "Không tìm thấy mục lịch sử này.",
+    "billingPortalNoSubscription": "Không tìm thấy đăng ký đang hoạt động để quản lý.",
+    "billingPortalCompNotice": "Gói này được cấp cho tài khoản của bạn và không được tính phí qua Creem. Liên hệ hỗ trợ để thực hiện thay đổi.",
+    "billingPortalNoCustomerId": "Không có tài khoản thanh toán nào được lưu cho đăng ký này. Liên hệ hỗ trợ.",
+    "unableToOpenBillingPortal": "Hiện không thể mở cổng thanh toán"
   }
 }
