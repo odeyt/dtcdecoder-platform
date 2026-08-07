@@ -11,8 +11,9 @@ export default function ContactPage() {
     <div className="mx-auto max-w-2xl px-6 py-16">
       <h1 className="text-3xl font-bold text-white">Contact</h1>
       <p className="mt-4 text-zinc-400">
-        Questions about a diagnosis, a repair PDF, or Workshop accounts? Sign
-        up below and we&apos;ll follow up, or reach out directly on YouTube.
+        Questions about a diagnosis, a diagnostic report, or Workshop
+        accounts? Sign up below and we&apos;ll follow up, or reach out
+        directly on YouTube.
       </p>
       <div className="mt-8">
         <EmailSignupForm />
