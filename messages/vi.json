@@ -3,7 +3,6 @@
     "dtcLookup": "Tra cứu DTC",
     "aiDiagnostic": "Hỏi DTC Technician",
     "scanDiagnostics": "Phân tích báo cáo quét",
-    "repairLibrary": "Thư viện sửa chữa",
     "history": "Lịch sử",
     "pricing": "Bảng giá",
     "signIn": "Đăng nhập",
@@ -48,9 +47,6 @@
     "valueProp2Body": "Mỗi lần tra cứu được đối chiếu với cơ sở dữ liệu tham chiếu được tuyển chọn trước khi AI suy luận thêm.",
     "valueProp3Title": "Hướng dẫn ưu tiên an toàn",
     "valueProp3Body": "Các khuyến nghị chỉ ra những phép thử cần thực hiện trước khi thay phụ tùng — không bao giờ làm ngược lại.",
-    "pdfHeading": "Cần quy trình sửa chữa chuyên nghiệp đầy đủ?",
-    "pdfBody": "Tải xuống PDF Chẩn đoán tổng thể đầy đủ với kiểm tra hệ thống dây, dữ liệu máy quét, các bước kiểm tra và định hướng sửa chữa.",
-    "getRepairPdf": "Nhận PDF sửa chữa",
     "videoHeading": "Xem các video chẩn đoán thực tế và tình huống của kỹ thuật viên.",
     "videoBody": "Video đầy đủ từ tháo rời đến sửa chữa cho mọi mã lỗi chính.",
     "watchOnYoutube": "Xem trên YouTube",
@@ -122,13 +118,6 @@
     "startingCheckout": "Đang bắt đầu thanh toán…",
     "viewProPlans": "Xem các gói Pro Technician",
     "oneTimeNote": "Thanh toán một lần. Không yêu cầu đăng ký."
-  },
-  "repairPdfs": {
-    "title": "PDF Sửa Chữa",
-    "subtitle": "Hướng dẫn PDF chẩn đoán chính với kiểm tra hệ thống dây điện, dữ liệu công cụ quét và hướng dẫn sửa chữa.",
-    "masterPdfTitle": "PDF Chẩn Đoán Chính",
-    "masterPdfDescription": "Quy trình sửa chữa chuyên nghiệp đầy đủ, bao gồm kiểm tra hệ thống dây điện, dữ liệu công cụ quét, các bước kiểm tra và hướng dẫn sửa chữa.",
-    "getRepairPdf": "Nhận PDF Sửa Chữa"
   },
   "videosPage": {
     "title": "Video",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "Các mã liên quan trong cùng nhóm",
     "beforeYouDriveTitle": "Trước khi lái xe",
     "beforeYouDriveBody": "Bất kỳ mã lỗi nào được lưu trữ đều có thể cho thấy tình trạng ảnh hưởng đến an toàn vận hành. Nếu xe của bạn có các dấu hiệu cảnh báo khác (mất công suất, tiếng ồn bất thường, đèn cảnh báo ngoài đèn kiểm tra động cơ, quá nhiệt, hoặc thay đổi trong khả năng điều khiển), hãy đưa xe đi kiểm tra trước khi tiếp tục lái.",
-    "browseRepairPdfs": "Xem PDF sửa chữa",
     "browseRepairVideos": "Xem video sửa chữa",
     "unlockFullAiDiagnosisTitle": "Mở khóa chẩn đoán AI đầy đủ",
     "unlockFullAiDiagnosisBody": "Thêm thông tin xe và triệu chứng của bạn để nhận quy trình chẩn đoán chuyên nghiệp."

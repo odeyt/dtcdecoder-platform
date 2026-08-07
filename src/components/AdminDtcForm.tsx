@@ -13,7 +13,7 @@ export function AdminDtcForm({
         <Field label="Code (e.g. P0420)" name="code" defaultValue={dtc?.code} required />
         <Field label="Slug (e.g. p0420 or n55-p0171)" name="slug" defaultValue={dtc?.slug} required />
         <Field
-          label="Make (leave blank for generic — never blog/dtc/admin/account/api/pricing/contact/ai-assistant/videos/repair-pdfs/checkout)"
+          label="Make (leave blank for generic — never blog/dtc/admin/account/api/pricing/contact/ai-assistant/videos/checkout)"
           name="make"
           defaultValue={dtc?.make ?? ""}
         />

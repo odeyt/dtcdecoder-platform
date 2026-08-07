@@ -3,7 +3,6 @@
     "dtcLookup": "Quick Code Lookup",
     "aiDiagnostic": "Ask DTC Technician",
     "scanDiagnostics": "Professional Scan Analysis",
-    "repairLibrary": "Repair Library",
     "history": "History",
     "pricing": "Pricing",
     "signIn": "Sign In",
@@ -246,9 +245,6 @@
     "valueProp2Body": "Every lookup is checked against a curated reference database before further diagnostic reasoning is layered on top.",
     "valueProp3Title": "Safety-first guidance",
     "valueProp3Body": "Recommendations flag the tests you need before replacing a part — never the other way around.",
-    "pdfHeading": "Need the complete professional repair workflow?",
-    "pdfBody": "Download the full Master Diagnostic PDF with wiring checks, scan tool data, testing steps, and repair direction.",
-    "getRepairPdf": "Get Repair PDF",
     "videoHeading": "Watch real diagnostic walkthroughs and technician case studies.",
     "videoBody": "Full teardown-to-repair videos on every major fault code.",
     "watchOnYoutube": "Watch on YouTube",
@@ -320,13 +316,6 @@
     "startingCheckout": "Starting checkout…",
     "viewProPlans": "View Pro Technician plans",
     "oneTimeNote": "One-time payment. No subscription required."
-  },
-  "repairPdfs": {
-    "title": "Repair PDFs",
-    "subtitle": "Master Diagnostic PDF guides with wiring checks, scan tool data, and repair direction.",
-    "masterPdfTitle": "Master Diagnostic PDF",
-    "masterPdfDescription": "The complete professional repair workflow, covering wiring checks, scan tool data, testing steps, and repair direction.",
-    "getRepairPdf": "Get Repair PDF"
   },
   "videosPage": {
     "title": "Videos",
@@ -558,7 +547,6 @@
     "relatedCodesTitle": "Related codes in the same family",
     "beforeYouDriveTitle": "Before you drive",
     "beforeYouDriveBody": "Any stored trouble code can indicate a condition that affects safe operation. If your vehicle is showing other warning signs (loss of power, unusual noises, warning lights beyond the check engine light, overheating, or handling changes), have it inspected before continuing to drive.",
-    "browseRepairPdfs": "Browse repair PDFs",
     "browseRepairVideos": "Browse repair videos",
     "unlockFullAiDiagnosisTitle": "Unlock Full AI Diagnosis",
     "unlockFullAiDiagnosisBody": "Add your vehicle details and symptoms to receive a professional diagnostic workflow."

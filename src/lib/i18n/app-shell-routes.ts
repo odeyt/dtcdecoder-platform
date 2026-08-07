@@ -25,7 +25,6 @@ export const APP_SHELL_TOP_LEVEL_SEGMENTS = new Set([
   "dpa",
   "privacy-rights",
   "affiliate-disclosure",
-  "repair-pdfs",
   "videos",
   "diagnostics",
 ]);

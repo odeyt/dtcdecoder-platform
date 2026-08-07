@@ -3,7 +3,6 @@
     "dtcLookup": "DTC 查询",
     "aiDiagnostic": "咨询 DTC Technician",
     "scanDiagnostics": "扫描报告分析",
-    "repairLibrary": "维修资料库",
     "history": "历史记录",
     "pricing": "价格",
     "signIn": "登录",
@@ -48,9 +47,6 @@
     "valueProp2Body": "每次查询都会先与精选的参考数据库进行核对，然后再叠加 AI 推理。",
     "valueProp3Title": "安全优先的指导",
     "valueProp3Body": "建议会在更换零件之前标出需要进行的测试——绝不会本末倒置。",
-    "pdfHeading": "需要完整的专业维修流程吗？",
-    "pdfBody": "下载完整的 Master 诊断 PDF，包含线路检查、扫描仪数据、测试步骤和维修方向。",
-    "getRepairPdf": "获取维修 PDF",
     "videoHeading": "观看真实的诊断演示和技师案例分析。",
     "videoBody": "针对每个主要故障码，提供从拆解到维修的完整视频。",
     "watchOnYoutube": "在 YouTube 上观看",
@@ -122,13 +118,6 @@
     "startingCheckout": "正在开始结账…",
     "viewProPlans": "查看 Pro Technician 套餐",
     "oneTimeNote": "一次性付款，无需订阅。"
-  },
-  "repairPdfs": {
-    "title": "维修 PDF",
-    "subtitle": "主诊断 PDF 指南，包含线路检查、扫描工具数据和维修方向。",
-    "masterPdfTitle": "主诊断 PDF",
-    "masterPdfDescription": "完整的专业维修工作流程，涵盖线路检查、扫描工具数据、测试步骤和维修方向。",
-    "getRepairPdf": "获取维修 PDF"
   },
   "videosPage": {
     "title": "视频",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "同系列的相关代码",
     "beforeYouDriveTitle": "驾驶前须知",
     "beforeYouDriveBody": "任何已存储的故障代码都可能表明存在影响安全行驶的状况。如果您的车辆出现其他警示迹象（动力下降、异响、除发动机故障灯外的其他警示灯亮起、过热或操控变化），请在继续驾驶前进行检查。",
-    "browseRepairPdfs": "浏览维修 PDF",
     "browseRepairVideos": "浏览维修视频",
     "unlockFullAiDiagnosisTitle": "解锁完整 AI 诊断",
     "unlockFullAiDiagnosisBody": "添加您的车辆详情和症状，即可获得专业的诊断流程。"

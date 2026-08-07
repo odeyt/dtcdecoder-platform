@@ -114,14 +114,7 @@ export function UnknownDtcResult({ code, relatedCodes }: { code: string; related
         </div>
       </ResultSection>
 
-      <section className="grid gap-4 sm:grid-cols-2">
-        <Link
-          href="/repair-pdfs"
-          className="hover-lift flex items-center justify-center gap-2 rounded-[var(--radius-lg)] border border-[var(--border-red)] bg-[var(--surface-burgundy)] p-5 text-center font-semibold text-[var(--text-primary)]"
-          style={{ boxShadow: "var(--shadow-accent)" }}
-        >
-          {t("browseRepairPdfs")}
-        </Link>
+      <section>
         <Link
           href="/videos"
           className="hover-lift glass-panel flex items-center justify-center gap-2 rounded-[var(--radius-lg)] p-5 text-center font-semibold text-[var(--text-primary)]"

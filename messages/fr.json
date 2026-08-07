@@ -3,7 +3,6 @@
     "dtcLookup": "Recherche DTC",
     "aiDiagnostic": "Demander à DTC Technician",
     "scanDiagnostics": "Analyse de rapport de scan",
-    "repairLibrary": "Bibliothèque de réparation",
     "history": "Historique",
     "pricing": "Tarifs",
     "signIn": "Se connecter",
@@ -48,9 +47,6 @@
     "valueProp2Body": "Chaque recherche est confrontée à une base de données de référence sélectionnée avant que le raisonnement de l'IA ne s'y ajoute.",
     "valueProp3Title": "Des conseils axés sur la sécurité",
     "valueProp3Body": "Les recommandations signalent les tests nécessaires avant de remplacer une pièce — jamais l'inverse.",
-    "pdfHeading": "Besoin du flux de réparation professionnel complet ?",
-    "pdfBody": "Téléchargez le PDF Master Diagnostic complet avec vérifications de câblage, données d'outil de scan, étapes de test et pistes de réparation.",
-    "getRepairPdf": "Obtenir le PDF de réparation",
     "videoHeading": "Regardez de véritables démonstrations de diagnostic et des études de cas de techniciens.",
     "videoBody": "Des vidéos complètes, du démontage à la réparation, pour chaque code défaut majeur.",
     "watchOnYoutube": "Regarder sur YouTube",
@@ -122,13 +118,6 @@
     "startingCheckout": "Démarrage du paiement…",
     "viewProPlans": "Voir les forfaits Pro Technician",
     "oneTimeNote": "Paiement unique. Aucun abonnement requis."
-  },
-  "repairPdfs": {
-    "title": "PDF de réparation",
-    "subtitle": "Guides PDF de diagnostic principal avec vérifications du câblage, données de l'outil de diagnostic et orientation de réparation.",
-    "masterPdfTitle": "PDF de diagnostic principal",
-    "masterPdfDescription": "Le flux de travail de réparation professionnel complet, couvrant les vérifications du câblage, les données de l'outil de diagnostic, les étapes de test et l'orientation de réparation.",
-    "getRepairPdf": "Obtenir le PDF de réparation"
   },
   "videosPage": {
     "title": "Vidéos",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "Codes associés de la même famille",
     "beforeYouDriveTitle": "Avant de prendre la route",
     "beforeYouDriveBody": "Tout code défaut enregistré peut indiquer une condition affectant la sécurité de conduite. Si votre véhicule présente d'autres signes d'alerte (perte de puissance, bruits inhabituels, voyants d'alerte au-delà du voyant moteur, surchauffe ou changements de comportement routier), faites-le inspecter avant de continuer à rouler.",
-    "browseRepairPdfs": "Parcourir les PDF de réparation",
     "browseRepairVideos": "Parcourir les vidéos de réparation",
     "unlockFullAiDiagnosisTitle": "Débloquer le diagnostic IA complet",
     "unlockFullAiDiagnosisBody": "Ajoutez les détails de votre véhicule et les symptômes pour recevoir un déroulé de diagnostic professionnel."

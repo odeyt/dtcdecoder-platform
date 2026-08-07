@@ -21,7 +21,6 @@ export function SiteNav() {
   const NAV_LINKS = [
     { href: "/ai-assistant", label: t("aiDiagnostic") },
     ...(env.scanDiagnosticsEnabled() ? [{ href: "/diagnostics", label: t("scanDiagnostics") }] : []),
-    { href: "/repair-pdfs", label: t("repairLibrary") },
     { href: "/history", label: t("history") },
     { href: "/pricing", label: t("pricing") },
   ];

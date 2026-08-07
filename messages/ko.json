@@ -3,7 +3,6 @@
     "dtcLookup": "DTC 검색",
     "aiDiagnostic": "DTC Technician에게 질문",
     "scanDiagnostics": "스캔 리포트 분석",
-    "repairLibrary": "수리 라이브러리",
     "history": "기록",
     "pricing": "요금제",
     "signIn": "로그인",
@@ -48,9 +47,6 @@
     "valueProp2Body": "모든 검색은 AI 추론을 더하기 전에 엄선된 참조 데이터베이스와 대조됩니다.",
     "valueProp3Title": "안전 우선 안내",
     "valueProp3Body": "권장 사항은 부품을 교체하기 전에 필요한 테스트를 표시합니다 — 그 반대는 결코 아닙니다.",
-    "pdfHeading": "완전한 전문 수리 워크플로가 필요하신가요?",
-    "pdfBody": "배선 점검, 스캔 도구 데이터, 테스트 단계, 수리 방향이 포함된 전체 마스터 진단 PDF를 다운로드하세요.",
-    "getRepairPdf": "수리 PDF 받기",
     "videoHeading": "실제 진단 시연과 정비사 사례 연구를 시청하세요.",
     "videoBody": "모든 주요 고장 코드에 대해 분해부터 수리까지의 전체 동영상을 제공합니다.",
     "watchOnYoutube": "YouTube에서 보기",
@@ -122,13 +118,6 @@
     "startingCheckout": "결제 시작 중…",
     "viewProPlans": "Pro Technician 요금제 보기",
     "oneTimeNote": "일회성 결제입니다. 구독이 필요하지 않습니다."
-  },
-  "repairPdfs": {
-    "title": "수리 PDF",
-    "subtitle": "배선 점검, 스캔 툴 데이터, 수리 방향이 포함된 마스터 진단 PDF 가이드.",
-    "masterPdfTitle": "마스터 진단 PDF",
-    "masterPdfDescription": "배선 점검, 스캔 툴 데이터, 테스트 단계, 수리 방향을 포함한 완전한 전문 수리 워크플로우.",
-    "getRepairPdf": "수리 PDF 받기"
   },
   "videosPage": {
     "title": "동영상",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "동일 계열의 관련 코드",
     "beforeYouDriveTitle": "운전하기 전에",
     "beforeYouDriveBody": "저장된 고장 코드는 안전 운행에 영향을 줄 수 있는 상태를 나타낼 수 있습니다. 차량에 다른 경고 신호(출력 저하, 이상한 소음, 엔진 경고등 외의 경고등, 과열, 조작감 변화 등)가 나타나면 계속 운전하기 전에 점검을 받으세요.",
-    "browseRepairPdfs": "수리 PDF 보기",
     "browseRepairVideos": "수리 동영상 보기",
     "unlockFullAiDiagnosisTitle": "전체 AI 진단 잠금 해제",
     "unlockFullAiDiagnosisBody": "차량 세부 정보와 증상을 추가하면 전문적인 진단 워크플로를 받을 수 있습니다."

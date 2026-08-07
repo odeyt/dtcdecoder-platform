@@ -3,7 +3,6 @@
     "dtcLookup": "DTC 検索",
     "aiDiagnostic": "DTC Technicianに質問",
     "scanDiagnostics": "スキャンレポート解析",
-    "repairLibrary": "修理ライブラリ",
     "history": "履歴",
     "pricing": "料金",
     "signIn": "ログイン",
@@ -48,9 +47,6 @@
     "valueProp2Body": "すべての検索は、AI が推論を重ねる前に厳選された参照データベースと照合されます。",
     "valueProp3Title": "安全を最優先する案内",
     "valueProp3Body": "推奨事項は、部品を交換する前に必要なテストを示します — その逆はありません。",
-    "pdfHeading": "完全なプロ向け修理ワークフローが必要ですか？",
-    "pdfBody": "配線チェック、スキャンツールのデータ、テスト手順、修理の方向性を含む完全版のマスター診断 PDF をダウンロードしましょう。",
-    "getRepairPdf": "修理 PDF を入手",
     "videoHeading": "実際の診断ウォークスルーと技術者のケーススタディをご覧ください。",
     "videoBody": "主要な故障コードごとに、分解から修理までの完全な動画をご用意しています。",
     "watchOnYoutube": "YouTube で見る",
@@ -122,13 +118,6 @@
     "startingCheckout": "チェックアウトを開始しています…",
     "viewProPlans": "Pro Technicianプランを見る",
     "oneTimeNote": "一回限りのお支払い。サブスクリプション不要です。"
-  },
-  "repairPdfs": {
-    "title": "修理用PDF",
-    "subtitle": "配線チェック、スキャンツールデータ、修理方針を含むマスター診断PDFガイド。",
-    "masterPdfTitle": "マスター診断PDF",
-    "masterPdfDescription": "配線チェック、スキャンツールデータ、テスト手順、修理方針を網羅した完全なプロフェッショナル修理ワークフロー。",
-    "getRepairPdf": "修理用PDFを取得"
   },
   "videosPage": {
     "title": "動画",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "同じ系統の関連コード",
     "beforeYouDriveTitle": "運転前に",
     "beforeYouDriveBody": "保存されている故障コードはすべて、安全な走行に影響する状態を示している可能性があります。出力低下、異音、チェックエンジンランプ以外の警告灯、オーバーヒート、走行フィーリングの変化など、他の警告サインが見られる場合は、走行を続ける前に点検を受けてください。",
-    "browseRepairPdfs": "修理用PDFを見る",
     "browseRepairVideos": "修理動画を見る",
     "unlockFullAiDiagnosisTitle": "AIによる完全診断のロックを解除",
     "unlockFullAiDiagnosisBody": "車両の詳細と症状を追加すると、プロフェッショナルな診断フローを受けられます。"

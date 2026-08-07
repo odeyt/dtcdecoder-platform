@@ -3,7 +3,6 @@
     "dtcLookup": "DTC-Suche",
     "aiDiagnostic": "DTC Technician fragen",
     "scanDiagnostics": "Scan-Bericht-Analyse",
-    "repairLibrary": "Reparaturbibliothek",
     "history": "Verlauf",
     "pricing": "Preise",
     "signIn": "Anmelden",
@@ -48,9 +47,6 @@
     "valueProp2Body": "Jede Suche wird mit einer kuratierten Referenzdatenbank abgeglichen, bevor die KI zusätzlich analysiert.",
     "valueProp3Title": "Sicherheitsorientierte Hinweise",
     "valueProp3Body": "Empfehlungen benennen die nötigen Tests, bevor ein Teil ersetzt wird — niemals umgekehrt.",
-    "pdfHeading": "Benötigen Sie den kompletten professionellen Reparaturablauf?",
-    "pdfBody": "Laden Sie das vollständige Master-Diagnose-PDF mit Verkabelungsprüfungen, Scan-Tool-Daten, Testschritten und Reparaturhinweisen herunter.",
-    "getRepairPdf": "Reparatur-PDF erhalten",
     "videoHeading": "Sehen Sie echte Diagnose-Durchläufe und Fallbeispiele von Fachkräften.",
     "videoBody": "Vollständige Videos von der Demontage bis zur Reparatur für jeden wichtigen Fehlercode.",
     "watchOnYoutube": "Auf YouTube ansehen",
@@ -122,13 +118,6 @@
     "startingCheckout": "Checkout wird gestartet…",
     "viewProPlans": "Pro Technician-Pläne ansehen",
     "oneTimeNote": "Einmalzahlung. Kein Abonnement erforderlich."
-  },
-  "repairPdfs": {
-    "title": "Reparatur-PDFs",
-    "subtitle": "Master-Diagnose-PDF-Anleitungen mit Verkabelungsprüfungen, Scan-Tool-Daten und Reparaturanweisungen.",
-    "masterPdfTitle": "Master-Diagnose-PDF",
-    "masterPdfDescription": "Der vollständige professionelle Reparaturablauf mit Verkabelungsprüfungen, Scan-Tool-Daten, Testschritten und Reparaturanweisungen.",
-    "getRepairPdf": "Reparatur-PDF erhalten"
   },
   "videosPage": {
     "title": "Videos",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "Verwandte Codes derselben Familie",
     "beforeYouDriveTitle": "Vor der Fahrt",
     "beforeYouDriveBody": "Jeder gespeicherte Fehlercode kann auf einen Zustand hinweisen, der die Betriebssicherheit beeinträchtigt. Wenn dein Fahrzeug weitere Warnzeichen zeigt (Leistungsverlust, ungewöhnliche Geräusche, Warnleuchten über die Motorkontrollleuchte hinaus, Überhitzung oder verändertes Fahrverhalten), lass es prüfen, bevor du weiterfährst.",
-    "browseRepairPdfs": "Reparatur-PDFs durchsuchen",
     "browseRepairVideos": "Reparaturvideos durchsuchen",
     "unlockFullAiDiagnosisTitle": "Vollständige KI-Diagnose freischalten",
     "unlockFullAiDiagnosisBody": "Gib die Details deines Fahrzeugs und die Symptome an, um einen professionellen Diagnoseablauf zu erhalten."

@@ -138,38 +138,19 @@ export default async function HomePage({ params }: Props) {
 
       {/* Monetization */}
       <section className="container-app px-6 py-16">
-        <div className="grid gap-6 md:grid-cols-2">
-          <div
-            className="hover-lift rounded-[var(--radius-xl)] border border-[var(--border-red)] bg-[var(--surface-burgundy)] p-8"
-            style={{ boxShadow: "var(--shadow-accent)" }}
+        <div className="hover-lift glass-panel mx-auto max-w-xl rounded-[var(--radius-xl)] p-8">
+          <h2 className="text-xl font-bold text-[var(--text-primary)]">
+            {th("videoHeading")}
+          </h2>
+          <p className="mt-2 text-sm text-[var(--text-secondary)]">{th("videoBody")}</p>
+          <a
+            href="https://youtube.com"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
           >
-            <h2 className="text-xl font-bold text-[var(--text-primary)]">
-              {th("pdfHeading")}
-            </h2>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">{th("pdfBody")}</p>
-            <a
-              href="https://gumroad.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] bg-[var(--accent-red)] px-6 py-2.5 font-semibold text-white transition hover:brightness-110"
-            >
-              {th("getRepairPdf")}
-            </a>
-          </div>
-          <div className="hover-lift glass-panel rounded-[var(--radius-xl)] p-8">
-            <h2 className="text-xl font-bold text-[var(--text-primary)]">
-              {th("videoHeading")}
-            </h2>
-            <p className="mt-2 text-sm text-[var(--text-secondary)]">{th("videoBody")}</p>
-            <a
-              href="https://youtube.com"
-              target="_blank"
-              rel="noopener noreferrer"
-              className="mt-6 inline-block min-h-11 rounded-[var(--radius-md)] border border-[var(--border-subtle)] px-6 py-2.5 font-semibold text-[var(--text-primary)] transition hover:bg-white/5"
-            >
-              {th("watchOnYoutube")}
-            </a>
-          </div>
+            {th("watchOnYoutube")}
+          </a>
         </div>
 
         <div className="mt-6">

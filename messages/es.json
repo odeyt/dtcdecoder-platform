@@ -3,7 +3,6 @@
     "dtcLookup": "Búsqueda Rápida de Código",
     "aiDiagnostic": "Preguntar a DTC Technician",
     "scanDiagnostics": "Análisis Profesional de Escaneo",
-    "repairLibrary": "Biblioteca de Reparación",
     "history": "Historial",
     "pricing": "Precios",
     "signIn": "Iniciar Sesión",
@@ -246,9 +245,6 @@
     "valueProp2Body": "Cada búsqueda se verifica contra una base de datos de referencia curada antes de aplicar un razonamiento diagnóstico adicional.",
     "valueProp3Title": "Seguridad ante todo",
     "valueProp3Body": "Las recomendaciones indican las pruebas necesarias antes de reemplazar una pieza — nunca al revés.",
-    "pdfHeading": "¿Necesitas el flujo de trabajo de reparación profesional completo?",
-    "pdfBody": "Descarga el PDF de Diagnóstico Maestro completo con revisiones de cableado, datos del escáner, pasos de prueba y guía de reparación.",
-    "getRepairPdf": "Obtener PDF de Reparación",
     "videoHeading": "Mira diagnósticos reales paso a paso y casos de estudio de técnicos.",
     "videoBody": "Videos completos de desarme a reparación para cada código de falla principal.",
     "watchOnYoutube": "Ver en YouTube",
@@ -320,13 +316,6 @@
     "startingCheckout": "Iniciando pago…",
     "viewProPlans": "Ver planes Pro Technician",
     "oneTimeNote": "Pago único. No se requiere suscripción."
-  },
-  "repairPdfs": {
-    "title": "PDFs de reparación",
-    "subtitle": "Guías en PDF de diagnóstico maestro con comprobaciones de cableado, datos del escáner y orientación de reparación.",
-    "masterPdfTitle": "PDF de diagnóstico maestro",
-    "masterPdfDescription": "El flujo de trabajo de reparación profesional completo, que cubre comprobaciones de cableado, datos del escáner, pasos de prueba y orientación de reparación.",
-    "getRepairPdf": "Obtener PDF de reparación"
   },
   "videosPage": {
     "title": "Videos",
@@ -558,7 +547,6 @@
     "relatedCodesTitle": "Códigos relacionados de la misma familia",
     "beforeYouDriveTitle": "Antes de conducir",
     "beforeYouDriveBody": "Cualquier código de falla almacenado puede indicar una condición que afecta la operación segura. Si tu vehículo presenta otras señales de advertencia (pérdida de potencia, ruidos inusuales, luces de advertencia además de la luz de check engine, sobrecalentamiento o cambios en el manejo), hazlo revisar antes de seguir conduciendo.",
-    "browseRepairPdfs": "Ver PDFs de reparación",
     "browseRepairVideos": "Ver videos de reparación",
     "unlockFullAiDiagnosisTitle": "Desbloquear diagnóstico completo con IA",
     "unlockFullAiDiagnosisBody": "Agrega los datos de tu vehículo y los síntomas para recibir un flujo de diagnóstico profesional."

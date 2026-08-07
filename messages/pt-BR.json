@@ -3,7 +3,6 @@
     "dtcLookup": "Consulta de DTC",
     "aiDiagnostic": "Perguntar ao DTC Technician",
     "scanDiagnostics": "Análise de relatório de scanner",
-    "repairLibrary": "Biblioteca de reparos",
     "history": "Histórico",
     "pricing": "Preços",
     "signIn": "Entrar",
@@ -48,9 +47,6 @@
     "valueProp2Body": "Cada consulta é conferida com um banco de dados de referência selecionado antes de a IA adicionar seu raciocínio.",
     "valueProp3Title": "Orientação com foco em segurança",
     "valueProp3Body": "As recomendações indicam os testes necessários antes de trocar uma peça — nunca o contrário.",
-    "pdfHeading": "Precisa do fluxo de reparo profissional completo?",
-    "pdfBody": "Baixe o PDF Master de Diagnóstico completo, com verificações de fiação, dados do scanner, etapas de teste e direção de reparo.",
-    "getRepairPdf": "Obter PDF de reparo",
     "videoHeading": "Assista a demonstrações reais de diagnóstico e estudos de caso de técnicos.",
     "videoBody": "Vídeos completos, da desmontagem ao reparo, para cada código de falha importante.",
     "watchOnYoutube": "Assistir no YouTube",
@@ -122,13 +118,6 @@
     "startingCheckout": "Iniciando o checkout…",
     "viewProPlans": "Ver planos Pro Technician",
     "oneTimeNote": "Pagamento único. Nenhuma assinatura necessária."
-  },
-  "repairPdfs": {
-    "title": "PDFs de Reparo",
-    "subtitle": "Guias em PDF de diagnóstico mestre com verificações de fiação, dados do scanner e direção de reparo.",
-    "masterPdfTitle": "PDF de Diagnóstico Mestre",
-    "masterPdfDescription": "O fluxo de trabalho de reparo profissional completo, cobrindo verificações de fiação, dados do scanner, etapas de teste e direção de reparo.",
-    "getRepairPdf": "Obter PDF de Reparo"
   },
   "videosPage": {
     "title": "Vídeos",
@@ -360,7 +349,6 @@
     "relatedCodesTitle": "Códigos relacionados da mesma família",
     "beforeYouDriveTitle": "Antes de dirigir",
     "beforeYouDriveBody": "Qualquer código de falha armazenado pode indicar uma condição que afeta a segurança na condução. Se o seu veículo apresentar outros sinais de alerta (perda de potência, ruídos incomuns, luzes de aviso além da luz de check engine, superaquecimento ou mudanças na direção), leve-o para inspeção antes de continuar dirigindo.",
-    "browseRepairPdfs": "Ver PDFs de reparo",
     "browseRepairVideos": "Ver vídeos de reparo",
     "unlockFullAiDiagnosisTitle": "Desbloquear diagnóstico completo com IA",
     "unlockFullAiDiagnosisBody": "Adicione os detalhes do seu veículo e os sintomas para receber um fluxo de diagnóstico profissional."
