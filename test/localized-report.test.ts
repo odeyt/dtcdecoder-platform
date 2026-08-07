@@ -8,6 +8,7 @@ const canonical: ScanReportTranslatable = {
   ],
   recommendedTests: [{ step: "Read data", purpose: "Compare", expectedResult: "Switching" }],
   missingInformation: [],
+  extractionWarnings: [],
 };
 
 const localizedEs: ScanReportTranslatable = {

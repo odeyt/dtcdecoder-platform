@@ -121,11 +121,13 @@ function toTranslatable(row: {
   ranked_causes: unknown;
   recommended_tests: unknown;
   missing_information: string[];
+  extraction_warnings: string[];
 }): ScanReportTranslatable {
   return {
     rankedCauses: row.ranked_causes as ScanReportTranslatable["rankedCauses"],
     recommendedTests: row.recommended_tests as ScanReportTranslatable["recommendedTests"],
     missingInformation: row.missing_information,
+    extractionWarnings: row.extraction_warnings,
   };
 }
 
@@ -153,12 +155,27 @@ function buildDeps(params: { userId: string; plan: SubscriptionPlan }): Localize
     async loadCanonical(reportId) {
       const { data, error } = await admin
         .from("scan_reports")
-        .select("ranked_causes, recommended_tests, missing_information")
+        .select("case_id, ranked_causes, recommended_tests, missing_information")
         .eq("id", reportId)
         .maybeSingle();
       if (error) throw error;
       if (!data) return null;
-      return { canonical: toTranslatable(data), version: CANONICAL_REPORT_VERSION };
+
+      // Extraction warnings live on scan_extractions (one row per case),
+      // not on the scan_reports row itself — see canonical-scan.ts, which
+      // reads them the same way for the always-visible (non-AI) Evidence
+      // Panel base fields.
+      const { data: extraction, error: extractionError } = await admin
+        .from("scan_extractions")
+        .select("warnings")
+        .eq("case_id", data.case_id)
+        .maybeSingle();
+      if (extractionError) throw extractionError;
+
+      return {
+        canonical: toTranslatable({ ...data, extraction_warnings: extraction?.warnings ?? [] }),
+        version: CANONICAL_REPORT_VERSION,
+      };
     },
 
     async translate({ reportId, version, targetLocale, canonical }) {

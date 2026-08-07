@@ -1,17 +1,19 @@
 import type { RankedCause, RecommendedTest } from "@/lib/scan-diagnostics/schemas";
 import type { TranslationProvider } from "@/lib/ai/translation-provider";
 
-// Localizes a CANONICAL English scan report (scan_reports) into a target
-// locale. English is the source of truth: the report is never re-diagnosed —
-// only its natural-language prose is translated. Structure, ordering, the
-// confidenceLevel enum, and safety warnings are preserved. Safety warnings are
-// deliberately NOT translated here (they stay English until a reviewed
-// per-locale safety pack exists — see CONTENT_LOCALIZATION_ARCHITECTURE.md).
+// Localizes a CANONICAL English scan report (scan_reports + the case's
+// extraction warnings) into a target locale. English is the source of
+// truth: the report is never re-diagnosed — only its natural-language prose
+// is translated. Structure, ordering, the confidenceLevel enum, and safety
+// warnings are preserved. Safety warnings are deliberately NOT translated
+// here (they stay English until a reviewed per-locale safety pack exists —
+// see CONTENT_LOCALIZATION_ARCHITECTURE.md).
 
 export interface ScanReportTranslatable {
   rankedCauses: RankedCause[];
   recommendedTests: RecommendedTest[];
   missingInformation: string[];
+  extractionWarnings: string[];
 }
 
 // Flatten every translatable string into a deterministic order. The exact same
@@ -26,6 +28,7 @@ export function extractTranslatableStrings(input: ScanReportTranslatable): strin
     out.push(t.step, t.purpose, t.expectedResult);
   }
   out.push(...input.missingInformation);
+  out.push(...input.extractionWarnings);
   return out;
 }
 
@@ -59,7 +62,8 @@ export function applyTranslatedStrings(
     expectedResult: next(),
   }));
   const missingInformation = takeArray(input.missingInformation.length);
-  return { rankedCauses, recommendedTests, missingInformation };
+  const extractionWarnings = takeArray(input.extractionWarnings.length);
+  return { rankedCauses, recommendedTests, missingInformation, extractionWarnings };
 }
 
 export interface LocalizedScanReport {

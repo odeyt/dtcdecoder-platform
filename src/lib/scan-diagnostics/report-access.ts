@@ -92,6 +92,7 @@ export async function resolveReportAccess(
           rankedCauses: localization.localized.rankedCauses,
           recommendedTests: localization.localized.recommendedTests,
           missingInformation: localization.localized.missingInformation,
+          extractionWarnings: localization.localized.extractionWarnings,
         }
       : undefined,
   });

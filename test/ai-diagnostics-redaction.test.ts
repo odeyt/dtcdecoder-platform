@@ -283,4 +283,63 @@ describe("filterScanReportForAccessLevel — full, with a localized report", () 
     expect(result.visibleResult.fallbackUsed).toBe(true);
     expect(result.visibleResult.rankedCauses).toHaveLength(3);
   });
+
+  it("translates extraction-quality warnings when localization supplies them", () => {
+    const extractionWithWarning: ScanExtraction = {
+      ...EXTRACTION,
+      warnings: ["Extraction may be incomplete for module ECM."],
+    };
+    const canonicalScanWithWarning = buildCanonicalVehicleScan(SCAN_CASE, extractionWithWarning, DTC_RECORDS, []);
+    const result = filterScanReportForAccessLevel({
+      report: REPORT,
+      extraction: extractionWithWarning,
+      dtcRecords: DTC_RECORDS,
+      accessLevel: "full",
+      usage: FULL_USAGE,
+      canonicalScan: canonicalScanWithWarning,
+      patterns: [],
+      localization: {
+        requestedLocale: "es",
+        resolvedLocale: "es",
+        fallbackUsed: false,
+        rankedCauses: REPORT.ranked_causes as never,
+        recommendedTests: REPORT.recommended_tests as never,
+        missingInformation: REPORT.missing_information,
+        extractionWarnings: ["La extracción puede estar incompleta para el módulo ECM."],
+      },
+    });
+
+    expect(result.visibleResult.extractionQuality.warnings).toEqual([
+      "La extracción puede estar incompleta para el módulo ECM.",
+    ]);
+  });
+
+  it("leaves extraction-quality warnings in English when localization omits them (stale cache)", () => {
+    const extractionWithWarning: ScanExtraction = {
+      ...EXTRACTION,
+      warnings: ["Extraction may be incomplete for module ECM."],
+    };
+    const canonicalScanWithWarning = buildCanonicalVehicleScan(SCAN_CASE, extractionWithWarning, DTC_RECORDS, []);
+    const result = filterScanReportForAccessLevel({
+      report: REPORT,
+      extraction: extractionWithWarning,
+      dtcRecords: DTC_RECORDS,
+      accessLevel: "full",
+      usage: FULL_USAGE,
+      canonicalScan: canonicalScanWithWarning,
+      patterns: [],
+      localization: {
+        requestedLocale: "es",
+        resolvedLocale: "es",
+        fallbackUsed: false,
+        rankedCauses: REPORT.ranked_causes as never,
+        recommendedTests: REPORT.recommended_tests as never,
+        missingInformation: REPORT.missing_information,
+      },
+    });
+
+    expect(result.visibleResult.extractionQuality.warnings).toEqual([
+      "Extraction may be incomplete for module ECM.",
+    ]);
+  });
 });

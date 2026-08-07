@@ -61,7 +61,7 @@ export async function resolveLocalizedReport(
   ): Promise<ResolvedLocalizedReport> => {
     const canon = await deps.loadCanonical(params.reportId);
     return {
-      localized: canon?.canonical ?? { rankedCauses: [], recommendedTests: [], missingInformation: [] },
+      localized: canon?.canonical ?? { rankedCauses: [], recommendedTests: [], missingInformation: [], extractionWarnings: [] },
       resolvedLocale: "en",
       fallbackUsed,
       status,

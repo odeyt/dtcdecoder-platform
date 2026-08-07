@@ -25,6 +25,7 @@ const canonical: ScanReportTranslatable = {
     { step: "Read live data", purpose: "Compare O2 sensors", expectedResult: "Bank 1 Sensor 2 switching" },
   ],
   missingInformation: ["Fuel trim data"],
+  extractionWarnings: ["Extraction may be incomplete for module ECM."],
 };
 
 // Provider stub returning a caller-specified result (ignores the real translate).
@@ -69,6 +70,7 @@ describe("extract/apply round-trip", () => {
       "Compare O2 sensors",
       "Bank 1 Sensor 2 switching",
       "Fuel trim data",
+      "Extraction may be incomplete for module ECM.",
     ]);
   });
 

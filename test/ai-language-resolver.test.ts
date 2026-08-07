@@ -22,10 +22,19 @@ describe("resolveAiLanguage — priority chain", () => {
     expect(result.source).toBe("selected_ui_language");
   });
 
-  it("region profile outranks selected UI language and browser locale", () => {
+  it("selected UI language outranks region profile and browser locale", () => {
     const result = resolveAiLanguage({
       regionDefaultLanguage: regionDefaultLanguageFrom(THAILAND),
       selectedUiLanguage: "es",
+      browserLocale: "lo",
+    });
+    expect(result.language.locale).toBe("es");
+    expect(result.source).toBe("selected_ui_language");
+  });
+
+  it("region profile outranks browser locale when no UI language is selected", () => {
+    const result = resolveAiLanguage({
+      regionDefaultLanguage: regionDefaultLanguageFrom(THAILAND),
       browserLocale: "lo",
     });
     expect(result.language.locale).toBe("th");

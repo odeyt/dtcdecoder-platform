@@ -1,5 +1,11 @@
-// AI output language resolution — priority chain per the spec:
-//   User Profile -> Region Profile -> Selected UI Language -> Browser Locale -> English
+// AI output language resolution — priority chain:
+//   User Profile -> Selected UI Language -> Region Profile -> Browser Locale -> English
+//
+// Selected UI Language outranks Region Profile: a visitor who has explicitly
+// switched the site's interface language has stated their intent directly,
+// which should win over a geo-IP-inferred region guess. Region Profile
+// remains above Browser Locale/English as a locale-agnostic-visitor fallback
+// (e.g. a first-time visitor who hasn't touched the language switcher yet).
 //
 // Pure function, no I/O — mirrors region-resolver.ts's own shape exactly
 // (that resolver is the "Region Profile" tier's own upstream input; this
@@ -44,12 +50,12 @@ export function resolveAiLanguage(input: AiLanguageResolutionInput): ResolvedAiL
     return { language: toAiLanguage(input.userProfileLocale), source: "user_profile" };
   }
 
-  if (input.regionDefaultLanguage && isRecognizedLocaleCode(input.regionDefaultLanguage)) {
-    return { language: toAiLanguage(input.regionDefaultLanguage), source: "region_profile" };
-  }
-
   if (input.selectedUiLanguage && isRecognizedLocaleCode(input.selectedUiLanguage)) {
     return { language: toAiLanguage(input.selectedUiLanguage), source: "selected_ui_language" };
+  }
+
+  if (input.regionDefaultLanguage && isRecognizedLocaleCode(input.regionDefaultLanguage)) {
+    return { language: toAiLanguage(input.regionDefaultLanguage), source: "region_profile" };
   }
 
   if (input.browserLocale) {

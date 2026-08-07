@@ -134,8 +134,8 @@ export interface ScanReportVisibleResult {
   // Present only when a non-English report language was requested (full
   // access level only) — see report-localization.ts. resolvedLocale is "en"
   // and fallbackUsed is true when translation failed/wasn't entitled; the
-  // rankedCauses/recommendedTests/missingInformation above are English in
-  // that case, never a partial or broken translation.
+  // rankedCauses/recommendedTests/missingInformation/extractionQuality.warnings
+  // above are English in that case, never a partial or broken translation.
   requestedLocale?: string;
   resolvedLocale?: string;
   fallbackUsed?: boolean;
@@ -255,6 +255,10 @@ export function filterScanReportForAccessLevel(params: {
     rankedCauses: RankedCause[];
     recommendedTests: RecommendedTest[];
     missingInformation: string[];
+    // Optional: absent for a translation cached before this field existed,
+    // in which case the extraction-quality warnings below simply stay
+    // English until that case's report is re-translated.
+    extractionWarnings?: string[];
   };
 }): ScanReportAccessResult {
   const { report, extraction, dtcRecords, accessLevel, usage, canonicalScan, patterns, priority, localization } = params;
@@ -289,6 +293,10 @@ export function filterScanReportForAccessLevel(params: {
       },
       visibleResult: {
         ...base,
+        extractionQuality: {
+          ...base.extractionQuality,
+          warnings: localization?.extractionWarnings ?? base.extractionQuality.warnings,
+        },
         rankedCauses: localization?.rankedCauses ?? (report.ranked_causes as unknown as RankedCause[]),
         recommendedTests:
           localization?.recommendedTests ?? (report.recommended_tests as unknown as RecommendedTest[]),
