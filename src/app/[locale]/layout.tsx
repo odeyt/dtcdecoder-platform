@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { notFound } from "next/navigation";
 import { NextIntlClientProvider } from "next-intl";
 import { setRequestLocale } from "next-intl/server";
@@ -6,6 +6,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
+import { PwaShell } from "@/components/pwa/PwaShell";
 import {
   isRecognizedLocaleCode,
   isLiveLocale,
@@ -31,6 +32,22 @@ export const metadata: Metadata = {
   },
   description:
     "Consult DTC Technician, import vehicle scans, look up diagnostic codes, and follow guided evidence-based vehicle diagnosis.",
+  manifest: "/manifest.webmanifest",
+  icons: {
+    icon: [
+      { url: "/icons/icon-16.png", sizes: "16x16", type: "image/png" },
+      { url: "/icons/icon-32.png", sizes: "32x32", type: "image/png" },
+      { url: "/icons/icon-48.png", sizes: "48x48", type: "image/png" },
+      { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
+      { url: "/icons/icon-512.png", sizes: "512x512", type: "image/png" },
+    ],
+    apple: [{ url: "/icons/apple-touch-icon-180.png", sizes: "180x180", type: "image/png" }],
+  },
+};
+
+// PWA installability layer — see src/app/manifest.ts + public/sw.js.
+export const viewport: Viewport = {
+  themeColor: "#08080a",
 };
 
 type Props = {
@@ -101,6 +118,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
           <DtcTechnicianShell />
+          <PwaShell />
         </NextIntlClientProvider>
       </body>
     </html>

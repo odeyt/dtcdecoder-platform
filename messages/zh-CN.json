@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "此套餐是赠送给您账户的,不通过 Creem 计费。如需更改,请联系客服。",
     "billingPortalNoCustomerId": "此订阅没有登记的账单账户。请联系客服。",
     "unableToOpenBillingPortal": "目前无法打开账单门户"
+  },
+  "pwaOffline": {
+    "heading": "您已离线",
+    "body": "AI 诊断和实时 DTC 分析需要互联网连接。请重新连接以继续。",
+    "retryButton": "重试",
+    "homeButton": "返回首页"
+  },
+  "pwaInstall": {
+    "title": "安装 DTCDecoder",
+    "body": "添加到主屏幕，一键快速访问。",
+    "installButton": "安装",
+    "dismissButton": "暂不",
+    "iosInstructions": "安装方法：点击「共享」，然后选择「添加到主屏幕」。"
   }
 }

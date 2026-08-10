@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "This plan was granted to your account and isn't billed through Creem. Contact support to make changes.",
     "billingPortalNoCustomerId": "No billing account is on file for this subscription. Contact support.",
     "unableToOpenBillingPortal": "Unable to open the billing portal right now"
+  },
+  "pwaOffline": {
+    "heading": "You're offline",
+    "body": "AI diagnostics and live DTC analysis require an internet connection. Reconnect to continue.",
+    "retryButton": "Retry",
+    "homeButton": "Return Home"
+  },
+  "pwaInstall": {
+    "title": "Install DTCDecoder",
+    "body": "Add it to your home screen for quick, one-tap access.",
+    "installButton": "Install",
+    "dismissButton": "Not now",
+    "iosInstructions": "To install: tap Share, then \"Add to Home Screen\"."
   }
 }

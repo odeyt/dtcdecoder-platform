@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "Ce forfait a été offert à votre compte et n'est pas facturé via Creem. Contactez le support pour effectuer des modifications.",
     "billingPortalNoCustomerId": "Aucun compte de facturation n'est enregistré pour cet abonnement. Contactez le support.",
     "unableToOpenBillingPortal": "Impossible d'ouvrir le portail de facturation pour le moment"
+  },
+  "pwaOffline": {
+    "heading": "Vous êtes hors ligne",
+    "body": "Le diagnostic IA et l'analyse DTC en direct nécessitent une connexion internet. Reconnectez-vous pour continuer.",
+    "retryButton": "Réessayer",
+    "homeButton": "Retour à l'accueil"
+  },
+  "pwaInstall": {
+    "title": "Installer DTCDecoder",
+    "body": "Ajoutez-la à votre écran d'accueil pour un accès rapide en un geste.",
+    "installButton": "Installer",
+    "dismissButton": "Plus tard",
+    "iosInstructions": "Pour installer : appuyez sur Partager, puis « Sur l'écran d'accueil »."
   }
 }

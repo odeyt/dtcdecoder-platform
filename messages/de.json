@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "Dieser Plan wurde deinem Konto gewährt und wird nicht über Creem abgerechnet. Kontaktiere den Support für Änderungen.",
     "billingPortalNoCustomerId": "Für dieses Abonnement ist kein Rechnungskonto hinterlegt. Kontaktiere den Support.",
     "unableToOpenBillingPortal": "Das Rechnungsportal kann gerade nicht geöffnet werden"
+  },
+  "pwaOffline": {
+    "heading": "Du bist offline",
+    "body": "KI-Diagnosen und Live-DTC-Analysen erfordern eine Internetverbindung. Stelle die Verbindung wieder her, um fortzufahren.",
+    "retryButton": "Erneut versuchen",
+    "homeButton": "Zur Startseite"
+  },
+  "pwaInstall": {
+    "title": "DTCDecoder installieren",
+    "body": "Füge sie deinem Startbildschirm hinzu für schnellen Zugriff mit einem Tipp.",
+    "installButton": "Installieren",
+    "dismissButton": "Nicht jetzt",
+    "iosInstructions": "Zum Installieren: Tippe auf Teilen, dann auf „Zum Home-Bildschirm“."
   }
 }

@@ -14,6 +14,14 @@ const PASSTHROUGH_TOP_LEVEL_SEGMENTS = new Set([
   ...APP_SHELL_TOP_LEVEL_SEGMENTS,
   "robots.txt",
   "sitemap.xml",
+  // PWA layer — root-scoped metadata route + static service-worker file.
+  // Must never be locale-rewritten (would 404 at /en/manifest.webmanifest,
+  // /en/sw.js). "icons" covers public/icons/*.png; the proxy matcher below
+  // already excludes .png/.svg by extension, but the sw.js/manifest.webmanifest
+  // filenames don't match that extension allowlist, so they need to be
+  // listed explicitly the same way robots.txt/sitemap.xml are.
+  "manifest.webmanifest",
+  "sw.js",
 ]);
 
 // Public/SEO content (homepage, /dtc, /[make]/[slug], /blog) lives nested

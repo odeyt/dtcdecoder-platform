@@ -27,4 +27,5 @@ export const APP_SHELL_TOP_LEVEL_SEGMENTS = new Set([
   "affiliate-disclosure",
   "videos",
   "diagnostics",
+  "offline",
 ]);

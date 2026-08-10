@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "이 플랜은 계정에 제공된 것으로 Creem을 통해 청구되지 않습니다. 변경하려면 고객 지원에 문의하세요.",
     "billingPortalNoCustomerId": "이 구독에 등록된 결제 계정이 없습니다. 고객 지원에 문의하세요.",
     "unableToOpenBillingPortal": "지금은 결제 포털을 열 수 없습니다"
+  },
+  "pwaOffline": {
+    "heading": "오프라인 상태입니다",
+    "body": "AI 진단 및 실시간 DTC 분석에는 인터넷 연결이 필요합니다. 계속하려면 다시 연결하세요.",
+    "retryButton": "다시 시도",
+    "homeButton": "홈으로 돌아가기"
+  },
+  "pwaInstall": {
+    "title": "DTCDecoder 설치",
+    "body": "홈 화면에 추가하면 한 번의 탭으로 빠르게 접근할 수 있습니다.",
+    "installButton": "설치",
+    "dismissButton": "나중에",
+    "iosInstructions": "설치하려면: 공유를 탭한 다음 \"홈 화면에 추가\"를 선택하세요."
   }
 }

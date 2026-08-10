@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "Este plan fue otorgado a tu cuenta y no se factura a través de Creem. Contacta con soporte para hacer cambios.",
     "billingPortalNoCustomerId": "No hay ninguna cuenta de facturación registrada para esta suscripción. Contacta con soporte.",
     "unableToOpenBillingPortal": "No se pudo abrir el portal de facturación en este momento"
+  },
+  "pwaOffline": {
+    "heading": "Estás sin conexión",
+    "body": "El diagnóstico con IA y el análisis de DTC en vivo requieren conexión a internet. Reconéctate para continuar.",
+    "retryButton": "Reintentar",
+    "homeButton": "Volver al inicio"
+  },
+  "pwaInstall": {
+    "title": "Instalar DTCDecoder",
+    "body": "Agrégala a tu pantalla de inicio para acceso rápido con un toque.",
+    "installButton": "Instalar",
+    "dismissButton": "Ahora no",
+    "iosInstructions": "Para instalar: toca Compartir y luego \"Agregar a pantalla de inicio\"."
   }
 }

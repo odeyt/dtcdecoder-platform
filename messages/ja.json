@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "このプランはアカウントに付与されたもので、Creem経由の請求ではありません。変更についてはサポートにお問い合わせください。",
     "billingPortalNoCustomerId": "このサブスクリプションに登録された請求先アカウントがありません。サポートにお問い合わせください。",
     "unableToOpenBillingPortal": "現在、請求ポータルを開けません"
+  },
+  "pwaOffline": {
+    "heading": "オフラインです",
+    "body": "AI診断とリアルタイムDTC解析にはインターネット接続が必要です。再接続して続行してください。",
+    "retryButton": "再試行",
+    "homeButton": "ホームに戻る"
+  },
+  "pwaInstall": {
+    "title": "DTCDecoderをインストール",
+    "body": "ホーム画面に追加すると、ワンタップですぐにアクセスできます。",
+    "installButton": "インストール",
+    "dismissButton": "後で",
+    "iosInstructions": "インストールするには、共有をタップし、「ホーム画面に追加」を選択してください。"
   }
 }

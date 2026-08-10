@@ -1196,5 +1196,18 @@
     "billingPortalCompNotice": "Gói này được cấp cho tài khoản của bạn và không được tính phí qua Creem. Liên hệ hỗ trợ để thực hiện thay đổi.",
     "billingPortalNoCustomerId": "Không có tài khoản thanh toán nào được lưu cho đăng ký này. Liên hệ hỗ trợ.",
     "unableToOpenBillingPortal": "Hiện không thể mở cổng thanh toán"
+  },
+  "pwaOffline": {
+    "heading": "Bạn đang ngoại tuyến",
+    "body": "Chẩn đoán bằng AI và phân tích DTC trực tiếp yêu cầu kết nối internet. Hãy kết nối lại để tiếp tục.",
+    "retryButton": "Thử lại",
+    "homeButton": "Về trang chủ"
+  },
+  "pwaInstall": {
+    "title": "Cài đặt DTCDecoder",
+    "body": "Thêm vào màn hình chính để truy cập nhanh chỉ với một chạm.",
+    "installButton": "Cài đặt",
+    "dismissButton": "Để sau",
+    "iosInstructions": "Để cài đặt: nhấn Chia sẻ, sau đó chọn \"Thêm vào Màn hình chính\"."
   }
 }
