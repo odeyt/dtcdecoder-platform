@@ -28,4 +28,5 @@ export const APP_SHELL_TOP_LEVEL_SEGMENTS = new Set([
   "videos",
   "diagnostics",
   "offline",
+  "install",
 ]);

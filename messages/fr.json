@@ -38,7 +38,8 @@
     "dmca": "DMCA / Droits d'auteur",
     "dpa": "Accord de traitement des données",
     "affiliateDisclosure": "Divulgation d'affiliation",
-    "copyright": "© {year} DTC Decoder. Tous droits réservés."
+    "copyright": "© {year} DTC Decoder. Tous droits réservés.",
+    "installApp": "Installer l'app"
   },
   "home": {
     "valuePropsHeading": "Conçu pour la façon dont les techniciens travaillent réellement",
@@ -1209,5 +1210,28 @@
     "installButton": "Installer",
     "dismissButton": "Plus tard",
     "iosInstructions": "Pour installer : appuyez sur Partager, puis « Sur l'écran d'accueil »."
+  },
+  "installPage": {
+    "heroTitle": "Installer DTCDecoder",
+    "heroSubtitle": "Ajoutez-la à votre écran d'accueil pour accéder aux diagnostics en un geste, où que vous travailliez.",
+    "howItWorksTitle": "Comment ça marche",
+    "step1Title": "Recherchez un code ou importez un rapport de scan",
+    "step1Body": "Saisissez un code DTC ou importez un rapport de scan complet — aucun compte requis pour commencer.",
+    "step2Title": "Consultez DTC Technician",
+    "step2Body": "Notre copilote de diagnostic IA analyse les codes, symptômes et données du véhicule.",
+    "step3Title": "Obtenez des causes probables classées",
+    "step3Body": "Consultez les causes priorisées avec leur niveau de confiance et les tests pour confirmer chacune.",
+    "step4Title": "Vérifiez la réparation",
+    "step4Body": "Suivez la liste de contrôle guidée pour confirmer la réparation avant de clôturer l'intervention.",
+    "androidTitle": "Installer sur Android",
+    "androidStep1": "Ouvrez DTCDecoder dans Chrome.",
+    "androidStep2": "Appuyez sur le menu (⋮) en haut à droite.",
+    "androidStep3": "Appuyez sur « Installer l'application » (ou « Ajouter à l'écran d'accueil »).",
+    "androidStep4": "Appuyez sur « Installer » pour confirmer.",
+    "iosTitle": "Installer sur iPhone",
+    "iosStep1": "Ouvrez DTCDecoder dans Safari.",
+    "iosStep2": "Appuyez sur l'icône Partager en bas de l'écran.",
+    "iosStep3": "Faites défiler et appuyez sur « Sur l'écran d'accueil ».",
+    "iosStep4": "Appuyez sur « Ajouter » en haut à droite pour confirmer."
   }
 }

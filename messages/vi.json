@@ -38,7 +38,8 @@
     "dmca": "DMCA / Bản quyền",
     "dpa": "Thỏa thuận xử lý dữ liệu",
     "affiliateDisclosure": "Công bố liên kết",
-    "copyright": "© {year} DTC Decoder. Bảo lưu mọi quyền."
+    "copyright": "© {year} DTC Decoder. Bảo lưu mọi quyền.",
+    "installApp": "Cài đặt ứng dụng"
   },
   "home": {
     "valuePropsHeading": "Được xây dựng theo cách kỹ thuật viên thực sự làm việc",
@@ -1209,5 +1210,28 @@
     "installButton": "Cài đặt",
     "dismissButton": "Để sau",
     "iosInstructions": "Để cài đặt: nhấn Chia sẻ, sau đó chọn \"Thêm vào Màn hình chính\"."
+  },
+  "installPage": {
+    "heroTitle": "Cài đặt DTCDecoder",
+    "heroSubtitle": "Thêm vào màn hình chính để truy cập chẩn đoán chỉ với một chạm, dù bạn đang làm việc ở đâu.",
+    "howItWorksTitle": "Cách hoạt động",
+    "step1Title": "Tra cứu mã hoặc tải lên báo cáo quét",
+    "step1Body": "Nhập mã DTC hoặc tải lên báo cáo quét đầy đủ — không cần tài khoản để bắt đầu.",
+    "step2Title": "Hỏi DTC Technician",
+    "step2Body": "Trợ lý chẩn đoán AI của chúng tôi phân tích mã lỗi, triệu chứng và dữ liệu xe.",
+    "step3Title": "Nhận nguyên nhân khả dĩ theo thứ tự ưu tiên",
+    "step3Body": "Xem các nguyên nhân được ưu tiên kèm mức độ tin cậy và các bài kiểm tra để xác nhận từng nguyên nhân.",
+    "step4Title": "Xác minh việc sửa chữa",
+    "step4Body": "Làm theo danh sách kiểm tra có hướng dẫn để xác nhận việc sửa chữa trước khi hoàn tất công việc.",
+    "androidTitle": "Cài đặt trên Android",
+    "androidStep1": "Mở DTCDecoder trong Chrome.",
+    "androidStep2": "Nhấn vào menu (⋮) ở góc trên bên phải.",
+    "androidStep3": "Nhấn \"Cài đặt ứng dụng\" (hoặc \"Thêm vào Màn hình chính\").",
+    "androidStep4": "Nhấn \"Cài đặt\" để xác nhận.",
+    "iosTitle": "Cài đặt trên iPhone",
+    "iosStep1": "Mở DTCDecoder trong Safari.",
+    "iosStep2": "Nhấn biểu tượng Chia sẻ ở cuối màn hình.",
+    "iosStep3": "Cuộn xuống và nhấn \"Thêm vào Màn hình chính\".",
+    "iosStep4": "Nhấn \"Thêm\" ở góc trên bên phải để xác nhận."
   }
 }

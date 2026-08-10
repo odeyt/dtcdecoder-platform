@@ -38,7 +38,8 @@
     "dmca": "DMCA / Copyright",
     "dpa": "Data Processing Addendum",
     "affiliateDisclosure": "Affiliate Disclosure",
-    "copyright": "© {year} DTC Decoder. All rights reserved."
+    "copyright": "© {year} DTC Decoder. All rights reserved.",
+    "installApp": "Install App"
   },
   "landingIntake": {
     "importScanCta": "Import Vehicle Scan",
@@ -1209,5 +1210,28 @@
     "installButton": "Install",
     "dismissButton": "Not now",
     "iosInstructions": "To install: tap Share, then \"Add to Home Screen\"."
+  },
+  "installPage": {
+    "heroTitle": "Install DTCDecoder",
+    "heroSubtitle": "Add it to your home screen for one-tap access to diagnostics, wherever you're working.",
+    "howItWorksTitle": "How it works",
+    "step1Title": "Look up a code or scan report",
+    "step1Body": "Enter a DTC code or upload a full scan report — no account needed to start.",
+    "step2Title": "Ask DTC Technician",
+    "step2Body": "Our AI diagnostic copilot analyzes the codes, symptoms, and vehicle data.",
+    "step3Title": "Get ranked likely causes",
+    "step3Body": "See prioritized causes with confidence levels and the tests to confirm each one.",
+    "step4Title": "Verify the repair",
+    "step4Body": "Follow the guided checklist to confirm the fix before closing out the job.",
+    "androidTitle": "Install on Android",
+    "androidStep1": "Open DTCDecoder in Chrome.",
+    "androidStep2": "Tap the menu (⋮) in the top right.",
+    "androidStep3": "Tap \"Install app\" (or \"Add to Home screen\").",
+    "androidStep4": "Tap \"Install\" to confirm.",
+    "iosTitle": "Install on iPhone",
+    "iosStep1": "Open DTCDecoder in Safari.",
+    "iosStep2": "Tap the Share icon at the bottom of the screen.",
+    "iosStep3": "Scroll down and tap \"Add to Home Screen\".",
+    "iosStep4": "Tap \"Add\" in the top right to confirm."
   }
 }

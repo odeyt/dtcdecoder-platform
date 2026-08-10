@@ -30,6 +30,9 @@ export function SiteFooter() {
               <Link href="/history" className="hover:text-[var(--text-primary)]">
                 {t("history")}
               </Link>
+              <Link href="/install" className="hover:text-[var(--text-primary)]">
+                {t("installApp")}
+              </Link>
               <a
                 href="https://youtube.com"
                 target="_blank"

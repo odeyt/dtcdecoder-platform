@@ -38,7 +38,8 @@
     "dmca": "DMCA / Urheberrecht",
     "dpa": "Auftragsverarbeitungsvertrag",
     "affiliateDisclosure": "Affiliate-Offenlegung",
-    "copyright": "© {year} DTC Decoder. Alle Rechte vorbehalten."
+    "copyright": "© {year} DTC Decoder. Alle Rechte vorbehalten.",
+    "installApp": "App installieren"
   },
   "home": {
     "valuePropsHeading": "Entwickelt für die tatsächliche Arbeitsweise von Fachkräften",
@@ -1209,5 +1210,28 @@
     "installButton": "Installieren",
     "dismissButton": "Nicht jetzt",
     "iosInstructions": "Zum Installieren: Tippe auf Teilen, dann auf „Zum Home-Bildschirm“."
+  },
+  "installPage": {
+    "heroTitle": "DTCDecoder installieren",
+    "heroSubtitle": "Füge sie deinem Startbildschirm hinzu für Diagnosen mit einem Fingertipp — egal wo du gerade arbeitest.",
+    "howItWorksTitle": "So funktioniert's",
+    "step1Title": "Code nachschlagen oder Scanbericht hochladen",
+    "step1Body": "Gib einen DTC-Code ein oder lade einen vollständigen Scanbericht hoch — kein Konto zum Starten nötig.",
+    "step2Title": "DTC Technician fragen",
+    "step2Body": "Unser KI-Diagnose-Copilot analysiert Codes, Symptome und Fahrzeugdaten.",
+    "step3Title": "Priorisierte wahrscheinliche Ursachen erhalten",
+    "step3Body": "Sieh priorisierte Ursachen mit Konfidenzniveaus und den Tests zur Bestätigung jeder einzelnen.",
+    "step4Title": "Reparatur verifizieren",
+    "step4Body": "Folge der geführten Checkliste, um die Reparatur zu bestätigen, bevor du den Auftrag abschließt.",
+    "androidTitle": "Auf Android installieren",
+    "androidStep1": "Öffne DTCDecoder in Chrome.",
+    "androidStep2": "Tippe oben rechts auf das Menü (⋮).",
+    "androidStep3": "Tippe auf „App installieren\" (oder „Zum Startbildschirm hinzufügen\").",
+    "androidStep4": "Tippe zur Bestätigung auf „Installieren\".",
+    "iosTitle": "Auf iPhone installieren",
+    "iosStep1": "Öffne DTCDecoder in Safari.",
+    "iosStep2": "Tippe unten auf das Teilen-Symbol.",
+    "iosStep3": "Scrolle nach unten und tippe auf „Zum Home-Bildschirm\".",
+    "iosStep4": "Tippe oben rechts zur Bestätigung auf „Hinzufügen\"."
   }
 }

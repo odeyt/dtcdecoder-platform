@@ -38,7 +38,8 @@
     "dmca": "DMCA / 版权",
     "dpa": "数据处理协议",
     "affiliateDisclosure": "联盟披露",
-    "copyright": "© {year} DTC Decoder。保留所有权利。"
+    "copyright": "© {year} DTC Decoder。保留所有权利。",
+    "installApp": "安装应用"
   },
   "home": {
     "valuePropsHeading": "为技师的实际工作方式而打造",
@@ -1209,5 +1210,28 @@
     "installButton": "安装",
     "dismissButton": "暂不",
     "iosInstructions": "安装方法：点击「共享」，然后选择「添加到主屏幕」。"
+  },
+  "installPage": {
+    "heroTitle": "安装 DTCDecoder",
+    "heroSubtitle": "添加到主屏幕，无论您在何处工作，都能一键访问诊断功能。",
+    "howItWorksTitle": "工作原理",
+    "step1Title": "查询代码或上传扫描报告",
+    "step1Body": "输入 DTC 代码或上传完整的扫描报告——无需账户即可开始。",
+    "step2Title": "咨询 DTC Technician",
+    "step2Body": "我们的 AI 诊断副驾驶会分析代码、症状和车辆数据。",
+    "step3Title": "获取按优先级排序的可能原因",
+    "step3Body": "查看按优先级排序的原因，包括置信度以及用于确认每个原因的测试。",
+    "step4Title": "验证维修结果",
+    "step4Body": "在结束工作前，按照引导式检查清单确认维修效果。",
+    "androidTitle": "在 Android 上安装",
+    "androidStep1": "在 Chrome 中打开 DTCDecoder。",
+    "androidStep2": "点击右上角的菜单（⋮）。",
+    "androidStep3": "点击「安装应用」（或「添加到主屏幕」）。",
+    "androidStep4": "点击「安装」以确认。",
+    "iosTitle": "在 iPhone 上安装",
+    "iosStep1": "在 Safari 中打开 DTCDecoder。",
+    "iosStep2": "点击屏幕底部的分享图标。",
+    "iosStep3": "向下滚动并点击「添加到主屏幕」。",
+    "iosStep4": "点击右上角的「添加」以确认。"
   }
 }

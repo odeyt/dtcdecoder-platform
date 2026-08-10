@@ -38,7 +38,8 @@
     "dmca": "DMCA / 著作権",
     "dpa": "データ処理契約",
     "affiliateDisclosure": "アフィリエイト開示",
-    "copyright": "© {year} DTC Decoder. All rights reserved."
+    "copyright": "© {year} DTC Decoder. All rights reserved.",
+    "installApp": "アプリをインストール"
   },
   "home": {
     "valuePropsHeading": "技術者の実際の作業方法に合わせて設計",
@@ -1209,5 +1210,28 @@
     "installButton": "インストール",
     "dismissButton": "後で",
     "iosInstructions": "インストールするには、共有をタップし、「ホーム画面に追加」を選択してください。"
+  },
+  "installPage": {
+    "heroTitle": "DTCDecoderをインストール",
+    "heroSubtitle": "ホーム画面に追加すると、どこで作業していても診断機能にワンタップでアクセスできます。",
+    "howItWorksTitle": "使い方",
+    "step1Title": "コードを検索するかスキャンレポートをアップロード",
+    "step1Body": "DTCコードを入力するか、スキャンレポート全体をアップロードします。開始にアカウントは不要です。",
+    "step2Title": "DTC Technicianに相談",
+    "step2Body": "AI診断コパイロットがコード、症状、車両データを解析します。",
+    "step3Title": "優先順位付けされた原因候補を取得",
+    "step3Body": "信頼度と各原因を確認するためのテストとともに、優先順位付けされた原因を確認できます。",
+    "step4Title": "修理を検証",
+    "step4Body": "作業を完了する前に、ガイド付きチェックリストで修理内容を確認します。",
+    "androidTitle": "Androidにインストール",
+    "androidStep1": "ChromeでDTCDecoderを開きます。",
+    "androidStep2": "右上のメニュー（⋮）をタップします。",
+    "androidStep3": "「アプリをインストール」（または「ホーム画面に追加」）をタップします。",
+    "androidStep4": "「インストール」をタップして確定します。",
+    "iosTitle": "iPhoneにインストール",
+    "iosStep1": "SafariでDTCDecoderを開きます。",
+    "iosStep2": "画面下部の共有アイコンをタップします。",
+    "iosStep3": "下にスクロールして「ホーム画面に追加」をタップします。",
+    "iosStep4": "右上の「追加」をタップして確定します。"
   }
 }

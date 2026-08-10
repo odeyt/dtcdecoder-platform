@@ -38,7 +38,8 @@
     "dmca": "DMCA / Direitos autorais",
     "dpa": "Acordo de Processamento de Dados",
     "affiliateDisclosure": "Divulgação de afiliados",
-    "copyright": "© {year} DTC Decoder. Todos os direitos reservados."
+    "copyright": "© {year} DTC Decoder. Todos os direitos reservados.",
+    "installApp": "Instalar app"
   },
   "home": {
     "valuePropsHeading": "Feito para o jeito que os técnicos realmente trabalham",
@@ -1209,5 +1210,28 @@
     "installButton": "Instalar",
     "dismissButton": "Agora não",
     "iosInstructions": "Para instalar: toque em Compartilhar e depois em \"Adicionar à Tela de Início\"."
+  },
+  "installPage": {
+    "heroTitle": "Instalar o DTCDecoder",
+    "heroSubtitle": "Adicione à tela inicial para acesso aos diagnósticos com um toque, onde quer que você esteja trabalhando.",
+    "howItWorksTitle": "Como funciona",
+    "step1Title": "Consulte um código ou envie um relatório de escaneamento",
+    "step1Body": "Digite um código DTC ou envie um relatório de escaneamento completo — não é necessária conta para começar.",
+    "step2Title": "Consulte o DTC Technician",
+    "step2Body": "Nosso copiloto de diagnóstico por IA analisa códigos, sintomas e dados do veículo.",
+    "step3Title": "Obtenha causas prováveis priorizadas",
+    "step3Body": "Veja causas priorizadas com níveis de confiança e os testes para confirmar cada uma.",
+    "step4Title": "Verifique o reparo",
+    "step4Body": "Siga a lista de verificação guiada para confirmar o reparo antes de encerrar o serviço.",
+    "androidTitle": "Instalar no Android",
+    "androidStep1": "Abra o DTCDecoder no Chrome.",
+    "androidStep2": "Toque no menu (⋮) no canto superior direito.",
+    "androidStep3": "Toque em \"Instalar app\" (ou \"Adicionar à tela inicial\").",
+    "androidStep4": "Toque em \"Instalar\" para confirmar.",
+    "iosTitle": "Instalar no iPhone",
+    "iosStep1": "Abra o DTCDecoder no Safari.",
+    "iosStep2": "Toque no ícone Compartilhar na parte inferior da tela.",
+    "iosStep3": "Role para baixo e toque em \"Adicionar à Tela de Início\".",
+    "iosStep4": "Toque em \"Adicionar\" no canto superior direito para confirmar."
   }
 }

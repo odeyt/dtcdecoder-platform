@@ -38,7 +38,8 @@
     "dmca": "DMCA / ລິຂະສິດ",
     "dpa": "ຂໍ້ຕົກລົງການປະມວນຜົນຂໍ້ມູນ",
     "affiliateDisclosure": "ການເປີດເຜີຍພັນທະມິດ",
-    "copyright": "© {year} DTC Decoder. ສະຫງວນລິຂະສິດທັງໝົດ."
+    "copyright": "© {year} DTC Decoder. ສະຫງວນລິຂະສິດທັງໝົດ.",
+    "installApp": "ຕິດຕັ້ງແອັບ"
   },
   "home": {
     "valuePropsHeading": "ສ້າງຂຶ້ນສຳລັບວິທີການເຮັດວຽກຕົວຈິງຂອງຊ່າງ",
@@ -1209,5 +1210,28 @@
     "installButton": "ຕິດຕັ້ງ",
     "dismissButton": "ບໍ່ແມ່ນຕອນນີ້",
     "iosInstructions": "ເພື່ອຕິດຕັ້ງ: ແຕະ Share ແລ້ວເລືອກ \"Add to Home Screen\"."
+  },
+  "installPage": {
+    "heroTitle": "ຕິດຕັ້ງ DTCDecoder",
+    "heroSubtitle": "ເພີ່ມໃສ່ໜ້າຈໍຫຼັກຂອງທ່ານເພື່ອເຂົ້າເຖິງການວິນິດໄສໄດ້ໄວດ້ວຍການແຕະດຽວ ບໍ່ວ່າທ່ານກຳລັງເຮັດວຽກຢູ່ໃສ.",
+    "howItWorksTitle": "ວິທີການເຮັດວຽກ",
+    "step1Title": "ຄົ້ນຫາລະຫັດ ຫຼື ອັບໂຫລດລາຍງານສະແກນ",
+    "step1Body": "ປ້ອນລະຫັດ DTC ຫຼື ອັບໂຫລດລາຍງານສະແກນເຕັມ — ບໍ່ຈຳເປັນຕ້ອງມີບັນຊີເພື່ອເລີ່ມຕົ້ນ.",
+    "step2Title": "ຖາມ DTC Technician",
+    "step2Body": "ຜູ້ຊ່ວຍວິນິດໄສ AI ຂອງພວກເຮົາວິເຄາະລະຫັດ, ອາການ, ແລະ ຂໍ້ມູນລົດ.",
+    "step3Title": "ຮັບສາເຫດທີ່ເປັນໄປໄດ້ຕາມລຳດັບຄວາມສຳຄັນ",
+    "step3Body": "ເບິ່ງສາເຫດຕາມລຳດັບຄວາມສຳຄັນ ພ້ອມລະດັບຄວາມໝັ້ນໃຈ ແລະ ການທົດສອບເພື່ອຢືນຢັນແຕ່ລະສາເຫດ.",
+    "step4Title": "ກວດສອບການສ້ອມແປງ",
+    "step4Body": "ປະຕິບັດຕາມລາຍການກວດສອບແບບມີຄຳແນະນຳ ເພື່ອຢືນຢັນການສ້ອມແປງກ່ອນປິດວຽກ.",
+    "androidTitle": "ຕິດຕັ້ງເທິງ Android",
+    "androidStep1": "ເປີດ DTCDecoder ໃນ Chrome.",
+    "androidStep2": "ແຕະເມນູ (⋮) ຢູ່ມຸມຂວາເທິງ.",
+    "androidStep3": "ແຕະ \"Install app\" (ຫຼື \"Add to Home screen\").",
+    "androidStep4": "ແຕະ \"Install\" ເພື່ອຢືນຢັນ.",
+    "iosTitle": "ຕິດຕັ້ງເທິງ iPhone",
+    "iosStep1": "ເປີດ DTCDecoder ໃນ Safari.",
+    "iosStep2": "ແຕະໄອຄອນແບ່ງປັນຢູ່ລຸ່ມສຸດຂອງໜ້າຈໍ.",
+    "iosStep3": "ເລື່ອນລົງ ແລະ ແຕະ \"Add to Home Screen\".",
+    "iosStep4": "ແຕະ \"Add\" ຢູ່ມຸມຂວາເທິງເພື່ອຢືນຢັນ."
   }
 }
