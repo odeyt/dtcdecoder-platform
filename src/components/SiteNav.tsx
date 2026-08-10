@@ -8,6 +8,7 @@ import { createClient } from "@/lib/supabase/client";
 import { env } from "@/lib/env";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
 import { SignOutButton } from "@/components/SignOutButton";
+import { InstallAppButton } from "@/components/pwa/InstallAppButton";
 import { localizeContentHref } from "@/lib/i18n/localized-href";
 
 // Auth state is fetched client-side (not passed from the root layout) so
@@ -120,6 +121,7 @@ export function SiteNav() {
 
         <div className="hidden items-center gap-3 lg:flex">
           <LanguageSwitcher />
+          <InstallAppButton />
           {userEmail ? (
             <div className="flex items-center gap-2">
               <Link
@@ -197,6 +199,7 @@ export function SiteNav() {
             <div className="px-2 py-1">
               <LanguageSwitcher />
             </div>
+            <InstallAppButton className="[&_button]:min-h-11 [&_button]:w-full [&_button]:py-3" />
             <Link
               href={href(userEmail ? "/account" : "/account/login")}
               onClick={() => setMenuOpen(false)}

@@ -1,8 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useSyncExternalStore } from "react";
 import { usePathname } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { subscribe, getSnapshot, getServerSnapshot, promptInstall } from "@/lib/pwa/install-prompt-store";
+import { isIosSafari } from "@/lib/pwa/is-ios-safari";
 
 const DISMISSED_KEY = "dtc_pwa_install_dismissed";
 // Routes where an install nudge would be a distraction, not a convenience —
@@ -10,55 +12,32 @@ const DISMISSED_KEY = "dtc_pwa_install_dismissed";
 // so there's no in-app payment route to also suppress).
 const SUPPRESSED_PATH_PREFIXES = ["/account/login"];
 
-type BeforeInstallPromptEvent = Event & {
-  prompt: () => Promise<void>;
-  userChoice: Promise<{ outcome: "accepted" | "dismissed" }>;
-};
-
-function isIosSafari(): boolean {
-  const ua = window.navigator.userAgent.toLowerCase();
-  const isIos = /iphone|ipad|ipod/.test(ua);
-  const isStandaloneAlready = (window.navigator as { standalone?: boolean }).standalone === true;
-  return isIos && !isStandaloneAlready;
-}
-
 // Subtle, dismissible install nudge — never blocks the page, never
 // reappears once dismissed (see DISMISSED_KEY), and stays off auth/payment
-// flows. Chromium/Android gets a real one-tap install via the captured
-// `beforeinstallprompt` event; iOS Safari has no such API, so it gets a
-// short instructional line instead (Phase 7 — "Add to Home Screen").
+// flows. Chromium/Android gets a real one-tap install via the shared
+// install-prompt-store (see that file — also drives InstallAppButton, the
+// persistent nav-menu entry for anyone who dismissed this toast); iOS
+// Safari has no such API, so it gets a short instructional line instead
+// (Phase 7 — "Add to Home Screen").
 export function InstallPrompt() {
   const t = useTranslations("pwaInstall");
   const pathname = usePathname();
-  const [deferredPrompt, setDeferredPrompt] = useState<BeforeInstallPromptEvent | null>(null);
-  // Both default to their SSR-safe values (false) so the first client render
-  // matches the server-rendered markup exactly — no hydration mismatch.
-  // `dismissed` uses a lazy initializer (localStorage IS available
-  // synchronously by the time this component mounts client-side; the
-  // server-rendered pass never reaches this branch at all since
-  // `typeof window === "undefined"` there, so there's nothing to mismatch
-  // against). `showIosHint`, by contrast, would genuinely disagree with the
-  // server's output if read synchronously (real iOS visitors would compute
-  // true on mount, false on the server) — deferred into the effect below,
-  // one microtask after commit, so it only ever changes DOM output on a
-  // second pass, after hydration has already succeeded.
+  const deferredPrompt = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
+  // Lazy initializer, not an effect — see install-prompt-store.ts's own
+  // comment on why this specific value (unlike showIosHint below) can never
+  // cause a hydration mismatch.
   const [dismissed, setDismissed] = useState(
     () => typeof window !== "undefined" && window.localStorage.getItem(DISMISSED_KEY) === "1",
   );
+  // Starts false on both server and first client render (matches SSR
+  // output); flipped one microtask after mount, i.e. only after hydration
+  // has already succeeded — see InstallAppButton.tsx for the same pattern.
   const [showIosHint, setShowIosHint] = useState(false);
 
   useEffect(() => {
-    function onBeforeInstallPrompt(event: Event) {
-      event.preventDefault();
-      setDeferredPrompt(event as BeforeInstallPromptEvent);
-    }
-    window.addEventListener("beforeinstallprompt", onBeforeInstallPrompt);
-
     queueMicrotask(() => {
       if (isIosSafari()) setShowIosHint(true);
     });
-
-    return () => window.removeEventListener("beforeinstallprompt", onBeforeInstallPrompt);
   }, []);
 
   const suppressed = SUPPRESSED_PATH_PREFIXES.some((p) => pathname?.startsWith(p));
@@ -71,10 +50,7 @@ export function InstallPrompt() {
   }
 
   async function handleInstall() {
-    if (!deferredPrompt) return;
-    await deferredPrompt.prompt();
-    await deferredPrompt.userChoice;
-    setDeferredPrompt(null);
+    await promptInstall();
     dismiss();
   }
 
