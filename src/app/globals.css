@@ -162,6 +162,20 @@ body {
 .container-app {
   max-width: var(--container-max);
   margin-inline: auto;
+  /* Every (app)-shell page nests this directly inside <main class="flex
+     flex-1 flex-col"> (see both root layouts) — a COLUMN flex container, so
+     width is main's CROSS axis. flex-shrink/flex-basis only govern the main
+     axis (height, here); cross-axis sizing instead follows align-items
+     (default: stretch), which lets content-driven sizing pressure from a
+     descendant (e.g. a wrapped badge whose longest line still doesn't fit)
+     push this item wider than its container — min-width:0 does NOT prevent
+     that, since nothing is hitting the min-width floor; the box is being
+     sized UP by content, not refusing to shrink down. An explicit
+     width: 100% (capped by max-width above, exactly as before on wide
+     viewports) is what actually keeps this item at its container's real
+     width. Caught by tests/e2e/smoke/workbench-redesign.spec.ts's 390px
+     overflow assertion. */
+  width: 100%;
 }
 
 /* ---------------------------------------------------------------------
