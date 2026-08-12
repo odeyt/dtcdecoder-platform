@@ -36,11 +36,12 @@ function isNetworkOnlyPath(pathname) {
 }
 
 function isStaticAsset(pathname) {
-  return (
-    pathname.startsWith("/_next/static/") ||
-    pathname.startsWith("/icons/") ||
-    /\.(?:js|css|woff2?|ttf|otf)$/.test(pathname)
-  );
+  // Path-prefix only, deliberately no generic file-extension fallback (e.g.
+  // a bare /\.js$/ test) — that would also match /sw.js itself if it's ever
+  // fetched directly (as this file's own test suite does), cache-first
+  // caching the service worker's own script. Every real static asset this
+  // app serves already lives under one of these two prefixes.
+  return pathname.startsWith("/_next/static/") || pathname.startsWith("/icons/");
 }
 
 async function networkFirstNavigate(request) {

@@ -34,14 +34,23 @@ describe("service worker cache policy — isStaticAsset", () => {
     expect(sw.isStaticAsset("/icons/icon-192.png")).toBe(true);
   });
 
-  it("matches common static file extensions", () => {
-    expect(sw.isStaticAsset("/some/font.woff2")).toBe(true);
-    expect(sw.isStaticAsset("/some/style.css")).toBe(true);
+  it("matches fonts and other build assets nested under _next/static", () => {
+    expect(sw.isStaticAsset("/_next/static/media/font-abc123.woff2")).toBe(true);
+    expect(sw.isStaticAsset("/_next/static/chunks/0vforlehol292.css")).toBe(true);
   });
 
   it("does not match API or page routes", () => {
     expect(sw.isStaticAsset("/api/ai/assistant")).toBe(false);
     expect(sw.isStaticAsset("/account")).toBe(false);
+  });
+
+  it("does not match /sw.js itself, even though it ends in .js — no generic extension fallback", () => {
+    expect(sw.isStaticAsset("/sw.js")).toBe(false);
+  });
+
+  it("does not match a same-named .js/.css file outside the two allowed prefixes", () => {
+    expect(sw.isStaticAsset("/some/random/script.js")).toBe(false);
+    expect(sw.isStaticAsset("/some/random/style.css")).toBe(false);
   });
 });
 
