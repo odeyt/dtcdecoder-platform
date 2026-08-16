@@ -22,11 +22,33 @@ Scaffolded 2026-08-16. Context and remaining blockers before a real Play Store s
 
 `android/variables.gradle`: `minSdkVersion 24` (Android 7.0+), `targetSdkVersion 36` (current Capacitor default) — both are the generator's defaults, not yet deliberately tuned for this app's actual audience.
 
+## Build status (2026-08-16)
+
+Android Studio, the SDK, and a working JDK are now installed on this machine, and `./gradlew assembleDebug` succeeds — the shell genuinely builds and produces `android/app/build/outputs/apk/debug/app-debug.apk`.
+
+| Tool | Location |
+|---|---|
+| Android Studio 2026.1.3.7 | `C:\Program Files\Android\Android Studio` |
+| Android SDK | `C:\Android\Sdk` (`platform-tools`, `platforms;android-36`, `build-tools;36.0.0`) |
+| JDK 21 (Temurin) — **use this one for Gradle** | `C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot` |
+
+**Important gotcha:** Android Studio's bundled JBR (`Android Studio\jbr`) is Java 25, which Gradle 8.14.3 cannot run (`Unsupported class file major version 69`). Set `JAVA_HOME` to the Temurin 21 install above when running Gradle from the command line — Android Studio itself manages its own JDK selection separately when you build through the IDE.
+
+`android/local.properties` (gitignored, no secrets) points `sdk.dir` at `C:/Android/Sdk`.
+
+To rebuild from the command line:
+```
+cd android
+JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot" ./gradlew.bat assembleDebug
+```
+
+Not yet installed/run on this machine: an emulator or physical device — the build has been verified to compile and package, but the resulting APK has not yet been launched anywhere to confirm the WebView actually loads `https://dtcdecoder.com` and sign-in works end to end.
+
 ## What's NOT done yet
 
-This is scaffolding only — the project structure and config exist, but none of the following has happened:
+This is scaffolding only — the project structure and config exist, and it now builds successfully, but none of the following has happened:
 
-- **No local Android SDK / Java / Gradle in this dev environment** — this machine has no `ANDROID_HOME`, no `java` on PATH. The `android/` project has never actually been built or run here. To build/run, install Android Studio (which bundles the SDK) and open `android/` in it, or set up a headless SDK + JDK and run `./gradlew assembleDebug` from `android/`.
+- **Never installed/run on an emulator or device.** A debug APK exists but hasn't actually been launched to confirm the WebView loads correctly, sign-in works, or a diagnostic report renders.
 - **No app icons.** Capacitor's default placeholder icon/splash assets are in place; the PWA icons already exist at `public/icons/icon-192.png` / `icon-512.png` but haven't been run through Capacitor's asset generator (`@capacitor/assets`) to produce the full Android mipmap/adaptive-icon set.
 - **No push notifications, native camera, or other native-only features** — per the readiness audit, at least one of these is likely needed to satisfy store minimum-functionality review (more relevant on iOS than Android, but still worth building for both).
 - **No deep-link config** (App Links / `assetlinks.json`) — magic-link sign-in and any Creem checkout return URL still resolve to `https://dtcdecoder.com/...`, which will open the system browser instead of this app unless App Links are set up. Password sign-in (already live) is the safe default inside this shell in the meantime.
