@@ -21,10 +21,14 @@
     "test:e2e:provider": "playwright test tests/e2e/provider-reliability",
     "test:e2e:smoke:prod": "cross-env PLAYWRIGHT_TARGET=production-smoke playwright test tests/e2e/smoke",
     "test:e2e:internal:prod": "cross-env PLAYWRIGHT_TARGET=production-internal RUN_PRODUCTION_INTERNAL_E2E=true playwright test tests/e2e/internal-owner",
-    "test:e2e:report": "playwright show-report"
+    "test:e2e:report": "playwright show-report",
+    "cap:sync": "cap sync android",
+    "android:open": "cap open android"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.112.5",
+    "@capacitor/android": "^8.5.0",
+    "@capacitor/core": "^8.5.0",
     "@supabase/ssr": "^0.12.2",
     "@supabase/supabase-js": "^2.110.5",
     "fast-xml-parser": "^5.10.1",
@@ -43,6 +47,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.12.1",
+    "@capacitor/cli": "^8.5.0",
     "@playwright/test": "^1.62.0",
     "@tailwindcss/postcss": "^4",
     "@testing-library/jest-dom": "^7.0.0",
