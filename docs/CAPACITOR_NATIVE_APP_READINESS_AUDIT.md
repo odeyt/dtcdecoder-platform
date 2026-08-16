@@ -45,15 +45,13 @@ Password sign-in (already shipped — see `CLAUDE.md` hard constraint #3) sidest
 
 `src/components/ScanCaseUploadForm.tsx` uses a standard file input. This works inside both WKWebView and Android WebView, but the UX is noticeably worse than native (extra permission dialogs, no direct camera launch, format quirks on iOS Safari-based capture). Swapping to Capacitor's Camera plugin fixes the UX and doubles as a genuine native feature for point 2 above.
 
-### 5. Checkout exits to an external browser with no way back — confirmed on emulator (2026-08-16)
+### 5. Checkout exited to an external browser with no way back — RESOLVED (fixed and verified 2026-08-17)
 
-Tested empirically on a real Android emulator: tapping the pricing page's "Upgrade to Pro" CTA (`src/components/SubscribeButton.tsx`, `window.location.href = data.checkoutUrl`) correctly generates a real Creem checkout URL server-side, but Capacitor's WebView does **not** navigate to it in-app — it hands the cross-origin URL off to the system browser entirely (confirmed via `adb logcat`: `capturedLink=https://creem.io/checkout/...` on a new `com.android.chrome` task, launched as a separate Activity from `com.dtcdecoder.app`). This is Capacitor's default `shouldOverrideUrlLoading` behavior for any origin not in `capacitor.config.ts`'s `server.allowNavigation` list — which is currently unset.
+Originally found on an Android emulator: tapping the pricing page's "Upgrade to Pro" CTA (`src/components/SubscribeButton.tsx`, `window.location.href = data.checkoutUrl`) correctly generated a real Creem checkout URL server-side, but Capacitor's WebView did **not** navigate to it in-app — it handed the cross-origin URL off to the system browser entirely (confirmed via `adb logcat`: `capturedLink=https://creem.io/checkout/...` on a new `com.android.chrome` task, launched as a separate Activity from `com.dtcdecoder.app`). This was Capacitor's default `shouldOverrideUrlLoading` behavior for any origin not in `capacitor.config.ts`'s `server.allowNavigation` list, which was unset.
 
-Two compounding problems, not one:
-- **No in-app checkout.** The user leaves the native app shell entirely to pay, which undermines exactly the "keep users in-app" rationale for building the shell in the first place, and is a worse experience than a plain mobile browser (no back-button continuity, a jarring app-switch).
-- **No return path.** Creem's checkout success/cancel redirect goes back to an `https://dtcdecoder.com/...` URL, which — per finding #3 — has no App Links configured either, so it opens *in the same external browser tab*, not back in the app. A user who completes payment has no obvious way back into DTCDecoder; the purchase succeeds server-side (webhook-driven, same as web), but there's no handoff telling them so inside the app.
+**Fix:** added `server.allowNavigation: ["creem.io", "*.creem.io"]` to `capacitor.config.ts`. Re-verified on the same emulator: tapping "Upgrade to Pro" now loads the real Creem checkout page (`https://www.creem.io/checkout/...` — note the `www` subdomain, which is exactly why the wildcard pattern was needed, not just the apex domain) **inside the app's own WebView** — confirmed via Chrome DevTools Protocol (the devtools page target's own URL changed, no new external target appeared) and `adb logcat` (zero `com.android.chrome` activity, vs. a full launch before the fix).
 
-Fix is two-part and should be scoped together with #3's App Links work, not treated as separate: (a) add Creem's checkout domain to `server.allowNavigation` in `capacitor.config.ts` so the WebView itself navigates there instead of bouncing to Chrome, and (b) configure App Links so Creem's return redirect reopens the app rather than staying in a browser tab. Neither is done yet.
+This resolves both original problems, not just the navigation one: since the entire checkout flow (going to Creem, and Creem's own success/cancel redirect back to `dtcdecoder.com`) now happens inside the app's single WebView session, there's no external-browser hop at all — so the "no return path" issue is gone too, without needing App Links for this specific flow. App Links (finding #3) are still needed for the separate case of a magic-link opened from an external app like Gmail, which is a different scenario (a *different app* launching a link, vs. an in-app cross-origin navigation).
 
 ### 6. PWA install UI becomes dead weight (cleanup, not a blocker)
 
@@ -79,7 +77,7 @@ The `/install` page and the `beforeinstallprompt`-driven install button (`src/li
 | iOS payments (Guideline 3.1.1) | Blocker | Product/legal decision: StoreKit integration vs. scope iOS app to exclude purchases |
 | iOS minimum functionality (Guideline 4.2) | At risk | Add push notifications + native camera before submitting |
 | Magic-link deep linking | Gap | Configure Universal Links / App Links, or default to password sign-in in-app |
-| Checkout navigation (Android, confirmed on emulator) | Gap — exits to external browser, no return path | Add Creem's domain to `capacitor.config.ts`'s `server.allowNavigation`; pair with App Links for the return redirect |
+| Checkout navigation (Android) | **Ready** — fixed and verified on emulator | None — `server.allowNavigation` set in `capacitor.config.ts` |
 | VIN/DTC photo upload UX | Works, not native | Swap to Capacitor Camera plugin |
 | PWA install UI in native shell | Cleanup item | Gate behind `Capacitor.isNativePlatform()` |
 | Mobile responsiveness | Ready | None — recently verified across 3 viewports |

@@ -29,6 +29,9 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Native Android project (Capacitor) — Gradle build output and
+    // Capacitor's generated web-bridge JS, not this project's source.
+    "android/**",
   ]),
 ]);
 

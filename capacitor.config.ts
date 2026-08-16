@@ -18,6 +18,19 @@ const config: CapacitorConfig = {
     // header) — never allow plaintext http:// loads.
     cleartext: false,
     androidScheme: "https",
+    // Without this, Capacitor's default WebViewClient hands any
+    // cross-origin navigation off to the system browser instead of loading
+    // it in-app — confirmed empirically on an emulator (adb logcat showed
+    // capturedLink=https://creem.io/checkout/... opening as a separate
+    // com.android.chrome task) when tapping the pricing page's checkout
+    // CTA (SubscribeButton.tsx does a plain `window.location.href =
+    // checkoutUrl`, which is exactly what triggers this). Creem's hosted
+    // checkout — the only real cross-origin destination this app ever
+    // navigates to — needs to stay in-app for checkout to feel native.
+    // See docs/CAPACITOR_NATIVE_APP_READINESS_AUDIT.md finding #5. Return
+    // navigation after checkout still lands in-app fine since it redirects
+    // back to dtcdecoder.com, server.url's own origin.
+    allowNavigation: ["creem.io", "*.creem.io"],
   },
 };
 
