@@ -42,13 +42,23 @@ cd android
 JAVA_HOME="C:\Program Files\Eclipse Adoptium\jdk-21.0.12.8-hotspot" ./gradlew.bat assembleDebug
 ```
 
-Not yet installed/run on this machine: an emulator or physical device — the build has been verified to compile and package, but the resulting APK has not yet been launched anywhere to confirm the WebView actually loads `https://dtcdecoder.com` and sign-in works end to end.
+### Emulator verification (2026-08-16)
+
+Ran end to end on a real Android emulator (AVD `dtcdecoder_test`, Pixel-class profile, Android 16 / API 36, `google_apis` x86_64 image, WHPX-accelerated):
+
+1. `avdmanager create avd` + `emulator.exe -avd dtcdecoder_test` (headless: `-no-window -gpu swiftshader_indirect` — running the emulator with a visible window from an automated shell hit Windows job-object process-lifetime issues; headless avoids that)
+2. `adb install` the debug APK, `adb shell am start -n com.dtcdecoder.app/.MainActivity`
+3. Confirmed: the WebView loads `https://dtcdecoder.com` and renders the real homepage (nav, hero, "Start Diagnosis" CTA, Diagnostic Intake Console) — no CSP violations, no console errors, no crashes, verified via `adb logcat` and a pulled screenshot.
+
+**Gotcha:** running `adb`/`emulator.exe` from Git Bash on Windows needs `MSYS_NO_PATHCONV=1` on commands with device-side absolute paths (`/data/local/tmp/...`) — otherwise MSYS silently mangles them into bogus Windows paths (e.g. `/data/local/tmp/screen.png` → `C:/Program Files/Git/data/local/tmp/screen.png`). Don't set it on the `adb install`/`adb pull` local-path argument, which needs to stay a real Windows path.
+
+Not yet verified: sign-in (magic-link vs. password — see the readiness audit's deep-linking gap), navigating into an actual diagnostic report, or anything past the homepage.
 
 ## What's NOT done yet
 
-This is scaffolding only — the project structure and config exist, and it now builds successfully, but none of the following has happened:
+The shell now builds AND has been confirmed to load the live site correctly on an emulator. Still outstanding:
 
-- **Never installed/run on an emulator or device.** A debug APK exists but hasn't actually been launched to confirm the WebView loads correctly, sign-in works, or a diagnostic report renders.
+- **Sign-in and deeper navigation unverified** — only the homepage has been confirmed rendering; sign-in flow, diagnostic report pages, and checkout haven't been exercised inside the shell yet.
 - **No app icons.** Capacitor's default placeholder icon/splash assets are in place; the PWA icons already exist at `public/icons/icon-192.png` / `icon-512.png` but haven't been run through Capacitor's asset generator (`@capacitor/assets`) to produce the full Android mipmap/adaptive-icon set.
 - **No push notifications, native camera, or other native-only features** — per the readiness audit, at least one of these is likely needed to satisfy store minimum-functionality review (more relevant on iOS than Android, but still worth building for both).
 - **No deep-link config** (App Links / `assetlinks.json`) — magic-link sign-in and any Creem checkout return URL still resolve to `https://dtcdecoder.com/...`, which will open the system browser instead of this app unless App Links are set up. Password sign-in (already live) is the safe default inside this shell in the meantime.
