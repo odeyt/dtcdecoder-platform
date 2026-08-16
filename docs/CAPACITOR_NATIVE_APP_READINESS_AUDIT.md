@@ -45,7 +45,17 @@ Password sign-in (already shipped — see `CLAUDE.md` hard constraint #3) sidest
 
 `src/components/ScanCaseUploadForm.tsx` uses a standard file input. This works inside both WKWebView and Android WebView, but the UX is noticeably worse than native (extra permission dialogs, no direct camera launch, format quirks on iOS Safari-based capture). Swapping to Capacitor's Camera plugin fixes the UX and doubles as a genuine native feature for point 2 above.
 
-### 5. PWA install UI becomes dead weight (cleanup, not a blocker)
+### 5. Checkout exits to an external browser with no way back — confirmed on emulator (2026-08-16)
+
+Tested empirically on a real Android emulator: tapping the pricing page's "Upgrade to Pro" CTA (`src/components/SubscribeButton.tsx`, `window.location.href = data.checkoutUrl`) correctly generates a real Creem checkout URL server-side, but Capacitor's WebView does **not** navigate to it in-app — it hands the cross-origin URL off to the system browser entirely (confirmed via `adb logcat`: `capturedLink=https://creem.io/checkout/...` on a new `com.android.chrome` task, launched as a separate Activity from `com.dtcdecoder.app`). This is Capacitor's default `shouldOverrideUrlLoading` behavior for any origin not in `capacitor.config.ts`'s `server.allowNavigation` list — which is currently unset.
+
+Two compounding problems, not one:
+- **No in-app checkout.** The user leaves the native app shell entirely to pay, which undermines exactly the "keep users in-app" rationale for building the shell in the first place, and is a worse experience than a plain mobile browser (no back-button continuity, a jarring app-switch).
+- **No return path.** Creem's checkout success/cancel redirect goes back to an `https://dtcdecoder.com/...` URL, which — per finding #3 — has no App Links configured either, so it opens *in the same external browser tab*, not back in the app. A user who completes payment has no obvious way back into DTCDecoder; the purchase succeeds server-side (webhook-driven, same as web), but there's no handoff telling them so inside the app.
+
+Fix is two-part and should be scoped together with #3's App Links work, not treated as separate: (a) add Creem's checkout domain to `server.allowNavigation` in `capacitor.config.ts` so the WebView itself navigates there instead of bouncing to Chrome, and (b) configure App Links so Creem's return redirect reopens the app rather than staying in a browser tab. Neither is done yet.
+
+### 6. PWA install UI becomes dead weight (cleanup, not a blocker)
 
 The `/install` page and the `beforeinstallprompt`-driven install button (`src/lib/pwa/install-prompt-store.ts`, `InstallPrompt`, `InstallAppButton`) are meaningless once the app is actually wrapped as a native app — there's no browser chrome to install from. Should be conditionally hidden via Capacitor's `Capacitor.isNativePlatform()` check once the native shell exists, rather than assumed away. Same applies to the service worker's offline-page caching (`public/sw.js`) — fine to keep for the plain mobile-web/PWA audience, just needs to coexist with (not assume it's the only client of) the app.
 
@@ -69,6 +79,7 @@ The `/install` page and the `beforeinstallprompt`-driven install button (`src/li
 | iOS payments (Guideline 3.1.1) | Blocker | Product/legal decision: StoreKit integration vs. scope iOS app to exclude purchases |
 | iOS minimum functionality (Guideline 4.2) | At risk | Add push notifications + native camera before submitting |
 | Magic-link deep linking | Gap | Configure Universal Links / App Links, or default to password sign-in in-app |
+| Checkout navigation (Android, confirmed on emulator) | Gap — exits to external browser, no return path | Add Creem's domain to `capacitor.config.ts`'s `server.allowNavigation`; pair with App Links for the return redirect |
 | VIN/DTC photo upload UX | Works, not native | Swap to Capacitor Camera plugin |
 | PWA install UI in native shell | Cleanup item | Gate behind `Capacitor.isNativePlatform()` |
 | Mobile responsiveness | Ready | None — recently verified across 3 viewports |
