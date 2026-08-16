@@ -22,6 +22,24 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <!-- Android App Links (docs/CAPACITOR_ANDROID_SETUP.md) — scoped to
+                 just the magic-link sign-in callback, not the whole domain, so
+                 ordinary dtcdecoder.com links shared elsewhere (blog posts, DTC
+                 pages) keep their normal "open in browser" behavior instead of
+                 always hijacking into the app. autoVerify requires
+                 https://dtcdecoder.com/.well-known/assetlinks.json to be live
+                 and list this build's signing certificate fingerprint — see
+                 that file's own comment for the debug-vs-release-key caveat. -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data
+                    android:scheme="https"
+                    android:host="dtcdecoder.com"
+                    android:pathPrefix="/account/auth/callback" />
+            </intent-filter>
+
         </activity>
 
         <provider

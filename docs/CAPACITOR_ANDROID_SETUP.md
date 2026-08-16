@@ -54,6 +54,24 @@ Ran end to end on a real Android emulator (AVD `dtcdecoder_test`, Pixel-class pr
 
 Not yet verified: sign-in (magic-link vs. password — see the readiness audit's deep-linking gap), navigating into an actual diagnostic report, or anything past the homepage.
 
+### App Links for magic-link sign-in (2026-08-17)
+
+Implemented, but verification is blocked on a production push — Android's `autoVerify` fetches `/.well-known/assetlinks.json` from the real live domain, not localhost, so it can't be tested until that file is deployed.
+
+**What's in place:**
+- `public/.well-known/assetlinks.json` — declares `com.dtcdecoder.app` + this build's signing certificate SHA-256 fingerprint as authorized to handle `dtcdecoder.com` links. **The fingerprint here is the debug keystore's** (`keytool -list -v -keystore ~/.android/debug.keystore -alias androiddebugkey -storepass android -keypass android`, `SHA256:` line) — it's auto-generated per build machine, so it will need a matching entry added (not replaced — list can hold multiple fingerprints) once a real release keystore exists for Play Store submission, and again if this project ever builds from a different machine's debug keystore.
+- `src/proxy.ts` — added `.well-known` to `PASSTHROUGH_TOP_LEVEL_SEGMENTS` so the locale-rewrite middleware doesn't mangle `/.well-known/assetlinks.json` into a 404 at `/en/.well-known/assetlinks.json`. Verified locally: serves byte-for-byte correctly at `http://localhost:3000/.well-known/assetlinks.json`.
+- `android/app/src/main/AndroidManifest.xml` — a second `autoVerify="true"` intent-filter on `MainActivity`, scoped to `https://dtcdecoder.com/account/auth/callback` (**not the whole domain** — deliberately, so ordinary shared dtcdecoder.com links like blog posts or DTC pages keep opening in a normal browser instead of always hijacking into the app; only the actual magic-link sign-in redirect target is claimed).
+- `@capacitor/app` plugin + `src/components/capacitor/CapacitorAppLinks.tsx` (mounted in both root layouts, same pattern as `PwaShell`) — Capacitor does **not** automatically navigate a `server.url`-configured (remote) WebView to an incoming App Link URL on its own, only bundled-`webDir` apps get that behavior for free. This component listens for the plugin's `appUrlOpen` event and does a full `window.location.href` navigation to the incoming URL — necessary here (not client-side routing) because `/account/auth/callback` is a server route handler that exchanges the Supabase auth code and sets cookies, the same thing a real browser does for a tapped link.
+
+**Confirmed so far (emulator, before production push):** `adb shell pm get-app-links com.dtcdecoder.app` shows the app correctly registered for the `dtcdecoder.com` domain with the right signature, `Domain verification state: dtcdecoder.com: none` — "none" is expected and correct at this stage; it flips to "verified" only after Android successfully fetches and validates the live `assetlinks.json`.
+
+**Still to do once `assetlinks.json` is live in production:**
+1. Reinstall the APK (a fresh install re-triggers verification) or run `adb shell pm verify-app-links --re-verify com.dtcdecoder.app`.
+2. Re-check `adb shell pm get-app-links com.dtcdecoder.app` — expect `dtcdecoder.com: verified`.
+3. Real test: `adb shell am start -a android.intent.action.VIEW -c android.intent.category.BROWSABLE -d "https://dtcdecoder.com/account/auth/callback?code=test"` simulating an external app (like Gmail) opening the link — should launch straight into DTCDecoder with no browser/chooser in between, confirmed via `adb logcat` showing no external browser activity (same technique used to verify the checkout `allowNavigation` fix).
+4. A real magic-link email is the ultimate test but can't be exercised from this environment (per the `browser-tool-no-external-auth` limitation) — the `adb am start` simulation above is the closest verifiable proxy.
+
 ## What's NOT done yet
 
 The shell now builds AND has been confirmed to load the live site correctly on an emulator. Still outstanding:
@@ -61,7 +79,7 @@ The shell now builds AND has been confirmed to load the live site correctly on a
 - **Sign-in and deeper navigation unverified** — only the homepage has been confirmed rendering; sign-in flow, diagnostic report pages, and checkout haven't been exercised inside the shell yet.
 - **No app icons.** Capacitor's default placeholder icon/splash assets are in place; the PWA icons already exist at `public/icons/icon-192.png` / `icon-512.png` but haven't been run through Capacitor's asset generator (`@capacitor/assets`) to produce the full Android mipmap/adaptive-icon set.
 - **No push notifications, native camera, or other native-only features** — per the readiness audit, at least one of these is likely needed to satisfy store minimum-functionality review (more relevant on iOS than Android, but still worth building for both).
-- **No deep-link config** (App Links / `assetlinks.json`) — magic-link sign-in and any Creem checkout return URL still resolve to `https://dtcdecoder.com/...`, which will open the system browser instead of this app unless App Links are set up. Password sign-in (already live) is the safe default inside this shell in the meantime.
+- **App Links implemented but not yet verified against production** — see the section above. Creem checkout no longer needs this at all (the `server.allowNavigation` fix keeps that entire flow in-WebView). Password sign-in (already live) remains the safe default until App Links verification is confirmed working end to end.
 - **No signing keystore** — a debug build will use Capacitor/Gradle's default debug signing; a real release keystore has to be created and kept out of the repo (`android/.gitignore` already excludes `local.properties`, build outputs, and other generated files, so no secrets have leaked from this scaffolding step).
 - **Never synced against a real device or emulator.**
 

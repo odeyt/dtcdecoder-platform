@@ -22,6 +22,11 @@ const PASSTHROUGH_TOP_LEVEL_SEGMENTS = new Set([
   // listed explicitly the same way robots.txt/sitemap.xml are.
   "manifest.webmanifest",
   "sw.js",
+  // Android App Links verification (docs/CAPACITOR_ANDROID_SETUP.md) —
+  // Android fetches /.well-known/assetlinks.json directly and expects it
+  // verbatim; a locale-rewritten 404 at /en/.well-known/assetlinks.json
+  // would silently break App Links verification.
+  ".well-known",
 ]);
 
 // Public/SEO content (homepage, /dtc, /[make]/[slug], /blog) lives nested

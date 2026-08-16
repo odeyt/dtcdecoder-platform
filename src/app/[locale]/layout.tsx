@@ -7,6 +7,7 @@ import { SiteNav } from "@/components/SiteNav";
 import { SiteFooter } from "@/components/SiteFooter";
 import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
 import { PwaShell } from "@/components/pwa/PwaShell";
+import { CapacitorAppLinks } from "@/components/capacitor/CapacitorAppLinks";
 import {
   isRecognizedLocaleCode,
   isLiveLocale,
@@ -119,6 +120,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <SiteFooter />
           <DtcTechnicianShell />
           <PwaShell />
+          <CapacitorAppLinks />
         </NextIntlClientProvider>
       </body>
     </html>
