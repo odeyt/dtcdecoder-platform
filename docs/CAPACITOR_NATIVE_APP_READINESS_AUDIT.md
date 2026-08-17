@@ -41,7 +41,7 @@ The AI report-generation flow is async and can take a noticeable amount of time 
 
 **Android fix, verified end to end:** Android App Links (`public/.well-known` → `src/app/.well-known/assetlinks.json/route.ts`, an `autoVerify` intent-filter scoped to just `/account/auth/callback`, and `@capacitor/app`'s `appUrlOpen` event wired to a full-navigation JS handler — see `docs/CAPACITOR_ANDROID_SETUP.md`). Confirmed on a real emulator: `pm get-app-links` shows the domain `verified`, and simulating an external app opening the callback link (`adb shell am start -a android.intent.action.VIEW ...`) launches directly into the app with zero browser hop.
 
-**iOS still needs the equivalent** — Universal Links (`apple-app-site-association`, hosted the same way at `/.well-known/`, plus the corresponding Associated Domains entitlement) haven't been built, since there's no iOS Capacitor project yet (see the readiness recommendation to gate iOS work on the payments decision first). The Android implementation is a template for it: same `appUrlOpen` JS handler works on both platforms unchanged, only the OS-level domain-verification file and native config differ.
+**iOS: web-side half started 2026-08-17, native half blocked on a Mac.** `src/app/.well-known/apple-app-site-association/route.ts` exists and is live (same route-handler pattern as `assetlinks.json`, verified locally the same way) — but its `appID` is a placeholder (`TEAMID_PLACEHOLDER.com.dtcdecoder.app`) since there's no Apple Developer account yet, and it does nothing until: (a) a real Team ID replaces the placeholder, and (b) an actual iOS Capacitor project exists with the Associated Domains entitlement (`applinks:dtcdecoder.com`) configured in Xcode — which requires a Mac. This machine is Windows-only and cannot create, build, or run any iOS project; nothing native has been attempted. The `appUrlOpen` JS handler (`CapacitorAppLinks.tsx`) already works cross-platform unchanged — no iOS-specific JS work needed once the native side exists.
 
 Password sign-in (already shipped — see `CLAUDE.md` hard constraint #3) remains the simpler default entry point regardless, and is the only option on iOS until Universal Links exist there.
 
@@ -81,7 +81,7 @@ The `/install` page and the `beforeinstallprompt`-driven install button (`src/li
 | iOS payments (Guideline 3.1.1) | Blocker | Product/legal decision: StoreKit integration vs. scope iOS app to exclude purchases |
 | iOS minimum functionality (Guideline 4.2) | At risk | Add push notifications + native camera before submitting |
 | Magic-link deep linking (Android) | **Ready** — fixed and verified end to end on emulator | None |
-| Magic-link deep linking (iOS) | Gap — no iOS project yet | Universal Links (`apple-app-site-association`) once iOS work starts |
+| Magic-link deep linking (iOS) | Web-side route live; native half blocked | Needs a Mac: real Team ID in the AASA route, `npx cap add ios`, Associated Domains entitlement in Xcode |
 | Checkout navigation (Android) | **Ready** — fixed and verified on emulator | None — `server.allowNavigation` set in `capacitor.config.ts` |
 | VIN/DTC photo upload UX | Works, not native | Swap to Capacitor Camera plugin |
 | PWA install UI in native shell | Cleanup item | Gate behind `Capacitor.isNativePlatform()` |
