@@ -4,27 +4,25 @@
 // (the analyze route/orchestrator call these functions instead), so
 // flipping a flag changes routing in exactly one place.
 //
-// Defaults (nothing configured): getPrimaryProvider() → Anthropic,
-// getReviewerProvider() → null (the orchestrator itself is disabled by
-// default — see diagnostic-orchestrator.ts — so this module's outputs are
-// only ever consulted when AI_ORCHESTRATOR_ENABLED=true), getMultimodalProvider() → null.
+// OpenAI is the sole provider today — Anthropic was fully retired (see
+// docs/MULTI_MODEL_ORCHESTRATOR.md history). getPrimaryProvider() always
+// returns OpenAiDiagnosticProvider; getReviewerProvider() always returns
+// null, since the only reviewer implementation this app ever had was
+// Anthropic's — there is no OpenAI reviewer, and building one (an AI
+// critiquing its own sibling model's output) is a real feature decision,
+// not part of a provider swap. getMultimodalProvider() → null, unchanged.
 import "server-only";
 import { env } from "@/lib/env";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { GeminiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/gemini-provider";
 import type { DiagnosticAIProvider, DiagnosticReviewer } from "@/lib/scan-diagnostics/ai/provider";
 
 export function getPrimaryProvider(): DiagnosticAIProvider {
-  return env.openaiPrimaryEnabled() ? new OpenAiDiagnosticProvider() : new AnthropicDiagnosticProvider();
+  return new OpenAiDiagnosticProvider();
 }
 
 export function getReviewerProvider(): DiagnosticReviewer | null {
-  if (!env.anthropicReviewEnabled()) return null;
-  // AI_REVIEW_PROVIDER is fixed at "anthropic" in this app (see
-  // .env.example) — there is no second reviewer implementation, so this
-  // isn't a second flag-driven branch, just the one reviewer this repo has.
-  return new AnthropicDiagnosticProvider();
+  return null;
 }
 
 // Always null while GEMINI_PROVIDER_ENABLED is false (the only supported

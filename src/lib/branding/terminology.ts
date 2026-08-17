@@ -41,6 +41,7 @@ export const PROHIBITED_CUSTOMER_FACING_TERM_PATTERNS: RegExp[] = [
   /\bgpt\b/i,
   /\bclaude\b/i,
   /\banthropic\b/i,
+  /\bopenai\b/i,
   /\bgemini\b/i,
   /\bllm\b/i,
   /model routing/i,

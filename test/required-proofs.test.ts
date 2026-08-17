@@ -105,14 +105,14 @@ beforeEach(() => {
 describe("proof #1 — basic search never touches an AI provider", () => {
   it("src/lib/basic-search/usage.ts has no AI-provider import at all", () => {
     const src = readFileSync(join(process.cwd(), "src/lib/basic-search/usage.ts"), "utf8");
-    expect(src).not.toMatch(/anthropic/i);
-    expect(src).not.toMatch(/@anthropic-ai\/sdk/);
+    expect(src).not.toMatch(/openai/i);
+    expect(src).not.toMatch(/"openai"/);
   });
 
   it("src/lib/dtc.ts (the actual search/lookup queries) has no AI-provider import at all", () => {
     const src = readFileSync(join(process.cwd(), "src/lib/dtc.ts"), "utf8");
-    expect(src).not.toMatch(/anthropic/i);
-    expect(src).not.toMatch(/@anthropic-ai\/sdk/);
+    expect(src).not.toMatch(/openai/i);
+    expect(src).not.toMatch(/"openai"/);
   });
 });
 

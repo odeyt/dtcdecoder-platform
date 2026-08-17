@@ -1,9 +1,10 @@
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
+import { requireModelForTask, OpenAiConfigurationError } from "@/lib/ai-diagnostics/model-routing";
+import { getRequestLimits } from "@/lib/ai-diagnostics/orchestrator-config";
 import { CHAT_FULL_MAX_TOKENS } from "@/lib/ai-diagnostics/redaction";
-import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
 import type { DtcCode, TerminologyGlossaryEntry } from "@/lib/types";
 
 export const CHAT_TRANSLATION_MAX_TOKENS = 2048;
@@ -86,17 +87,24 @@ export async function estimateChatInputTokens(userMessage: string, groundingRows
   return Math.ceil((systemPrompt.length + userMessage.length) / CHARS_PER_TOKEN_ESTIMATE);
 }
 
+function openAiClient(): OpenAI {
+  const apiKey = env.openaiApiKeyOptional();
+  if (!apiKey) throw new OpenAiConfigurationError("OPENAI_API_KEY is not configured.");
+  const limits = getRequestLimits();
+  return new OpenAI({ apiKey, timeout: limits.providerTimeoutMs, maxRetries: limits.providerMaxRetries });
+}
+
 export async function streamAssistantResponse(userMessage: string, groundingRows: DtcCode[]) {
-  const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+  const client = openAiClient();
   const systemPrompt = (await getSystemPrompt()) + buildGroundingContext(groundingRows);
 
-  return client.messages.stream({
-    model: modelForTask("chatGeneration"),
-    max_tokens: CHAT_FULL_MAX_TOKENS,
-    system: systemPrompt,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "medium" },
-    messages: [{ role: "user", content: userMessage }],
+  return client.chat.completions.stream({
+    model: requireModelForTask("chatGeneration"),
+    max_completion_tokens: CHAT_FULL_MAX_TOKENS,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: userMessage },
+    ],
   });
 }
 
@@ -122,7 +130,8 @@ Non-negotiable rules:
 - Preserve DTC codes (e.g. P0420), VINs, part numbers, connector/pin names, wire colors, CAN High/CAN Low/LIN/FlexRay/MOST, voltages, resistance/pressure/torque/temperature values and their units, module acronyms (PCM, ECU, ABS, etc.), calibration IDs, and TSB numbers exactly as written in the source — never translate or alter them.
 - Do not add, remove, reinterpret, or reorder any diagnostic content. This is a translation task, not a new diagnosis — the conclusion, ranked causes, and recommended steps must match the source exactly in meaning and order.
 - Preserve the original structure (headings, lists, paragraph breaks).
-- Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}`;
+- Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}
+- Respond with the translated text only — no preamble, no commentary, no markdown fences around the whole response.`;
 }
 
 // A second, separate call over the ALREADY-GENERATED English text (never a
@@ -130,7 +139,11 @@ Non-negotiable rules:
 // record and its translations consistent: the diagnosis itself is decided
 // once, in English, and every other language is a faithful translation of
 // that fixed text. Returns the same kind of streaming object as
-// streamAssistantResponse so the API route can treat both uniformly.
+// streamAssistantResponse so the API route can treat both uniformly. Plain
+// free-text streaming (no structured-output schema) — unlike the other
+// three translation call sites in this app, this one translates a whole
+// chat answer's prose directly for real-time display, not a JSON array of
+// discrete strings to reassemble later.
 //
 // Routed to the economical model tier (model-routing.ts "chatTranslation")
 // rather than the same model used for the diagnosis itself — translating
@@ -144,15 +157,15 @@ export async function translateDiagnosticText(
   outputLanguageName: string,
   glossary: TerminologyGlossaryEntry[],
 ) {
-  const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+  const client = openAiClient();
   const systemPrompt = buildTranslationSystemPrompt(outputLanguageName, outputLocale, glossary);
 
-  return client.messages.stream({
-    model: modelForTask("chatTranslation"),
-    max_tokens: CHAT_TRANSLATION_MAX_TOKENS,
-    system: systemPrompt,
-    thinking: { type: "adaptive" },
-    output_config: { effort: "low" },
-    messages: [{ role: "user", content: englishText }],
+  return client.chat.completions.stream({
+    model: requireModelForTask("chatTranslation"),
+    max_completion_tokens: CHAT_TRANSLATION_MAX_TOKENS,
+    messages: [
+      { role: "system", content: systemPrompt },
+      { role: "user", content: englishText },
+    ],
   });
 }

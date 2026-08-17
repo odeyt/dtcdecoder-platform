@@ -3,7 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { env } from "@/lib/env";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { regenerateScanAnalysis } from "@/lib/scan-diagnostics/analyze";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
@@ -34,7 +34,7 @@ export async function POST(_request: NextRequest, { params }: RouteParams) {
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);
-    const provider = new AnthropicDiagnosticProvider();
+    const provider = new OpenAiDiagnosticProvider();
 
     const result = await regenerateScanAnalysis(user.id, caseId, plan, provider);
     return NextResponse.json(result);

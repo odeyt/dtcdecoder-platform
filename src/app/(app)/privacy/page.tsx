@@ -57,7 +57,7 @@ export default function PrivacyPage() {
       <p>We may share data with trusted providers including:</p>
       <ul>
         <li>Creem</li>
-        <li>Anthropic</li>
+        <li>OpenAI</li>
         <li>Supabase</li>
         <li>Vercel</li>
       </ul>

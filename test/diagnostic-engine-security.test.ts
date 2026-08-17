@@ -34,17 +34,20 @@ vi.mock("@/lib/supabase/admin", async () => {
 });
 
 // Real-route-level regression coverage for docs/DIAGNOSTIC_ENGINE_SAFETY_NULL_AUDIT.md
-// — a fake provider standing in for AnthropicDiagnosticProvider, since the
+// — a fake provider standing in for OpenAiDiagnosticProvider, since the
 // route instantiates it directly rather than accepting it as a parameter.
-vi.mock("@/lib/scan-diagnostics/ai/anthropic-provider", () => ({
-  AnthropicDiagnosticProvider: class {
-    id = "fake-anthropic";
+// Mocking the whole module (rather than just env vars) also guarantees
+// these auth/ownership tests never make a real OpenAI network call even if
+// a rejection check were ever accidentally bypassed.
+vi.mock("@/lib/scan-diagnostics/ai/openai-provider", () => ({
+  OpenAiDiagnosticProvider: class {
+    id = "fake-openai";
     async runDiagnosis(): Promise<never> {
       throw new Error("not used in these tests");
     }
     async runDiagnosticEngineTurn() {
       return {
-        providerId: "fake-anthropic",
+        providerId: "fake-openai",
         modelId: "fake-model",
         promptVersion: "test-v1",
         output: {

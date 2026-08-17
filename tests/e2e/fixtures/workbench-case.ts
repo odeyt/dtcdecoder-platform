@@ -1,5 +1,5 @@
 // Seeds a fully "completed", full-access diagnostic case directly via the
-// Supabase admin client — no real Anthropic call, matching this repo's own
+// Supabase admin client — no real OpenAI call, matching this repo's own
 // deterministic-suite convention (see the `production-internal` workflow
 // job's own comment about being the only place real AI budget is spent).
 // This is the one thing tests/e2e/fixtures/diagnostic-cases.ts doesn't

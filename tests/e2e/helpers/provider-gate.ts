@@ -1,6 +1,6 @@
 // Single source of truth for whether real-provider / internal-owner tests
 // are allowed to run (Phase 4/9/11). Every spec file that touches a real
-// Anthropic call or a real owner session must call requireProductionInternal()
+// OpenAI call or a real owner session must call requireProductionInternal()
 // at the top of its describe block and skip (not fail) when it returns false —
 // missing production secrets must never fail ordinary CI.
 import { test } from "@playwright/test";
@@ -34,7 +34,7 @@ export function assertMockingAllowed(): void {
 const MAX_PROVIDER_CALLS_PER_RUN = 16;
 let providerCallCount = 0;
 
-// Called by the reliability harness before each real Anthropic call
+// Called by the reliability harness before each real OpenAI call
 // (Phase 11) — throws once the bounded cap is reached rather than letting a
 // runaway loop keep spending.
 export function reserveProviderCall(): void {

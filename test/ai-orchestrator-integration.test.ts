@@ -84,7 +84,7 @@ function fakeReviewer(id: string, review: DiagnosticReview, tokens = { input: 50
 }
 
 function failingReviewer(): DiagnosticReviewer {
-  return { id: "anthropic-reviewer", async review() { throw new Error("simulated Anthropic reviewer outage"); } };
+  return { id: "test-reviewer", async review() { throw new Error("simulated reviewer outage"); } };
 }
 
 function approvedReview(overrides: Partial<DiagnosticReview> = {}): DiagnosticReview {
@@ -152,7 +152,7 @@ function seedCase(caseId: string, userId: string, opts: { safetyCriticalSystem?:
   }
 }
 
-const ENV_KEYS = ["AI_ORCHESTRATOR_ENABLED", "AI_REVIEW_CONFIDENCE_THRESHOLD", "AI_QUALITY_AUDIT_PERCENT", "ANTHROPIC_REVIEW_ENABLED"] as const;
+const ENV_KEYS = ["AI_ORCHESTRATOR_ENABLED", "AI_REVIEW_CONFIDENCE_THRESHOLD", "AI_QUALITY_AUDIT_PERCENT"] as const;
 const originalEnv: Record<string, string | undefined> = {};
 
 beforeEach(() => {
@@ -175,7 +175,6 @@ beforeEach(() => {
   // escalation in these tests is driven by seeding a safety-critical system.
   process.env.AI_REVIEW_CONFIDENCE_THRESHOLD = "0";
   process.env.AI_QUALITY_AUDIT_PERCENT = "0";
-  process.env.ANTHROPIC_REVIEW_ENABLED = "true";
 
   registryState.primary = fakePrimaryProvider();
   registryState.reviewer = null;
@@ -204,9 +203,9 @@ describe("orchestrated scan analysis — AI_ORCHESTRATOR_ENABLED=true", () => {
     expect(decisions[0].escalated).toBe(false);
   });
 
-  it("safety-critical current fault escalates to the Anthropic reviewer, which approves unchanged", async () => {
+  it("safety-critical current fault escalates to the reviewer, which approves unchanged", async () => {
     seedCase("case-2", "user-1", { safetyCriticalSystem: true });
-    registryState.reviewer = fakeReviewer("anthropic-reviewer", approvedReview());
+    registryState.reviewer = fakeReviewer("test-reviewer", approvedReview());
 
     const result = await runScanAnalysis("user-1", "case-2", "pro", fakePrimaryProvider());
     expect(result.case.status).toBe("completed");
@@ -214,13 +213,13 @@ describe("orchestrated scan analysis — AI_ORCHESTRATOR_ENABLED=true", () => {
     const decisions = fake().dump("ai_routing_decisions");
     expect(decisions[0].reason_code).toBe("SAFETY_CRITICAL");
     expect(decisions[0].escalated).toBe(true);
-    expect(decisions[0].reviewer_provider).toBe("anthropic-reviewer");
+    expect(decisions[0].reviewer_provider).toBe("test-reviewer");
   });
 
   it("reviewer's correctedFields are deterministically applied to the persisted report", async () => {
     seedCase("case-3", "user-1", { safetyCriticalSystem: true });
     registryState.reviewer = fakeReviewer(
-      "anthropic-reviewer",
+      "test-reviewer",
       approvedReview({
         decision: "approved_with_changes",
         correctedFields: [{ path: "rankedCauses.0.rationale", replacement: "Confirmed by fuel trim data", reason: "clarify" }],
@@ -235,7 +234,7 @@ describe("orchestrated scan analysis — AI_ORCHESTRATOR_ENABLED=true", () => {
 
   it("reviewer decision human_review_required adds a visible safety warning to the final report", async () => {
     seedCase("case-4", "user-1", { safetyCriticalSystem: true });
-    registryState.reviewer = fakeReviewer("anthropic-reviewer", approvedReview({ decision: "human_review_required" }));
+    registryState.reviewer = fakeReviewer("test-reviewer", approvedReview({ decision: "human_review_required" }));
 
     const result = await runScanAnalysis("user-1", "case-4", "pro", fakePrimaryProvider());
     expect(JSON.stringify(result.report.missing_information)).toMatch(/qualified technician/i);
@@ -252,11 +251,8 @@ describe("orchestrated scan analysis — AI_ORCHESTRATOR_ENABLED=true", () => {
     expect(decisions[0].reason_code).toBe("PROVIDER_FAILURE");
   });
 
-  it("reviewer disabled (ANTHROPIC_REVIEW_ENABLED=false) even when routing wants to escalate: primary result stands, no reviewer call", async () => {
-    process.env.ANTHROPIC_REVIEW_ENABLED = "false";
+  it("reviewer unavailable (getReviewerProvider() returns null) even when routing wants to escalate: primary result stands, no reviewer call", async () => {
     seedCase("case-6", "user-1", { safetyCriticalSystem: true });
-    // getReviewerProvider() returns null when disabled — the mocked
-    // registry simulates that directly rather than re-checking the env flag.
     registryState.reviewer = null;
 
     const result = await runScanAnalysis("user-1", "case-6", "pro", fakePrimaryProvider());
@@ -286,7 +282,7 @@ describe("orchestrated scan analysis — AI_ORCHESTRATOR_ENABLED=true", () => {
     // would throw if ever called, to prove the disabled path never touches it.
     registryState.primary = failingPrimaryProvider();
 
-    const result = await runScanAnalysis("user-1", "case-8", "pro", fakePrimaryProvider("anthropic-claude-sonnet-5"));
+    const result = await runScanAnalysis("user-1", "case-8", "pro", fakePrimaryProvider("unused-provider-id"));
     expect(result.case.status).toBe("completed");
     expect(fake().dump("ai_routing_decisions")).toHaveLength(0);
   });

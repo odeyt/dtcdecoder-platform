@@ -1,29 +1,47 @@
 import { describe, expect, it } from "vitest";
-import { MODEL_ROUTES, modelForTask, CLAUDE_SONNET_5, CLAUDE_HAIKU_4_5 } from "@/lib/ai-diagnostics/model-routing";
-import { MODEL_PRICING } from "@/lib/ai-diagnostics/cost";
+import { MODEL_ROUTES, modelForTask } from "@/lib/ai-diagnostics/model-routing";
 
+// Models are resolved from OPENAI_PRIMARY_MODEL/OPENAI_TRANSLATION_MODEL at
+// module load (see model-routing.ts) rather than hardcoded literals — these
+// tests assert the TIER GROUPING (same env var backs the same set of
+// tasks), not specific model id strings, since no model id is ever
+// hardcoded in this codebase.
 describe("modelForTask", () => {
-  it("routes the wired tasks exactly as documented", () => {
-    expect(modelForTask("chatGeneration")).toBe(CLAUDE_SONNET_5);
-    expect(modelForTask("chatTranslation")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("scanMainAnalysis")).toBe(CLAUDE_SONNET_5);
+  it("routes the wired tasks to the same tier as documented", () => {
+    expect(modelForTask("chatGeneration")).toBe(modelForTask("scanMainAnalysis"));
+    expect(modelForTask("chatGeneration")).toBe(modelForTask("scanImageExtraction"));
+    expect(modelForTask("chatTranslation")).toBe(modelForTask("scanReportTranslation"));
   });
 
   it("routes translation-shaped sub-tasks to the economical tier, main-analysis-shaped tasks to the stronger tier", () => {
-    expect(modelForTask("chatTranslation")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("scanReportTranslation")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("languageDetection")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("symptomNormalization")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("dtcClassification")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("independentSafetyReview")).toBe(CLAUDE_HAIKU_4_5);
-    expect(modelForTask("chatGeneration")).toBe(CLAUDE_SONNET_5);
-    expect(modelForTask("scanMainAnalysis")).toBe(CLAUDE_SONNET_5);
-    expect(modelForTask("complexEscalation")).toBe(CLAUDE_SONNET_5);
+    const economical = modelForTask("chatTranslation");
+    const strong = modelForTask("chatGeneration");
+
+    expect(modelForTask("scanReportTranslation")).toBe(economical);
+    expect(modelForTask("languageDetection")).toBe(economical);
+    expect(modelForTask("symptomNormalization")).toBe(economical);
+    expect(modelForTask("dtcClassification")).toBe(economical);
+    expect(modelForTask("independentSafetyReview")).toBe(economical);
+
+    expect(modelForTask("scanMainAnalysis")).toBe(strong);
+    expect(modelForTask("complexEscalation")).toBe(strong);
   });
 
-  it("every routed model has a corresponding MODEL_PRICING entry — a route can never point at an unpriced model", () => {
-    for (const modelId of Object.values(MODEL_ROUTES)) {
-      expect(MODEL_PRICING).toHaveProperty(modelId);
+  it("every AiTaskType has a routing entry", () => {
+    const tasks: (keyof typeof MODEL_ROUTES)[] = [
+      "chatGeneration",
+      "chatTranslation",
+      "scanMainAnalysis",
+      "scanImageExtraction",
+      "scanReportTranslation",
+      "languageDetection",
+      "symptomNormalization",
+      "dtcClassification",
+      "independentSafetyReview",
+      "complexEscalation",
+    ];
+    for (const task of tasks) {
+      expect(MODEL_ROUTES).toHaveProperty(task);
     }
   });
 });

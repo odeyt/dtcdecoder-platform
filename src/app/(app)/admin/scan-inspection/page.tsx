@@ -4,7 +4,7 @@ import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan
 import { detectPatterns } from "@/lib/scan-diagnostics/patterns";
 import { computeDiagnosticPriority } from "@/lib/scan-diagnostics/priority";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
-import { buildUserPrompt } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { buildUserPrompt } from "@/lib/scan-diagnostics/ai/shared-prompt";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanPattern, ScanSystem } from "@/lib/types";
 
 export const metadata: Metadata = { title: "Scan Inspection" };

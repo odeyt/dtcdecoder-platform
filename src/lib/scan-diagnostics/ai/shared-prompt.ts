@@ -7,6 +7,24 @@
 // unchanged so existing imports/tests keep working.
 import type { CanonicalDiagnosticInput, DtcCategory } from "@/lib/scan-diagnostics/schemas";
 
+// Bump this whenever DEFAULT_SYSTEM_PROMPT, SAFETY_SUFFIX, or a provider's
+// structured-output schema shape changes in a way that affects what the
+// model is asked to produce — persisted per scan_ai_runs row
+// (prompt_version) so past runs can always be traced back to the exact
+// instructions that produced them. See docs/DIAGNOSTIC_SAFETY_RULES.md.
+export const DTCDECODER_DIAGNOSTIC_PROMPT_VERSION = "2026-07-safety-v2";
+
+// Phase 2 Diagnostic Engine addendum — appended to the same
+// DEFAULT_SYSTEM_PROMPT + SAFETY_SUFFIX every scan-report call already
+// uses (the non-negotiable safety rules apply identically here; nothing
+// about the Diagnostic Engine relaxes them). Only the reasoning framing
+// changes: a Diagnostic Engine turn is one step in an ongoing case, not a
+// one-shot report, so it should refine the existing hypothesis set rather
+// than restart from nothing each time.
+export const DIAGNOSTIC_ENGINE_SYSTEM_ADDENDUM = `
+
+You are reasoning about ONE step in an ongoing diagnostic case, not writing a one-time report. You will be given this case's structured evidence, its evolving diagnostic graph, its current ranked hypotheses (if any exist yet), and one specific question the case's Question Engine selected as the next highest-value question to resolve. Update and re-rank the hypotheses in light of everything given — do not discard prior reasoning and start over unless the new evidence genuinely contradicts it.`;
+
 export const DEFAULT_SYSTEM_PROMPT = `You are DTCDecoder AI, an evidence-based automotive diagnostic reasoning system analyzing a vehicle scan report for a technician.
 
 Treat every DTC as evidence that a module detected a condition. A DTC is not proof that the named component failed.

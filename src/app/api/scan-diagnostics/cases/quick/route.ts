@@ -5,7 +5,7 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { canAccessFullDiagnostics } from "@/lib/ai-diagnostics/entitlements";
 import { createQuickDiagnosticCase, findExistingCasesForVin } from "@/lib/scan-diagnostics/cases";
 import { runScanAnalysis } from "@/lib/scan-diagnostics/analyze";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { QuickDiagnosticCaseInputSchema } from "@/lib/scan-diagnostics/schemas";
 import { DuplicateVinError, FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
@@ -78,7 +78,7 @@ export async function POST(request: NextRequest) {
     }
 
     const scanCase = await createQuickDiagnosticCase(user.id, parsed.data);
-    const provider = new AnthropicDiagnosticProvider();
+    const provider = new OpenAiDiagnosticProvider();
     const result = await runScanAnalysis(user.id, scanCase.id, plan, provider);
 
     return NextResponse.json(result, { status: 201 });

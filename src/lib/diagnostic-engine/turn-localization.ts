@@ -1,16 +1,19 @@
 // Production wiring for Diagnostic Engine turn translation — mirrors
 // scan-diagnostics/report-localization.ts closely, reusing the exact same
-// AnthropicTranslationProvider (fully generic over its canonical payload)
+// TextTranslationProvider (fully generic over its canonical payload)
 // and the same JSON-array translation prompt style.
 import "server-only";
 import { createHash } from "node:crypto";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
-import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
+import { requireModelForTask, OpenAiConfigurationError } from "@/lib/ai-diagnostics/model-routing";
+import { getRequestLimits } from "@/lib/ai-diagnostics/orchestrator-config";
 import { getAllowedOutputLocales, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
-import { AnthropicTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
+import { TextTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
 import { translateDiagnosticTurn, type DiagnosticTurnTranslatable } from "@/lib/diagnostic-engine/turn-translation";
 import { resolveLocalizedTurn, type LocalizedTurnDeps, type ResolvedLocalizedTurn } from "@/lib/diagnostic-engine/localized-turn";
 import type { SubscriptionPlan } from "@/lib/types";
@@ -70,28 +73,40 @@ Non-negotiable rules:
 // either safety-audited ledger; a real cost-ledger integration is a
 // follow-up once the correct increment semantics are confirmed with
 // whoever owns that budget guard.
+const TranslatedArraySchema = z.object({ translations: z.array(z.string()) });
+
 function buildTurnTranslateStep(params: { userId: string; plan: SubscriptionPlan; caseId: string }): ReportTranslateStep {
   return async ({ englishText, targetLocale, glossaryVersion }) => {
-    const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+    const apiKey = env.openaiApiKeyOptional();
+    if (!apiKey) throw new OpenAiConfigurationError("OPENAI_API_KEY is not configured.");
+    const model = requireModelForTask("scanReportTranslation");
+    const limits = getRequestLimits();
+    const client = new OpenAI({ apiKey, timeout: limits.providerTimeoutMs, maxRetries: limits.providerMaxRetries });
+
     const localeInfo = getLocaleInfo(targetLocale);
     const glossary = await listGlossaryForLocale(targetLocale);
     const systemPrompt = buildJsonArrayTurnTranslationSystemPrompt(localeInfo?.englishName ?? targetLocale, targetLocale, glossary);
-    const modelId = modelForTask("scanReportTranslation");
     const startedAt = Date.now();
 
-    const message = await client.messages.create({
-      model: modelId,
-      max_tokens: TURN_TRANSLATION_MAX_TOKENS,
-      system: systemPrompt,
-      messages: [{ role: "user", content: englishText }],
+    const completion = await client.chat.completions.parse({
+      model,
+      max_completion_tokens: TURN_TRANSLATION_MAX_TOKENS,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: englishText },
+      ],
+      response_format: zodResponseFormat(TranslatedArraySchema, "translated_array"),
     });
 
-    const textBlock = message.content.find((block) => block.type === "text");
-    const text = textBlock && textBlock.type === "text" ? textBlock.text : "";
+    const choice = completion.choices[0];
+    const parsed = choice?.message.parsed;
+    const text = parsed ? JSON.stringify(parsed.translations) : "";
+    const inputTokens = completion.usage?.prompt_tokens ?? 0;
+    const outputTokens = completion.usage?.completion_tokens ?? 0;
 
     console.log(
       `[diagnostic-engine-turn-translation] case=${params.caseId} plan=${params.plan} locale=${targetLocale} ` +
-        `model=${modelId} inputTokens=${message.usage.input_tokens} outputTokens=${message.usage.output_tokens} ` +
+        `model=${model} inputTokens=${inputTokens} outputTokens=${outputTokens} ` +
         `latencyMs=${Date.now() - startedAt}`,
     );
 
@@ -124,7 +139,7 @@ function buildDeps(params: { userId: string; plan: SubscriptionPlan; caseId: str
     async translate({ turnCacheKey, version, targetLocale, canonical }) {
       const glossary = await listGlossaryForLocale(targetLocale);
       const glossaryVersion = String(glossary.length);
-      const provider = new AnthropicTranslationProvider(buildTurnTranslateStep(params));
+      const provider = new TextTranslationProvider(buildTurnTranslateStep(params));
       return translateDiagnosticTurn({
         turnCacheKey,
         turnVersion: version,

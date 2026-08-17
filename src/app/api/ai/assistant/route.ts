@@ -169,7 +169,7 @@ export async function POST(request: NextRequest) {
   // Pre-flight cost estimate + hard-ceiling guard, run AFTER the report-
   // count slot is reserved above but BEFORE the AI provider is ever
   // called — a request estimated over COST_GUARDS.hardCeilingUsd is
-  // rejected here instead of being sent to Anthropic. The reservation made
+  // rejected here instead of being sent to OpenAI. The reservation made
   // above must still be released on this path, exactly like a genuine
   // provider failure, so a rejected request never consumes an allowance.
   const estimatedInputTokens = await estimateChatInputTokens(parsed.data.message, groundingRows);
@@ -190,7 +190,7 @@ export async function POST(request: NextRequest) {
         requestId: parsed.data.requestId,
         feature: "chat",
         plan,
-        providerId: "anthropic",
+        providerId: "openai",
         modelId: CHAT_GENERATION_MODEL_ID,
         status: "failed",
         accessLevelRequested: accessLevel,
@@ -220,16 +220,17 @@ export async function POST(request: NextRequest) {
         // text. Never generate independently in the target language: that
         // would let the English chat answer and a later translation drift
         // into two different conclusions over the same grounding data.
-        for await (const event of englishStream) {
-          if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-            englishChunks.push(event.delta.text);
+        for await (const chunk of englishStream) {
+          const delta = chunk.choices[0]?.delta?.content;
+          if (delta) {
+            englishChunks.push(delta);
             if (!outputLocale) {
-              controller.enqueue(encoder.encode(event.delta.text));
+              controller.enqueue(encoder.encode(delta));
             }
           }
         }
         const englishText = englishChunks.join("");
-        const englishFinal = await englishStream.finalMessage();
+        const englishFinal = await englishStream.finalChatCompletion();
         const englishCompletedAt = Date.now();
         let translatedText: string | null = null;
 
@@ -245,22 +246,24 @@ export async function POST(request: NextRequest) {
         // route decisions and model versions in the audit record") is
         // traceable per operation, not blended with the translation call
         // below, which is routed to a different, cheaper model.
+        const generationInputTokens = englishFinal.usage?.prompt_tokens ?? 0;
+        const generationOutputTokens = englishFinal.usage?.completion_tokens ?? 0;
         const generationCost = computeActualCostMicros({
           modelId: CHAT_GENERATION_MODEL_ID,
-          inputTokens: englishFinal.usage.input_tokens,
-          outputTokens: englishFinal.usage.output_tokens,
+          inputTokens: generationInputTokens,
+          outputTokens: generationOutputTokens,
         });
         await recordAiDiagnosticRun({
           userId: user.id,
           requestId: parsed.data.requestId,
           feature: "chat",
           plan,
-          providerId: "anthropic",
+          providerId: "openai",
           modelId: CHAT_GENERATION_MODEL_ID,
           status: "completed",
           accessLevelRequested: accessLevel,
-          inputTokens: englishFinal.usage.input_tokens,
-          outputTokens: englishFinal.usage.output_tokens,
+          inputTokens: generationInputTokens,
+          outputTokens: generationOutputTokens,
           operationType: "standard_report",
           creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.standardReport,
           estimatedInputCostMicros: generationCost.inputCostMicros,
@@ -281,31 +284,34 @@ export async function POST(request: NextRequest) {
           );
 
           const translatedChunks: string[] = [];
-          for await (const event of translateStream) {
-            if (event.type === "content_block_delta" && event.delta.type === "text_delta") {
-              translatedChunks.push(event.delta.text);
-              controller.enqueue(encoder.encode(event.delta.text));
+          for await (const chunk of translateStream) {
+            const delta = chunk.choices[0]?.delta?.content;
+            if (delta) {
+              translatedChunks.push(delta);
+              controller.enqueue(encoder.encode(delta));
             }
           }
           translatedText = translatedChunks.join("");
 
-          const translateFinal = await translateStream.finalMessage();
+          const translateFinal = await translateStream.finalChatCompletion();
+          const translationInputTokens = translateFinal.usage?.prompt_tokens ?? 0;
+          const translationOutputTokens = translateFinal.usage?.completion_tokens ?? 0;
           const translationCost = computeActualCostMicros({
             modelId: CHAT_TRANSLATION_MODEL_ID,
-            inputTokens: translateFinal.usage.input_tokens,
-            outputTokens: translateFinal.usage.output_tokens,
+            inputTokens: translationInputTokens,
+            outputTokens: translationOutputTokens,
           });
           await recordAiDiagnosticRun({
             userId: user.id,
             requestId: parsed.data.requestId,
             feature: "chat",
             plan,
-            providerId: "anthropic",
+            providerId: "openai",
             modelId: CHAT_TRANSLATION_MODEL_ID,
             status: "completed",
             accessLevelRequested: accessLevel,
-            inputTokens: translateFinal.usage.input_tokens,
-            outputTokens: translateFinal.usage.output_tokens,
+            inputTokens: translationInputTokens,
+            outputTokens: translationOutputTokens,
             operationType: "additional_language",
             creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.additionalLanguage,
             estimatedInputCostMicros: translationCost.inputCostMicros,
@@ -351,7 +357,7 @@ export async function POST(request: NextRequest) {
           requestId: parsed.data.requestId,
           feature: "chat",
           plan,
-          providerId: "anthropic",
+          providerId: "openai",
           modelId: CHAT_GENERATION_MODEL_ID,
           status: "failed",
           accessLevelRequested: accessLevel,

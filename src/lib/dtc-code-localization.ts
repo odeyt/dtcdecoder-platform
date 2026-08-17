@@ -1,15 +1,18 @@
 // Production wiring for DTC code page translation — instantiates
-// resolveLocalizedDtcCode with real Supabase/Anthropic-backed dependencies.
+// resolveLocalizedDtcCode with real Supabase/OpenAI-backed dependencies.
 // Called from the two DTC page components for a published code whose
 // requested locale isn't English (see migration 0049).
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
-import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
+import { requireModelForTask, OpenAiConfigurationError } from "@/lib/ai-diagnostics/model-routing";
+import { getRequestLimits } from "@/lib/ai-diagnostics/orchestrator-config";
 import { isAiOutputEnabledLocale, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
-import { AnthropicTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
+import { TextTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
 import { translateDtcCode, type DtcCodeTranslatable } from "@/lib/dtc-translation";
 import {
   resolveLocalizedDtcCode,
@@ -51,9 +54,16 @@ Non-negotiable rules:
 - Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}`;
 }
 
+const TranslatedArraySchema = z.object({ translations: z.array(z.string()) });
+
 function buildDtcTranslateStep(): ReportTranslateStep {
   return async ({ englishText, targetLocale, glossaryVersion }) => {
-    const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+    const apiKey = env.openaiApiKeyOptional();
+    if (!apiKey) throw new OpenAiConfigurationError("OPENAI_API_KEY is not configured.");
+    const model = requireModelForTask("scanReportTranslation");
+    const limits = getRequestLimits();
+    const client = new OpenAI({ apiKey, timeout: limits.providerTimeoutMs, maxRetries: limits.providerMaxRetries });
+
     const localeInfo = getLocaleInfo(targetLocale);
     const glossary = await listGlossaryForLocale(targetLocale);
     const systemPrompt = buildJsonArrayTranslationSystemPrompt(
@@ -61,18 +71,21 @@ function buildDtcTranslateStep(): ReportTranslateStep {
       targetLocale,
       glossary,
     );
-    const modelId = modelForTask("scanReportTranslation");
     const startedAt = Date.now();
 
-    const message = await client.messages.create({
-      model: modelId,
-      max_tokens: DTC_TRANSLATION_MAX_TOKENS,
-      system: systemPrompt,
-      messages: [{ role: "user", content: englishText }],
+    const completion = await client.chat.completions.parse({
+      model,
+      max_completion_tokens: DTC_TRANSLATION_MAX_TOKENS,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: englishText },
+      ],
+      response_format: zodResponseFormat(TranslatedArraySchema, "translated_array"),
     });
 
-    const textBlock = message.content.find((block) => block.type === "text");
-    const text = textBlock && textBlock.type === "text" ? textBlock.text : "";
+    const choice = completion.choices[0];
+    const parsed = choice?.message.parsed;
+    const text = parsed ? JSON.stringify(parsed.translations) : "";
 
     // Cost observability only — not recordAiDiagnosticRun (its `feature`
     // column has a hard DB check-constraint of 'chat'/'scan_report' only,
@@ -82,15 +95,12 @@ function buildDtcTranslateStep(): ReportTranslateStep {
     // (see docs/AI_LANGUAGE_LOCALIZATION.md).
     console.log("[dtc-translation]", {
       targetLocale,
-      model: modelId,
-      inputTokens: message.usage.input_tokens,
-      outputTokens: message.usage.output_tokens,
+      model,
+      inputTokens: completion.usage?.prompt_tokens ?? 0,
+      outputTokens: completion.usage?.completion_tokens ?? 0,
       latencyMs: Date.now() - startedAt,
-      // Enough to diagnose a JSON.parse failure (markdown fences, a
-      // conversational preamble, truncation) without dumping full
-      // potentially-large translated prose into logs.
-      textHead: text.slice(0, 120),
-      textTail: text.slice(-120),
+      refusal: choice?.message.refusal ?? null,
+      finishReason: choice?.finish_reason ?? null,
       textLength: text.length,
     });
 
@@ -155,7 +165,7 @@ function buildDeps(): LocalizedDtcCodeDeps {
     async translate({ dtcCodeId, version, targetLocale, canonical }) {
       const glossary = await listGlossaryForLocale(targetLocale);
       const glossaryVersion = String(glossary.length);
-      const provider = new AnthropicTranslationProvider(buildDtcTranslateStep());
+      const provider = new TextTranslationProvider(buildDtcTranslateStep());
       const result = await translateDtcCode({
         dtcCodeId,
         dtcCodeVersion: version,

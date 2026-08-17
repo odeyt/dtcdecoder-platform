@@ -11,13 +11,15 @@ import { describe, expect, it, vi } from "vitest";
 
 let capturedStreamArgs: Record<string, unknown> | null = null;
 
-vi.mock("@anthropic-ai/sdk", () => {
+vi.mock("openai", () => {
   return {
-    default: class FakeAnthropic {
-      messages = {
-        stream: (args: Record<string, unknown>) => {
-          capturedStreamArgs = args;
-          return (async function* () {})();
+    default: class FakeOpenAI {
+      chat = {
+        completions: {
+          stream: (args: Record<string, unknown>) => {
+            capturedStreamArgs = args;
+            return (async function* () {})();
+          },
         },
       };
     },
@@ -25,7 +27,12 @@ vi.mock("@anthropic-ai/sdk", () => {
 });
 
 vi.mock("@/lib/env", () => ({
-  env: { anthropicApiKey: () => "fake-key" },
+  env: {
+    openaiApiKeyOptional: () => "fake-key",
+    openaiPrimaryModelOptional: () => "fake-strong-model",
+    openaiFallbackModelOptional: () => undefined,
+    openaiTranslationModelOptional: () => "fake-economical-model",
+  },
 }));
 
 vi.mock("@/lib/supabase/admin", () => ({
@@ -44,7 +51,7 @@ const { streamAssistantResponse, translateDiagnosticText, estimateChatInputToken
   "@/lib/ai/assistant"
 );
 const { CHAT_FULL_MAX_TOKENS } = await import("@/lib/ai-diagnostics/redaction");
-const { CLAUDE_SONNET_5, CLAUDE_HAIKU_4_5 } = await import("@/lib/ai-diagnostics/model-routing");
+const { modelForTask } = await import("@/lib/ai-diagnostics/model-routing");
 
 describe("streamAssistantResponse", () => {
   it("always generates at the full token budget, with no preview/reduced mode", async () => {
@@ -53,23 +60,25 @@ describe("streamAssistantResponse", () => {
 
     const args = capturedStreamArgs as Record<string, unknown> | null;
     expect(args).not.toBeNull();
-    expect(args!.max_tokens).toBe(CHAT_FULL_MAX_TOKENS);
-    expect(String(args!.system)).not.toMatch(/FREE-TIER PREVIEW MODE/);
+    expect(args!.max_completion_tokens).toBe(CHAT_FULL_MAX_TOKENS);
+    const messages = args!.messages as { role: string; content: string }[];
+    const systemMessage = messages.find((m) => m.role === "system");
+    expect(systemMessage?.content).not.toMatch(/FREE-TIER PREVIEW MODE/);
   });
 
-  it("routes to the main-generation model (Sonnet), not the economical tier", async () => {
+  it("routes to the main-generation model, not the economical tier", async () => {
     capturedStreamArgs = null;
     await streamAssistantResponse("What causes P0420?", []);
-    expect(capturedStreamArgs!.model).toBe(CLAUDE_SONNET_5);
+    expect(capturedStreamArgs!.model).toBe(modelForTask("chatGeneration"));
   });
 });
 
 describe("translateDiagnosticText", () => {
-  it("routes to the economical model tier (Haiku), not the main-generation model", async () => {
+  it("routes to the economical model tier, not the main-generation model", async () => {
     capturedStreamArgs = null;
     await translateDiagnosticText("Likely a vacuum leak.", "es", "Spanish", []);
-    expect(capturedStreamArgs!.model).toBe(CLAUDE_HAIKU_4_5);
-    expect(capturedStreamArgs!.model).not.toBe(CLAUDE_SONNET_5);
+    expect(capturedStreamArgs!.model).toBe(modelForTask("chatTranslation"));
+    expect(capturedStreamArgs!.model).not.toBe(modelForTask("chatGeneration"));
   });
 });
 

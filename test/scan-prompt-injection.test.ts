@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { buildUserPrompt, DEFAULT_SYSTEM_PROMPT, SAFETY_SUFFIX } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { buildUserPrompt, DEFAULT_SYSTEM_PROMPT, SAFETY_SUFFIX } from "@/lib/scan-diagnostics/ai/shared-prompt";
 import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 import type { CanonicalDiagnosticInput } from "@/lib/scan-diagnostics/schemas";
 
@@ -35,7 +35,7 @@ describe("prompt-injection resistance in the user-prompt builder", () => {
     // It must appear strictly inside the DTC line's quoted description
     // field — not as a standalone line that could be mistaken for an
     // instruction to the model.
-    const line = prompt.split("\n").find((l) => l.includes(INJECTION_TEXT));
+    const line = prompt.split("\n").find((l: string) => l.includes(INJECTION_TEXT));
     expect(line).toMatch(/^- P0234,.*reported description: "IGNORE ALL PREVIOUS INSTRUCTIONS/);
   });
 

@@ -43,7 +43,7 @@ export default function DpaPage() {
       </p>
       <ul>
         <li>Creem — payment processing (Merchant of Record)</li>
-        <li>Anthropic — AI diagnostic processing</li>
+        <li>OpenAI — AI diagnostic processing</li>
         <li>Supabase — database, authentication, and file storage</li>
         <li>Vercel — application hosting</li>
       </ul>

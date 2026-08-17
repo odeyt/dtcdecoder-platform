@@ -133,15 +133,10 @@ describe("Phase 1 branding registry", () => {
 describe("Phase 1 branding — internal identifiers stay stable", () => {
   it("does not rename internal provider/orchestration class names", async () => {
     const fs = await import("node:fs/promises");
-    const anthropic = await fs.readFile(
-      new URL("../src/lib/scan-diagnostics/ai/anthropic-provider.ts", import.meta.url),
-      "utf-8",
-    );
     const openai = await fs.readFile(
       new URL("../src/lib/scan-diagnostics/ai/openai-provider.ts", import.meta.url),
       "utf-8",
     );
-    expect(anthropic).toContain("class AnthropicDiagnosticProvider");
     expect(openai).toContain("class OpenAiDiagnosticProvider");
   });
 });

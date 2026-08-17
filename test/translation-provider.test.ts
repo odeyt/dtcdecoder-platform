@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import {
-  AnthropicTranslationProvider,
+  TextTranslationProvider,
   localizedReportCacheKey,
   type ReportTranslateStep,
   type TranslateReportInput,
@@ -28,12 +28,12 @@ function fakeClock() {
   };
 }
 
-describe("AnthropicTranslationProvider", () => {
+describe("TextTranslationProvider", () => {
   it("serves the canonical directly for an English request (not a fallback)", async () => {
     const translate: ReportTranslateStep = async () => {
       throw new Error("should not be called for en");
     };
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("en"));
     expect(r.resolvedLocale).toBe("en");
     expect(r.text).toBe(CANONICAL);
@@ -44,12 +44,12 @@ describe("AnthropicTranslationProvider", () => {
   it("returns the translation and full metadata on success", async () => {
     const translate: ReportTranslateStep = async () =>
       "P0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.";
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("es"));
     expect(r.resolvedLocale).toBe("es");
     expect(r.fallbackUsed).toBe(false);
     expect(r.status).toBe("completed");
-    expect(r.provider).toBe("anthropic");
+    expect(r.provider).toBe("openai");
     expect(r.glossaryVersion).toBe("7");
     expect(r.promptVersion).toBe("2");
     expect(r.latencyMs).toBeGreaterThan(0);
@@ -61,7 +61,7 @@ describe("AnthropicTranslationProvider", () => {
     // Missing P0420 and altered PCM.
     const translate: ReportTranslateStep = async () =>
       "eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del módulo; se esperan 12 V.";
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("es"));
     expect(r.status).toBe("fallback");
     expect(r.fallbackUsed).toBe(true);
@@ -78,7 +78,7 @@ describe("AnthropicTranslationProvider", () => {
     // not left for each of the three callers to defend against separately.
     const translate: ReportTranslateStep = async () =>
       "```json\nP0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.\n```";
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("es"));
     expect(r.status).toBe("completed");
     expect(r.text).not.toContain("```");
@@ -88,7 +88,7 @@ describe("AnthropicTranslationProvider", () => {
   it("leaves a response with no fence untouched", async () => {
     const translate: ReportTranslateStep = async () =>
       "P0420 eficiencia del catalizador por debajo del umbral en Bank 1 Sensor 2. Revise la tierra del PCM; se esperan 12 V.";
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("es"));
     expect(r.status).toBe("completed");
     expect(r.text).toBe(
@@ -99,7 +99,7 @@ describe("AnthropicTranslationProvider", () => {
   it("does not strip a ``` that appears inside the translated content itself, only a fence wrapping the whole response", async () => {
     const inline = "P0420: código ```especial``` en Bank 1 Sensor 2. PCM 12 V.";
     const translate: ReportTranslateStep = async () => inline;
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("es"));
     expect(r.text).toBe(inline);
   });
@@ -108,7 +108,7 @@ describe("AnthropicTranslationProvider", () => {
     const translate: ReportTranslateStep = async () => {
       throw new Error("timeout");
     };
-    const provider = new AnthropicTranslationProvider(translate, fakeClock());
+    const provider = new TextTranslationProvider(translate, fakeClock());
     const r = await provider.translateDiagnosticReport(makeInput("ja"));
     expect(r.status).toBe("failed");
     expect(r.fallbackUsed).toBe(true);

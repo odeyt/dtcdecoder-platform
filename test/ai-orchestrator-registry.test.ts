@@ -1,10 +1,9 @@
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { getPrimaryProvider, getReviewerProvider, getMultimodalProvider } from "@/lib/scan-diagnostics/ai/registry";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
 import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { GeminiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/gemini-provider";
 
-const ENV_KEYS = ["OPENAI_PRIMARY_ENABLED", "ANTHROPIC_REVIEW_ENABLED", "GEMINI_PROVIDER_ENABLED"] as const;
+const ENV_KEYS = ["OPENAI_PRIMARY_ENABLED", "GEMINI_PROVIDER_ENABLED"] as const;
 const originalEnv: Record<string, string | undefined> = {};
 
 beforeEach(() => {
@@ -18,24 +17,21 @@ afterEach(() => {
   }
 });
 
-describe("provider registry — env-flag-driven selection only", () => {
-  it("getPrimaryProvider defaults to Anthropic when OPENAI_PRIMARY_ENABLED is unset", () => {
+// OpenAI is the sole AI provider today (Anthropic fully retired — see
+// docs/MULTI_MODEL_ORCHESTRATOR.md history) — getPrimaryProvider() always
+// returns OpenAiDiagnosticProvider regardless of OPENAI_PRIMARY_ENABLED,
+// and getReviewerProvider() always returns null, since the only reviewer
+// implementation this app ever had was Anthropic's.
+describe("provider registry — OpenAI-only", () => {
+  it("getPrimaryProvider always returns OpenAiDiagnosticProvider", () => {
     delete process.env.OPENAI_PRIMARY_ENABLED;
-    expect(getPrimaryProvider()).toBeInstanceOf(AnthropicDiagnosticProvider);
-  });
+    expect(getPrimaryProvider()).toBeInstanceOf(OpenAiDiagnosticProvider);
 
-  it("getPrimaryProvider returns OpenAI only when OPENAI_PRIMARY_ENABLED=true", () => {
     process.env.OPENAI_PRIMARY_ENABLED = "true";
     expect(getPrimaryProvider()).toBeInstanceOf(OpenAiDiagnosticProvider);
   });
 
-  it("getReviewerProvider defaults to Anthropic (opt-out, not opt-in)", () => {
-    delete process.env.ANTHROPIC_REVIEW_ENABLED;
-    expect(getReviewerProvider()).toBeInstanceOf(AnthropicDiagnosticProvider);
-  });
-
-  it("getReviewerProvider returns null when ANTHROPIC_REVIEW_ENABLED=false", () => {
-    process.env.ANTHROPIC_REVIEW_ENABLED = "false";
+  it("getReviewerProvider always returns null — no reviewer implementation exists", () => {
     expect(getReviewerProvider()).toBeNull();
   });
 

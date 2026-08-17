@@ -53,7 +53,7 @@ function AiDisclaimerEn() {
 
       <h2>AI Providers</h2>
       <p>
-        Diagnostic information you submit may be processed by our AI provider (Anthropic) to generate
+        Diagnostic information you submit may be processed by our AI provider (OpenAI) to generate
         recommendations. See our{" "}
         <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Privacy Policy
@@ -120,7 +120,7 @@ function AiDisclaimerEs() {
       <h2>Proveedores de IA</h2>
       <p>
         La información de diagnóstico que envíes puede ser procesada por nuestro proveedor de IA
-        (Anthropic) para generar recomendaciones. Consulta nuestra{" "}
+        (OpenAI) para generar recomendaciones. Consulta nuestra{" "}
         <Link href="/privacy" className="text-[var(--accent-red)] underline">
           Política de Privacidad
         </Link>{" "}

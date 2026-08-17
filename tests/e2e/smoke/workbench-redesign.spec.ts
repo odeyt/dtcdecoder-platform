@@ -3,7 +3,7 @@
 // docs/design/ — this repo's own convention every other feature this
 // session got, that this one never did). Seeds a real "completed",
 // full-access case directly via the admin client (seedCompletedWorkbenchCase
-// — no real Anthropic call) and drives the actual page through
+// — no real OpenAI call) and drives the actual page through
 // ScanReportView's real server-side data pipeline: getCaseDetail,
 // resolveReportAccess, buildCanonicalVehicleScan, computeDiagnosticPriority,
 // workbench state — nothing here is mocked at the component level.

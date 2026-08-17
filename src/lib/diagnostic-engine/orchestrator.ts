@@ -20,7 +20,7 @@ import "server-only";
 import { getCaseForOwner } from "@/lib/scan-diagnostics/cases";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
-import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { estimateCostMicros, computeActualCostMicros, guardCostCeiling, microsToUsd } from "@/lib/ai-diagnostics/cost";
 import { DIAGNOSTIC_ENGINE_FLAGS, type DiagnosticEngineRolloutTier } from "@/lib/diagnostic-engine/feature-flags";
 import { getEvidenceForCase, insertEvidence, dedupeAgainstExisting, buildEvidenceFromCase } from "@/lib/diagnostic-engine/evidence";

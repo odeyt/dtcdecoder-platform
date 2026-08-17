@@ -24,7 +24,7 @@ const faqsEn: Faq[] = [
   {
     question: "Which AI models are used?",
     answer:
-      "DTCDecoder uses Anthropic's Claude models to power its AI diagnostic features. The AI capabilities available to you depend on your subscription plan.",
+      "DTCDecoder uses OpenAI's models to power its AI diagnostic features. The AI capabilities available to you depend on your subscription plan.",
   },
   {
     question: "How do I cancel?",
@@ -104,7 +104,7 @@ const faqsEs: Faq[] = [
   {
     question: "¿Qué modelos de IA se utilizan?",
     answer:
-      "DTCDecoder utiliza los modelos Claude de Anthropic para sus funciones de diagnóstico con IA. Las capacidades de IA disponibles dependen de tu plan de suscripción.",
+      "DTCDecoder utiliza los modelos de OpenAI para sus funciones de diagnóstico con IA. Las capacidades de IA disponibles dependen de tu plan de suscripción.",
   },
   {
     question: "¿Cómo cancelo?",

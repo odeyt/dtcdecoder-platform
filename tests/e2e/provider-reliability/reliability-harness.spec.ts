@@ -3,7 +3,7 @@
 //
 //   RUN_PRODUCTION_INTERNAL_E2E=true npm run test:e2e:provider
 //
-// Bounded: 8 cases, max 2 attempts each, hard cap 16 real Anthropic calls
+// Bounded: 8 cases, max 2 attempts each, hard cap 16 real OpenAI calls
 // per run (tests/e2e/helpers/provider-gate.ts enforces the cap). Records
 // measured reliability — never treats a retry as proof of a passing
 // deterministic test, and never widens rollout or mutates production env

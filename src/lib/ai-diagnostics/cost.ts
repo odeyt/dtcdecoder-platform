@@ -34,12 +34,13 @@ interface ModelRate {
 // conservative unknown-model guess. See docs/AI_PROVIDER_CONFIGURATION.md.
 export type PricingSource = "manual_config" | "env_override" | "unknown_model_fallback";
 
-export const MODEL_PRICING: Record<string, ModelRate> = {
-  "claude-sonnet-5": { inputUsdPerMillionTokens: 3, outputUsdPerMillionTokens: 15 },
-  // The economical routing tier (src/lib/ai-diagnostics/model-routing.ts) —
-  // rate is a rough Haiku-tier estimate, same verification caveat as above.
-  "claude-haiku-4-5": { inputUsdPerMillionTokens: 1, outputUsdPerMillionTokens: 5 },
-};
+// No manual_config entries today — every model this app calls is an
+// OpenAI model resolved from OPENAI_PRIMARY_MODEL/OPENAI_TRANSLATION_MODEL
+// (src/lib/ai-diagnostics/model-routing.ts), priced via the
+// OPENAI_INPUT_PER_MILLION_USD/OPENAI_OUTPUT_PER_MILLION_USD env-override
+// path below (isConfiguredOpenAiModel) rather than a hardcoded literal —
+// there's no fixed model id to key a table entry on.
+export const MODEL_PRICING: Record<string, ModelRate> = {};
 
 // Fallback rate for any model id not yet in MODEL_PRICING — deliberately
 // the most expensive known rate, so a missing pricing entry fails toward
@@ -58,31 +59,18 @@ function envRateUsd(name: string): number | undefined {
 }
 
 function isConfiguredOpenAiModel(modelId: string): boolean {
-  return modelId === env.openaiPrimaryModelOptional() || modelId === env.openaiFallbackModelOptional();
+  return (
+    modelId === env.openaiPrimaryModelOptional() ||
+    modelId === env.openaiFallbackModelOptional() ||
+    modelId === env.openaiTranslationModelOptional()
+  );
 }
 
 function isConfiguredGeminiModel(modelId: string): boolean {
   return modelId === env.geminiMultimodalModelOptional();
 }
 
-// ANTHROPIC_*_PER_MILLION_USD only overrides the Sonnet-tier rate (the
-// model this app's Anthropic diagnostic/reviewer role actually uses) — the
-// Haiku economical tier (chat translation only) keeps its own manual_config
-// rate, since the spec's single Anthropic input/output override pair has
-// no way to target two different Anthropic models independently.
 function rateForWithSource(modelId: string): ModelRate & { source: PricingSource } {
-  if (modelId === "claude-sonnet-5") {
-    const input = envRateUsd("ANTHROPIC_INPUT_PER_MILLION_USD");
-    const output = envRateUsd("ANTHROPIC_OUTPUT_PER_MILLION_USD");
-    if (input !== undefined || output !== undefined) {
-      return {
-        inputUsdPerMillionTokens: input ?? MODEL_PRICING["claude-sonnet-5"].inputUsdPerMillionTokens,
-        outputUsdPerMillionTokens: output ?? MODEL_PRICING["claude-sonnet-5"].outputUsdPerMillionTokens,
-        source: "env_override",
-      };
-    }
-  }
-
   if (MODEL_PRICING[modelId]) {
     return { ...MODEL_PRICING[modelId], source: "manual_config" };
   }

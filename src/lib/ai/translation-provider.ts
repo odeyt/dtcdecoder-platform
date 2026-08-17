@@ -84,8 +84,14 @@ export type ReportTranslateStep = (input: {
 // case-detail flow yet. Routing its model is still correct/harmless to do
 // now (see model-routing.ts "scanReportTranslation"), just not yet
 // observable anywhere.
-export class AnthropicTranslationProvider implements TranslationProvider {
-  readonly id = "anthropic";
+//
+// Provider-neutral: this is just a thin wrapper around an injected
+// ReportTranslateStep closure — the actual AI call (and which vendor it
+// hits) lives entirely in the closure each production call site supplies
+// (dtc-code-localization.ts, report-localization.ts, turn-localization.ts,
+// each backed by OpenAI today).
+export class TextTranslationProvider implements TranslationProvider {
+  readonly id = "openai";
   readonly model = modelForTask("scanReportTranslation");
 
   constructor(

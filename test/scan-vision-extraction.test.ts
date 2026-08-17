@@ -1,24 +1,17 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-// Same mocking pattern as scan-strict-tool-schema.test.ts and
-// scan-anthropic-provider-truncation.test.ts: vision-extraction.ts imports
-// isStrictSchemaRejection from anthropic-provider.ts, which pulls in
-// dtc-grounding/supabase-admin/env transitively even though this file never
-// exercises the main diagnosis path.
-
-vi.mock("@/lib/scan-diagnostics/dtc-grounding", () => ({
-  findKnownDtcContext: async () => new Map(),
-}));
-vi.mock("@/lib/env", () => ({ env: { anthropicApiKey: () => "test-key" } }));
-vi.mock("@/lib/supabase/admin", () => ({
-  createAdminClient: () => ({
-    from: () => ({ select: () => ({ eq: () => ({ maybeSingle: async () => ({ data: null }) }) }) }),
-  }),
+vi.mock("@/lib/env", () => ({
+  env: {
+    openaiApiKeyOptional: () => "test-key",
+    openaiPrimaryModelOptional: () => "test-model",
+    openaiFallbackModelOptional: () => undefined,
+    openaiTranslationModelOptional: () => undefined,
+  },
 }));
 
 // Image normalization has its own dedicated test file
 // (scan-image-processing.test.ts) — mocked here so this file can exercise
-// the Claude call/mapping logic against arbitrary (non-decodable) buffers.
+// the OpenAI call/mapping logic against arbitrary (non-decodable) buffers.
 vi.mock("@/lib/scan-diagnostics/image-processing", () => ({
   normalizeImage: vi.fn(async (buffer: Buffer) => ({
     buffer,
@@ -31,52 +24,38 @@ vi.mock("@/lib/scan-diagnostics/image-processing", () => ({
 
 type MockState = { queue: unknown[]; calls: number };
 
-vi.mock("@anthropic-ai/sdk", () => {
+vi.mock("openai", () => {
   const state: MockState = { queue: [], calls: 0 };
-  (globalThis as Record<string, unknown>).__anthropicVisionState = state;
+  (globalThis as Record<string, unknown>).__openaiVisionState = state;
 
-  class FakeAPIError extends Error {
-    status: number;
-    constructor(status: number, message: string) {
-      super(message);
-      this.status = status;
-    }
-  }
-
-  class FakeAnthropic {
-    messages = {
-      create: async () => {
-        state.calls += 1;
-        const next = state.queue.shift();
-        if (next instanceof Error) throw next;
-        if (!next) throw new Error("no queued Anthropic response for this call");
-        return next;
+  class FakeOpenAI {
+    chat = {
+      completions: {
+        parse: async () => {
+          state.calls += 1;
+          const next = state.queue.shift();
+          if (next instanceof Error) throw next;
+          if (!next) throw new Error("no queued OpenAI response for this call");
+          return next;
+        },
       },
     };
     constructor(_opts: unknown) {}
-    static APIError = FakeAPIError;
   }
-  return { default: FakeAnthropic };
+  return { default: FakeOpenAI };
 });
 
 const { extractFromImages } = await import("@/lib/scan-diagnostics/ai/vision-extraction");
 
 function st() {
-  return (globalThis as Record<string, unknown>).__anthropicVisionState as MockState;
+  return (globalThis as Record<string, unknown>).__openaiVisionState as MockState;
 }
 
-async function apiError(status: number, message: string) {
-  const A = (await import("@anthropic-ai/sdk")).default as unknown as {
-    APIError: new (s: number, m: string) => Error;
-  };
-  return new A.APIError(status, message);
-}
-
-function toolMessage(input: unknown, stopReason = "tool_use") {
+function completion(finishReason: string, parsed: unknown, refusal: string | null = null) {
   return {
-    stop_reason: stopReason,
-    usage: { input_tokens: 500, output_tokens: 300 },
-    content: [{ type: "tool_use", name: "submit_scan_extraction", input }],
+    model: "test-model",
+    usage: { prompt_tokens: 500, completion_tokens: 300 },
+    choices: [{ finish_reason: finishReason, message: { parsed, refusal } }],
   };
 }
 
@@ -118,19 +97,20 @@ beforeEach(() => {
   s.queue = [];
   s.calls = 0;
   vi.spyOn(console, "error").mockImplementation(() => {});
+  vi.spyOn(console, "info").mockImplementation(() => {});
 });
 
 afterEach(() => vi.restoreAllMocks());
 
 describe("extractFromImages", () => {
   it("preserves an uncertain DTC character verbatim, never auto-correcting it", async () => {
-    st().queue = [toolMessage(BASE_OUTPUT)];
+    st().queue = [completion("stop", BASE_OUTPUT)];
     const { report } = await extractFromImages(IMAGES);
     expect(report.dtcCodes[0].code).toBe("P0?17");
   });
 
   it("zips per-image evidence positionally against the caller's own filenames/indices, not a model-provided index", async () => {
-    st().queue = [toolMessage(BASE_OUTPUT)];
+    st().queue = [completion("stop", BASE_OUTPUT)];
     const { report } = await extractFromImages(IMAGES);
 
     expect(report.evidence).toHaveLength(2);
@@ -150,13 +130,13 @@ describe("extractFromImages", () => {
   });
 
   it("passes through the model's sourceImageIndex on each DTC", async () => {
-    st().queue = [toolMessage(BASE_OUTPUT)];
+    st().queue = [completion("stop", BASE_OUTPUT)];
     const { report } = await extractFromImages(IMAGES);
     expect(report.dtcCodes[0].sourceImageIndex).toBe(1);
   });
 
   it("marks extraction confidence medium when any warning is present, anywhere", async () => {
-    st().queue = [toolMessage(BASE_OUTPUT)];
+    st().queue = [completion("stop", BASE_OUTPUT)];
     const { report } = await extractFromImages(IMAGES);
     expect(report.extractionQuality.confidence).toBe("medium");
   });
@@ -170,45 +150,31 @@ describe("extractFromImages", () => {
         { extractedText: "ECM DTC list screen", warnings: [] },
       ],
     };
-    st().queue = [toolMessage(clean)];
+    st().queue = [completion("stop", clean)];
     const { report } = await extractFromImages(IMAGES);
     expect(report.extractionQuality.confidence).toBe("high");
   });
 
-  it("falls back to the non-strict tool when the API rejects the strict schema", async () => {
-    st().queue = [
-      await apiError(400, "tools.0.strict: schema is not eligible for strict mode"),
-      toolMessage(BASE_OUTPUT),
-    ];
-
-    const { report } = await extractFromImages(IMAGES);
-
-    expect(st().calls).toBe(2);
-    expect(report.vin).toBe("1FTFW1ET1EFA00001");
-  });
-
-  it("does not swallow an unrelated 400", async () => {
-    st().queue = [await apiError(400, "messages.0: content must be non-empty")];
+  it("propagates an unexpected provider error unchanged", async () => {
+    st().queue = [new Error("network timeout")];
     const err = await extractFromImages(IMAGES).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(Error);
-    expect((err as Error).message).toContain("content must be non-empty");
+    expect((err as Error).message).toContain("network timeout");
     expect(st().calls).toBe(1);
   });
 
-  it("throws a truncation-specific error when stop_reason is max_tokens", async () => {
-    st().queue = [toolMessage(BASE_OUTPUT, "max_tokens")];
+  it("throws a truncation-specific error when finish_reason is length", async () => {
+    st().queue = [completion("length", undefined)];
     await expect(extractFromImages(IMAGES)).rejects.toThrow(/output token limit/i);
   });
 
-  it("throws when no tool_use block is returned", async () => {
-    st().queue = [
-      { stop_reason: "end_turn", usage: { input_tokens: 10, output_tokens: 10 }, content: [{ type: "text", text: "I can't help with that." }] },
-    ];
-    await expect(extractFromImages(IMAGES)).rejects.toThrow(/structured tool call/i);
+  it("throws a refusal-specific error when the model refuses", async () => {
+    st().queue = [completion("stop", undefined, "I can't help with that.")];
+    await expect(extractFromImages(IMAGES)).rejects.toThrow(/refused/i);
   });
 
-  it("throws when the tool input fails schema validation", async () => {
-    st().queue = [toolMessage({ vin: "only a vin, nothing else" })];
-    await expect(extractFromImages(IMAGES)).rejects.toThrow(/invalid structured output/i);
+  it("throws a generic structured-output error when parsing otherwise fails", async () => {
+    st().queue = [completion("stop", undefined)];
+    await expect(extractFromImages(IMAGES)).rejects.toThrow(/schema-conformant/i);
   });
 });

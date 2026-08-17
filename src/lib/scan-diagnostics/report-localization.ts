@@ -1,19 +1,22 @@
 // Production wiring for the previously-dormant scan-report translation
 // system (docs/DYNAMIC_REPORT_TRANSLATION.md) — instantiates
-// resolveLocalizedReport with real Supabase/Anthropic-backed dependencies.
+// resolveLocalizedReport with real Supabase/OpenAI-backed dependencies.
 // Called from report-access.ts for a "full" access-level report whose case
 // requested a non-English report_language (see migration 0026).
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
+import OpenAI from "openai";
+import { zodResponseFormat } from "openai/helpers/zod";
+import { z } from "zod";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { env } from "@/lib/env";
-import { modelForTask } from "@/lib/ai-diagnostics/model-routing";
+import { requireModelForTask, OpenAiConfigurationError } from "@/lib/ai-diagnostics/model-routing";
+import { getRequestLimits } from "@/lib/ai-diagnostics/orchestrator-config";
 import { recordAiDiagnosticRun } from "@/lib/ai-diagnostics/usage";
 import { computeActualCostMicros } from "@/lib/ai-diagnostics/cost";
 import { DIAGNOSTIC_CREDIT_WEIGHTS } from "@/lib/pricing";
 import { getAllowedOutputLocales, listGlossaryForLocale } from "@/lib/i18n/languages";
 import { getLocaleInfo } from "@/lib/i18n/locale-codes";
-import { AnthropicTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
+import { TextTranslationProvider, type ReportTranslateStep } from "@/lib/ai/translation-provider";
 import { translateScanReport, type ScanReportTranslatable } from "@/lib/scan-diagnostics/report-translation";
 import {
   resolveLocalizedReport,
@@ -55,7 +58,9 @@ Non-negotiable rules:
 - Write naturally in ${outputLanguageName}, not a stilted word-for-word rendering.${glossaryBlock}`;
 }
 
-// Real Anthropic call for the JSON-array translate step AnthropicTranslationProvider
+const TranslatedArraySchema = z.object({ translations: z.array(z.string()) });
+
+// Real OpenAI call for the JSON-array translate step TextTranslationProvider
 // expects. Cost is logged (operationType "additional_language", matching the
 // chat-translation pattern in src/app/api/ai/assistant/route.ts) but no separate
 // usage slot is reserved — translating an already-generated, already-paid-for
@@ -66,7 +71,12 @@ function buildScanReportTranslateStep(params: {
   reportId: string;
 }): ReportTranslateStep {
   return async ({ englishText, targetLocale, glossaryVersion }) => {
-    const client = new Anthropic({ apiKey: env.anthropicApiKey() });
+    const apiKey = env.openaiApiKeyOptional();
+    if (!apiKey) throw new OpenAiConfigurationError("OPENAI_API_KEY is not configured.");
+    const model = requireModelForTask("scanReportTranslation");
+    const limits = getRequestLimits();
+    const client = new OpenAI({ apiKey, timeout: limits.providerTimeoutMs, maxRetries: limits.providerMaxRetries });
+
     const localeInfo = getLocaleInfo(targetLocale);
     const glossary = await listGlossaryForLocale(targetLocale);
     const systemPrompt = buildJsonArrayTranslationSystemPrompt(
@@ -74,35 +84,36 @@ function buildScanReportTranslateStep(params: {
       targetLocale,
       glossary,
     );
-    const modelId = modelForTask("scanReportTranslation");
     const startedAt = Date.now();
 
-    const message = await client.messages.create({
-      model: modelId,
-      max_tokens: SCAN_REPORT_TRANSLATION_MAX_TOKENS,
-      system: systemPrompt,
-      messages: [{ role: "user", content: englishText }],
+    const completion = await client.chat.completions.parse({
+      model,
+      max_completion_tokens: SCAN_REPORT_TRANSLATION_MAX_TOKENS,
+      messages: [
+        { role: "system", content: systemPrompt },
+        { role: "user", content: englishText },
+      ],
+      response_format: zodResponseFormat(TranslatedArraySchema, "translated_array"),
     });
 
-    const textBlock = message.content.find((block) => block.type === "text");
-    const text = textBlock && textBlock.type === "text" ? textBlock.text : "";
+    const choice = completion.choices[0];
+    const parsed = choice?.message.parsed;
+    const text = parsed ? JSON.stringify(parsed.translations) : "";
+    const inputTokens = completion.usage?.prompt_tokens ?? 0;
+    const outputTokens = completion.usage?.completion_tokens ?? 0;
 
-    const cost = computeActualCostMicros({
-      modelId,
-      inputTokens: message.usage.input_tokens,
-      outputTokens: message.usage.output_tokens,
-    });
+    const cost = computeActualCostMicros({ modelId: model, inputTokens, outputTokens });
     await recordAiDiagnosticRun({
       userId: params.userId,
       requestId: params.reportId,
       feature: "scan_report",
       plan: params.plan,
-      providerId: "anthropic",
-      modelId,
+      providerId: "openai",
+      modelId: model,
       status: "completed",
       accessLevelRequested: "full",
-      inputTokens: message.usage.input_tokens,
-      outputTokens: message.usage.output_tokens,
+      inputTokens,
+      outputTokens,
       reportId: params.reportId,
       operationType: "additional_language",
       creditsConsumed: DIAGNOSTIC_CREDIT_WEIGHTS.additionalLanguage,
@@ -181,7 +192,7 @@ function buildDeps(params: { userId: string; plan: SubscriptionPlan }): Localize
     async translate({ reportId, version, targetLocale, canonical }) {
       const glossary = await listGlossaryForLocale(targetLocale);
       const glossaryVersion = String(glossary.length);
-      const provider = new AnthropicTranslationProvider(
+      const provider = new TextTranslationProvider(
         buildScanReportTranslateStep({ userId: params.userId, plan: params.plan, reportId }),
       );
       return translateScanReport({

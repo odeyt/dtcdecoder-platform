@@ -4,7 +4,7 @@ import { env } from "@/lib/env";
 import { getEffectivePlan } from "@/lib/subscriptions";
 import { runScanAnalysis } from "@/lib/scan-diagnostics/analyze";
 import { getCaseForOwner, findExistingCasesForVin, getVinForCase } from "@/lib/scan-diagnostics/cases";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { DuplicateVinError, FeatureDisabledError, toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     }
 
     const plan = await getEffectivePlan(user.id, user.email ?? null);
-    const provider = new AnthropicDiagnosticProvider();
+    const provider = new OpenAiDiagnosticProvider();
 
     const result = await runScanAnalysis(user.id, caseId, plan, provider);
     return NextResponse.json(result);

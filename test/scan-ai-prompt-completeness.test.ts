@@ -6,7 +6,7 @@ import {
   isSafetyCriticalSystem,
 } from "@/lib/scan-diagnostics/parsers/category-classification";
 import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-input";
-import { buildUserPrompt } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { buildUserPrompt } from "@/lib/scan-diagnostics/ai/shared-prompt";
 import type { ScanCase, ScanDtcRecord, ScanExtraction, ScanSystem } from "@/lib/types";
 import { ZOTYE_SCAN_REPORT_TEXT } from "./fixtures/zotye-scan-report";
 

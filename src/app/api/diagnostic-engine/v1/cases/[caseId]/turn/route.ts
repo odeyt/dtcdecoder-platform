@@ -22,7 +22,7 @@ import { getEffectivePlan } from "@/lib/subscriptions";
 import { isAllowedAdminEmail } from "@/lib/admin-auth";
 import { DIAGNOSTIC_ENGINE_FLAGS, diagnosticEngineRolloutTier, isDiagnosticEngineRolloutAllowed } from "@/lib/diagnostic-engine/feature-flags";
 import { runDiagnosticEngineTurn } from "@/lib/diagnostic-engine/orchestrator";
-import { AnthropicDiagnosticProvider } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { OpenAiDiagnosticProvider } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { toSafeErrorResponse } from "@/lib/scan-diagnostics/api-errors";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { getOrCreateLocalizedTurn } from "@/lib/diagnostic-engine/turn-localization";
@@ -76,7 +76,7 @@ export async function POST(request: NextRequest, { params }: RouteParams) {
     // itself the fail-closed behavior.
     const plan = await getEffectivePlan(user.id, user.email ?? null);
 
-    const provider = new AnthropicDiagnosticProvider();
+    const provider = new OpenAiDiagnosticProvider();
     const result = await runDiagnosticEngineTurn(user.id, caseId, provider, {
       plan,
       email: user.email ?? null,

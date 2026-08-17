@@ -33,7 +33,7 @@ import {
   RegenerationLimitExceededError,
 } from "@/lib/scan-diagnostics/api-errors";
 import { recordEvent } from "@/lib/analytics/events";
-import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/anthropic-provider";
+import { SCAN_REPORT_MODEL_ID, SCAN_REPORT_MAX_TOKENS } from "@/lib/scan-diagnostics/ai/openai-provider";
 import { env } from "@/lib/env";
 import { runOrchestratedDiagnosis } from "@/lib/scan-diagnostics/ai/orchestrator";
 import { persistRoutingDecision } from "@/lib/scan-diagnostics/ai/routing-log";
