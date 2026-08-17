@@ -36,9 +36,10 @@ export default async function QuickDiagnosticPage({ searchParams }: Props) {
   if (!env.scanDiagnosticsEnabled()) notFound();
 
   const params = await searchParams;
-  const currentUrl = `/diagnostics/quick?${new URLSearchParams(
+  const queryString = new URLSearchParams(
     Object.entries(params).filter(([, v]) => v !== undefined) as [string, string][],
-  ).toString()}`;
+  ).toString();
+  const currentUrl = queryString ? `/diagnostics/quick?${queryString}` : "/diagnostics/quick";
 
   const locale = await resolveAppShellLocale();
   const t = await getTranslations({ locale, namespace: "quickDiagnostic" });
