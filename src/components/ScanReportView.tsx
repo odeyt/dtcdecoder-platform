@@ -73,15 +73,15 @@ function CategoryBadge({
   const noneReported = category.status === "none_reported";
   return (
     <div className="glass-panel flex flex-col gap-1 rounded-[var(--radius-lg)] p-4">
-      <p className="text-xs font-semibold text-[var(--text-primary)]">{label}</p>
+      <p className="text-sm font-semibold text-[var(--text-primary)]">{label}</p>
       <p
-        className="font-mono text-[10px] uppercase tracking-wide"
+        className="font-mono text-xs font-semibold uppercase tracking-wide"
         style={{ color: found ? "var(--accent-red)" : "var(--text-muted)" }}
       >
         {found ? foundLabel : noneReported ? noneReportedLabel : notStatedLabel}
       </p>
       {found && category.codes.length > 0 && (
-        <p className="font-mono text-xs text-[var(--text-secondary)]">{category.codes.join(", ")}</p>
+        <p className="font-mono text-sm font-semibold text-[var(--text-secondary)]">{category.codes.join(", ")}</p>
       )}
     </div>
   );
@@ -142,7 +142,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               </span>
             )}
           </div>
-          <p className="mt-3 max-w-2xl text-xs text-[var(--text-muted)]">{t("disclosure")}</p>
+          <p className="mt-3 max-w-2xl text-sm text-[var(--text-muted)]">{t("disclosure")}</p>
 
           {isFull && (
             <div className="mt-4 flex flex-wrap items-center gap-3">
@@ -233,7 +233,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
           {visibleResult.extractionQuality.truncated && (
             <p
               role="alert"
-              className="mt-3 rounded-[var(--radius-md)] border p-3 text-xs text-[var(--text-secondary)]"
+              className="mt-3 rounded-[var(--radius-md)] border p-3 text-sm text-[var(--text-secondary)]"
               style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
             >
               {t("truncatedWarning")}
@@ -250,6 +250,8 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               { label: t("totalDtcs"), value: visibleResult.healthSummary.totalDtcCount },
               { label: t("current"), value: visibleResult.healthSummary.currentCount },
               { label: t("history"), value: visibleResult.healthSummary.historyCount },
+              { label: t("permanentActive"), value: visibleResult.healthSummary.permanentCount },
+              { label: t("intermittentActive"), value: visibleResult.healthSummary.intermittentCount },
               { label: t("networkFaults"), value: visibleResult.healthSummary.networkCount },
               { label: t("batteryVoltage"), value: visibleResult.healthSummary.batteryVoltageCount },
               { label: t("safetyCritical"), value: visibleResult.healthSummary.safetyCriticalCount },
@@ -281,7 +283,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                       <td className="py-2 pr-4 text-[var(--text-primary)]">{row.systemName}</td>
                       <td className="py-2 pr-4">
                         <span
-                          className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                          className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-xs font-semibold uppercase"
                           style={{
                             borderColor: row.status === "faulted" ? "var(--accent-red)" : "var(--border-subtle)",
                             color: row.status === "faulted" ? "var(--accent-red)" : "var(--text-muted)",
@@ -290,18 +292,18 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                           {moduleStatusLabel[row.status] ?? row.status}
                         </span>
                       </td>
-                      <td className="py-2 pr-4 font-mono text-xs">
+                      <td className="py-2 pr-4 font-mono text-sm">
                         {row.dtcCountExtracted}
                         {row.dtcCountReported != null ? ` / ${row.dtcCountReported}` : ""}
                       </td>
-                      <td className="py-2 pr-4 text-xs">
+                      <td className="py-2 pr-4 text-sm">
                         {row.extractionComplete ? (
                           t("completeStatus")
                         ) : (
                           <span style={{ color: "var(--accent-amber)" }}>{t("incompleteStatus")}</span>
                         )}
                       </td>
-                      <td className="py-2 font-mono text-xs">{row.highestPriorityFault ?? "—"}</td>
+                      <td className="py-2 font-mono text-sm font-semibold text-[var(--text-primary)]">{row.highestPriorityFault ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -317,7 +319,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                 <div key={pattern.patternType} className="glass-panel rounded-[var(--radius-lg)] p-4">
                   <div className="flex flex-wrap items-center gap-2">
                     <span
-                      className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] uppercase"
+                      className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-xs font-semibold uppercase"
                       style={{
                         borderColor: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
                         color: pattern.severity === "critical" ? "var(--accent-red)" : "var(--accent-amber)",
@@ -328,7 +330,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                     <p className="text-sm font-semibold text-[var(--text-primary)]">{pattern.name}</p>
                   </div>
                   {pattern.affectedModules.length > 0 && (
-                    <p className="mt-1 text-xs text-[var(--text-muted)]">
+                    <p className="mt-1 text-sm text-[var(--text-muted)]">
                       {t("affected")} {pattern.affectedModules.join(", ")}
                     </p>
                   )}
@@ -354,7 +356,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               ].map(({ label, codes, severity }) => (
                 <div key={label} className="glass-panel rounded-[var(--radius-lg)] p-4">
                   <ResultPill category="severity" value={severity} label={label} />
-                  <p className="mt-2 font-mono text-xs text-[var(--text-secondary)]">
+                  <p className="mt-2 font-mono text-sm font-semibold text-[var(--text-primary)]">
                     {codes.length > 0 ? codes.join(", ") : t("none")}
                   </p>
                 </div>
@@ -364,12 +366,19 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
         )}
 
         <ResultSection title={t("customerComplaintTitle")}>
-          <p className="text-sm text-[var(--text-secondary)]">{scanCase.complaint ?? t("notProvidedPlain")}</p>
-          {scanCase.symptoms.length > 0 && (
-            <p className="mt-1 text-sm text-[var(--text-muted)]">
-              {t("symptoms")} {scanCase.symptoms.join(", ")}
-            </p>
-          )}
+          <div className="glass-panel rounded-[var(--radius-lg)] p-5">
+            {scanCase.complaint ? (
+              <p className="text-lg font-semibold leading-7 text-[var(--text-primary)]">{scanCase.complaint}</p>
+            ) : (
+              <p className="text-base font-medium text-[var(--text-muted)]">{t("notProvidedPlain")}</p>
+            )}
+            {scanCase.symptoms.length > 0 && (
+              <p className="mt-2 text-sm text-[var(--text-secondary)]">
+                <span className="font-semibold text-[var(--text-primary)]">{t("symptoms")} </span>
+                {scanCase.symptoms.join(", ")}
+              </p>
+            )}
+          </div>
         </ResultSection>
 
         <ResultSection title={t("faultCategoriesTitle")}>
@@ -414,15 +423,19 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
         </ResultSection>
 
         <ResultSection title={t("dtcsRecordedTitle")}>
-          <div className="flex flex-wrap gap-2">
+          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
             {visibleResult.dtcs.map((dtc, i) => (
-              <span
+              <div
                 key={i}
-                className="rounded-full border border-[var(--border-subtle)] px-3 py-1 font-mono text-xs text-[var(--text-secondary)]"
+                className="rounded-[var(--radius-md)] border border-[var(--border-subtle)] bg-[var(--surface-1)] px-3 py-2"
               >
-                {dtc.code}
-                {dtc.module ? ` (${dtc.module})` : ""}
-              </span>
+                <p className="font-mono text-lg font-bold tracking-tight text-[var(--text-primary)]">{dtc.code}</p>
+                {(dtc.module || dtc.status) && (
+                  <p className="mt-0.5 text-sm text-[var(--text-secondary)]">
+                    {[dtc.module, dtc.status].filter(Boolean).join(" · ")}
+                  </p>
+                )}
+              </div>
             ))}
             {visibleResult.dtcs.length === 0 && <p className="text-sm text-[var(--text-muted)]">{t("noDtcRecords")}</p>}
           </div>
@@ -466,7 +479,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                     <p className="text-xs font-semibold text-[var(--text-primary)]">{t("freezeFrameData")}</p>
                     <div className="mt-2 flex flex-col gap-2">
                       {freezeFrames.map((frame, i) => (
-                        <div key={i} className="font-mono text-xs text-[var(--text-secondary)]">
+                        <div key={i} className="font-mono text-sm leading-6 text-[var(--text-secondary)]">
                           {Object.entries(frame)
                             .map(([k, v]) => `${k}: ${String(v)}`)
                             .join(", ")}
@@ -496,9 +509,9 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
             {visibleResult.rankedCauses && visibleResult.rankedCauses.length > 0 && (
               <ResultSection title={t("repairRecommendationTitle")}>
                 <div className="glass-panel rounded-[var(--radius-lg)] p-5">
-                  <p className="text-xs text-[var(--text-muted)]">{t("basedOnTopCause")}</p>
-                  <p className="mt-1 font-semibold text-[var(--text-primary)]">{visibleResult.rankedCauses[0].cause}</p>
-                  <p className="mt-2 text-xs text-[var(--text-secondary)]">
+                  <p className="text-sm text-[var(--text-muted)]">{t("basedOnTopCause")}</p>
+                  <p className="mt-1 text-lg font-semibold text-[var(--text-primary)]">{visibleResult.rankedCauses[0].cause}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
                     <span className="font-semibold text-[var(--text-primary)]">{t("confirmBeforeRepairing")} </span>
                     {visibleResult.rankedCauses[0].confirmationTestsRequired &&
                     visibleResult.rankedCauses[0].confirmationTestsRequired!.length > 0
@@ -536,7 +549,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               <ul className="flex flex-col gap-2 text-sm text-[var(--text-primary)]">
                 {safetyFindings.map((f, i) => (
                   <li key={i}>
-                    <span className="font-mono text-[10px] uppercase text-[var(--accent-red)]">
+                    <span className="font-mono text-xs font-semibold uppercase text-[var(--accent-red)]">
                       {ruleSeverityLabel[f.severity] ?? f.severity}
                     </span>{" "}
                     {f.message}
@@ -553,7 +566,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
               {legacyReport ? (
                 <>
                   <p className="text-lg font-bold text-[var(--text-muted)]">{t("notEstablished")}</p>
-                  <p className="mt-2 text-xs text-[var(--text-secondary)]">{t("legacyConfidenceBody")}</p>
+                  <p className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">{t("legacyConfidenceBody")}</p>
                 </>
               ) : (
                 <>
@@ -565,7 +578,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                         : undefined
                     }
                   />
-                  <ul className="mt-3 flex flex-col gap-1 text-xs text-[var(--text-secondary)]">
+                  <ul className="mt-3 flex flex-col gap-1.5 text-sm leading-6 text-[var(--text-secondary)]">
                     {visibleResult.confidenceRationale!
                       .filter((r) => !/^Internal score/.test(r))
                       .map((r, i) => (

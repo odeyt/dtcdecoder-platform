@@ -22,6 +22,8 @@ function baseResult(overrides: Partial<ScanReportVisibleResult> = {}): ScanRepor
       totalDtcCount: 0,
       currentCount: 0,
       historyCount: 0,
+      permanentCount: 0,
+      intermittentCount: 0,
       networkCount: 0,
       batteryVoltageCount: 0,
       safetyCriticalCount: 0,
@@ -67,6 +69,7 @@ describe("formatReportForCopy", () => {
           {
             cause: "Failing coil pack",
             confidenceLevel: "high",
+            complaintCorrelation: "unknown",
             rationale: "Misfire pattern matches cylinder 1",
             supportingEvidence: [],
             contradictingEvidence: [],

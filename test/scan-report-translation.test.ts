@@ -15,6 +15,7 @@ const canonical: ScanReportTranslatable = {
     {
       cause: "Catalyst efficiency below threshold",
       confidenceLevel: "medium",
+      complaintCorrelation: "unknown",
       rationale: "P0420 stored with MIL on",
       supportingEvidence: ["MIL illuminated"],
       contradictingEvidence: [],

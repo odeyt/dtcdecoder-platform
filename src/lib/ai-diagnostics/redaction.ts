@@ -70,6 +70,13 @@ export interface VehicleHealthSummary {
   totalDtcCount: number;
   currentCount: number;
   historyCount: number;
+  // Explicit counts for scanner-native "Permanent"/"Intermittent" status —
+  // without these, a report with real active/confirmed faults that simply
+  // aren't literally statused "current" or "history" would show
+  // Current: 0, History: 0 next to non-zero totalDtcCount, implying no
+  // faults exist rather than that they're just a different status class.
+  permanentCount: number;
+  intermittentCount: number;
   networkCount: number;
   batteryVoltageCount: number;
   safetyCriticalCount: number;
@@ -176,7 +183,11 @@ function vehicleSummaryFrom(extraction: ScanExtraction | null): VehicleSummary {
 }
 
 function dtcSummariesFrom(dtcRecords: ScanDtcRecord[]): DtcSummary[] {
-  return dtcRecords.map((r) => ({ module: r.module, code: r.code, status: r.status }));
+  // Same module/system_name coalescing as canonical-input.ts — the
+  // text/PDF parser records a DTC's owning module heading as
+  // `system_name`, not `module`, so the raw column alone under-reports
+  // attribution for anything but CSV/JSON sources.
+  return dtcRecords.map((r) => ({ module: r.module ?? r.system_name, code: r.code, status: r.status }));
 }
 
 function scannerMetaFrom(extraction: ScanExtraction | null): ScannerMeta {
@@ -197,6 +208,8 @@ function healthSummaryFrom(canonicalScan: CanonicalVehicleScan): VehicleHealthSu
     totalDtcCount: canonicalScan.allDtcs.length,
     currentCount: canonicalScan.derivedCategories.currentCodes.length,
     historyCount: canonicalScan.derivedCategories.historyCodes.length,
+    permanentCount: canonicalScan.derivedCategories.permanentCodes.length,
+    intermittentCount: canonicalScan.derivedCategories.intermittentCodes.length,
     networkCount: canonicalScan.derivedCategories.networkFaults.length,
     batteryVoltageCount: canonicalScan.derivedCategories.batteryVoltageFaults.length,
     safetyCriticalCount: canonicalScan.derivedCategories.safetySystemFaults.length,

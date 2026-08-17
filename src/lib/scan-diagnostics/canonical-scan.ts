@@ -64,6 +64,7 @@ export interface CanonicalDerivedCategories {
   historyCodes: string[];
   pendingCodes: string[];
   permanentCodes: string[];
+  intermittentCodes: string[];
   referenceOnlyCodes: string[];
   unknownStatusCodes: string[];
   networkFaults: string[];
@@ -155,6 +156,7 @@ export function buildCanonicalVehicleScan(
     historyCodes: byStatus("history"),
     pendingCodes: byStatus("pending"),
     permanentCodes: byStatus("permanent"),
+    intermittentCodes: byStatus("intermittent"),
     referenceOnlyCodes: byStatus("reference_only"),
     unknownStatusCodes: byStatus("unknown"),
     networkFaults: allDtcs.filter((d) => d.networkRelevance).map((d) => d.normalizedCode),

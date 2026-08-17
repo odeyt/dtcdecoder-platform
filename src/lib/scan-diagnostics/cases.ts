@@ -56,12 +56,26 @@ export async function createQuickDiagnosticCase(
     .insert({
       user_id: userId,
       status: "ready_for_analysis",
-      complaint: input.scanToolNotes ?? null,
+      // The customer's stated complaint gets its own real column, same as
+      // the file-upload intake path — it must never be conflated with
+      // scan-tool notes or freeze-frame notes, which are separate pieces
+      // of evidence.
+      complaint: input.complaint ?? null,
       symptoms: input.symptoms ?? [],
       mileage: null,
       recent_repairs: input.repairHistory ?? null,
       battery_condition: null,
-      technician_notes: input.freezeFrameNotes ?? null,
+      // scan_cases has no dedicated columns for free-text scan-tool/
+      // freeze-frame notes, so both are preserved here, clearly labeled so
+      // they stay distinguishable from each other and from the complaint —
+      // never silently dropped, never merged into the complaint field.
+      technician_notes:
+        [
+          input.freezeFrameNotes ? `Freeze-frame notes: ${input.freezeFrameNotes}` : null,
+          input.scanToolNotes ? `Scan-tool notes: ${input.scanToolNotes}` : null,
+        ]
+          .filter((s): s is string => Boolean(s))
+          .join("\n\n") || null,
       report_language: input.reportLanguage ?? "en",
     })
     .select("*")

@@ -71,7 +71,7 @@ export async function POST(request: NextRequest) {
       modelYear: parsedYear && Number.isInteger(parsedYear) ? parsedYear : undefined,
       engine: intake.engine,
       symptoms: intake.symptoms ? [intake.symptoms] : undefined,
-      scanToolNotes: intake.complaint,
+      complaint: intake.complaint,
       reportLanguage: intake.locale,
     });
     if (!caseInput.success) {

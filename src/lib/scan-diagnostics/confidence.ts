@@ -36,6 +36,47 @@ const HIGH_THRESHOLD = 75;
 const MEDIUM_THRESHOLD = 50;
 const LOW_THRESHOLD = 30;
 
+// Narrow, deterministic guard against one specific hallucination risk: the
+// AI's `missingInformation` array (schemas.ts's DiagnosticAiOutputSchema)
+// is free text the model writes itself, with nothing forcing it to be
+// consistent with the actual canonical input it was given. Deterministic
+// source facts must outrank an AI-generated description of those facts —
+// if a technician-supplied complaint/symptoms were genuinely provided, the
+// model must not be allowed to claim otherwise, since that claim would be
+// factually false and would double-penalize confidence (see the
+// deterministic "no customer complaint or symptoms" check below, which
+// already handles the true-negative case correctly).
+//
+// Deliberately narrow: matches only the specific claim shape "no
+// complaint/symptoms was/were supplied," not broader semantic rewriting of
+// the model's prose — a wider pattern risks stripping legitimate content
+// and introducing a different kind of error.
+const FALSE_MISSING_COMPLAINT_PATTERN =
+  /\bno\b[^.]{0,40}\b(customer\s+)?complaint\b[^.]{0,40}\b(provided|supplied|given|stated|described|available|mentioned)\b|\bcomplaint\b[^.]{0,40}\b(is|was)\s+(missing|not\s+provided|absent)\b/i;
+const FALSE_MISSING_SYMPTOMS_PATTERN =
+  /\bno\b[^.]{0,40}\bsymptoms?\b[^.]{0,40}\b(provided|supplied|given|stated|described|available|mentioned)\b|\bsymptoms?\b[^.]{0,40}\b(is|are|was|were)\s+(missing|not\s+provided|absent)\b/i;
+
+export function sanitizeMissingInformation(
+  missingInformation: string[],
+  input: Pick<CanonicalDiagnosticInput, "complaint" | "symptoms">,
+): { sanitized: string[]; removed: string[] } {
+  const hasComplaint = Boolean(input.complaint?.trim());
+  const hasSymptoms = input.symptoms.length > 0;
+  const removed: string[] = [];
+  const sanitized = missingInformation.filter((item) => {
+    if (hasComplaint && FALSE_MISSING_COMPLAINT_PATTERN.test(item)) {
+      removed.push(item);
+      return false;
+    }
+    if (hasSymptoms && FALSE_MISSING_SYMPTOMS_PATTERN.test(item)) {
+      removed.push(item);
+      return false;
+    }
+    return true;
+  });
+  return { sanitized, removed };
+}
+
 function bandConfidence(score: number): ConfidenceLevel {
   if (score >= HIGH_THRESHOLD) return "high";
   if (score >= MEDIUM_THRESHOLD) return "medium";

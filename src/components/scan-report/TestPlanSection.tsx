@@ -65,10 +65,10 @@ export function TestPlanSection({ caseId, tests, initialProgress }: TestPlanSect
               </p>
               <ResultPill category="status" value={testOutcomeToPill(outcome)} />
             </div>
-            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
               {t("purpose")} {test.purpose}
             </p>
-            <p className="mt-1 text-xs text-[var(--text-secondary)]">
+            <p className="mt-1 text-sm leading-6 text-[var(--text-secondary)]">
               {t("expectedResult")} {test.expectedResult}
             </p>
             <div

@@ -70,7 +70,10 @@ describe("POST /api/diagnostics/create-from-intake — happy path", () => {
     expect(body.caseId).toBe("case-1");
     expect(createQuickDiagnosticCaseMock).toHaveBeenCalledWith(
       "user-1",
-      expect.objectContaining({ dtcCode: "P0303", make: "Toyota", model: "Camry", modelYear: 2018 }),
+      // complaint must map to its own real field, never scanToolNotes —
+      // regression for the bug where a technician's stated complaint had
+      // nowhere correctly labeled to land and ended up lost/misfiled.
+      expect.objectContaining({ dtcCode: "P0303", make: "Toyota", model: "Camry", modelYear: 2018, complaint: "Rough idle" }),
     );
     expect(recordEventMock).toHaveBeenCalledWith("diagnostic_case_created_from_intake", expect.anything());
   });

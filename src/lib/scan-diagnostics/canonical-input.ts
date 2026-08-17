@@ -77,8 +77,14 @@ export function buildCanonicalDiagnosticInput(
     batteryCondition: scanCase.battery_condition,
     technicianNotes: scanCase.technician_notes,
     modules: extraction?.modules ?? [],
+    // Canonical module fallback: the text/PDF parser tracks a DTC's owning
+    // module heading (e.g. "BCM", "RFA") as `system_name`, not `module` —
+    // only CSV/JSON sources ever populate the dedicated `module` column
+    // directly. Coalescing once here means every downstream consumer (the
+    // AI prompt, the rendered report) gets one reliable value regardless of
+    // source format, instead of each one needing its own fallback.
     dtcs: dtcs.map((d) => ({
-      module: d.module,
+      module: d.module ?? d.system_name,
       code: d.code,
       status: d.status,
       descriptionRaw: d.description_raw,

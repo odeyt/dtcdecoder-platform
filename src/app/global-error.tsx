@@ -61,6 +61,11 @@ export default function GlobalError({
             >
               Try again
             </button>
+            {/* Plain <a>, not next/link's <Link>: this file replaces the
+                entire root layout when the app itself has crashed, so its
+                recovery UI must not depend on Next.js router machinery that
+                could be part of what's broken. */}
+            {/* eslint-disable-next-line @next/next/no-html-link-for-pages */}
             <a
               href="/"
               style={{

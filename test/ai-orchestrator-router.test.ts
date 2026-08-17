@@ -31,6 +31,7 @@ const BASE_OUTPUT: DiagnosticAiOutput = {
     {
       cause: "Vacuum leak",
       confidenceLevel: "medium",
+      complaintCorrelation: "unknown",
       rationale: "Lean condition",
       supportingEvidence: [],
       contradictingEvidence: [],
