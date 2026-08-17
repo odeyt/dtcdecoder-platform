@@ -60,16 +60,31 @@ function extractLabeledYear(text: string): number | undefined {
   return year <= currentYearCeiling ? year : undefined;
 }
 
+// Sanity ceiling mirrors ExtractionReviewInputSchema's odometerMiles.max()
+// (schemas.ts) — an extracted value this implausible is far more likely to
+// be a parsing artifact than a real reading, and letting it through just
+// means the review-form submission fails validation later with no
+// indication of which field was the problem.
+const MAX_PLAUSIBLE_ODOMETER_MILES = 1_000_000;
+
 function extractOdometer(text: string): number | undefined {
   const labeled = extractLabeledField(text, ["Mileage", "Odometer"]);
   if (labeled) {
-    const value = Number(labeled.replace(/[^\d.]/g, ""));
-    if (Number.isFinite(value)) return value;
+    // Take only the first digit run (with optional thousands separators),
+    // not every digit character anywhere in the rest of the line —
+    // extractLabeledField captures to end-of-line, and on multi-column
+    // scan-tool reports flattened to plain text, unrelated data can end up
+    // on the same line and get concatenated in if every digit is kept.
+    const digits = labeled.match(/[\d,]{1,7}(?:\.\d+)?/);
+    if (digits) {
+      const value = Number(digits[0].replace(/,/g, ""));
+      if (Number.isFinite(value) && value >= 0 && value <= MAX_PLAUSIBLE_ODOMETER_MILES) return value;
+    }
   }
   const match = text.match(/\b(?:mileage|odometer)\s*[:=]?\s*([\d,]{3,7})\s*(?:mi|miles)?\b/i);
   if (!match) return undefined;
   const value = Number(match[1].replace(/,/g, ""));
-  return Number.isFinite(value) ? value : undefined;
+  return Number.isFinite(value) && value <= MAX_PLAUSIBLE_ODOMETER_MILES ? value : undefined;
 }
 
 // Best-effort scanner-brand detection — a report's brand is often rendered

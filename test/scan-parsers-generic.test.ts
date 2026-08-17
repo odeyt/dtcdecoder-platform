@@ -22,6 +22,29 @@ describe("txtParser", () => {
     expect(result.odometerMiles).toBe(62000);
     expect(result.dtcCodes.map((c) => c.code)).toEqual(["P0171", "P0300"]);
   });
+
+  // Regression for a real production case: a multi-column scan-tool table
+  // flattened to plain text can leave unrelated digits on the same line as
+  // the "Mileage:" label — extractOdometer used to strip every non-digit
+  // character from the whole rest of the line and concatenate whatever
+  // digits remained, producing an implausible multi-million-mile reading
+  // that then failed ExtractionReviewInputSchema's max(1_000_000) with no
+  // indication of which field was the problem.
+  it("does not bleed trailing same-line digits into the extracted mileage", async () => {
+    const buffer = Buffer.from(
+      ["VIN: SALWA2VF7EA501249", "Mileage: 104248  Page 78 of 2", "DTC B100D-67 - Column Lock Authorization"].join(
+        "\n",
+      ),
+    );
+    const result = await txtParser.parse(buffer);
+    expect(result.odometerMiles).toBe(104248);
+  });
+
+  it("drops an odometer reading that exceeds the plausible sanity ceiling rather than passing it through", async () => {
+    const buffer = Buffer.from(["Mileage: 10424878", "DTC P0300 - Random Misfire"].join("\n"));
+    const result = await txtParser.parse(buffer);
+    expect(result.odometerMiles).toBeUndefined();
+  });
 });
 
 describe("csvParser", () => {
