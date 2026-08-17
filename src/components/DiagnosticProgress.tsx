@@ -21,6 +21,7 @@ export interface DiagnosticProgressProps {
 export function DiagnosticProgress({ stages, query, onCancel }: DiagnosticProgressProps) {
   const t = useTranslations("diagnosticProgress");
   const tc = useTranslations("common");
+  const SYSTEMS_COUNT = 6;
   const SYSTEMS = [
     t("systemEngine"),
     t("systemFuel"),
@@ -55,7 +56,11 @@ export function DiagnosticProgress({ stages, query, onCancel }: DiagnosticProgre
   useEffect(() => {
     if (reducedMotion) return;
     const interval = setInterval(() => {
-      activeSystem.current = (activeSystem.current + 1) % SYSTEMS.length;
+      // SYSTEMS is rebuilt every render (translated strings), but its length
+      // is fixed at 6 regardless of locale — using the array itself as a
+      // dependency would re-run this effect (and restart the interval) on
+      // every render for no reason.
+      activeSystem.current = (activeSystem.current + 1) % SYSTEMS_COUNT;
       setSystemIndex(activeSystem.current);
     }, 650);
     return () => clearInterval(interval);

@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { useTranslations, useLocale } from "next-intl";
+import { useTranslations } from "next-intl";
 import { AiDiagnosisCtaLink } from "@/components/AiDiagnosisCtaLink";
 import type { DtcCode } from "@/lib/types";
 import type { DtcRedactionResult } from "@/lib/dtc-redaction";
