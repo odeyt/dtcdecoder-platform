@@ -8,6 +8,7 @@ import { SiteFooter } from "@/components/SiteFooter";
 import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
 import { PwaShell } from "@/components/pwa/PwaShell";
 import { CapacitorAppLinks } from "@/components/capacitor/CapacitorAppLinks";
+import { PushNotifications } from "@/components/capacitor/PushNotifications";
 import {
   isRecognizedLocaleCode,
   isLiveLocale,
@@ -121,6 +122,7 @@ export default async function LocaleLayout({ children, params }: Props) {
           <DtcTechnicianShell />
           <PwaShell />
           <CapacitorAppLinks />
+          <PushNotifications />
         </NextIntlClientProvider>
       </body>
     </html>

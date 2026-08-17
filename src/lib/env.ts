@@ -149,4 +149,16 @@ export const env = {
   // production, matching this repo's "flags default off" deployment
   // pattern for anything not fully wired up.
   retentionSweepDryRun: () => process.env.RETENTION_SWEEP_DRY_RUN !== "false",
+
+  // Push notifications (Capacitor Android shell — see
+  // docs/CAPACITOR_ANDROID_SETUP.md). Optional, not required(): the feature
+  // must degrade to a silent no-op until a real Firebase project exists,
+  // matching this repo's "flags default off" pattern rather than crashing
+  // every request once this file is imported. The full JSON contents of a
+  // Firebase service account key (Console → Project Settings → Service
+  // Accounts → Generate new private key) — a real secret, .env.local only,
+  // never committed, unlike google-services.json (client config, safe to
+  // commit) which lives in android/app/ instead of here.
+  firebaseServiceAccountJson: () => process.env.FIREBASE_SERVICE_ACCOUNT_JSON,
+  pushNotificationsEnabled: () => !!process.env.FIREBASE_SERVICE_ACCOUNT_JSON,
 };

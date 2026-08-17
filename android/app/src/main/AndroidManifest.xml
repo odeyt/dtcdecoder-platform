@@ -56,4 +56,9 @@
     <!-- Permissions -->
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Push notifications (docs/CAPACITOR_ANDROID_SETUP.md) — required on
+         Android 13+ (API 33+) alongside the runtime request @capacitor/
+         push-notifications' requestPermissions() makes; the plugin does not
+         add this manifest declaration automatically. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
 </manifest>

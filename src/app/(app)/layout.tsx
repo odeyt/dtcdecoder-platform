@@ -8,6 +8,7 @@ import { DtcTechnicianShell } from "@/components/DtcTechnicianShell";
 import { RegionGeoBanner } from "@/components/RegionGeoBanner";
 import { PwaShell } from "@/components/pwa/PwaShell";
 import { CapacitorAppLinks } from "@/components/capacitor/CapacitorAppLinks";
+import { PushNotifications } from "@/components/capacitor/PushNotifications";
 import { resolveAppShellLocale, getAppShellMessages } from "@/lib/i18n/app-shell-locale";
 import { directionForLocale } from "@/lib/i18n/locale-codes";
 import "../globals.css";
@@ -92,6 +93,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
           <DtcTechnicianShell />
           <PwaShell />
           <CapacitorAppLinks />
+          <PushNotifications />
         </NextIntlClientProvider>
       </body>
     </html>

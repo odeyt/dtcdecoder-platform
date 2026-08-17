@@ -26,6 +26,7 @@ import { detectPatterns } from "@/lib/scan-diagnostics/patterns";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
 import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
+import { sendPushNotificationToUser } from "@/lib/push/fcm";
 import {
   AiResponseValidationError,
   ScanAnalysisFailedError,
@@ -347,6 +348,27 @@ export async function runScanAnalysis(
     latencyMs: Date.now() - requestStartedAt,
   });
   await recordEvent("ai_diagnosis_completed", { userId, metadata: { plan, accessLevel } });
+
+  // Best-effort, same as recordEvent above — sendPushNotificationToUser
+  // never throws (see src/lib/push/fcm.ts) and silently no-ops until a
+  // real Firebase project exists (env.pushNotificationsEnabled()), so this
+  // is safe to leave unconditional rather than gated here. Report
+  // generation is async and can take a while (the whole reason this
+  // feature exists — see docs/CAPACITOR_NATIVE_APP_READINESS_AUDIT.md
+  // finding #2), so this is the one moment a signed-out-of-the-app user
+  // most wants to hear from us.
+  //
+  // English-only for now — a deliberate, flagged scope cut, not an
+  // oversight: this app translates everything else into 12 locales, and
+  // localizing this notification is a natural, easy follow-up (read the
+  // user's user_preferences.interface_locale, pull the equivalent strings
+  // from messages/[locale].json) once the base mechanism is verified
+  // end-to-end against a real Firebase project.
+  await sendPushNotificationToUser(userId, {
+    title: "Your diagnostic report is ready",
+    body: "Tap to view the full results.",
+    data: { url: `/diagnostics/${caseId}` },
+  });
 
   return { case: completedCase, report };
 }
