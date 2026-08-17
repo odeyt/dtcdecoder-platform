@@ -8,11 +8,11 @@ Two layers, deliberately kept separate: the **system prompt** (what the model is
 DTCDECODER_DIAGNOSTIC_PROMPT_VERSION = "2026-07-safety-v2"
 ```
 
-Exported from `src/lib/scan-diagnostics/ai/anthropic-provider.ts`, persisted on every `scan_ai_runs` row (`prompt_version` column) so any past run can be traced back to the exact instructions that produced it. Bump this identifier whenever `DEFAULT_SYSTEM_PROMPT`, `SAFETY_SUFFIX`, or the `SUBMIT_DIAGNOSIS_TOOL` JSON schema changes in a way that affects model output.
+Exported from `src/lib/scan-diagnostics/ai/shared-prompt.ts`, persisted on every `scan_ai_runs` row (`prompt_version` column) so any past run can be traced back to the exact instructions that produced it. Bump this identifier whenever `DEFAULT_SYSTEM_PROMPT`, `OPENAI_SAFETY_SUFFIX`, or the `DiagnosticAiOutputSchema` JSON schema changes in a way that affects model output.
 
 ## System prompt structure
 
-`getScanSystemPrompt()` = admin-editable `DEFAULT_SYSTEM_PROMPT` (stored in `admin_settings.scan_diagnostic_ai_system_prompt`, editable by an admin) **+** a fixed, non-negotiable `SAFETY_SUFFIX` appended in code, after the admin-editable part, so an admin edit can never remove it.
+`getScanSystemPrompt()` = admin-editable `DEFAULT_SYSTEM_PROMPT` (stored in `admin_settings.scan_diagnostic_ai_system_prompt`, editable by an admin) **+** a fixed, non-negotiable `OPENAI_SAFETY_SUFFIX` appended in code, after the admin-editable part, so an admin edit can never remove it.
 
 ### Core instruction (opening line)
 

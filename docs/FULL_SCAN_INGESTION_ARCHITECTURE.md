@@ -37,8 +37,8 @@ PDF upload
       → src/lib/scan-diagnostics/patterns.ts detectPatterns()      → scan_patterns
       → src/lib/scan-diagnostics/priority.ts computeDiagnosticPriority()
   → src/lib/scan-diagnostics/canonical-input.ts buildCanonicalDiagnosticInput()
-  → src/lib/scan-diagnostics/ai/anthropic-provider.ts buildUserPrompt()
-  → Anthropic (submit_diagnosis tool call)
+  → src/lib/scan-diagnostics/ai/shared-prompt.ts buildUserPrompt()
+  → OpenAI (structured JSON response)
   → src/lib/scan-diagnostics/confidence.ts computeConfidence()
   → src/lib/scan-diagnostics/report.ts assembleAndPersistReport()
   → src/lib/scan-diagnostics/report-access.ts / src/lib/ai-diagnostics/redaction.ts
@@ -133,7 +133,7 @@ text was present in the source at all). See `normalizeStoredDtcStatus()` in
   `scan_dtc_records`, so the report UI and admin screen never re-derive them from
   description text on every read.
 
-## AI context strategy (`canonical-input.ts`, `anthropic-provider.ts`)
+## AI context strategy (`canonical-input.ts`, `shared-prompt.ts`)
 
 The AI's user-prompt now includes, in addition to the unchanged full per-DTC listing
 (never capped under normal conditions): a system/module summary with

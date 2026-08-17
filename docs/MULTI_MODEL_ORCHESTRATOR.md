@@ -1,9 +1,16 @@
 # Multi-Model Diagnostic Orchestrator
 
+> **Historical design doc.** Written when Anthropic was the primary provider. Anthropic was
+> fully retired in the OpenAI migration — `anthropic-provider.ts` no longer exists, and
+> `getReviewerProvider()` (registry.ts) always returns `null`, since the only reviewer
+> implementation this app ever had was Anthropic's. The rest of this document describes the
+> orchestrator scaffold's design as originally built; it still ships disabled
+> (`AI_ORCHESTRATOR_ENABLED=false`) and untouched for possible future use.
+
 Provider-neutral, budget-controlled orchestration for Scan Report Analysis's AI diagnostic
 step. Ships fully built but **disabled by default** (`AI_ORCHESTRATOR_ENABLED=false`) — with
 the flag off, the app behaves byte-for-byte like it did before this feature existed: a single
-call to `AnthropicDiagnosticProvider`, no router, no budget-guard aggregate check, no
+call to the primary provider, no router, no budget-guard aggregate check, no
 `ai_routing_decisions` row ever written.
 
 ## Why this exists
@@ -41,9 +48,8 @@ not replace or duplicate them:
 ```
 src/lib/scan-diagnostics/ai/
   provider.ts           — DiagnosticAIProvider + DiagnosticReviewer interfaces
-  shared-prompt.ts       — provider-neutral system/user prompt content (was anthropic-provider.ts)
-  anthropic-provider.ts  — Anthropic: primary role (unchanged) AND reviewer role (new)
-  openai-provider.ts     — OpenAI: primary role only
+  shared-prompt.ts       — provider-neutral system/user prompt content
+  openai-provider.ts     — OpenAI: primary role only (sole provider today; Anthropic retired)
   gemini-provider.ts     — scaffold only, throws if ever called, no SDK installed
   review-schema.ts       — Zod schema for the reviewer's structured output
   review-merge.ts        — deterministic application of reviewer correctedFields

@@ -16,8 +16,8 @@ PDF upload
   → src/lib/scan-diagnostics/extraction.ts persistExtraction()  (scan_extractions / scan_dtc_records)
   → src/lib/scan-diagnostics/canonical-input.ts buildCanonicalDiagnosticInput()
   → src/lib/scan-diagnostics/parsers/category-classification.ts classifyDtcCategories()
-  → src/lib/scan-diagnostics/ai/anthropic-provider.ts buildUserPrompt()
-  → Anthropic (submit_diagnosis tool call)
+  → src/lib/scan-diagnostics/ai/shared-prompt.ts buildUserPrompt()
+  → OpenAI (structured JSON response)
   → src/lib/scan-diagnostics/report.ts assembleAndPersistReport()
   → src/lib/ai-diagnostics/redaction.ts filterScanReportForAccessLevel()
   → src/components/ScanReportView.tsx
@@ -42,7 +42,7 @@ PDF upload
 | 13 | Category classification — lost-communication | `category-classification.ts` `LOST_COMM_TEXT_PATTERN` | **FAIL** (independent, compounding bug) | `/\b(lost communication\|no communication\|not communicating\|no response\|communication (fault\|loss\|error))\b/i` does not match the source's actual phrasings: "Frame Lost", "Node Missing", "Message Lost", "Interrupted", "Cannot Receive", "Signal Missing", "Timeout". Even after fixing #2, this pattern would still under-report lost-communication faults — a second, independent bug, not merely a symptom of #2. |
 | 14 | Category classification — battery | `category-classification.ts` `BATTERY_TEXT_PATTERN` | **PASS** (logic) / starved of data | `/\b(battery\|system voltage\|voltage low\|low voltage\|charging system\|voltage drop)\b/i` matches "Battery Low Voltage" via the word "battery" alone. Correct logic, starved of data by #2. |
 | 15 | Category classification — bus-off | *(none)* | **BLOCKED** | No bus-off category exists in `classifyDtcCategories`/`DtcCategoryClassificationSchema` at all. The source's `U000188 CAN Busoff` has nowhere to be classified into. |
-| 16 | AI prompt construction | `canonical-input.ts`, `anthropic-provider.ts` `buildUserPrompt()` | **PASS** | Confirmed by direct code read: `buildUserPrompt` iterates `input.dtcs` with no length cap, slice, or filter — every DTC in `scan_dtc_records` is listed verbatim in the prompt. There is no prompt-size truncation logic anywhere in this path today. If the parser is fixed to extract all 66 DTCs, all 66 will reach the AI unchanged, with no further code change required at this stage for the DTC list itself (a genuinely large multi-hundred-DTC report could still need the size-safeguard/`omittedFromPrompt` mechanism the spec asks for as a forward-looking guard, not because this case needs it at 66 records). |
+| 16 | AI prompt construction | `canonical-input.ts`, `shared-prompt.ts` `buildUserPrompt()` | **PASS** | Confirmed by direct code read: `buildUserPrompt` iterates `input.dtcs` with no length cap, slice, or filter — every DTC in `scan_dtc_records` is listed verbatim in the prompt. There is no prompt-size truncation logic anywhere in this path today. If the parser is fixed to extract all 66 DTCs, all 66 will reach the AI unchanged, with no further code change required at this stage for the DTC list itself (a genuinely large multi-hundred-DTC report could still need the size-safeguard/`omittedFromPrompt` mechanism the spec asks for as a forward-looking guard, not because this case needs it at 66 records). |
 | 17 | Pattern detection / diagnostic priority engine | *(none)* | **BLOCKED** | Does not exist. All ranking/pattern-recognition today happens inside the AI's own free-form reasoning, with no deterministic pre-AI pass. |
 | 18 | Report rendering — category "not stated" claims | `ScanReportView.tsx` | **PASS** (rendering) / driven by upstream data | The UI faithfully renders whatever `classifyDtcCategories` returned. "NOT STATED IN REPORT" for network/lost-comm/battery was the correct rendering of incorrect upstream data (#2, #13, #15) — not a rendering bug itself. |
 

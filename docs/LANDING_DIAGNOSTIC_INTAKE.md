@@ -37,7 +37,7 @@ verified.
 ## Cost control
 
 `processPublicIntake` has no import of, or call path to, any AI provider
-module (`anthropic-provider`, `openai-provider`, `gemini-provider`,
+module (`openai-provider`, `gemini-provider`,
 `ai-diagnostics/{cost,usage,orchestrator}`) — pinned by a source-scan test
 (`test/landing-intake-engine.test.ts`, "never calls a paid provider").
 

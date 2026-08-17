@@ -29,7 +29,7 @@ Distinct stages, each its own module/route — no monolithic handler:
 | DTC normalization | `src/lib/scan-diagnostics/parsers/dtc-extraction.ts` |
 | Extraction persistence/review | `src/lib/scan-diagnostics/extraction.ts` |
 | Usage/entitlement gate | `src/lib/scan-diagnostics/usage.ts`, `entitlements.ts` |
-| AI provider adapter | `src/lib/scan-diagnostics/ai/provider.ts`, `anthropic-provider.ts` |
+| AI provider adapter | `src/lib/scan-diagnostics/ai/provider.ts`, `openai-provider.ts` |
 | Safety review | `src/lib/scan-diagnostics/safety-rules.ts` |
 | Confidence/consensus | `src/lib/scan-diagnostics/confidence.ts` |
 | Orchestration | `src/lib/scan-diagnostics/analyze.ts` |

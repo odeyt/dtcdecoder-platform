@@ -1,5 +1,11 @@
 # `diagnostic_engine_runs.tool_use_present` (Phase 23)
 
+> **Historical fix record.** Written when Anthropic's tool-use API was the sole provider.
+> `anthropic-provider.ts` no longer exists (retired in the OpenAI migration); OpenAI's
+> structured-output throw sites (`openai-provider.ts`) never set `toolUsePresent`, so the
+> column now always persists as `null` for every run. Left as-is below for the historical
+> record of the original two-failure-shape distinction.
+
 ## Finding
 
 While building the Playwright QA framework and investigating the
