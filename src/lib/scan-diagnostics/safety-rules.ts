@@ -37,6 +37,32 @@ const AIRBAG_SQUIB_PATTERN_REVERSE = /\b(ohmmeter|multimeter|resistance|probe|me
 
 const IMMOBILIZER_BYPASS_PATTERN = /\bbypass(?:ing)?\s+(?:the\s+)?(immobilizer|security system|anti-?theft)\b/i;
 
+// The pattern above is already scoped to an actual bypass VERB next to the
+// system name — "read immobilizer authorization status" never matches it.
+// But collectAllText() scans the model's own free-text output (summary,
+// rationale, safety warnings, etc.), and a model discussing a
+// security-adjacent system will sometimes write a CAUTIONARY sentence that
+// still contains the words "bypass" and "immobilizer" together — e.g.
+// "confirm the technician does not need to bypass the immobilizer." A
+// plain substring test can't distinguish that from an actual instruction,
+// so any match is checked against nearby negation cues before counting as
+// a genuine bypass finding.
+const NEGATION_CUE_PATTERN =
+  /\b(not|never|n't|without|avoid(?:ing)?|no need to|must not|cannot|do not|does not|did not|should not|shall not|never attempt|refrain from)\b/i;
+
+function hasNonNegatedMatch(pattern: RegExp, text: string): boolean {
+  const flags = pattern.flags.includes("g") ? pattern.flags : `${pattern.flags}g`;
+  const global = new RegExp(pattern.source, flags);
+  let match: RegExpExecArray | null;
+  while ((match = global.exec(text)) !== null) {
+    const precedingStart = Math.max(0, match.index - 60);
+    const preceding = text.slice(precedingStart, match.index);
+    if (!NEGATION_CUE_PATTERN.test(preceding)) return true;
+    if (match[0].length === 0) global.lastIndex += 1; // avoid an infinite loop on a zero-width match
+  }
+  return false;
+}
+
 // Communication/network-fault context — a module replacement recommended
 // in this context specifically needs power/ground/battery/network
 // confirmation first (a "lost communication" code is very often a wiring,
@@ -97,7 +123,7 @@ const SAFETY_RULES: SafetyRule[] = [
     id: "immobilizer-security-bypass",
     severity: "block",
     message: "Guidance appeared to involve bypassing an immobilizer or security system, which is out of scope here.",
-    matches: (text) => IMMOBILIZER_BYPASS_PATTERN.test(text),
+    matches: (text) => hasNonNegatedMatch(IMMOBILIZER_BYPASS_PATTERN, text),
   },
   {
     id: "comm-fault-module-replacement-without-power-ground-network-tests",

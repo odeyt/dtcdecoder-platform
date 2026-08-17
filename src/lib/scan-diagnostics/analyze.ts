@@ -24,7 +24,7 @@ import { buildCanonicalDiagnosticInput } from "@/lib/scan-diagnostics/canonical-
 import { buildCanonicalVehicleScan } from "@/lib/scan-diagnostics/canonical-scan";
 import { detectPatterns } from "@/lib/scan-diagnostics/patterns";
 import { runSafetyReview } from "@/lib/scan-diagnostics/safety-rules";
-import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
+import { computeConfidence, sanitizeMissingInformation } from "@/lib/scan-diagnostics/confidence";
 import { assembleAndPersistReport } from "@/lib/scan-diagnostics/report";
 import { sendPushNotificationToUser } from "@/lib/push/fcm";
 import {
@@ -278,6 +278,23 @@ export async function runScanAnalysis(
       failedCase,
       isValidationFailure ? { code: err.code, retryable: err.retryable } : undefined,
     );
+  }
+
+  // Deterministic guard, applied before anything downstream (safety review,
+  // confidence scoring, persistence, the rendered report) ever sees the raw
+  // AI output — the model's own missingInformation array is free text with
+  // nothing forcing it to be consistent with what it was actually given.
+  // See sanitizeMissingInformation's doc comment.
+  const missingInfoGuard = sanitizeMissingInformation(providerResult.output.missingInformation, input);
+  if (missingInfoGuard.removed.length > 0) {
+    console.warn(
+      "[scan-diagnostics] removed AI missing-information claim(s) contradicted by canonical input",
+      { caseId, removed: missingInfoGuard.removed },
+    );
+    providerResult = {
+      ...providerResult,
+      output: { ...providerResult.output, missingInformation: missingInfoGuard.sanitized },
+    };
   }
 
   const safety = runSafetyReview(providerResult.output, input);

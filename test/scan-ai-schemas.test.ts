@@ -8,6 +8,7 @@ const VALID_OUTPUT = {
     {
       cause: "Vacuum leak at intake manifold gasket",
       confidenceLevel: "medium",
+      complaintCorrelation: "unknown",
       rationale: "P0171 lean code with rough idle matches a common vacuum leak pattern.",
       supportingEvidence: ["P0171 present", "Rough idle reported"],
       contradictingEvidence: [],

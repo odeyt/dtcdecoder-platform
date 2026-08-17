@@ -4,7 +4,7 @@ import type { ScanReportTranslatable, LocalizedScanReport } from "@/lib/scan-dia
 
 const canonical: ScanReportTranslatable = {
   rankedCauses: [
-    { cause: "Catalyst", confidenceLevel: "medium", rationale: "P0420", supportingEvidence: [], contradictingEvidence: [], confirmationTestsRequired: [] },
+    { cause: "Catalyst", confidenceLevel: "medium", complaintCorrelation: "unknown", rationale: "P0420", supportingEvidence: [], contradictingEvidence: [], confirmationTestsRequired: [] },
   ],
   recommendedTests: [{ step: "Read data", purpose: "Compare", expectedResult: "Switching" }],
   missingInformation: [],

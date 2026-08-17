@@ -265,6 +265,8 @@ describe("CopyReportButton", () => {
       totalDtcCount: 1,
       currentCount: 1,
       historyCount: 0,
+      permanentCount: 0,
+      intermittentCount: 0,
       networkCount: 0,
       batteryVoltageCount: 0,
       safetyCriticalCount: 0,

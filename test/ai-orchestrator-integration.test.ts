@@ -43,6 +43,7 @@ const VALID_OUTPUT: DiagnosticAiOutput = {
     {
       cause: "Vacuum leak",
       confidenceLevel: "medium",
+      complaintCorrelation: "unknown",
       rationale: "P0171 lean code",
       supportingEvidence: [],
       contradictingEvidence: [],

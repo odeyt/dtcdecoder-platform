@@ -51,6 +51,7 @@ const VALID_OUTPUT: DiagnosticAiOutput = {
     {
       cause: "Open ground at G103",
       confidenceLevel: "high",
+      complaintCorrelation: "unknown",
       rationale: "P0562 present alongside a reported no-start.",
       supportingEvidence: ["P0562"],
       contradictingEvidence: [],

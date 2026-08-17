@@ -18,6 +18,7 @@ import type { ScanCauseStatus, ScanReportCauseStatus } from "@/lib/types";
 interface RankedCause {
   cause: string;
   confidenceLevel?: "high" | "medium" | "low" | "insufficient_evidence";
+  complaintCorrelation?: "strong" | "moderate" | "weak" | "unknown";
   rationale: string;
   supportingEvidence: string[];
   contradictingEvidence: string[];
@@ -41,6 +42,13 @@ const CONFIDENCE_KEY: Record<string, string> = {
   medium: "confidenceMedium",
   low: "confidenceLow",
   insufficient_evidence: "confidenceInsufficientEvidence",
+};
+
+const CORRELATION_KEY: Record<string, string> = {
+  strong: "complaintCorrelationStrong",
+  moderate: "complaintCorrelationModerate",
+  weak: "complaintCorrelationWeak",
+  unknown: "complaintCorrelationUnknown",
 };
 
 export function LikelyCausesSection({ caseId, causes, initialStatus }: LikelyCausesSectionProps) {
@@ -80,7 +88,7 @@ export function LikelyCausesSection({ caseId, causes, initialStatus }: LikelyCau
           <div key={i} className="glass-panel rounded-[var(--radius-lg)] p-5">
             <div className="flex flex-wrap items-center gap-2">
               <span
-                className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-[10px] font-semibold"
+                className="whitespace-nowrap rounded-full border px-2 py-0.5 font-mono text-xs font-semibold"
                 style={{
                   borderColor: i === 0 ? "var(--accent-red)" : "var(--border-subtle)",
                   color: i === 0 ? "var(--accent-red)" : "var(--text-muted)",
@@ -92,23 +100,28 @@ export function LikelyCausesSection({ caseId, causes, initialStatus }: LikelyCau
                 level={cause.confidenceLevel}
                 label={cause.confidenceLevel && CONFIDENCE_KEY[cause.confidenceLevel] ? t(CONFIDENCE_KEY[cause.confidenceLevel]) : undefined}
               />
+              {cause.complaintCorrelation && (
+                <span className="whitespace-nowrap rounded-full border border-[var(--border-subtle)] px-2 py-0.5 text-xs font-semibold text-[var(--text-secondary)]">
+                  {t("complaintCorrelationLabel")} {t(CORRELATION_KEY[cause.complaintCorrelation])}
+                </span>
+              )}
               <ResultPill category="status" value={causeStatusToPill(status)} />
             </div>
-            <p className="mt-2 font-semibold text-[var(--text-primary)]">{cause.cause}</p>
-            <p className="mt-1 text-sm text-[var(--text-secondary)]">{cause.rationale}</p>
+            <p className="mt-2 text-lg font-semibold text-[var(--text-primary)]">{cause.cause}</p>
+            <p className="mt-1 text-base leading-7 text-[var(--text-secondary)]">{cause.rationale}</p>
             {cause.supportingEvidence.length > 0 && (
-              <div className="mt-2 text-xs text-[var(--text-secondary)]">
+              <div className="mt-3 text-sm leading-6 text-[var(--text-secondary)]">
                 <span className="font-semibold text-[var(--text-primary)]">{t("supportingEvidence")} </span>
                 {cause.supportingEvidence.join("; ")}
               </div>
             )}
             {cause.contradictingEvidence.length > 0 && (
-              <div className="mt-1 text-xs text-[var(--text-secondary)]">
+              <div className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
                 <span className="font-semibold text-[var(--text-primary)]">{t("contradictingEvidence")} </span>
                 {cause.contradictingEvidence.join("; ")}
               </div>
             )}
-            <div className="mt-2 text-xs text-[var(--text-secondary)]">
+            <div className="mt-2 text-sm leading-6 text-[var(--text-secondary)]">
               <span className="font-semibold text-[var(--text-primary)]">{t("requiredBeforeReplacing")} </span>
               {cause.confirmationTestsRequired && cause.confirmationTestsRequired.length > 0
                 ? cause.confirmationTestsRequired.join("; ")

@@ -40,6 +40,10 @@ export const QuickDiagnosticCaseInputSchema = z.object({
   modelYear: z.number().int().min(1950).max(2100).optional(),
   engine: z.string().trim().max(200).optional(),
   module: z.string().trim().max(100).optional(),
+  // The customer's stated primary concern (e.g. "Vehicle does not start") —
+  // distinct from symptoms/scanToolNotes below. Maps to scan_cases.complaint,
+  // same as the file-upload intake path (ScanCaseUploadForm.tsx).
+  complaint: z.string().trim().max(2000).optional(),
   symptoms: z.array(z.string().trim().min(1).max(200)).max(50).optional(),
   freezeFrameNotes: z.string().trim().max(2000).optional(),
   repairHistory: z.string().trim().max(4000).optional(),
@@ -174,9 +178,20 @@ export type CanonicalDiagnosticInput = z.infer<typeof CanonicalDiagnosticInputSc
 export const ConfidenceLevelSchema = z.enum(["high", "medium", "low", "insufficient_evidence"]);
 export type ConfidenceLevel = z.infer<typeof ConfidenceLevelSchema>;
 
+// How strongly this cause correlates with the technician-supplied
+// complaint/symptoms — "unknown" when no complaint was supplied at all,
+// distinct from "weak" (a complaint was supplied but doesn't point at this
+// cause). Makes the ranking explainable to a technician without exposing
+// the model's raw chain-of-thought — this is the concise, structured
+// answer to "why does DTCDecoder think this fault relates to what the
+// vehicle is actually doing?"
+export const ComplaintCorrelationSchema = z.enum(["strong", "moderate", "weak", "unknown"]);
+export type ComplaintCorrelation = z.infer<typeof ComplaintCorrelationSchema>;
+
 const RankedCauseSchema = z.object({
   cause: z.string(),
   confidenceLevel: ConfidenceLevelSchema,
+  complaintCorrelation: ComplaintCorrelationSchema,
   rationale: z.string(),
   supportingEvidence: z.array(z.string()),
   contradictingEvidence: z.array(z.string()),

@@ -25,6 +25,7 @@ function output(overrides: Partial<DiagnosticAiOutput>): DiagnosticAiOutput {
       {
         cause: "Faulty oxygen sensor",
         confidenceLevel: "medium",
+        complaintCorrelation: "unknown",
         rationale: "Lean code pattern consistent with sensor drift.",
         supportingEvidence: ["P0171 present"],
         contradictingEvidence: [],
@@ -54,6 +55,7 @@ describe("runSafetyReview", () => {
           {
             cause: "Replace the BCM",
             confidenceLevel: "high",
+            complaintCorrelation: "unknown",
             rationale: "Multiple network faults suggest BCM failure.",
             supportingEvidence: [],
             contradictingEvidence: [],
@@ -75,6 +77,7 @@ describe("runSafetyReview", () => {
           {
             cause: "Replace the TCM",
             confidenceLevel: "medium",
+            complaintCorrelation: "unknown",
             rationale: "Shift faults observed.",
             supportingEvidence: [],
             contradictingEvidence: [],
@@ -98,6 +101,7 @@ describe("runSafetyReview", () => {
           {
             cause: "Replace the TCM",
             confidenceLevel: "medium",
+            complaintCorrelation: "unknown",
             rationale: "Shift faults observed.",
             supportingEvidence: [],
             contradictingEvidence: [],
@@ -162,6 +166,7 @@ describe("runSafetyReview", () => {
           {
             cause: "Replace the BCM",
             confidenceLevel: "medium",
+            complaintCorrelation: "unknown",
             rationale: "Multiple modules report lost communication, pointing to a failed BCM.",
             supportingEvidence: [],
             contradictingEvidence: [],
@@ -186,6 +191,7 @@ describe("runSafetyReview", () => {
           {
             cause: "Replace the BCM",
             confidenceLevel: "medium",
+            complaintCorrelation: "unknown",
             rationale: "Multiple modules report lost communication with the BCM.",
             supportingEvidence: [],
             contradictingEvidence: [],
@@ -210,6 +216,77 @@ describe("runSafetyReview", () => {
   it("always blocks immobilizer bypass guidance", () => {
     const result = runSafetyReview(
       output({ summary: "To resolve this, bypass the immobilizer and clear the fault." }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "immobilizer-security-bypass")).toBe(true);
+  });
+
+  // Regression for a real false positive: legitimate OEM-style diagnosis of
+  // the immobilizer/key-authentication/start-authorization chain must be
+  // allowed — the bypass rule exists to block actual defeat/circumvent
+  // instructions, not any mention of these systems at all.
+  it("allows legitimate immobilizer/start-authorization diagnostic guidance, never blocks it", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "No-start complaint correlates with a column-lock authorization DTC.",
+        rankedCauses: [
+          {
+            cause: "Column-lock/start-authorization chain",
+            confidenceLevel: "medium",
+            complaintCorrelation: "strong",
+            rationale: "B100D-67 (Column Lock Authorisation, permanent) directly correlates with the no-start complaint.",
+            supportingEvidence: ["Permanent column-lock authorization fault present"],
+            contradictingEvidence: [],
+            confirmationTestsRequired: [
+              "Read immobilizer authorization status",
+              "Check smart-key validity and confirm the key is recognized",
+              "Read column-lock authorization and actual state",
+              "Verify RFA configuration and programmed-key count",
+              "Follow the OEM start-authorization initialization procedure",
+            ],
+          },
+        ],
+        recommendedTests: [
+          {
+            step: "Read immobilizer authorization and start-authorization status with a scan tool",
+            purpose: "Confirm whether the BCM/RFA are granting start authorization before suspecting the column lock itself",
+            expectedResult: "Authorization status matches expected state for a valid, recognized key",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("pass");
+    expect(result.findings.some((f) => f.ruleId === "immobilizer-security-bypass")).toBe(false);
+  });
+
+  it("does not block a cautionary sentence that mentions bypassing the immobilizer only to say not to", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "Confirm the technician does not need to bypass the immobilizer to complete this test.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "immobilizer-security-bypass")).toBe(false);
+  });
+
+  it("still blocks a genuine bypass instruction even when a negated sentence appears elsewhere in the same output", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "Do not attempt to bypass the immobilizer under normal circumstances.",
+        rankedCauses: [
+          {
+            cause: "Bad idea",
+            confidenceLevel: "low",
+            complaintCorrelation: "unknown",
+            rationale: "As a shortcut, bypass the immobilizer and hot-wire the starter circuit directly.",
+            supportingEvidence: [],
+            contradictingEvidence: [],
+            confirmationTestsRequired: [],
+          },
+        ],
+      }),
       BASE_INPUT,
     );
     expect(result.verdict).toBe("block");

@@ -110,7 +110,7 @@ export function TechnicianNotesSection({ caseId, initialNotes }: TechnicianNotes
           {notes.map((note) => (
             <li key={note.id} className="glass-panel rounded-[var(--radius-lg)] p-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="font-mono text-[10px] uppercase tracking-wide text-[var(--text-muted)]">
+                <span className="font-mono text-xs uppercase tracking-wide text-[var(--text-muted)]">
                   {categoryLabel[note.category]} · {new Date(note.created_at).toLocaleString()}
                 </span>
                 <div className="flex gap-2 print:hidden">

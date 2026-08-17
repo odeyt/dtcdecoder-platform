@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { computeConfidence } from "@/lib/scan-diagnostics/confidence";
+import { computeConfidence, sanitizeMissingInformation } from "@/lib/scan-diagnostics/confidence";
 import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 import type { CanonicalDiagnosticInput, DiagnosticAiOutput } from "@/lib/scan-diagnostics/schemas";
 import type { DiagnosticAIProviderResult } from "@/lib/scan-diagnostics/ai/provider";
@@ -64,6 +64,7 @@ function output(overrides: Partial<DiagnosticAiOutput> = {}): DiagnosticAiOutput
       {
         cause: "Vacuum leak",
         confidenceLevel: "medium",
+        complaintCorrelation: "unknown",
         rationale: "r",
         supportingEvidence: [],
         contradictingEvidence: [],
@@ -192,6 +193,7 @@ describe("computeConfidence — internal deterministic score (never displayed di
             {
               cause: "Failed O2 sensor",
               confidenceLevel: "medium",
+              complaintCorrelation: "unknown",
               rationale: "r",
               supportingEvidence: [],
               contradictingEvidence: [],
@@ -231,5 +233,63 @@ describe("computeConfidence — categorical confidenceLevel (what the UI/API act
   it("never returns a numerical field as part of confidenceLevel — only one of the four fixed labels", () => {
     const { confidenceLevel } = computeConfidence([result(output())], BASE_INPUT, { verdict: "pass" });
     expect(["high", "medium", "low", "insufficient_evidence"]).toContain(confidenceLevel);
+  });
+});
+
+describe("sanitizeMissingInformation", () => {
+  it("strips a false 'no customer complaint was provided' claim when the complaint is actually populated", () => {
+    const { sanitized, removed } = sanitizeMissingInformation(
+      ["No customer complaint was provided.", "No live data available."],
+      { complaint: "Vehicle does not start", symptoms: [] },
+    );
+    expect(sanitized).toEqual(["No live data available."]);
+    expect(removed).toEqual(["No customer complaint was provided."]);
+  });
+
+  it("strips a false 'no symptoms were supplied' claim when symptoms are actually populated", () => {
+    const { sanitized, removed } = sanitizeMissingInformation(
+      ["No symptoms were supplied.", "No freeze frame data."],
+      { complaint: null, symptoms: ["Starter does not crank"] },
+    );
+    expect(sanitized).toEqual(["No freeze frame data."]);
+    expect(removed).toEqual(["No symptoms were supplied."]);
+  });
+
+  it("leaves a genuine 'no complaint provided' claim intact when the complaint really is empty", () => {
+    const { sanitized, removed } = sanitizeMissingInformation(["No customer complaint was provided."], {
+      complaint: null,
+      symptoms: [],
+    });
+    expect(sanitized).toEqual(["No customer complaint was provided."]);
+    expect(removed).toEqual([]);
+  });
+
+  it("leaves a genuine 'no complaint provided' claim intact when the complaint is only whitespace", () => {
+    const { sanitized, removed } = sanitizeMissingInformation(["No customer complaint was provided."], {
+      complaint: "   ",
+      symptoms: [],
+    });
+    expect(sanitized).toEqual(["No customer complaint was provided."]);
+    expect(removed).toEqual([]);
+  });
+
+  it("never touches unrelated missing-information items", () => {
+    const items = ["No VIN provided.", "No live data available.", "Freeze frame not captured."];
+    const { sanitized, removed } = sanitizeMissingInformation(items, {
+      complaint: "Vehicle does not start",
+      symptoms: ["No crank"],
+    });
+    expect(sanitized).toEqual(items);
+    expect(removed).toEqual([]);
+  });
+
+  it("is narrow enough not to strip an item that merely mentions 'complaint' without claiming it's missing", () => {
+    const items = ["The complaint description does not mention any prior repair attempts."];
+    const { sanitized, removed } = sanitizeMissingInformation(items, {
+      complaint: "Vehicle does not start",
+      symptoms: [],
+    });
+    expect(sanitized).toEqual(items);
+    expect(removed).toEqual([]);
   });
 });

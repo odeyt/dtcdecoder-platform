@@ -9,6 +9,7 @@ const PRIMARY: DiagnosticAiOutput = {
     {
       cause: "Vacuum leak",
       confidenceLevel: "medium",
+      complaintCorrelation: "unknown",
       rationale: "Lean condition on bank 1",
       supportingEvidence: [],
       contradictingEvidence: [],

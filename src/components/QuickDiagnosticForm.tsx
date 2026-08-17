@@ -59,6 +59,7 @@ export function QuickDiagnosticForm({
   const [modelYear, setModelYear] = useState(prefill.modelYear);
   const [engine, setEngine] = useState(prefill.engine);
   const [module, setModuleField] = useState("");
+  const [complaint, setComplaint] = useState("");
   const [symptoms, setSymptoms] = useState("");
   const [freezeFrameNotes, setFreezeFrameNotes] = useState("");
   const [repairHistory, setRepairHistory] = useState("");
@@ -86,6 +87,7 @@ export function QuickDiagnosticForm({
           modelYear: modelYear ? Number(modelYear) : undefined,
           engine: engine || undefined,
           module: module || undefined,
+          complaint: complaint || undefined,
           symptoms: symptoms
             ? symptoms.split("\n").map((s) => s.trim()).filter(Boolean)
             : undefined,
@@ -198,6 +200,16 @@ export function QuickDiagnosticForm({
         <Field label={t("fieldControlModule")}><input value={module} onChange={(e) => setModuleField(e.target.value)} placeholder={t("controlModulePlaceholder")} className={inputClass} /></Field>
       </div>
 
+      <Field label={t("fieldComplaint")}>
+        <textarea
+          value={complaint}
+          onChange={(e) => setComplaint(e.target.value)}
+          rows={2}
+          placeholder={t("fieldComplaintPlaceholder")}
+          className={inputClass}
+        />
+        {!complaint && <p className="mt-1 text-xs text-[var(--text-muted)]">{t("noComplaintWarning")}</p>}
+      </Field>
       <Field label={t("fieldSymptoms")}>
         <textarea value={symptoms} onChange={(e) => setSymptoms(e.target.value)} rows={3} className={inputClass} />
       </Field>
