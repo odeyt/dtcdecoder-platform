@@ -279,6 +279,7 @@
     "sendingLoginLink": "Enviando…",
     "checkEmailForLink": "Revisa {email} para ver el enlace de acceso.",
     "magicLinkError": "Algo salió mal. Inténtalo de nuevo.",
+    "signInLinkExpired": "Ese enlace de acceso no es válido o ha caducado. Solicita uno nuevo a continuación.",
     "useMagicLinkInstead": "Usar un enlace mágico en su lugar",
     "signInWithPasswordInstead": "Iniciar sesión con contraseña en su lugar",
     "signIn": "Iniciar sesión",

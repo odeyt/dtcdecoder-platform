@@ -81,6 +81,7 @@
     "sendingLoginLink": "កំពុងផ្ញើ…",
     "checkEmailForLink": "ពិនិត្យមើល {email} សម្រាប់តំណចូល។",
     "magicLinkError": "មានបញ្ហាកើតឡើង។ សូមព្យាយាមម្តងទៀត។",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "ប្រើតំណវេទមន្តជំនួសវិញ",
     "signInWithPasswordInstead": "ចូលដោយប្រើពាក្យសម្ងាត់ជំនួសវិញ",
     "signIn": "ចូល",

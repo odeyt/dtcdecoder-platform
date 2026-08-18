@@ -81,6 +81,7 @@
     "sendingLoginLink": "전송 중…",
     "checkEmailForLink": "{email}에서 로그인 링크를 확인하세요.",
     "magicLinkError": "문제가 발생했습니다. 다시 시도해 주세요.",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "대신 매직 링크 사용",
     "signInWithPasswordInstead": "대신 비밀번호로 로그인",
     "signIn": "로그인",

@@ -81,6 +81,7 @@
     "sendingLoginLink": "ກຳລັງສົ່ງ…",
     "checkEmailForLink": "ກວດເບິ່ງ {email} ສຳລັບລິ້ງເຂົ້າສູ່ລະບົບ.",
     "magicLinkError": "ມີບາງຢ່າງຜິດພາດ. ກະລຸນາລອງໃໝ່.",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "ໃຊ້ລິ້ງມະຫັດສະຈັນແທນ",
     "signInWithPasswordInstead": "ເຂົ້າສູ່ລະບົບດ້ວຍລະຫັດຜ່ານແທນ",
     "signIn": "ເຂົ້າສູ່ລະບົບ",

@@ -81,6 +81,7 @@
     "sendingLoginLink": "กำลังส่ง…",
     "checkEmailForLink": "ตรวจสอบ {email} เพื่อรับลิงก์เข้าสู่ระบบ",
     "magicLinkError": "เกิดข้อผิดพลาด กรุณาลองใหม่อีกครั้ง",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "ใช้ลิงก์วิเศษแทน",
     "signInWithPasswordInstead": "เข้าสู่ระบบด้วยรหัสผ่านแทน",
     "signIn": "เข้าสู่ระบบ",

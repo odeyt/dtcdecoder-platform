@@ -81,6 +81,7 @@
     "sendingLoginLink": "发送中…",
     "checkEmailForLink": "请查看 {email} 获取登录链接。",
     "magicLinkError": "出现问题，请重试。",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "改用魔法链接",
     "signInWithPasswordInstead": "改用密码登录",
     "signIn": "登录",

@@ -81,6 +81,7 @@
     "sendingLoginLink": "Enviando…",
     "checkEmailForLink": "Verifique {email} para o link de login.",
     "magicLinkError": "Algo deu errado. Tente novamente.",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "Usar link mágico em vez disso",
     "signInWithPasswordInstead": "Entrar com senha em vez disso",
     "signIn": "Entrar",

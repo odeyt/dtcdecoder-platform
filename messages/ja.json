@@ -81,6 +81,7 @@
     "sendingLoginLink": "送信中…",
     "checkEmailForLink": "{email} を確認してログインリンクをご覧ください。",
     "magicLinkError": "問題が発生しました。もう一度お試しください。",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "代わりにマジックリンクを使用する",
     "signInWithPasswordInstead": "代わりにパスワードでサインインする",
     "signIn": "サインイン",

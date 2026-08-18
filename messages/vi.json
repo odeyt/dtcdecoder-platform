@@ -81,6 +81,7 @@
     "sendingLoginLink": "Đang gửi…",
     "checkEmailForLink": "Kiểm tra {email} để nhận liên kết đăng nhập.",
     "magicLinkError": "Đã xảy ra lỗi. Vui lòng thử lại.",
+    "signInLinkExpired": "That sign-in link is invalid or has expired. Request a new one below.",
     "useMagicLinkInstead": "Sử dụng liên kết ma thuật thay thế",
     "signInWithPasswordInstead": "Đăng nhập bằng mật khẩu thay thế",
     "signIn": "Đăng nhập",
