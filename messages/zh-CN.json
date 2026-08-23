@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "代码定义",
-    "freeInclude2": "常见原因",
+    "freeInclude2": "可能原因的数量",
     "freeInclude3": "已报告的症状",
     "freeInclude4": "初步诊断检查",
     "freeInclude5": "基本更换注意事项",
@@ -142,7 +142,7 @@
     "freeBullet1": "预览访问公开 DTC 指南",
     "freeBullet2": "每天 1 次基础搜索",
     "freeBullet3": "每月 5 次基础搜索",
-    "freeBullet4": "基础代码定义和常见原因",
+    "freeBullet4": "基础代码定义和可能原因的数量",
     "freeBullet5": "重要的已审核安全警告",
     "freeBullet6": "DTC Technician 仅限付费套餐使用",
     "startFree": "免费开始",

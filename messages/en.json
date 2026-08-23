@@ -301,7 +301,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "Code definition",
-    "freeInclude2": "Common causes",
+    "freeInclude2": "Possible-cause count",
     "freeInclude3": "Reported symptoms",
     "freeInclude4": "Initial diagnostic checks",
     "freeInclude5": "Basic replacement caution",
@@ -340,7 +340,7 @@
     "freeBullet1": "Preview access to the public DTC guide",
     "freeBullet2": "1 basic search per day",
     "freeBullet3": "5 basic searches per month",
-    "freeBullet4": "Basic code definitions and common causes",
+    "freeBullet4": "Basic code definitions and possible-cause counts",
     "freeBullet5": "Essential reviewed safety warnings",
     "freeBullet6": "DTC Technician available on paid plans",
     "startFree": "Start Free",

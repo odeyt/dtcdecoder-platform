@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "コードの定義",
-    "freeInclude2": "一般的な原因",
+    "freeInclude2": "考えられる原因の件数",
     "freeInclude3": "報告された症状",
     "freeInclude4": "初期診断チェック",
     "freeInclude5": "基本的な交換に関する注意事項",
@@ -142,7 +142,7 @@
     "freeBullet1": "公開DTCガイドへのプレビューアクセス",
     "freeBullet2": "1日1回の基本検索",
     "freeBullet3": "月5回の基本検索",
-    "freeBullet4": "基本的なコード定義と一般的な原因",
+    "freeBullet4": "基本的なコード定義と考えられる原因の件数",
     "freeBullet5": "重要な確認済み安全警告",
     "freeBullet6": "DTC Technicianは有料プランで利用可能",
     "startFree": "無料で開始",

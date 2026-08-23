@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "코드 정의",
-    "freeInclude2": "일반적인 원인",
+    "freeInclude2": "가능한 원인 개수",
     "freeInclude3": "보고된 증상",
     "freeInclude4": "초기 진단 점검",
     "freeInclude5": "기본 교체 주의사항",
@@ -142,7 +142,7 @@
     "freeBullet1": "공개 DTC 가이드 미리보기 액세스",
     "freeBullet2": "하루 1회 기본 검색",
     "freeBullet3": "월 5회 기본 검색",
-    "freeBullet4": "기본 코드 정의 및 일반적인 원인",
+    "freeBullet4": "기본 코드 정의 및 가능한 원인 개수",
     "freeBullet5": "필수 검토된 안전 경고",
     "freeBullet6": "DTC Technician은 유료 요금제에서 이용 가능합니다",
     "startFree": "무료로 시작",

@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "Définition du code",
-    "freeInclude2": "Causes courantes",
+    "freeInclude2": "Nombre de causes possibles",
     "freeInclude3": "Symptômes signalés",
     "freeInclude4": "Vérifications diagnostiques initiales",
     "freeInclude5": "Mise en garde de base sur le remplacement",
@@ -142,7 +142,7 @@
     "freeBullet1": "Accès en aperçu au guide DTC public",
     "freeBullet2": "1 recherche de base par jour",
     "freeBullet3": "5 recherches de base par mois",
-    "freeBullet4": "Définitions de codes de base et causes courantes",
+    "freeBullet4": "Définitions de codes de base et nombre de causes possibles",
     "freeBullet5": "Avertissements de sécurité essentiels vérifiés",
     "freeBullet6": "DTC Technician disponible sur les forfaits payants",
     "startFree": "Commencer gratuitement",

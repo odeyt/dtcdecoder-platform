@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "Định nghĩa mã lỗi",
-    "freeInclude2": "Nguyên nhân thường gặp",
+    "freeInclude2": "Số lượng nguyên nhân có thể xảy ra",
     "freeInclude3": "Triệu chứng đã báo cáo",
     "freeInclude4": "Kiểm tra chẩn đoán ban đầu",
     "freeInclude5": "Lưu ý cơ bản khi thay thế",
@@ -142,7 +142,7 @@
     "freeBullet1": "Quyền truy cập xem trước hướng dẫn DTC công khai",
     "freeBullet2": "1 lượt tra cứu cơ bản mỗi ngày",
     "freeBullet3": "5 lượt tra cứu cơ bản mỗi tháng",
-    "freeBullet4": "Định nghĩa mã cơ bản và nguyên nhân thường gặp",
+    "freeBullet4": "Định nghĩa mã cơ bản và số lượng nguyên nhân có thể xảy ra",
     "freeBullet5": "Cảnh báo an toàn thiết yếu đã được xem xét",
     "freeBullet6": "DTC Technician khả dụng trên các gói trả phí",
     "startFree": "Bắt đầu miễn phí",

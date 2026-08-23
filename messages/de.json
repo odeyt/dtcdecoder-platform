@@ -103,7 +103,7 @@
   },
   "reportUpsell": {
     "freeInclude1": "Codedefinition",
-    "freeInclude2": "Häufige Ursachen",
+    "freeInclude2": "Anzahl möglicher Ursachen",
     "freeInclude3": "Gemeldete Symptome",
     "freeInclude4": "Erste diagnostische Prüfungen",
     "freeInclude5": "Grundlegender Hinweis zum Austausch",
@@ -142,7 +142,7 @@
     "freeBullet1": "Vorschauzugriff auf den öffentlichen DTC-Leitfaden",
     "freeBullet2": "1 einfache Suche pro Tag",
     "freeBullet3": "5 einfache Suchen pro Monat",
-    "freeBullet4": "Grundlegende Code-Definitionen und häufige Ursachen",
+    "freeBullet4": "Grundlegende Code-Definitionen und Anzahl möglicher Ursachen",
     "freeBullet5": "Wesentliche geprüfte Sicherheitswarnungen",
     "freeBullet6": "DTC Technician verfügbar in kostenpflichtigen Plänen",
     "startFree": "Kostenlos starten",
