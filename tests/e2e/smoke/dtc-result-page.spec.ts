@@ -77,25 +77,24 @@ for (const viewport of VIEWPORTS) {
       console_.assertClean();
     });
 
-    test("ranks causes with visible numbers and a single most-likely marker", async ({ page }) => {
+    test("names no cause on the free preview — only a locked count teaser", async ({ page }) => {
       await page.goto(RESULT_PATH);
 
       const causes = page.getByTestId("most-likely-causes");
       await expect(causes).toBeVisible();
 
-      // Rank is real text, so it survives with colour and badges ignored.
-      await expect(causes.getByTestId("ranked-cause-1")).toBeVisible();
-      await expect(causes.getByText("#1")).toBeVisible();
+      // Free/anonymous visitors never see which cause ranks #1 — naming it,
+      // combined with the free symptoms list, was often enough on its own
+      // to self-diagnose without ever converting. See dtc-redaction.ts
+      // (PREVIEW_CAUSES_SHOWN = 0).
+      await expect(causes.getByTestId("ranked-cause-1")).toHaveCount(0);
+      await expect(causes.locator("ol")).toHaveCount(0);
 
-      // Only the top cause carries the badge. Scoped to the list, not the
-      // section: the section's own heading is "Most likely causes", which
-      // would otherwise match this text too.
-      const list = causes.getByTestId("ranked-cause-list");
-      await expect(list.getByText(/most likely/i)).toHaveCount(1);
-      await expect(list.getByTestId("ranked-cause-1").getByText(/most likely/i)).toHaveCount(1);
-
-      // Ranked causes are an ordered list, not a stack of divs.
-      await expect(causes.locator("ol")).toHaveCount(1);
+      // The count is still shown as a teaser, with a working upgrade link.
+      const teaser = causes.getByTestId("causes-locked-teaser");
+      await expect(teaser).toBeVisible();
+      await expect(teaser).toContainText(/possible cause/i);
+      await expect(teaser.getByRole("link")).toHaveAttribute("href", "/pricing");
     });
 
     test("keeps the conversion panel's CTAs usable at this size", async ({ page }) => {

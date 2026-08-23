@@ -140,7 +140,7 @@ export function DtcCodeResult({
               mostLikelyLabel={t("mostLikelyBadge")}
             />
             {redaction.hiddenCausesCount > 0 && (
-              <p className="text-sm text-[var(--text-secondary)]">
+              <p data-testid="causes-locked-teaser" className="text-sm text-[var(--text-secondary)]">
                 {t("causesLockedTeaser", { count: redaction.hiddenCausesCount })}{" "}
                 <Link href="/pricing" className="font-semibold text-[var(--accent-red)] hover:underline">
                   {t("upgradeButton")}
