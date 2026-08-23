@@ -338,7 +338,7 @@
     "difficultyProfessional": "ລະດັບມືອາຊີບ — ການນຳໄປອູ່ເປັນທາງທີ່ປອດໄພກວ່າ",
     "contentNotLocalizedNote": "ເນື້ອຫາອ້າງອີງຂອງລະຫັດນີ້ (ຄວາມໝາຍ, ສາເຫດ, ຂັ້ນຕອນ) ສະແດງເປັນພາສາອັງກິດຕົ້ນສະບັບ — ມີພຽງປ້າຍກຳກັບອ້ອມຂ້າງເທົ່ານັ້ນທີ່ຖືກແປ.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "ໝວດໝູ່ (ອະນຸມານຈາກໂຄງສ້າງລະຫັດ)",
     "categoryLabel": "ໝວດໝູ່",

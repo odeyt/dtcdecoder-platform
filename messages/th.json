@@ -338,7 +338,7 @@
     "difficultyProfessional": "ระดับมืออาชีพ — การนำเข้าอู่เป็นทางที่ปลอดภัยกว่า",
     "contentNotLocalizedNote": "เนื้อหาอ้างอิงของรหัสนี้ (ความหมาย สาเหตุ ขั้นตอน) แสดงเป็นภาษาอังกฤษต้นฉบับ — มีเพียงป้ายกำกับโดยรอบเท่านั้นที่แปลเป็นภาษาท้องถิ่น",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "หมวดหมู่ (อนุมานจากโครงสร้างรหัส)",
     "categoryLabel": "หมวดหมู่",

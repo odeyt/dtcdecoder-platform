@@ -22,9 +22,12 @@ export function accessLevelForDtcContent(plan: SubscriptionPlan): DtcAccessLevel
   return plan === "free" ? "preview" : "full";
 }
 
-// How many of the ranked causes a preview visitor sees before the rest lock
-// — enough to confirm relevance, not enough to be "the answer."
-const PREVIEW_CAUSES_SHOWN = 1;
+// How many of the ranked causes a preview visitor sees before the rest lock.
+// Zero, deliberately: naming which single cause ranks #1 — combined with the
+// free symptoms list — was often enough on its own for a visitor to
+// self-diagnose and never convert. The free page still confirms causes exist
+// (hiddenCausesCount) without naming any of them.
+const PREVIEW_CAUSES_SHOWN = 0;
 
 export interface DtcRedactionResult {
   accessLevel: DtcAccessLevel;

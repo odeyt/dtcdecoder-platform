@@ -338,7 +338,7 @@
     "difficultyProfessional": "Chuyên nghiệp — đưa đến gara là lựa chọn an toàn hơn",
     "contentNotLocalizedNote": "Nội dung tham chiếu của mã này (ý nghĩa, nguyên nhân, các bước) được hiển thị bằng tiếng Anh gốc — chỉ các nhãn xung quanh được bản địa hóa.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "Danh mục (suy ra từ cấu trúc mã)",
     "categoryLabel": "Danh mục",

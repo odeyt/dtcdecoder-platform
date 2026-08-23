@@ -338,7 +338,7 @@
     "difficultyProfessional": "អាជីព — ការនាំទៅហាងជាផ្លូវដែលមានសុវត្ថិភាពជាង",
     "contentNotLocalizedNote": "ខ្លឹមសារយោងនៃកូដនេះ (អត្ថន័យ មូលហេតុ ជំហាន) បង្ហាញជាភាសាអង់គ្លេសដើម — មានតែស្លាកជុំវិញប៉ុណ្ណោះដែលត្រូវបានបកប្រែ។",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "ប្រភេទ (កំណត់ពីរចនាសម្ព័ន្ធកូដ)",
     "categoryLabel": "ប្រភេទ",

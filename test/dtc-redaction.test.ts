@@ -78,9 +78,9 @@ describe("filterDtcCodeForAccessLevel — preview", () => {
     expect(result.visible.drive_recommendation).toBe(dtc.drive_recommendation);
   });
 
-  it("shows only the first cause and reports how many are hidden", () => {
-    expect(result.visible.causes).toEqual(["Vacuum leak"]);
-    expect(result.hiddenCausesCount).toBe(2);
+  it("names no cause — only reports how many exist, to avoid giving away the answer for free", () => {
+    expect(result.visible.causes).toEqual([]);
+    expect(result.hiddenCausesCount).toBe(3);
   });
 
   it("strips diagnostic steps, repair resources, and common mistakes entirely", () => {
@@ -95,6 +95,7 @@ describe("filterDtcCodeForAccessLevel — preview", () => {
     expect(serialized).not.toContain("Smoke test the intake system");
     expect(serialized).not.toContain("Inspect the PCV valve");
     expect(serialized).not.toContain("repair.pdf");
+    expect(serialized).not.toContain("Vacuum leak");
     expect(serialized).not.toContain("Failed PCV valve");
     expect(serialized).not.toContain("Cracked intake boot");
     expect(serialized).not.toContain("Don't replace the O2 sensor first.");
@@ -106,9 +107,15 @@ describe("filterDtcCodeForAccessLevel — preview", () => {
     );
   });
 
-  it("does not claim causes are hidden when there is only one to begin with", () => {
+  it("locks the cause even when there is only one — naming it would fully answer the question for free", () => {
     const single = filterDtcCodeForAccessLevel(baseDtc({ causes: ["Only cause"] }), "preview");
-    expect(single.hiddenCausesCount).toBe(0);
+    expect(single.visible.causes).toEqual([]);
+    expect(single.hiddenCausesCount).toBe(1);
+  });
+
+  it("reports zero hidden causes when the DTC has no documented causes at all", () => {
+    const none = filterDtcCodeForAccessLevel(baseDtc({ causes: [] }), "preview");
+    expect(none.hiddenCausesCount).toBe(0);
   });
 
   it("does not list a locked section for resources that never existed", () => {

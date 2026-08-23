@@ -141,7 +141,7 @@ export function DtcCodeResult({
             />
             {redaction.hiddenCausesCount > 0 && (
               <p className="text-sm text-[var(--text-secondary)]">
-                {t("moreCausesLocked", { count: redaction.hiddenCausesCount })}{" "}
+                {t("causesLockedTeaser", { count: redaction.hiddenCausesCount })}{" "}
                 <Link href="/pricing" className="font-semibold text-[var(--accent-red)] hover:underline">
                   {t("upgradeButton")}
                 </Link>

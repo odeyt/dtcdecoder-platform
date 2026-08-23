@@ -338,7 +338,7 @@
     "difficultyProfessional": "Professionell — ein Werkstattbesuch ist der sicherere Weg",
     "contentNotLocalizedNote": "Der Referenzinhalt dieses Codes (Bedeutung, Ursachen, Schritte) wird im englischen Original angezeigt — nur die umgebenden Beschriftungen sind lokalisiert.",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "Kategorie (aus der Codestruktur abgeleitet)",
     "categoryLabel": "Kategorie",

@@ -338,7 +338,7 @@
     "difficultyProfessional": "プロ向け — 工場に持ち込むのがより安全な方法です",
     "contentNotLocalizedNote": "このコードの参照内容（意味、原因、手順）は英語の原文で表示されます — 周囲のラベルのみがローカライズされています。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "カテゴリー（コード構造からの推定）",
     "categoryLabel": "カテゴリー",

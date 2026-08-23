@@ -338,7 +338,7 @@
     "difficultyProfessional": "专业——送往车间是更安全的选择",
     "contentNotLocalizedNote": "此代码的参考内容（含义、原因、步骤）以英语原文显示——仅周围的标签已本地化。",
     "previewNote": "Full causes, diagnostic steps, and repair resources are available with a paid plan.",
-    "moreCausesLocked": "+{count} more possible causes — unlock to see them all",
+    "causesLockedTeaser": "{count, plural, one {# possible cause identified} other {# possible causes identified}} — unlock to see the ranked list",
     "repairResourcesLocked": "Repair PDF / Video Walkthrough",
     "categoryStructureTitle": "类别（根据代码结构推断）",
     "categoryLabel": "类别",
