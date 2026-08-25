@@ -274,6 +274,7 @@ describe("CopyReportButton", () => {
     moduleHealthTable: [],
     patterns: [],
     extractionQuality: { truncated: false, confidence: "high", warnings: [] },
+    extractionProvenance: "deterministic_parser",
   };
 
   // @testing-library/user-event installs its own working Clipboard stub the

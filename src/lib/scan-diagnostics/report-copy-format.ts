@@ -23,6 +23,13 @@ export function formatReportForCopy(result: ScanReportVisibleResult): string {
   );
   lines.push("");
 
+  if (result.extractionProvenance === "ai_assisted_vision") {
+    lines.push(
+      "NOTE: Vehicle/DTC data for this case was extracted via AI-assisted image analysis, not deterministic document parsing — verify against the original image(s).",
+    );
+    lines.push("");
+  }
+
   if (result.rankedCauses && result.rankedCauses.length > 0) {
     lines.push("LIKELY CAUSES");
     result.rankedCauses.forEach((cause, i) => {

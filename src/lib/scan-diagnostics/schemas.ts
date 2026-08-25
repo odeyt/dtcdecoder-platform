@@ -128,7 +128,7 @@ export const ExtractionQualitySummarySchema = z.object({
   dtcsExpected: z.number().nullable().optional(),
   dtcsParsed: z.number().nullable().optional(),
   truncated: z.boolean(),
-  confidence: z.enum(["high", "medium", "low"]),
+  confidence: z.enum(["high", "medium", "low", "unknown"]),
 });
 export type ExtractionQualitySummary = z.infer<typeof ExtractionQualitySummarySchema>;
 

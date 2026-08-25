@@ -425,6 +425,8 @@ export interface ScanExtraction {
   dtcs_expected: number | null;
   dtcs_parsed: number | null;
   extraction_truncated: boolean;
+  // DB column stays null for "no confidence signal recorded" — the app
+  // layer (canonical-scan.ts) surfaces that as "unknown", never "medium".
   extraction_confidence: "high" | "medium" | "low" | null;
   // Photo-upload provenance (migration 0046) — one entry per source image,
   // empty for every non-photo extraction. See ExtractedEvidence below.

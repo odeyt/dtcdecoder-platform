@@ -135,8 +135,20 @@ export function ScanExtractionReviewForm({ caseId, extraction, dtcRecords }: Sca
 
   const visibleRows = rows.filter((r) => !r.removed);
 
+  const isAiAssisted = extraction.parser_id === "vision-extraction";
+
   return (
     <form onSubmit={handleSubmit} className="flex flex-col gap-6">
+      {isAiAssisted && (
+        <div
+          role="status"
+          className="rounded-[var(--radius-lg)] border p-4 text-sm text-[var(--text-secondary)]"
+          style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
+        >
+          <p className="font-semibold text-[var(--text-primary)]">{t("aiAssistedNoticeTitle")}</p>
+          <p className="mt-1">{t("aiAssistedNoticeBody")}</p>
+        </div>
+      )}
       {extraction.warnings.length > 0 && (
         <div className="rounded-[var(--radius-lg)] border border-[var(--border-red)] p-4 text-sm text-[var(--text-secondary)]">
           <p className="font-semibold text-[var(--text-primary)]">{t("warningsHeading")}</p>
