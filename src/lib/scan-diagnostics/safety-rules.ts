@@ -75,6 +75,60 @@ const COMM_FAULT_CONTEXT_PATTERN =
 const POWER_GROUND_NETWORK_TEST_PATTERN =
   /\b(power supply|ground (integrity|test|circuit)|battery (voltage|test|condition)|network (topology|resistance|termination)|bias voltage|voltage drop|continuity|short(?:s|ed)?\b|open circuit|splice|terminating resistor|can (high|low)|reference voltage)\b/i;
 
+// --- M-DIAG0.1 additions: brakes / steering / fuel / unsafe road tests -----
+// Owner decision #1 (M-DIAG0.1): close these four safety-rule gaps
+// immediately. Same design as the rules above — a signal pattern detecting
+// that the AI's own text touches a safety-critical procedure, paired with
+// a required-language pattern that must ALSO be present, or the rule
+// fires. Deliberately narrow signal patterns (specific verbs/nouns, not
+// bare system names) so ordinary diagnostic discussion of these systems is
+// never blocked — only unsafe or under-specified procedural guidance is.
+
+const BRAKE_HYDRAULIC_WORK_PATTERN =
+  /\b(open(?:ing)?\s+(?:the\s+)?(?:a\s+)?(brake\s+line|brake\s+hose|hydraulic\s+brake\s+system)|brake\s+(?:line|hose)\s+(?:repair|replace(?:ment)?|disconnect(?:ion)?)|bleed(?:ing)?\s+(?:the\s+)?brakes?|brake\s+bleed(?:ing)?|abs\s+(?:hydraulic\s+control\s+unit|hcu)\s+(?:bleed|service|repair)|brake\s+(?:pressure|line)\s+test(?:ing)?)\b/i;
+const BRAKE_SAFETY_LANGUAGE_PATTERN =
+  /\b(manufacturer(?:'s)?\s+(?:bleed(?:ing)?\s+)?procedure|proper\s+bleed(?:ing)?\s+sequence|bench\s+bleed|pressure\s+bleeder|vacuum\s+bleeder|stationary\s+(?:test|verification)|do\s+not\s+road\s+test|before\s+road\s+testing|qualified\s+technician|verify\s+(?:a\s+)?(?:firm\s+)?pedal\s+(?:feel|firmness)|firm\s+pedal\s+before)\b/i;
+
+const BRAKE_ROAD_TEST_HAZARD_PATTERN =
+  /\b(road\s+test|test\s+drive)\b(?:(?!\.).){0,80}\b(brake\s+(?:fault|defect|failure|fluid\s+loss)|spongy\s+(?:brake\s+)?pedal|pedal\s+(?:goes\s+to\s+the\s+floor|fades?|sinks?)|no\s+brakes?|loss\s+of\s+brak(?:e|ing))\b|\b(brake\s+(?:fault|defect|failure|fluid\s+loss)|spongy\s+(?:brake\s+)?pedal|pedal\s+(?:goes\s+to\s+the\s+floor|fades?|sinks?)|no\s+brakes?|loss\s+of\s+brak(?:e|ing))\b(?:(?!\.).){0,80}\b(road\s+test|test\s+drive)\b/i;
+const ROAD_TEST_MITIGATION_PATTERN =
+  /\b(stationary\s+test|lift\s+test|on\s+(?:the\s+)?(?:lift|hoist)|controlled(?:,?\s+low-speed)?\s+(?:private[- ]area\s+)?test|tow(?:ed|ing)?\s+(?:the\s+vehicle\s+)?(?:to|for)|do\s+not\s+road\s+test|never\s+road\s+test)\b/i;
+
+const STEERING_WORK_PATTERN =
+  /\b(steering\s+(?:rack|column)\s+removal|remov(?:e|ing)\s+(?:the\s+)?steering\s+(?:rack|column)|eps\s+power\s+circuit|pscm\s+power\s+circuit|steering[- ]angle\s+calibration|(?:steering|column)\s+lock\s+(?:actuator|solenoid|motor)\s+(?:removal|replace(?:ment)?)|disconnect(?:ing|ed)?\s+(?:the\s+)?steering\s+(?:shaft|coupler|column))\b/i;
+const STEERING_SAFETY_LANGUAGE_PATTERN =
+  /\b(secure(?:ly)?\s+(?:lift|support)|jack\s+stands|(?:proper|correct)\s+connector\s+orientation|verify\s+connector\s+orientation\s+before|calibration\s+procedure|programming\s+procedure|qualified\s+technician|do\s+not\s+road\s+test)\b/i;
+
+const STEERING_LOCK_BYPASS_PATTERN =
+  /\bbypass(?:ing)?\s+(?:the\s+)?(steering\s+lock|column\s+lock|electronic\s+steering\s+lock|esl)\b/i;
+
+// Matches the hazard phrase regardless of word order ("intermittently lost
+// power steering assist" vs. "power steering assist was intermittently
+// lost") — real AI-generated prose puts the subject and the fault verb in
+// either order.
+const STEERING_ASSIST_HAZARD_PATTERN =
+  /\b((?:no|heavy|intermittent(?:ly)?)\b(?:(?!\.).){0,20}\b(?:power\s+)?steering\s+assist|steering\s+assist\b(?:(?!\.).){0,20}\b(?:lost|unavailable|intermittent(?:ly)?|fault)|loss\s+of\s+(?:power\s+)?steering)\b/i;
+const STEERING_ROAD_TEST_HAZARD_PATTERN =
+  new RegExp(
+    `\\b(road\\s+test|test\\s+drive)\\b(?:(?!\\.).){0,80}${STEERING_ASSIST_HAZARD_PATTERN.source}` +
+      `|${STEERING_ASSIST_HAZARD_PATTERN.source}(?:(?!\\.).){0,80}\\b(road\\s+test|test\\s+drive)\\b`,
+    "i",
+  );
+
+const FUEL_PRESSURIZED_WORK_PATTERN =
+  /\b(open(?:ing)?\s+(?:the\s+)?(?:a\s+)?(?:pressurized\s+)?fuel\s+(?:line|rail|system)|gdi\s+(?:high[- ]pressure\s+)?fuel\s+(?:pump|rail|system)|common[- ]rail\s+diesel\s+(?:fuel\s+)?system|activat(?:e|ing)\s+(?:the\s+)?fuel\s+pump|fuel\s+pump\s+activation|leak\s+test(?:ing)?\s+(?:the\s+)?fuel|fuel\s+tank\s+(?:removal|repair|service)|(?:evap|vapor)\s+system\s+(?:service|repair|test))\b/i;
+const FUEL_SAFETY_LANGUAGE_PATTERN =
+  /\b(relieve\s+(?:fuel\s+system\s+)?pressure|pressure\s+relief\s+procedure|manufacturer(?:'s)?\s+(?:fuel\s+)?procedure|ventilat(?:e|ion|ed)|fire\s+extinguisher|no\s+open\s+flame|intrinsically\s+safe|qualified\s+technician)\b/i;
+
+const FUEL_IGNITION_HAZARD_PATTERN =
+  /\b(open\s+flame|lit\s+cigarette|non[- ]intrinsically[- ]safe|test\s+light|spark(?:s|ing)?)\b(?:(?!\.).){0,60}\bfuel\b|\bfuel\b(?:(?!\.).){0,60}\b(open\s+flame|lit\s+cigarette|non[- ]intrinsically[- ]safe|test\s+light|spark(?:s|ing)?)\b/i;
+
+// General road-test hazard categories not already covered by the
+// brake/steering-specific road-test rules above.
+const GENERAL_ROAD_TEST_PATTERN = /\b(road\s+test|test\s+drive)\b/i;
+const GENERAL_ROAD_TEST_HAZARD_PATTERN =
+  /\b(fuel\s+leak|unsecured\s+(?:component|part|panel|cover)|(?:airbag|srs)\s+(?:hazard|fault|warning)|(?:high[- ]voltage|hv)\s+isolation\s+fault|severe(?:ly)?\s+overheat(?:ing|ed)?|engine\s+(?:severely\s+)?overheat(?:ing|ed)|unstable\s+charging\s+voltage|(?:unsafe|worn|damaged)\s+(?:tires?|wheels?|suspension)\s+for\s+travel)\b/i;
+
 interface SafetyRule {
   id: string;
   severity: "block" | "warn";
@@ -136,6 +190,66 @@ const SAFETY_RULES: SafetyRule[] = [
       return !POWER_GROUND_NETWORK_TEST_PATTERN.test(testsText);
     },
   },
+  // --- M-DIAG0.1 additions ------------------------------------------------
+  {
+    id: "brake-hydraulic-work-missing-safety-guidance",
+    severity: "block",
+    message:
+      "Braking is safety-critical. Hydraulic brake system work (opening a brake line/hose, ABS hydraulic control unit service, bleeding, or pressure testing) was suggested without confirming the correct manufacturer procedure and equipment, verifying a firm pedal with a stationary test before any controlled road test, and prohibiting an unsafe road test. Escalate to a qualified technician if the correct procedure isn't confirmed.",
+    matches: (text) => BRAKE_HYDRAULIC_WORK_PATTERN.test(text) && !BRAKE_SAFETY_LANGUAGE_PATTERN.test(text),
+  },
+  {
+    id: "brake-unsafe-road-test-with-fault",
+    severity: "block",
+    message:
+      "A road test was suggested while an unresolved braking fault (fluid loss, a spongy or fading pedal, or loss of braking) was present. Never road-test a vehicle with an unresolved brake defect — verify braking with a stationary or lift test first, or tow the vehicle for further diagnosis.",
+    matches: (text) => BRAKE_ROAD_TEST_HAZARD_PATTERN.test(text) && !ROAD_TEST_MITIGATION_PATTERN.test(text),
+  },
+  {
+    id: "steering-work-missing-safety-guidance",
+    severity: "block",
+    message:
+      "Steering-system work (rack/column removal, EPS/PSCM power circuit work, steering-angle calibration, or steering/column-lock actuator work) was suggested without confirming secure lifting/support, correct connector orientation before probing, and the required calibration/programming procedure where applicable.",
+    matches: (text) => STEERING_WORK_PATTERN.test(text) && !STEERING_SAFETY_LANGUAGE_PATTERN.test(text),
+  },
+  {
+    id: "steering-lock-security-bypass",
+    severity: "block",
+    message:
+      "Guidance appeared to involve bypassing a steering lock or column lock, which is out of scope here — this is distinct from legitimately diagnosing a faulted steering-lock or column-lock system.",
+    matches: (text) => hasNonNegatedMatch(STEERING_LOCK_BYPASS_PATTERN, text),
+  },
+  {
+    id: "steering-unsafe-road-test-with-fault",
+    severity: "block",
+    message:
+      "A road test was suggested while steering assist was reported as heavy, intermittent, or unavailable. Never road-test a vehicle with unresolved loss of steering assist — verify with a stationary or lift test first, or tow the vehicle for further diagnosis.",
+    matches: (text) => STEERING_ROAD_TEST_HAZARD_PATTERN.test(text) && !ROAD_TEST_MITIGATION_PATTERN.test(text),
+  },
+  {
+    id: "fuel-system-pressurized-work-missing-safety-guidance",
+    severity: "block",
+    message:
+      "Work on a pressurized fuel system (GDI high-pressure fuel, common-rail diesel, fuel pump activation, leak testing, or fuel tank/vapor-system work) was suggested without confirming a pressure-relief procedure, ventilation and fire precautions, or escalation to a qualified technician when the exact procedure isn't known. Never activate or probe a pressurized fuel system without relieving pressure first.",
+    matches: (text) => FUEL_PRESSURIZED_WORK_PATTERN.test(text) && !FUEL_SAFETY_LANGUAGE_PATTERN.test(text),
+  },
+  {
+    id: "fuel-system-ignition-source-hazard",
+    severity: "block",
+    message:
+      "Guidance appeared to combine fuel-system work with an ignition source (open flame, spark-producing tool, or a test light not rated intrinsically safe) — this is never safe and must not be attempted.",
+    matches: (text) => FUEL_IGNITION_HAZARD_PATTERN.test(text),
+  },
+  {
+    id: "unsafe-road-test-general-hazard",
+    severity: "block",
+    message:
+      "A road test was suggested in the presence of a hazard (fuel leak, unsecured component, airbag/SRS hazard, high-voltage isolation fault, severe overheating, unstable charging voltage, or tires/wheels/suspension unsafe for travel) without converting it to a stationary test, lift test, controlled low-speed test, or towing recommendation. A warning light alone does not establish roadworthiness — resolve or explicitly rule out the hazard before any road test.",
+    matches: (text) =>
+      GENERAL_ROAD_TEST_PATTERN.test(text) &&
+      GENERAL_ROAD_TEST_HAZARD_PATTERN.test(text) &&
+      !ROAD_TEST_MITIGATION_PATTERN.test(text),
+  },
 ];
 
 export function runSafetyReview(
@@ -172,6 +286,14 @@ const BLOCK_RULE_PATTERNS: Record<string, RegExp[]> = {
   "ev-high-voltage-missing-ppe-warning": [HIGH_VOLTAGE_PATTERN],
   "airbag-squib-circuit-probing": [AIRBAG_SQUIB_PATTERN, AIRBAG_SQUIB_PATTERN_REVERSE],
   "immobilizer-security-bypass": [IMMOBILIZER_BYPASS_PATTERN],
+  "brake-hydraulic-work-missing-safety-guidance": [BRAKE_HYDRAULIC_WORK_PATTERN],
+  "brake-unsafe-road-test-with-fault": [BRAKE_ROAD_TEST_HAZARD_PATTERN],
+  "steering-work-missing-safety-guidance": [STEERING_WORK_PATTERN],
+  "steering-lock-security-bypass": [STEERING_LOCK_BYPASS_PATTERN],
+  "steering-unsafe-road-test-with-fault": [STEERING_ROAD_TEST_HAZARD_PATTERN],
+  "fuel-system-pressurized-work-missing-safety-guidance": [FUEL_PRESSURIZED_WORK_PATTERN],
+  "fuel-system-ignition-source-hazard": [FUEL_IGNITION_HAZARD_PATTERN],
+  "unsafe-road-test-general-hazard": [GENERAL_ROAD_TEST_HAZARD_PATTERN],
 };
 
 export function redactBlockedContent(
