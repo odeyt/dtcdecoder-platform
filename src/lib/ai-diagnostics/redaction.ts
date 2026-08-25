@@ -100,8 +100,25 @@ export interface PatternSummary {
 
 export interface ScanExtractionQualitySummary {
   truncated: boolean;
-  confidence: "high" | "medium" | "low";
+  // "unknown" means no confidence signal was ever recorded for this
+  // extraction (e.g. a legacy row from before this field existed) — never
+  // silently reported as "medium". See canonical-scan.ts and
+  // docs/M-DIAG0-SCANNER-PIPELINE-AUDIT.md §16 finding #9.
+  confidence: "high" | "medium" | "low" | "unknown";
   warnings: string[];
+}
+
+// M-DIAG0.1 Phase 3 (owner decision #2): the technician must be able to
+// tell that a case's vehicle/DTC facts came from an AI-assisted photo read
+// rather than deterministic document parsing. Derived from the existing
+// scan_extractions.parser_id column — no new provenance system, no
+// duplicate tracking. "unknown" only when there is no extraction row at
+// all yet (case not yet extracted).
+export type ExtractionProvenance = "deterministic_parser" | "ai_assisted_vision" | "unknown";
+
+export function extractionProvenanceFrom(extraction: ScanExtraction | null): ExtractionProvenance {
+  if (!extraction) return "unknown";
+  return extraction.parser_id === "vision-extraction" ? "ai_assisted_vision" : "deterministic_parser";
 }
 
 export interface DiagnosticPrioritySummary {
@@ -127,6 +144,9 @@ export interface ScanReportVisibleResult {
   moduleHealthTable: ModuleHealthRow[];
   patterns: PatternSummary[];
   extractionQuality: ScanExtractionQualitySummary;
+  // Deterministic, extraction-derived — see extractionProvenanceFrom above.
+  // Always present, same visibility rule as vehicleSummary/dtcs/safety.
+  extractionProvenance: ExtractionProvenance;
   // Present only when accessLevel === "full" — structurally absent
   // (not just empty) from a preview response.
   rankedCauses?: RankedCause[];
@@ -278,7 +298,7 @@ export function filterScanReportForAccessLevel(params: {
 
   const base: Pick<
     ScanReportVisibleResult,
-    "vehicleSummary" | "dtcs" | "safety" | "schemaVersion" | "scannerMeta" | "healthSummary" | "moduleHealthTable" | "patterns" | "extractionQuality"
+    "vehicleSummary" | "dtcs" | "safety" | "schemaVersion" | "scannerMeta" | "healthSummary" | "moduleHealthTable" | "patterns" | "extractionQuality" | "extractionProvenance"
   > = {
     vehicleSummary: vehicleSummaryFrom(extraction),
     dtcs: dtcSummariesFrom(dtcRecords),
@@ -293,6 +313,7 @@ export function filterScanReportForAccessLevel(params: {
       confidence: canonicalScan.extractionQuality.confidence,
       warnings: canonicalScan.extractionQuality.warnings,
     },
+    extractionProvenance: extractionProvenanceFrom(extraction),
   };
 
   if (accessLevel === "full") {

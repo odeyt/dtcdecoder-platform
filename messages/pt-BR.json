@@ -616,7 +616,9 @@
     "ruleSeverityWarn": "Aviso",
     "printExport": "Imprimir / Exportar",
     "reportLanguageSrLabel": "Idioma do relatório",
-    "unableToChangeLanguage": "Não foi possível alterar o idioma do relatório."
+    "unableToChangeLanguage": "Não foi possível alterar o idioma do relatório.",
+    "provenanceAiAssisted": "Os dados do veículo e dos DTCs deste caso foram extraídos de fotos por meio de análise de imagem assistida por IA, não por análise determinística de documento — verifique cada campo em relação à(s) imagem(ns) original(is) antes de confiar neles.",
+    "extractionConfidenceUnknownNote": "A confiança da extração não foi avaliada para este caso. Isso não indica um problema — significa que nenhum sinal de confiança foi registrado."
   },
   "diagnosticProgress": {
     "systemEngine": "Motor",
@@ -746,7 +748,9 @@
     "errorSaveFailed": "Não foi possível salvar sua revisão. Tente novamente.",
     "errorGeneric": "Algo deu errado. Tente novamente.",
     "saving": "Salvando…",
-    "confirmAndAnalyze": "Confirmar e iniciar análise"
+    "confirmAndAnalyze": "Confirmar e iniciar análise",
+    "aiAssistedNoticeTitle": "Extração de imagem assistida por IA",
+    "aiAssistedNoticeBody": "Estes dados de veículo e DTC foram lidos de sua(s) foto(s) por IA, não extraídos de forma determinística de um documento de texto. Verifique cada campo em relação à imagem original antes de continuar."
   },
   "scanFeedback": {
     "errorSaveFailed": "Não foi possível salvar seu feedback. Tente novamente.",
@@ -1268,5 +1272,21 @@
     "faq2A": "Não. É a mesma conta e plano do DTCDecoder que você já tem — instalar apenas adiciona um atalho na tela inicial.",
     "faq3Q": "Vou receber atualizações automaticamente?",
     "faq3A": "Sim. O app instalado é atualizado da mesma forma que o site — não há nada para baixar ou atualizar manualmente."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "A substituição de um módulo de alto custo (ECU/PCM/BCM/TCM/inversor/módulo ABS/caixa de direção) foi sugerida sem nenhum teste de diagnóstico recomendado para confirmá-la primeiro.",
+    "high-cost-module-replacement-untested": "A substituição de um módulo de alto custo foi sugerida, mas nenhum dos testes recomendados menciona esse módulo específico — confirme que um resultado de teste realmente aponta para ele antes de substituí-lo.",
+    "ev-high-voltage-missing-ppe-warning": "Conteúdo sobre sistema de alta tensão de VE foi mencionado sem um aviso de técnico qualificado/EPI/bloqueio-etiquetagem. Trabalhos de alta tensão nunca devem ser orientados passo a passo aqui.",
+    "airbag-squib-circuit-probing": "A orientação parecia envolver sondar/medir um circuito iniciador de airbag — isso nunca é seguro com equipamento de teste de oficina padrão.",
+    "immobilizer-security-bypass": "A orientação parecia envolver contornar um imobilizador ou sistema de segurança, o que está fora de escopo aqui.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "A substituição de um módulo foi sugerida no contexto de uma falha de comunicação/rede, mas nenhum dos testes recomendados cobre verificações de alimentação, terra, bateria ou específicas de rede (tensão, resistência, terminação, continuidade, pontos de emenda) — um DTC de comunicação é frequentemente um problema de fiação/alimentação/terra anterior ao módulo indicado, não o módulo em si. Confirme isso primeiro.",
+    "brake-hydraulic-work-missing-safety-guidance": "A frenagem é crítica para a segurança. Trabalho no sistema hidráulico de freios (abertura de linha/mangueira de freio, serviço na unidade hidráulica do ABS, sangria, ou teste de pressão) foi sugerido sem confirmar o procedimento e equipamento corretos do fabricante, verificar um pedal firme com um teste estacionário antes de qualquer teste de estrada controlado, e proibir um teste de estrada inseguro. Encaminhe a um técnico qualificado se o procedimento correto não for confirmado.",
+    "brake-unsafe-road-test-with-fault": "Um teste de estrada foi sugerido enquanto havia uma falha de freio não resolvida (perda de fluido, pedal esponjoso ou que afunda, ou perda de frenagem). Nunca faça teste de estrada com um defeito de freio não resolvido — verifique a frenagem com um teste estacionário ou em elevador primeiro, ou reboque o veículo para diagnóstico adicional.",
+    "steering-work-missing-safety-guidance": "Trabalho no sistema de direção (remoção de caixa de direção/coluna, trabalho no circuito de alimentação EPS/PSCM, calibração do ângulo de direção, ou trabalho no atuador de trava de direção/coluna) foi sugerido sem confirmar elevação/suporte seguro, orientação correta do conector antes de sondar, e o procedimento de calibração/programação exigido quando aplicável.",
+    "steering-lock-security-bypass": "A orientação parecia envolver contornar uma trava de direção ou de coluna, o que está fora de escopo aqui — isso é diferente de diagnosticar legitimamente um sistema de trava de direção/coluna com defeito.",
+    "steering-unsafe-road-test-with-fault": "Um teste de estrada foi sugerido enquanto a assistência de direção era relatada como pesada, intermitente ou indisponível. Nunca faça teste de estrada com perda de assistência de direção não resolvida — verifique com um teste estacionário ou em elevador primeiro, ou reboque o veículo para diagnóstico adicional.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Trabalho em um sistema de combustível pressurizado (combustível de alta pressão GDI, sistema common-rail diesel, ativação da bomba de combustível, teste de vazamento, ou trabalho no tanque/sistema de vapores) foi sugerido sem confirmar um procedimento de alívio de pressão, ventilação e precauções contra incêndio, ou encaminhamento a um técnico qualificado quando o procedimento exato não é conhecido. Nunca ative ou sonde um sistema de combustível pressurizado sem aliviar a pressão primeiro.",
+    "fuel-system-ignition-source-hazard": "A orientação parecia combinar trabalho no sistema de combustível com uma fonte de ignição (chama aberta, ferramenta que produz faíscas, ou uma lâmpada de teste não classificada como intrinsecamente segura) — isso nunca é seguro e não deve ser tentado.",
+    "unsafe-road-test-general-hazard": "Um teste de estrada foi sugerido na presença de um risco (vazamento de combustível, componente não fixado, risco de airbag/SRS, falha de isolamento de alta tensão, superaquecimento severo, tensão de carga instável, ou pneus/rodas/suspensão inseguros para circular) sem convertê-lo em teste estacionário, em elevador, controlado em baixa velocidade, ou recomendação de reboque. Uma luz de advertência sozinha não estabelece que o veículo está apto a circular — resolva ou descarte explicitamente o risco antes de qualquer teste de estrada."
   }
 }

@@ -83,7 +83,10 @@ export interface CanonicalExtractionQuality {
   dtcsParsed: number | null;
   truncated: boolean;
   warnings: string[];
-  confidence: "high" | "medium" | "low";
+  // "unknown" (never a silent "medium") when no extraction row exists yet
+  // or the DB column is legitimately null — see M-DIAG0.1 Phase 4 /
+  // docs/M-DIAG0-SCANNER-PIPELINE-AUDIT.md §16 finding #9.
+  confidence: "high" | "medium" | "low" | "unknown";
 }
 
 export interface CanonicalVehicleScan {
@@ -208,7 +211,10 @@ export function buildCanonicalVehicleScan(
       dtcsParsed: extraction?.dtcs_parsed ?? null,
       truncated: extraction?.extraction_truncated ?? false,
       warnings: extraction?.warnings ?? [],
-      confidence: extraction?.extraction_confidence ?? "medium",
+      // Never assign confidence merely because parsing succeeded — a null
+      // DB value means no confidence signal was ever recorded, which is
+      // "unknown", not an assumed "medium".
+      confidence: extraction?.extraction_confidence ?? "unknown",
     },
   };
 }

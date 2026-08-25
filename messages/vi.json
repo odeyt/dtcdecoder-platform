@@ -616,7 +616,9 @@
     "ruleSeverityWarn": "Cảnh báo",
     "printExport": "In / Xuất",
     "reportLanguageSrLabel": "Ngôn ngữ báo cáo",
-    "unableToChangeLanguage": "Không thể thay đổi ngôn ngữ báo cáo."
+    "unableToChangeLanguage": "Không thể thay đổi ngôn ngữ báo cáo.",
+    "provenanceAiAssisted": "Dữ liệu xe và mã DTC của hồ sơ này được trích xuất từ ảnh chụp bằng phân tích hình ảnh có hỗ trợ AI, không phải phân tích tài liệu tất định — hãy kiểm tra từng trường dữ liệu so với (các) ảnh gốc trước khi tin dùng.",
+    "extractionConfidenceUnknownNote": "Độ tin cậy trích xuất chưa được đánh giá cho hồ sơ này. Điều này không cho thấy có vấn đề — nghĩa là không có tín hiệu độ tin cậy nào được ghi nhận."
   },
   "diagnosticProgress": {
     "systemEngine": "Động cơ",
@@ -746,7 +748,9 @@
     "errorSaveFailed": "Không thể lưu bản đánh giá của bạn. Vui lòng thử lại.",
     "errorGeneric": "Đã xảy ra sự cố. Vui lòng thử lại.",
     "saving": "Đang lưu…",
-    "confirmAndAnalyze": "Xác nhận và bắt đầu phân tích"
+    "confirmAndAnalyze": "Xác nhận và bắt đầu phân tích",
+    "aiAssistedNoticeTitle": "Trích xuất hình ảnh có hỗ trợ AI",
+    "aiAssistedNoticeBody": "Dữ liệu xe và DTC này được AI đọc từ (các) ảnh của bạn, không được trích xuất tất định từ tài liệu văn bản. Hãy kiểm tra từng trường dữ liệu so với ảnh gốc trước khi tiếp tục."
   },
   "scanFeedback": {
     "errorSaveFailed": "Không thể lưu phản hồi của bạn. Vui lòng thử lại.",
@@ -1268,5 +1272,21 @@
     "faq2A": "Không. Đây là cùng tài khoản và gói DTCDecoder mà bạn đã có — cài đặt chỉ thêm lối tắt trên màn hình chính.",
     "faq3Q": "Tôi có nhận được cập nhật tự động không?",
     "faq3A": "Có. Ứng dụng đã cài đặt cập nhật giống như trang web — không cần tải xuống hay cập nhật thủ công."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "Đề xuất thay thế một mô-đun chi phí cao (ECU/PCM/BCM/TCM/bộ nghịch lưu/mô-đun ABS/thước lái) mà không có bất kỳ kiểm tra chẩn đoán nào được khuyến nghị để xác nhận trước.",
+    "high-cost-module-replacement-untested": "Đề xuất thay thế một mô-đun chi phí cao, nhưng không có kiểm tra khuyến nghị nào đề cập đến mô-đun cụ thể đó — hãy xác nhận kết quả kiểm tra thực sự chỉ ra mô-đun đó trước khi thay thế.",
+    "ev-high-voltage-missing-ppe-warning": "Đề cập đến nội dung hệ thống điện áp cao xe điện mà không có cảnh báo về kỹ thuật viên có chuyên môn/PPE/khóa-gắn thẻ cách ly. Công việc điện áp cao không bao giờ được hướng dẫn từng bước ở đây.",
+    "airbag-squib-circuit-probing": "Hướng dẫn có vẻ liên quan đến việc dò/đo mạch kích nổ túi khí — điều này không bao giờ an toàn với thiết bị kiểm tra gara tiêu chuẩn.",
+    "immobilizer-security-bypass": "Hướng dẫn có vẻ liên quan đến việc vượt qua hệ thống chống trộm hoặc hệ thống an ninh, điều này nằm ngoài phạm vi ở đây.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "Đề xuất thay thế mô-đun trong bối cảnh lỗi giao tiếp/mạng, nhưng không có kiểm tra khuyến nghị nào bao gồm kiểm tra nguồn điện, tiếp mát, ắc quy, hoặc mạng (điện áp, điện trở, đầu cuối, độ liên tục, điểm nối) — mã DTC giao tiếp thường là vấn đề dây điện/nguồn/tiếp mát ở phía trước mô-đun được nêu, không phải bản thân mô-đun. Hãy xác nhận điều đó trước.",
+    "brake-hydraulic-work-missing-safety-guidance": "Phanh là bộ phận quan trọng đối với an toàn. Đề xuất công việc trên hệ thống thủy lực phanh (mở đường ống/ống mềm phanh, bảo dưỡng cụm thủy lực ABS, xả gió, hoặc kiểm tra áp suất) mà không xác nhận quy trình và thiết bị đúng của nhà sản xuất, không kiểm tra bàn đạp chắc chắn bằng thử nghiệm tĩnh trước khi lái thử có kiểm soát, và không cấm việc lái thử không an toàn. Chuyển đến kỹ thuật viên có chuyên môn nếu không xác nhận được quy trình đúng.",
+    "brake-unsafe-road-test-with-fault": "Đề xuất lái thử trong khi có lỗi phanh chưa được khắc phục (mất dầu phanh, bàn đạp mềm hoặc lún, hoặc mất phanh). Không bao giờ lái thử xe có lỗi phanh chưa khắc phục — hãy kiểm tra phanh bằng thử nghiệm tĩnh hoặc trên cầu nâng trước, hoặc kéo xe đi để chẩn đoán thêm.",
+    "steering-work-missing-safety-guidance": "Đề xuất công việc trên hệ thống lái (tháo thước lái/trục lái, làm việc trên mạch nguồn EPS/PSCM, hiệu chỉnh góc lái, hoặc làm việc trên bộ truyền động khóa lái/khóa trục lái) mà không xác nhận việc nâng/đỡ an toàn, hướng đúng của giắc cắm trước khi dò, và quy trình hiệu chỉnh/lập trình cần thiết khi áp dụng.",
+    "steering-lock-security-bypass": "Hướng dẫn có vẻ liên quan đến việc vượt qua khóa lái hoặc khóa trục lái, điều này nằm ngoài phạm vi ở đây — điều này khác với việc chẩn đoán hợp lệ một hệ thống khóa lái/khóa trục lái bị lỗi.",
+    "steering-unsafe-road-test-with-fault": "Đề xuất lái thử trong khi trợ lực lái được báo cáo là nặng, không liên tục, hoặc không hoạt động. Không bao giờ lái thử xe có mất trợ lực lái chưa khắc phục — hãy kiểm tra bằng thử nghiệm tĩnh hoặc trên cầu nâng trước, hoặc kéo xe đi để chẩn đoán thêm.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Đề xuất công việc trên hệ thống nhiên liệu có áp suất (nhiên liệu áp suất cao GDI, hệ thống common-rail diesel, kích hoạt bơm nhiên liệu, kiểm tra rò rỉ, hoặc công việc trên bình xăng/hệ thống hơi) mà không xác nhận quy trình giảm áp, thông gió và các biện pháp phòng cháy, hoặc chuyển đến kỹ thuật viên có chuyên môn khi không biết quy trình chính xác. Không bao giờ kích hoạt hoặc dò hệ thống nhiên liệu có áp suất mà chưa giảm áp trước.",
+    "fuel-system-ignition-source-hazard": "Hướng dẫn có vẻ kết hợp công việc hệ thống nhiên liệu với nguồn đánh lửa (ngọn lửa trần, dụng cụ phát tia lửa, hoặc đèn thử không được chứng nhận an toàn nội tại) — điều này không bao giờ an toàn và không được thực hiện.",
+    "unsafe-road-test-general-hazard": "Đề xuất lái thử khi có nguy cơ hiện diện (rò rỉ nhiên liệu, bộ phận chưa cố định, nguy cơ túi khí/SRS, lỗi cách điện cao áp, quá nhiệt nghiêm trọng, điện áp sạc không ổn định, hoặc lốp/bánh xe/hệ thống treo không an toàn khi lưu thông) mà không chuyển thành thử nghiệm tĩnh, thử trên cầu nâng, thử có kiểm soát ở tốc độ thấp, hoặc khuyến nghị kéo xe. Chỉ riêng đèn cảnh báo không xác định được xe đủ điều kiện lưu thông — hãy khắc phục hoặc loại trừ rõ ràng nguy cơ trước khi lái thử."
   }
 }

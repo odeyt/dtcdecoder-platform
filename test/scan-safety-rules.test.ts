@@ -292,4 +292,239 @@ describe("runSafetyReview", () => {
     expect(result.verdict).toBe("block");
     expect(result.findings.some((f) => f.ruleId === "immobilizer-security-bypass")).toBe(true);
   });
+
+  // --- M-DIAG0.1 additions: brakes / steering / fuel / unsafe road tests --
+
+  it("allows safe brake diagnosis that never touches hydraulic work (Phase 6 #1)", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "ABS wheel-speed sensor code correlates with an intermittent pulsation complaint.",
+        rankedCauses: [
+          {
+            cause: "Faulty left-front ABS wheel-speed sensor",
+            confidenceLevel: "medium",
+            complaintCorrelation: "strong",
+            rationale: "Live data shows an erratic signal from the left-front sensor.",
+            supportingEvidence: ["C0035 present"],
+            contradictingEvidence: [],
+            confirmationTestsRequired: ["Read live wheel-speed data", "Inspect the tone ring for damage"],
+          },
+        ],
+        recommendedTests: [
+          { step: "Read live wheel-speed sensor data", purpose: "Confirm signal dropout", expectedResult: "Consistent signal at all wheels" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("pass");
+  });
+
+  it("blocks brake hydraulic work with no manufacturer procedure/equipment/stationary-test guidance (Phase 6 #1)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Bleed the brakes", purpose: "Remove air from the lines", expectedResult: "Firm pedal" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "brake-hydraulic-work-missing-safety-guidance")).toBe(true);
+  });
+
+  it("passes brake hydraulic work when the manufacturer procedure and stationary verification are stated", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          {
+            step: "Bleed the brakes following the manufacturer's bleeding procedure with a pressure bleeder",
+            purpose: "Remove air from the lines",
+            expectedResult: "Verify a firm pedal with a stationary test before any road test",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "brake-hydraulic-work-missing-safety-guidance")).toBe(false);
+  });
+
+  it("blocks a road test recommended with an unresolved braking fault (Phase 6 #2)", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "Road test the vehicle to confirm the spongy brake pedal reported by the customer.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "brake-unsafe-road-test-with-fault")).toBe(true);
+  });
+
+  it("does not block a brake road-test recommendation when a stationary test is required first", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "Do not road test — first confirm a firm pedal with a stationary test given the reported spongy brake pedal.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "brake-unsafe-road-test-with-fault")).toBe(false);
+  });
+
+  it("allows safe steering electrical testing that never touches rack/column/lock work (Phase 6 #3)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Test steering angle sensor signal circuit for continuity", purpose: "Confirm sensor wiring", expectedResult: "Continuous circuit" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-work-missing-safety-guidance")).toBe(false);
+  });
+
+  it("blocks steering rack/column work with no lift-support/connector-orientation/calibration guidance", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Remove the steering column to inspect the coupler", purpose: "Check for wear", expectedResult: "No excessive play" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "steering-work-missing-safety-guidance")).toBe(true);
+  });
+
+  it("passes steering rack/column work when secure support and connector orientation are stated (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          {
+            step: "Securely lift and support the vehicle, remove the steering column, and verify connector orientation before reconnecting",
+            purpose: "Inspect the coupler for wear",
+            expectedResult: "No excessive play; column reinstalled per the calibration procedure",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-work-missing-safety-guidance")).toBe(false);
+  });
+
+  it("blocks a road test recommended with unresolved loss of steering assist (Phase 6 #4)", () => {
+    const result = runSafetyReview(
+      output({ summary: "Road test the vehicle even though power steering assist was intermittently lost." }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "steering-unsafe-road-test-with-fault")).toBe(true);
+  });
+
+  it("does not block a steering road-test recommendation when converted to a stationary/lift test first (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        summary:
+          "Power steering assist was intermittently lost — do not road test; first verify assist with a stationary test on the lift.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-unsafe-road-test-with-fault")).toBe(false);
+  });
+
+  it("distinguishes a legitimate steering-lock diagnosis from a steering-lock bypass instruction", () => {
+    const result = runSafetyReview(
+      output({
+        summary: "The electronic steering lock actuator failed to release — test the lock solenoid and read its status.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-lock-security-bypass")).toBe(false);
+  });
+
+  it("blocks an instruction to bypass the steering lock", () => {
+    const result = runSafetyReview(
+      output({ summary: "To resolve this, bypass the steering lock and clear the fault." }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "steering-lock-security-bypass")).toBe(true);
+  });
+
+  it("blocks pressurized fuel-system work with no pressure-relief/ventilation guidance (Phase 6 #5)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Open the fuel rail to check fuel pressure", purpose: "Confirm pump output", expectedResult: "Pressure within spec" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "fuel-system-pressurized-work-missing-safety-guidance")).toBe(true);
+  });
+
+  it("passes pressurized fuel-system work when the pressure-relief procedure and ventilation are stated", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          {
+            step: "Relieve fuel system pressure per the manufacturer procedure before opening the fuel rail",
+            purpose: "Confirm pump output",
+            expectedResult: "Pressure within spec, performed with proper ventilation",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "fuel-system-pressurized-work-missing-safety-guidance")).toBe(false);
+  });
+
+  it("does not fire the ignition-source-hazard rule on ordinary electrical fuel-pump diagnosis (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Check fuel pump relay and fuse, then read live fuel pressure data", purpose: "Confirm pump circuit integrity", expectedResult: "Relay clicks, fuse intact, pressure within spec" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "fuel-system-ignition-source-hazard")).toBe(false);
+  });
+
+  it("blocks fuel-pump activation combined with an ignition-source hazard (Phase 6 #6)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Activate the fuel pump and use a test light near the fuel line to check for spark", purpose: "Diagnose pump relay", expectedResult: "Pump runs" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "fuel-system-ignition-source-hazard")).toBe(true);
+  });
+
+  it("does not falsely block a harmless road-test recommendation with no safety hazard present (Phase 6 #7)", () => {
+    const result = runSafetyReview(
+      output({ summary: "Road test the vehicle to confirm the check-engine light stays off after the repair." }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("pass");
+  });
+
+  it("blocks high-risk road testing in the presence of a general hazard with no mitigation (Phase 6 #8)", () => {
+    const result = runSafetyReview(
+      output({ summary: "Road test the vehicle despite a known fuel leak reported by the customer." }),
+      BASE_INPUT,
+    );
+    expect(result.verdict).toBe("block");
+    expect(result.findings.some((f) => f.ruleId === "unsafe-road-test-general-hazard")).toBe(true);
+  });
+
+  it("does not block a general-hazard road test when converted to a stationary/lift/tow recommendation", () => {
+    const result = runSafetyReview(
+      output({ summary: "Given the reported fuel leak, do not road test — tow the vehicle for further diagnosis." }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "unsafe-road-test-general-hazard")).toBe(false);
+  });
 });

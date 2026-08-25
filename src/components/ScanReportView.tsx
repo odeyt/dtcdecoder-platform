@@ -15,6 +15,7 @@ import { VerificationChecklistSection } from "@/components/scan-report/Verificat
 import { CaseCompletionSection } from "@/components/scan-report/CaseCompletionSection";
 import { classifyDtcCategories } from "@/lib/scan-diagnostics/parsers/category-classification";
 import { isLegacyReport } from "@/lib/scan-diagnostics/report-presentation";
+import { resolveLocalizedSafetyMessage } from "@/lib/scan-diagnostics/safety-rule-i18n";
 import type { DtcCategory } from "@/lib/scan-diagnostics/schemas";
 import type { CompletionSummary } from "@/lib/scan-diagnostics/workbench";
 import type { ScanReportAccessResult } from "@/lib/ai-diagnostics/redaction";
@@ -94,6 +95,21 @@ function CategoryBadge({
 export async function ScanReportView({ scanCase, extraction, dtcRecords, reportAccess, workbench }: ScanReportViewProps) {
   const locale = await resolveAppShellLocale();
   const t = await getTranslations({ locale, namespace: "scanReport" });
+  // Phase 5 (M-DIAG0.1, owner decision #8): safety-warning text is
+  // rendered through the existing next-intl message catalog, keyed by
+  // ruleId, so it can appear in the technician's selected language —
+  // never a new machine-translation call for deterministic safety text.
+  // The canonical English in safety-rules.ts (f.message) is always the
+  // fallback when a locale hasn't got that rule's key yet, so a missing
+  // translation degrades to English, never to a blank/broken warning.
+  const tSafety = await getTranslations({ locale, namespace: "scanSafetyRules" });
+  function localizedSafetyMessage(f: SafetyFinding): string {
+    return resolveLocalizedSafetyMessage(
+      (ruleId) => tSafety(ruleId as Parameters<typeof tSafety>[0]),
+      f.ruleId,
+      f.message,
+    );
+  }
   const { visibleResult, accessLevel, lockedSections } = reportAccess;
   const isFull = accessLevel === "full";
   const safetyFindings = visibleResult.safety.findings as unknown as SafetyFinding[];
@@ -238,6 +254,18 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
             >
               {t("truncatedWarning")}
             </p>
+          )}
+          {visibleResult.extractionProvenance === "ai_assisted_vision" && (
+            <p
+              role="status"
+              className="mt-3 rounded-[var(--radius-md)] border p-3 text-sm text-[var(--text-secondary)]"
+              style={{ borderColor: "var(--accent-amber)", background: "rgba(217, 154, 63, 0.08)" }}
+            >
+              {t("provenanceAiAssisted")}
+            </p>
+          )}
+          {visibleResult.extractionQuality.confidence === "unknown" && (
+            <p className="mt-3 text-xs text-[var(--text-muted)]">{t("extractionConfidenceUnknownNote")}</p>
           )}
         </ResultSection>
 
@@ -552,7 +580,7 @@ export async function ScanReportView({ scanCase, extraction, dtcRecords, reportA
                     <span className="font-mono text-xs font-semibold uppercase text-[var(--accent-red)]">
                       {ruleSeverityLabel[f.severity] ?? f.severity}
                     </span>{" "}
-                    {f.message}
+                    {localizedSafetyMessage(f)}
                   </li>
                 ))}
               </ul>

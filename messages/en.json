@@ -802,6 +802,8 @@
     "reportType": "Report type:",
     "notStated": "Not stated",
     "truncatedWarning": "Extraction may be incomplete — the source report declared more DTCs for at least one system than were extracted. Do not treat the DTC list on this case as exhaustive.",
+    "provenanceAiAssisted": "This case's vehicle and DTC data was extracted from photos using AI-assisted image analysis, not deterministic document parsing — verify every field against the original image(s) before relying on it.",
+    "extractionConfidenceUnknownNote": "Extraction confidence was not assessed for this case. This does not indicate a problem — it means no confidence signal was recorded.",
     "healthSummaryTitle": "Vehicle health summary",
     "faultedSystems": "Faulted systems",
     "systemsOk": "Systems OK",
@@ -1070,7 +1072,25 @@
     "errorSaveFailed": "Could not save your review. Please try again.",
     "errorGeneric": "Something went wrong. Please try again.",
     "saving": "Saving…",
-    "confirmAndAnalyze": "Confirm and start analysis"
+    "confirmAndAnalyze": "Confirm and start analysis",
+    "aiAssistedNoticeTitle": "AI-assisted image extraction",
+    "aiAssistedNoticeBody": "This vehicle and DTC data was read from your photo(s) by AI, not extracted deterministically from a text document. Verify every field against the original image before continuing."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "A high-cost module replacement (ECU/PCM/BCM/TCM/inverter/ABS module/steering rack) was suggested with no diagnostic test recommended to confirm it first.",
+    "high-cost-module-replacement-untested": "A high-cost module replacement was suggested, but none of the recommended tests mention that specific module — confirm a test result actually points to it before replacing it.",
+    "ev-high-voltage-missing-ppe-warning": "High-voltage EV system content was mentioned without a qualified-technician/PPE/lockout-tagout warning. High-voltage work must never be guided step-by-step here.",
+    "airbag-squib-circuit-probing": "Guidance appeared to involve probing/measuring an airbag squib circuit — this is never safe to do with standard shop test equipment.",
+    "immobilizer-security-bypass": "Guidance appeared to involve bypassing an immobilizer or security system, which is out of scope here.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "A module replacement was suggested in the context of a communication/network fault, but none of the recommended tests cover power, ground, battery, or network-specific checks (voltage, resistance, termination, continuity, splice points) — a communication DTC is frequently a wiring/power/ground issue upstream of the named module, not the module itself. Confirm those first.",
+    "brake-hydraulic-work-missing-safety-guidance": "Braking is safety-critical. Hydraulic brake system work (opening a brake line/hose, ABS hydraulic control unit service, bleeding, or pressure testing) was suggested without confirming the correct manufacturer procedure and equipment, verifying a firm pedal with a stationary test before any controlled road test, and prohibiting an unsafe road test. Escalate to a qualified technician if the correct procedure isn't confirmed.",
+    "brake-unsafe-road-test-with-fault": "A road test was suggested while an unresolved braking fault (fluid loss, a spongy or fading pedal, or loss of braking) was present. Never road-test a vehicle with an unresolved brake defect — verify braking with a stationary or lift test first, or tow the vehicle for further diagnosis.",
+    "steering-work-missing-safety-guidance": "Steering-system work (rack/column removal, EPS/PSCM power circuit work, steering-angle calibration, or steering/column-lock actuator work) was suggested without confirming secure lifting/support, correct connector orientation before probing, and the required calibration/programming procedure where applicable.",
+    "steering-lock-security-bypass": "Guidance appeared to involve bypassing a steering lock or column lock, which is out of scope here — this is distinct from legitimately diagnosing a faulted steering-lock or column-lock system.",
+    "steering-unsafe-road-test-with-fault": "A road test was suggested while steering assist was reported as heavy, intermittent, or unavailable. Never road-test a vehicle with unresolved loss of steering assist — verify with a stationary or lift test first, or tow the vehicle for further diagnosis.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Work on a pressurized fuel system (GDI high-pressure fuel, common-rail diesel, fuel pump activation, leak testing, or fuel tank/vapor-system work) was suggested without confirming a pressure-relief procedure, ventilation and fire precautions, or escalation to a qualified technician when the exact procedure isn't known. Never activate or probe a pressurized fuel system without relieving pressure first.",
+    "fuel-system-ignition-source-hazard": "Guidance appeared to combine fuel-system work with an ignition source (open flame, spark-producing tool, or a test light not rated intrinsically safe) — this is never safe and must not be attempted.",
+    "unsafe-road-test-general-hazard": "A road test was suggested in the presence of a hazard (fuel leak, unsecured component, airbag/SRS hazard, high-voltage isolation fault, severe overheating, unstable charging voltage, or tires/wheels/suspension unsafe for travel) without converting it to a stationary test, lift test, controlled low-speed test, or towing recommendation. A warning light alone does not establish roadworthiness — resolve or explicitly rule out the hazard before any road test."
   },
   "scanFeedback": {
     "errorSaveFailed": "Could not save your feedback. Please try again.",

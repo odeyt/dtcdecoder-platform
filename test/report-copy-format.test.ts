@@ -31,6 +31,7 @@ function baseResult(overrides: Partial<ScanReportVisibleResult> = {}): ScanRepor
     moduleHealthTable: [],
     patterns: [],
     extractionQuality: { truncated: false, confidence: "high", warnings: [] },
+    extractionProvenance: "deterministic_parser",
     ...overrides,
   };
 }
@@ -41,6 +42,16 @@ describe("formatReportForCopy", () => {
     expect(text).toContain("Vehicle: Not provided in report");
     expect(text).toContain("VIN: Not provided in report");
     expect(text).toContain("DTCs: None recorded");
+  });
+
+  it("includes an AI-assisted-extraction provenance notice when applicable (M-DIAG0.1 Phase 3)", () => {
+    const text = formatReportForCopy(baseResult({ extractionProvenance: "ai_assisted_vision" }));
+    expect(text).toContain("AI-assisted image analysis");
+  });
+
+  it("omits the provenance notice for deterministic-parser extractions", () => {
+    const text = formatReportForCopy(baseResult({ extractionProvenance: "deterministic_parser" }));
+    expect(text).not.toContain("AI-assisted image analysis");
   });
 
   it("includes vehicle summary and DTCs when present", () => {
