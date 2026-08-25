@@ -394,6 +394,22 @@ describe("runSafetyReview", () => {
     expect(result.findings.some((f) => f.ruleId === "steering-work-missing-safety-guidance")).toBe(true);
   });
 
+  it("passes steering rack/column work when secure support and connector orientation are stated (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          {
+            step: "Securely lift and support the vehicle, remove the steering column, and verify connector orientation before reconnecting",
+            purpose: "Inspect the coupler for wear",
+            expectedResult: "No excessive play; column reinstalled per the calibration procedure",
+          },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-work-missing-safety-guidance")).toBe(false);
+  });
+
   it("blocks a road test recommended with unresolved loss of steering assist (Phase 6 #4)", () => {
     const result = runSafetyReview(
       output({ summary: "Road test the vehicle even though power steering assist was intermittently lost." }),
@@ -401,6 +417,17 @@ describe("runSafetyReview", () => {
     );
     expect(result.verdict).toBe("block");
     expect(result.findings.some((f) => f.ruleId === "steering-unsafe-road-test-with-fault")).toBe(true);
+  });
+
+  it("does not block a steering road-test recommendation when converted to a stationary/lift test first (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        summary:
+          "Power steering assist was intermittently lost — do not road test; first verify assist with a stationary test on the lift.",
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "steering-unsafe-road-test-with-fault")).toBe(false);
   });
 
   it("distinguishes a legitimate steering-lock diagnosis from a steering-lock bypass instruction", () => {
@@ -449,6 +476,18 @@ describe("runSafetyReview", () => {
       BASE_INPUT,
     );
     expect(result.findings.some((f) => f.ruleId === "fuel-system-pressurized-work-missing-safety-guidance")).toBe(false);
+  });
+
+  it("does not fire the ignition-source-hazard rule on ordinary electrical fuel-pump diagnosis (legitimate use)", () => {
+    const result = runSafetyReview(
+      output({
+        recommendedTests: [
+          { step: "Check fuel pump relay and fuse, then read live fuel pressure data", purpose: "Confirm pump circuit integrity", expectedResult: "Relay clicks, fuse intact, pressure within spec" },
+        ],
+      }),
+      BASE_INPUT,
+    );
+    expect(result.findings.some((f) => f.ruleId === "fuel-system-ignition-source-hazard")).toBe(false);
   });
 
   it("blocks fuel-pump activation combined with an ignition-source hazard (Phase 6 #6)", () => {
