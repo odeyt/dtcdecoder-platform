@@ -616,7 +616,9 @@
     "ruleSeverityWarn": "Warnung",
     "printExport": "Drucken / Exportieren",
     "reportLanguageSrLabel": "Berichtsprache",
-    "unableToChangeLanguage": "Die Berichtsprache konnte nicht geändert werden."
+    "unableToChangeLanguage": "Die Berichtsprache konnte nicht geändert werden.",
+    "provenanceAiAssisted": "Die Fahrzeug- und DTC-Daten dieses Falls wurden per KI-gestützter Bildanalyse aus Fotos extrahiert, nicht durch deterministisches Dokumenten-Parsing — überprüfen Sie jedes Feld anhand des/der Originalbilder, bevor Sie sich darauf verlassen.",
+    "extractionConfidenceUnknownNote": "Die Extraktionssicherheit wurde für diesen Fall nicht bewertet. Dies deutet nicht auf ein Problem hin — es bedeutet, dass kein Konfidenzsignal erfasst wurde."
   },
   "diagnosticProgress": {
     "systemEngine": "Motor",
@@ -746,7 +748,9 @@
     "errorSaveFailed": "Deine Überprüfung konnte nicht gespeichert werden. Bitte versuche es erneut.",
     "errorGeneric": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
     "saving": "Wird gespeichert…",
-    "confirmAndAnalyze": "Bestätigen und Analyse starten"
+    "confirmAndAnalyze": "Bestätigen und Analyse starten",
+    "aiAssistedNoticeTitle": "KI-gestützte Bildextraktion",
+    "aiAssistedNoticeBody": "Diese Fahrzeug- und DTC-Daten wurden von einer KI aus Ihren Foto(s) gelesen, nicht deterministisch aus einem Textdokument extrahiert. Überprüfen Sie jedes Feld anhand des Originalbilds, bevor Sie fortfahren."
   },
   "scanFeedback": {
     "errorSaveFailed": "Dein Feedback konnte nicht gespeichert werden. Bitte versuche es erneut.",
@@ -1268,5 +1272,21 @@
     "faq2A": "Nein. Es ist dasselbe DTCDecoder-Konto und derselbe Plan, den du bereits hast — die Installation fügt nur eine Verknüpfung auf dem Startbildschirm hinzu.",
     "faq3Q": "Erhalte ich automatisch Updates?",
     "faq3A": "Ja. Die installierte App aktualisiert sich genau wie die Website — es gibt nichts manuell herunterzuladen oder zu aktualisieren."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "Der Austausch eines teuren Steuergeräts (ECU/PCM/BCM/TCM/Wechselrichter/ABS-Modul/Lenkgetriebe) wurde vorgeschlagen, ohne dass ein Diagnosetest zur vorherigen Bestätigung empfohlen wurde.",
+    "high-cost-module-replacement-untested": "Der Austausch eines teuren Steuergeräts wurde vorgeschlagen, aber keiner der empfohlenen Tests erwähnt dieses spezifische Modul — bestätigen Sie, dass ein Testergebnis tatsächlich darauf hinweist, bevor Sie es austauschen.",
+    "ev-high-voltage-missing-ppe-warning": "Hochvolt-Inhalte zu Elektrofahrzeugen wurden ohne Warnhinweis zu qualifiziertem Techniker/PSA/Lockout-Tagout erwähnt. Hochvoltarbeiten dürfen hier niemals Schritt für Schritt angeleitet werden.",
+    "airbag-squib-circuit-probing": "Die Anleitung schien das Sondieren/Messen eines Airbag-Zündkreises zu beinhalten — dies ist mit Standard-Werkstattausrüstung nie sicher.",
+    "immobilizer-security-bypass": "Die Anleitung schien das Umgehen einer Wegfahrsperre oder eines Sicherheitssystems zu beinhalten, was hier nicht im Geltungsbereich liegt.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "Ein Modulaustausch wurde im Zusammenhang mit einem Kommunikations-/Netzwerkfehler vorgeschlagen, aber keiner der empfohlenen Tests deckt Strom-, Masse-, Batterie- oder netzwerkspezifische Prüfungen ab (Spannung, Widerstand, Terminierung, Durchgang, Spleißstellen) — ein Kommunikations-DTC ist häufig ein Verkabelungs-/Strom-/Masseproblem vor dem genannten Modul, nicht das Modul selbst. Bestätigen Sie dies zuerst.",
+    "brake-hydraulic-work-missing-safety-guidance": "Bremsen sind sicherheitskritisch. Arbeiten am hydraulischen Bremssystem (Öffnen einer Bremsleitung/-schlauch, Wartung des ABS-Hydraulikaggregats, Entlüften oder Drucktest) wurden vorgeschlagen, ohne das korrekte Herstellerverfahren und die Ausrüstung zu bestätigen, ein festes Pedal durch einen stationären Test vor jeder kontrollierten Probefahrt zu prüfen und eine unsichere Probefahrt zu untersagen. Ziehen Sie einen qualifizierten Techniker hinzu, wenn das korrekte Verfahren nicht bestätigt ist.",
+    "brake-unsafe-road-test-with-fault": "Eine Probefahrt wurde vorgeschlagen, während ein ungelöster Bremsfehler (Flüssigkeitsverlust, schwammiges oder nachlassendes Pedal, oder Bremsverlust) vorlag. Fahren Sie ein Fahrzeug mit ungelöstem Bremsdefekt niemals probehalber — prüfen Sie die Bremsen zuerst mit einem stationären Test oder auf der Hebebühne, oder lassen Sie das Fahrzeug für die weitere Diagnose abschleppen.",
+    "steering-work-missing-safety-guidance": "Arbeiten am Lenksystem (Ausbau von Lenkgetriebe/-säule, Arbeiten am EPS-/PSCM-Stromkreis, Lenkwinkelkalibrierung, oder Arbeiten am Lenk-/Lenksäulenschloss-Aktuator) wurden vorgeschlagen, ohne sicheres Anheben/Abstützen, korrekte Steckerausrichtung vor dem Sondieren und das erforderliche Kalibrierungs-/Programmierverfahren zu bestätigen, sofern zutreffend.",
+    "steering-lock-security-bypass": "Die Anleitung schien das Umgehen eines Lenk- oder Lenksäulenschlosses zu beinhalten, was hier nicht im Geltungsbereich liegt — dies unterscheidet sich von der legitimen Diagnose eines defekten Lenk-/Lenksäulenschlosssystems.",
+    "steering-unsafe-road-test-with-fault": "Eine Probefahrt wurde vorgeschlagen, während die Lenkunterstützung als schwergängig, unterbrochen oder nicht verfügbar gemeldet wurde. Fahren Sie ein Fahrzeug mit ungelöstem Verlust der Lenkunterstützung niemals probehalber — prüfen Sie zuerst mit einem stationären Test oder auf der Hebebühne, oder lassen Sie das Fahrzeug für die weitere Diagnose abschleppen.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Arbeiten an einem druckbeaufschlagten Kraftstoffsystem (GDI-Hochdruckkraftstoff, Common-Rail-Dieselsystem, Aktivierung der Kraftstoffpumpe, Dichtheitsprüfung, oder Arbeiten am Tank-/Entlüftungssystem) wurden vorgeschlagen, ohne ein Druckentlastungsverfahren, Belüftung und Brandschutzmaßnahmen zu bestätigen, oder ohne Hinzuziehung eines qualifizierten Technikers, wenn das genaue Verfahren nicht bekannt ist. Aktivieren oder sondieren Sie ein druckbeaufschlagtes Kraftstoffsystem niemals, ohne den Druck vorher abzulassen.",
+    "fuel-system-ignition-source-hazard": "Die Anleitung schien Kraftstoffsystemarbeiten mit einer Zündquelle zu kombinieren (offene Flamme, funkenerzeugendes Werkzeug, oder eine nicht als eigensicher zertifizierte Prüflampe) — dies ist niemals sicher und darf nicht versucht werden.",
+    "unsafe-road-test-general-hazard": "Eine Probefahrt wurde bei Vorliegen einer Gefahr vorgeschlagen (Kraftstoffleck, ungesichertes Bauteil, Airbag-/SRS-Gefahr, Hochvolt-Isolationsfehler, schwere Überhitzung, instabile Ladespannung, oder für den Straßenverkehr ungeeignete Reifen/Räder/Fahrwerk), ohne sie in einen stationären Test, Hebebühnentest, kontrollierten Langsamfahrtest oder eine Abschleppempfehlung umzuwandeln. Eine Warnleuchte allein stellt keine Verkehrstauglichkeit fest — beheben oder schließen Sie die Gefahr ausdrücklich aus, bevor Sie eine Probefahrt durchführen."
   }
 }

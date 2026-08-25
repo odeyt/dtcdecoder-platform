@@ -940,7 +940,9 @@
     "ruleSeverityWarn": "Advertencia",
     "printExport": "Imprimir / Exportar",
     "reportLanguageSrLabel": "Idioma del informe",
-    "unableToChangeLanguage": "No se pudo cambiar el idioma del informe."
+    "unableToChangeLanguage": "No se pudo cambiar el idioma del informe.",
+    "provenanceAiAssisted": "Los datos del vehículo y los DTC de este caso se extrajeron de fotos mediante análisis de imagen asistido por IA, no mediante análisis determinista de documentos — verifique cada campo contra la(s) imagen(es) original(es) antes de confiar en ellos.",
+    "extractionConfidenceUnknownNote": "No se evaluó la confianza de extracción para este caso. Esto no indica un problema — significa que no se registró ninguna señal de confianza."
   },
   "diagnosticProgress": {
     "systemEngine": "Motor",
@@ -1070,7 +1072,9 @@
     "errorSaveFailed": "No se pudo guardar tu revisión. Inténtalo de nuevo.",
     "errorGeneric": "Algo salió mal. Inténtalo de nuevo.",
     "saving": "Guardando…",
-    "confirmAndAnalyze": "Confirmar e iniciar análisis"
+    "confirmAndAnalyze": "Confirmar e iniciar análisis",
+    "aiAssistedNoticeTitle": "Extracción de imagen asistida por IA",
+    "aiAssistedNoticeBody": "Estos datos del vehículo y DTC fueron leídos de su(s) foto(s) por IA, no extraídos de forma determinista de un documento de texto. Verifique cada campo contra la imagen original antes de continuar."
   },
   "scanFeedback": {
     "errorSaveFailed": "No se pudo guardar tu comentario. Inténtalo de nuevo.",
@@ -1268,5 +1272,21 @@
     "faq2A": "No. Es la misma cuenta y plan de DTCDecoder que ya tienes — instalar solo agrega un acceso directo en la pantalla de inicio.",
     "faq3Q": "¿Recibiré actualizaciones automáticamente?",
     "faq3A": "Sí. La app instalada se actualiza igual que el sitio web — no hay nada que descargar o actualizar manualmente."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "Se sugirió reemplazar un módulo de alto costo (ECU/PCM/BCM/TCM/inversor/módulo ABS/cremallera de dirección) sin recomendar ninguna prueba diagnóstica para confirmarlo primero.",
+    "high-cost-module-replacement-untested": "Se sugirió reemplazar un módulo de alto costo, pero ninguna de las pruebas recomendadas menciona ese módulo específico — confirme que un resultado de prueba realmente lo señala antes de reemplazarlo.",
+    "ev-high-voltage-missing-ppe-warning": "Se mencionó contenido de alto voltaje de VE sin una advertencia de técnico calificado/EPP/bloqueo-etiquetado. El trabajo de alto voltaje nunca debe guiarse aquí paso a paso.",
+    "airbag-squib-circuit-probing": "La guía parecía implicar sondear/medir un circuito de iniciador de airbag — esto nunca es seguro con equipo de prueba de taller estándar.",
+    "immobilizer-security-bypass": "La guía parecía implicar eludir un inmovilizador o sistema de seguridad, lo cual está fuera de alcance aquí.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "Se sugirió reemplazar un módulo en el contexto de una falla de comunicación/red, pero ninguna de las pruebas recomendadas cubre verificaciones de alimentación, tierra, batería o red (voltaje, resistencia, terminación, continuidad, puntos de empalme) — un DTC de comunicación suele ser un problema de cableado/alimentación/tierra anterior al módulo indicado, no el módulo en sí. Confirme eso primero.",
+    "brake-hydraulic-work-missing-safety-guidance": "El frenado es crítico para la seguridad. Se sugirió trabajo en el sistema hidráulico de frenos (abrir una línea/manguera de freno, servicio de la unidad hidráulica ABS, purgado o prueba de presión) sin confirmar el procedimiento y equipo correctos del fabricante, verificar un pedal firme con una prueba estacionaria antes de cualquier prueba de manejo controlada, y sin prohibir una prueba de manejo insegura. Derive a un técnico calificado si no se confirma el procedimiento correcto.",
+    "brake-unsafe-road-test-with-fault": "Se sugirió una prueba de manejo mientras había una falla de frenos sin resolver (pérdida de líquido, pedal esponjoso o que se hunde, o pérdida de frenado). Nunca realice una prueba de manejo con un defecto de frenos sin resolver — verifique el frenado con una prueba estacionaria o en elevador primero, o remolque el vehículo para un diagnóstico posterior.",
+    "steering-work-missing-safety-guidance": "Se sugirió trabajo en el sistema de dirección (remoción de cremallera/columna, trabajo en el circuito de alimentación EPS/PSCM, calibración del ángulo de dirección, o trabajo en el actuador de bloqueo de dirección/columna) sin confirmar soporte/elevación segura, orientación correcta del conector antes de sondear, y el procedimiento de calibración/programación requerido cuando aplique.",
+    "steering-lock-security-bypass": "La guía parecía implicar eludir un bloqueo de dirección o de columna, lo cual está fuera de alcance aquí — esto es distinto de diagnosticar legítimamente un sistema de bloqueo de dirección/columna averiado.",
+    "steering-unsafe-road-test-with-fault": "Se sugirió una prueba de manejo mientras la asistencia de dirección se reportaba como pesada, intermitente o no disponible. Nunca realice una prueba de manejo con pérdida de asistencia de dirección sin resolver — verifique con una prueba estacionaria o en elevador primero, o remolque el vehículo para un diagnóstico posterior.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Se sugirió trabajo en un sistema de combustible presurizado (combustible de alta presión GDI, sistema common-rail diésel, activación de la bomba de combustible, prueba de fugas, o trabajo en el tanque/sistema de vapores) sin confirmar un procedimiento de alivio de presión, ventilación y precauciones contra incendios, o derivación a un técnico calificado cuando no se conoce el procedimiento exacto. Nunca active ni sondee un sistema de combustible presurizado sin aliviar la presión primero.",
+    "fuel-system-ignition-source-hazard": "La guía parecía combinar trabajo en el sistema de combustible con una fuente de ignición (llama abierta, herramienta que produce chispas, o una lámpara de prueba no clasificada como intrínsecamente segura) — esto nunca es seguro y no debe intentarse.",
+    "unsafe-road-test-general-hazard": "Se sugirió una prueba de manejo en presencia de un peligro (fuga de combustible, componente sin asegurar, peligro de airbag/SRS, falla de aislamiento de alto voltaje, sobrecalentamiento severo, voltaje de carga inestable, o neumáticos/ruedas/suspensión inseguros para circular) sin convertirla en una prueba estacionaria, en elevador, controlada a baja velocidad, o una recomendación de remolque. Una luz de advertencia por sí sola no establece que el vehículo sea apto para circular — resuelva o descarte explícitamente el peligro antes de cualquier prueba de manejo."
   }
 }

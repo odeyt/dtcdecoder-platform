@@ -616,7 +616,9 @@
     "ruleSeverityWarn": "Avertissement",
     "printExport": "Imprimer / Exporter",
     "reportLanguageSrLabel": "Langue du rapport",
-    "unableToChangeLanguage": "Impossible de changer la langue du rapport."
+    "unableToChangeLanguage": "Impossible de changer la langue du rapport.",
+    "provenanceAiAssisted": "Les données du véhicule et des DTC de ce dossier ont été extraites de photos par analyse d'image assistée par IA, et non par une analyse déterministe de document — vérifiez chaque champ par rapport à l'image ou aux images d'origine avant de vous y fier.",
+    "extractionConfidenceUnknownNote": "La confiance d'extraction n'a pas été évaluée pour ce dossier. Cela n'indique pas un problème — cela signifie qu'aucun signal de confiance n'a été enregistré."
   },
   "diagnosticProgress": {
     "systemEngine": "Moteur",
@@ -746,7 +748,9 @@
     "errorSaveFailed": "Impossible d'enregistrer votre vérification. Veuillez réessayer.",
     "errorGeneric": "Une erreur s'est produite. Veuillez réessayer.",
     "saving": "Enregistrement…",
-    "confirmAndAnalyze": "Confirmer et lancer l'analyse"
+    "confirmAndAnalyze": "Confirmer et lancer l'analyse",
+    "aiAssistedNoticeTitle": "Extraction d'image assistée par IA",
+    "aiAssistedNoticeBody": "Ces données de véhicule et de DTC ont été lues à partir de votre/vos photo(s) par IA, et non extraites de manière déterministe d'un document texte. Vérifiez chaque champ par rapport à l'image d'origine avant de continuer."
   },
   "scanFeedback": {
     "errorSaveFailed": "Impossible d'enregistrer votre avis. Veuillez réessayer.",
@@ -1268,5 +1272,21 @@
     "faq2A": "Non. C'est le même compte et le même forfait DTCDecoder que vous avez déjà — l'installation ajoute simplement un raccourci sur l'écran d'accueil.",
     "faq3Q": "Recevrai-je les mises à jour automatiquement ?",
     "faq3A": "Oui. L'application installée se met à jour de la même manière que le site web — rien à télécharger ou mettre à jour manuellement."
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "Le remplacement d'un module coûteux (ECU/PCM/BCM/TCM/onduleur/module ABS/crémaillère de direction) a été suggéré sans qu'aucun test diagnostique ne soit recommandé pour le confirmer au préalable.",
+    "high-cost-module-replacement-untested": "Le remplacement d'un module coûteux a été suggéré, mais aucun des tests recommandés ne mentionne ce module spécifique — confirmez qu'un résultat de test le désigne réellement avant de le remplacer.",
+    "ev-high-voltage-missing-ppe-warning": "Du contenu sur un système haute tension de véhicule électrique a été mentionné sans avertissement sur un technicien qualifié/EPI/consignation. Le travail sous haute tension ne doit jamais être guidé étape par étape ici.",
+    "airbag-squib-circuit-probing": "Les instructions semblaient impliquer de sonder/mesurer un circuit d'allumeur d'airbag — cela n'est jamais sûr avec un équipement de test d'atelier standard.",
+    "immobilizer-security-bypass": "Les instructions semblaient impliquer de contourner un immobiliseur ou un système de sécurité, ce qui sort du cadre ici.",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "Le remplacement d'un module a été suggéré dans le contexte d'un défaut de communication/réseau, mais aucun des tests recommandés ne couvre l'alimentation, la masse, la batterie ou des vérifications spécifiques au réseau (tension, résistance, terminaison, continuité, points d'épissure) — un DTC de communication est souvent un problème de câblage/alimentation/masse en amont du module désigné, pas le module lui-même. Confirmez cela d'abord.",
+    "brake-hydraulic-work-missing-safety-guidance": "Le freinage est critique pour la sécurité. Un travail sur le système hydraulique de freinage (ouverture d'une conduite/durite de frein, entretien du bloc hydraulique ABS, purge, ou test de pression) a été suggéré sans confirmer la procédure et l'équipement corrects du fabricant, sans vérifier une pédale ferme par un test à l'arrêt avant tout essai routier contrôlé, et sans interdire un essai routier dangereux. Faites appel à un technicien qualifié si la procédure correcte n'est pas confirmée.",
+    "brake-unsafe-road-test-with-fault": "Un essai routier a été suggéré alors qu'un défaut de freinage non résolu (perte de liquide, pédale spongieuse ou qui s'enfonce, ou perte de freinage) était présent. Ne jamais faire d'essai routier avec un défaut de frein non résolu — vérifiez le freinage avec un test à l'arrêt ou sur pont élévateur d'abord, ou remorquez le véhicule pour un diagnostic plus approfondi.",
+    "steering-work-missing-safety-guidance": "Un travail sur le système de direction (dépose de crémaillère/colonne, travail sur le circuit d'alimentation EPS/PSCM, calibration de l'angle de direction, ou travail sur l'actionneur de verrouillage de direction/colonne) a été suggéré sans confirmer un levage/support sécurisé, l'orientation correcte du connecteur avant sondage, et la procédure de calibration/programmation requise le cas échéant.",
+    "steering-lock-security-bypass": "Les instructions semblaient impliquer de contourner un verrou de direction ou de colonne, ce qui sort du cadre ici — ceci est distinct du diagnostic légitime d'un système de verrouillage de direction/colonne défectueux.",
+    "steering-unsafe-road-test-with-fault": "Un essai routier a été suggéré alors que l'assistance de direction était signalée comme lourde, intermittente ou indisponible. Ne jamais faire d'essai routier avec une perte d'assistance de direction non résolue — vérifiez avec un test à l'arrêt ou sur pont élévateur d'abord, ou remorquez le véhicule pour un diagnostic plus approfondi.",
+    "fuel-system-pressurized-work-missing-safety-guidance": "Un travail sur un système de carburant sous pression (carburant haute pression GDI, système common-rail diesel, activation de la pompe à carburant, test d'étanchéité, ou travail sur le réservoir/système de vapeurs) a été suggéré sans confirmer une procédure de décompression, une ventilation et des précautions incendie, ou un renvoi vers un technicien qualifié lorsque la procédure exacte est inconnue. Ne jamais activer ni sonder un système de carburant sous pression sans décompression préalable.",
+    "fuel-system-ignition-source-hazard": "Les instructions semblaient combiner un travail sur le système de carburant avec une source d'inflammation (flamme nue, outil produisant des étincelles, ou une lampe témoin non certifiée intrinsèquement sûre) — cela n'est jamais sûr et ne doit pas être tenté.",
+    "unsafe-road-test-general-hazard": "Un essai routier a été suggéré en présence d'un danger (fuite de carburant, composant non sécurisé, danger airbag/SRS, défaut d'isolement haute tension, surchauffe sévère, tension de charge instable, ou pneus/roues/suspension impropres à la circulation) sans le convertir en test à l'arrêt, sur pont élévateur, contrôlé à basse vitesse, ou en recommandation de remorquage. Un simple témoin d'alerte n'établit pas l'aptitude à circuler — résolvez ou écartez explicitement le danger avant tout essai routier."
   }
 }

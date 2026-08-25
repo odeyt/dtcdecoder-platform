@@ -616,7 +616,9 @@
     "ruleSeverityWarn": "警告",
     "printExport": "打印 / 导出",
     "reportLanguageSrLabel": "报告语言",
-    "unableToChangeLanguage": "无法更改报告语言。"
+    "unableToChangeLanguage": "无法更改报告语言。",
+    "provenanceAiAssisted": "此案例的车辆和 DTC 数据是通过 AI 辅助图像分析从照片中提取的，而不是通过确定性文档解析提取的——在依赖这些数据之前，请对照原始图像逐项核实。",
+    "extractionConfidenceUnknownNote": "此案例的提取置信度尚未评估。这并不表示存在问题——只是没有记录置信度信号。"
   },
   "diagnosticProgress": {
     "systemEngine": "发动机",
@@ -746,7 +748,9 @@
     "errorSaveFailed": "无法保存您的审查内容，请重试。",
     "errorGeneric": "出现问题，请重试。",
     "saving": "正在保存…",
-    "confirmAndAnalyze": "确认并开始分析"
+    "confirmAndAnalyze": "确认并开始分析",
+    "aiAssistedNoticeTitle": "AI 辅助图像提取",
+    "aiAssistedNoticeBody": "这些车辆和 DTC 数据是由 AI 从您的照片中读取的，而不是从文本文档中确定性提取的。请在继续之前对照原始图像核实每个字段。"
   },
   "scanFeedback": {
     "errorSaveFailed": "无法保存您的反馈，请重试。",
@@ -1268,5 +1272,21 @@
     "faq2A": "不需要。这是您已拥有的同一个 DTCDecoder 账户和套餐——安装只是在主屏幕添加一个快捷方式。",
     "faq3Q": "我会自动获得更新吗？",
     "faq3A": "会的。已安装的应用与网站更新方式相同——无需手动下载或更新任何内容。"
+  },
+  "scanSafetyRules": {
+    "high-cost-module-replacement-no-tests": "建议更换高成本模块（ECU/PCM/BCM/TCM/逆变器/ABS 模块/转向机）,但未推荐任何诊断测试来事先确认。",
+    "high-cost-module-replacement-untested": "建议更换高成本模块，但推荐的测试中没有一项提及该特定模块——在更换前请确认测试结果确实指向该模块。",
+    "ev-high-voltage-missing-ppe-warning": "提到了电动车高压系统相关内容，但没有关于合格技师/个人防护装备/锁定挂牌的警告。此处绝不能对高压作业进行分步指导。",
+    "airbag-squib-circuit-probing": "指导内容似乎涉及探测/测量安全气囊起爆器电路——使用标准车间测试设备进行此操作永远不安全。",
+    "immobilizer-security-bypass": "指导内容似乎涉及绕过防盗器或安全系统，这超出了此处的范围。",
+    "comm-fault-module-replacement-without-power-ground-network-tests": "在通信/网络故障背景下建议更换模块，但推荐的测试均未涵盖电源、搭铁、电池或网络相关检查（电压、电阻、终端电阻、导通性、接头点）——通信类 DTC 往往是所指模块上游的线路/电源/搭铁问题，而非模块本身。请先确认这一点。",
+    "brake-hydraulic-work-missing-safety-guidance": "制动系统关乎安全。建议对液压制动系统进行作业（打开制动管路/软管、ABS 液压控制单元维修、排气或压力测试），但未确认制造商正确的程序和设备，未在任何受控路试前通过静态测试验证踏板力度，也未禁止不安全的路试。若无法确认正确程序，应转交合格技师处理。",
+    "brake-unsafe-road-test-with-fault": "在存在未解决的制动故障（制动液损失、踏板发软或下沉、或制动失效）的情况下建议进行路试。切勿在制动缺陷未解决的情况下对车辆进行路试——请先通过静态测试或举升机测试验证制动效果，或将车辆拖走做进一步诊断。",
+    "steering-work-missing-safety-guidance": "建议进行转向系统作业（转向机/转向柱拆卸、EPS/PSCM 电源电路作业、转向角标定，或转向锁/转向柱锁执行器作业），但未确认安全举升/支撑、探测前接头方向正确，以及在适用情况下所需的标定/编程程序。",
+    "steering-lock-security-bypass": "指导内容似乎涉及绕过转向锁或转向柱锁，这超出了此处的范围——这与合理诊断故障的转向锁/转向柱锁系统不同。",
+    "steering-unsafe-road-test-with-fault": "在转向助力被报告为沉重、间歇性或不可用的情况下建议进行路试。切勿在转向助力丧失未解决的情况下对车辆进行路试——请先通过静态测试或举升机测试验证，或将车辆拖走做进一步诊断。",
+    "fuel-system-pressurized-work-missing-safety-guidance": "建议对加压燃油系统进行作业（GDI 高压燃油、共轨柴油系统、燃油泵激活、泄漏测试，或油箱/蒸汽系统作业），但未确认泄压程序、通风及防火措施，也未在不清楚确切程序时转交合格技师处理。切勿在未先泄压的情况下激活或探测加压燃油系统。",
+    "fuel-system-ignition-source-hazard": "指导内容似乎将燃油系统作业与点火源（明火、产生火花的工具，或未获本质安全认证的试灯）结合在一起——这永远不安全，绝不能尝试。",
+    "unsafe-road-test-general-hazard": "在存在危险（燃油泄漏、部件未固定、安全气囊/SRS 危险、高压绝缘故障、严重过热、充电电压不稳定，或轮胎/车轮/悬架不适合行驶）的情况下建议进行路试，但未将其转换为静态测试、举升机测试、受控低速测试或拖车建议。仅凭警告灯本身并不能确定车辆适合行驶——在进行任何路试之前，必须解决或明确排除该危险。"
   }
 }
